@@ -38,7 +38,7 @@ export default function Home() {
       
       <footer className="bg-usa-blue text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>© 2024 Goaltending Development Plan Generator</p>
+          <p>© 2025 Goaltending Development Plan Generator</p>
         </div>
       </footer>
     </div>
