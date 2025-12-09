@@ -4,6 +4,8 @@
 
 This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help youth ice hockey teams and clubs generate customized goaltending development plans.
 
+**Note**: This is a Gatsby project (not Jekyll). The `.gitignore` is configured for Gatsby with entries for `public/`, `.cache/`, and `node_modules/`.
+
 ## Technology Stack
 
 - **Static Site Generator**: GatsbyJS 5
@@ -15,12 +17,13 @@ This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help
 
 ## Repository Structure
 
-- `public/`: Generated site (git-ignored, created by Gatsby build)
-- `.cache/`: Gatsby cache directory (git-ignored)
-- `node_modules/`: npm dependencies (git-ignored)
+### Source Files (Committed to Git)
+
+The following files and directories are part of the repository:
+
 - `src/`: Source code directory
   - `src/pages/`: Page components (auto-routed by Gatsby)
-  - `src/components/`: Reusable React components
+  - `src/components/`: Reusable React components (if created)
   - `src/styles/`: Global CSS styles
 - `static/`: Static assets (copied to public folder as-is)
 - `gatsby-config.js`: Gatsby configuration file
@@ -28,6 +31,15 @@ This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help
 - `tailwind.config.js`: Tailwind CSS configuration
 - `postcss.config.js`: PostCSS configuration
 - `package.json`: npm dependencies and scripts
+- `.gitignore`: Configured for Gatsby (ignores `public/`, `.cache/`, `node_modules/`)
+
+### Generated/Ignored Artifacts (Not Committed)
+
+The following are created during development/build and excluded via `.gitignore`:
+
+- `public/`: Generated site output (created by `npm run build`)
+- `.cache/`: Gatsby cache directory (created automatically)
+- `node_modules/`: npm dependencies (created by `npm install`)
 
 ## Development Guidelines
 
