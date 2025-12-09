@@ -6,7 +6,7 @@ on:
     branches:
       - '**'
   schedule:
-    # Run weekly on Saturday at 2:00 AM UTC (Friday night into Saturday)
+    # Run weekly on Saturday at 2:00 AM UTC (Friday night US time zones)
     - cron: '0 2 * * 6'
   workflow_dispatch:
 
