@@ -14,11 +14,10 @@ export default function DarkModeToggle() {
     
     if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
       setDarkMode(true)
-      document.documentElement.classList.add('dark')
     } else {
       setDarkMode(false)
-      document.documentElement.classList.remove('dark')
     }
+    // DOM manipulation is handled in the second useEffect
   }, [])
 
   // Update dark mode when toggled
@@ -38,11 +37,14 @@ export default function DarkModeToggle() {
     setDarkMode(!darkMode)
   }
 
+  // Set dynamic aria-label for accessibility
+  const ariaLabel = darkMode ? "Switch to light mode" : "Switch to dark mode"
+
   // Avoid hydration mismatch by not rendering until mounted
   if (!mounted) {
     return (
       <button
-        className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+        className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 transition-colors"
         aria-label="Toggle dark mode"
       >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -56,7 +58,7 @@ export default function DarkModeToggle() {
     <button
       onClick={toggleDarkMode}
       className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
-      aria-label="Toggle dark mode"
+      aria-label={ariaLabel}
     >
       {darkMode ? (
         // Moon icon for dark mode
