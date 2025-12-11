@@ -107,6 +107,58 @@ The site uses USA national colors defined in `tailwind.config.js`:
 - Run `npm run build` to test production build locally
 - Serve production build with `npm run serve`
 
+## CI/CD and Workflows
+
+### Automated Workflows
+
+This repository uses GitHub Actions for automation:
+
+1. **Super Linter** (`super-linter.yml`):
+   - Runs on every push to any branch
+   - Also runs weekly on Saturday at 2:00 AM UTC
+   - Validates code quality across multiple languages and formats
+   - All code changes must pass linting before merge
+
+2. **Deploy to GitHub Pages** (`deploy.yml`):
+   - Automatically deploys on push to `main` branch
+   - Builds the site with `npm run build`
+   - Deploys to GitHub Pages using upload-pages-artifact
+   - Uses Node.js 20 with npm caching
+
+### Testing Locally Before Committing
+
+- Always run `npm run develop` to test changes locally
+- Verify the build succeeds with `npm run build` before pushing
+- Check that linting passes (super-linter will run on push)
+
+## Working with Copilot Coding Agent
+
+### Suitable Tasks for Copilot
+
+Copilot coding agent works best on:
+- Adding new React components or pages
+- Implementing new features with clear requirements
+- Updating styling with Tailwind CSS
+- Refactoring code for better maintainability
+- Fixing bugs with well-defined reproduction steps
+- Updating documentation
+- Improving accessibility
+
+### Iteration and Feedback
+
+- Review Copilot's pull requests thoroughly
+- Provide specific feedback in PR comments
+- Tag `@copilot` in comments to request changes
+- Copilot will iterate based on your feedback
+
+### Security Considerations
+
+- Copilot runs in an isolated environment with restricted permissions
+- Changes are only pushed to `copilot/*` branches
+- CI/CD workflows do not run until after human review
+- All changes are logged for audit and compliance
+- Never include secrets or sensitive data in code
+
 ## Important Notes
 
 - **Never commit** build artifacts (`public/`, `.cache/`)
