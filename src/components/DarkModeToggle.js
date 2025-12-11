@@ -42,7 +42,7 @@ export default function DarkModeToggle() {
   if (!mounted) {
     return (
       <button
-        className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 transition-colors"
+        className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
         aria-label="Toggle dark mode"
       >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -55,7 +55,7 @@ export default function DarkModeToggle() {
   return (
     <button
       onClick={toggleDarkMode}
-      className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 transition-colors"
+      className="p-2 rounded-lg bg-usa-white/20 hover:bg-usa-white/30 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
       aria-label="Toggle dark mode"
     >
       {darkMode ? (
