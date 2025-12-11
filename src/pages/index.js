@@ -5,8 +5,8 @@ export default function Home() {
     <div className="min-h-screen bg-usa-white">
       <header className="bg-usa-blue text-usa-white py-6">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold">Goaltending Development Plan Generator</h1>
-          <p className="text-xl mt-2">Youth Ice Hockey Goaltending Development</p>
+          <h1 className="text-4xl font-bold">Goalie Gen</h1>
+          <p className="text-xl mt-2">Goaltending Development Plan Generator</p>
         </div>
       </header>
       
@@ -38,7 +38,7 @@ export default function Home() {
       
       <footer className="bg-usa-blue text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>© 2025 Goaltending Development Plan Generator</p>
+          <p>© 2025 Goalie Gen</p>
         </div>
       </footer>
     </div>
