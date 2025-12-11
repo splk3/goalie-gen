@@ -1,3 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-usa-red: #BF0A30;
+  --color-usa-blue: #002868;
+  --color-usa-white: #FFFFFF;
+}
+
+@variant dark (&:where(.dark, .dark *));

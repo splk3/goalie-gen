@@ -12,7 +12,7 @@ module.exports = {
     title: `Goalie Gen`,
     siteUrl: `https://splk3.github.io`,
   },
-  pathPrefix: `/goaltending-development-plan-generator`,
+  pathPrefix: `/goalie-gen`,
   plugins: [
     `gatsby-plugin-postcss`,
   ],
