@@ -9,7 +9,7 @@
  */
 module.exports = {
   siteMetadata: {
-    title: `Goaltending Development Plan Generator`,
+    title: `Goalie Gen`,
     siteUrl: `https://splk3.github.io`,
   },
   pathPrefix: `/goaltending-development-plan-generator`,

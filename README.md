@@ -1,6 +1,6 @@
-# Goaltending Development Plan Generator
+# Goalie Gen
 
-Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans.
+Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice hockey teams and clubs to generate customized goaltending development plans.
 
 ## 🚀 Quick Start
 

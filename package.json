@@ -1,7 +1,7 @@
 {
-  "name": "goaltending-development-plan-generator",
+  "name": "goalie-gen",
   "private": true,
-  "description": "Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans",
+  "description": "Goalie Gen - Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans",
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
