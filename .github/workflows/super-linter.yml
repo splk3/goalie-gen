@@ -32,3 +32,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Disable Biome linters to avoid conflicts with other linters
+          VALIDATE_JAVASCRIPT_BIOME: false
+          VALIDATE_TYPESCRIPT_BIOME: false
