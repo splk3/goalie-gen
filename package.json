@@ -32,5 +32,8 @@
   },
   "bugs": {
     "url": "https://github.com/splk3/goaltending-development-plan-generator/issues"
+  },
+  "overrides": {
+    "eslint-config-react-app": "^7.0.1"
   }
 }
