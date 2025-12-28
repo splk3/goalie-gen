@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel } from "docx"
+import { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel, convertInchesToTwip } from "docx"
 import { saveAs } from "file-saver"
 
 export default function GeneratePlanButton() {
@@ -208,10 +208,64 @@ export default function GeneratePlanButton() {
             new Paragraph({
               children: [
                 new TextRun({
-                  text: "[Detail the specific skills to focus on, such as:\n• Positioning and angles\n• Butterfly technique\n• Glove and blocker work\n• Rebound control\n• Communication\n• Mental preparation]",
+                  text: "[Detail the specific skills to focus on, such as:]",
                   italics: true,
                 }),
               ],
+              spacing: {
+                after: 200,
+              },
+            }),
+            new Paragraph({
+              text: "Positioning and angles",
+              bullet: {
+                level: 0,
+              },
+              spacing: {
+                after: 100,
+              },
+            }),
+            new Paragraph({
+              text: "Butterfly technique",
+              bullet: {
+                level: 0,
+              },
+              spacing: {
+                after: 100,
+              },
+            }),
+            new Paragraph({
+              text: "Glove and blocker work",
+              bullet: {
+                level: 0,
+              },
+              spacing: {
+                after: 100,
+              },
+            }),
+            new Paragraph({
+              text: "Rebound control",
+              bullet: {
+                level: 0,
+              },
+              spacing: {
+                after: 100,
+              },
+            }),
+            new Paragraph({
+              text: "Communication",
+              bullet: {
+                level: 0,
+              },
+              spacing: {
+                after: 100,
+              },
+            }),
+            new Paragraph({
+              text: "Mental preparation",
+              bullet: {
+                level: 0,
+              },
               spacing: {
                 after: 300,
               },
@@ -303,7 +357,8 @@ export default function GeneratePlanButton() {
 
       // Generate and save document
       const blob = await Packer.toBlob(doc)
-      const fileName = `${teamName.replace(/[^a-z0-9]/gi, '_')}_Goaltending_Development_Plan.docx`
+      // Sanitize filename by removing only characters that are invalid in file systems
+      const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Goaltending_Development_Plan.docx`
       saveAs(blob, fileName)
 
       // Close modal and reset form
