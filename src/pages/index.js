@@ -1,5 +1,6 @@
 import * as React from "react"
 import DarkModeToggle from "../components/DarkModeToggle"
+import GeneratePlanButton from "../components/GeneratePlanButton"
 
 export default function Home() {
   return (
@@ -19,10 +20,13 @@ export default function Home() {
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
           <h2 className="text-3xl font-bold mb-4">Welcome</h2>
-          <p className="text-lg">
+          <p className="text-lg mb-6">
             This website makes it easy for youth ice hockey teams and clubs to generate 
             customized goaltending development plans.
           </p>
+          <div className="flex justify-center">
+            <GeneratePlanButton />
+          </div>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
