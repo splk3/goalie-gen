@@ -55,6 +55,8 @@ echo
 echo "✅ Download complete!"
 echo
 echo "Next steps:"
-echo "1. Run 'npm run clean' to clear the Gatsby cache"
-echo "2. Run 'npm run develop' to test the changes"
-echo "3. Verify logos and favicons display correctly"
+echo "1. Update src/pages/index.js to use format='png' for the Logo component"
+echo "2. Update gatsby-config.js icon path to use .png extension"
+echo "3. Run 'npm run clean' to clear the Gatsby cache"
+echo "4. Run 'npm run develop' to test the changes"
+echo "5. Verify logos and favicons display correctly"

@@ -25,7 +25,8 @@ module.exports = {
         background_color: `#FFFFFF`,
         theme_color: `#002868`,
         display: `standalone`,
-        icon: `static/images/logo-alt-light.svg`, // Use alternate logo as icon (will be updated to PNG)
+        // Note: Change extension to .png after downloading actual logo files
+        icon: `static/images/logo-alt-light.svg`,
         icons: [
           {
             src: `static/images/logo-alt-light.svg`,

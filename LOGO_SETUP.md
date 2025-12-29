@@ -88,11 +88,16 @@ static/
 - Uses the HTML `<picture>` element with media queries
 - Dark mode logo shows when user's system is in dark mode
 - Light mode logo shows by default
+- Supports both SVG and PNG formats via the `format` prop (defaults to 'svg')
 
 ### Header Usage
 - The main header in `src/pages/index.js` displays the full logo
 - Logo replaces the previous text-based "Goalie Gen" title
 - Logo automatically adapts to the current color scheme
+- **After downloading PNG files**: Update the Logo component to use `format="png"` prop:
+  ```jsx
+  <Logo variant="full" width={300} height={150} format="png" />
+  ```
 
 ### Favicons
 - Main favicon.ico is loaded from `static/favicon.ico`

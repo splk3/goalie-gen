@@ -7,23 +7,21 @@ import * as React from "react"
  * @param {string} props.className - Additional CSS classes
  * @param {number} props.width - Logo width in pixels (optional)
  * @param {number} props.height - Logo height in pixels (optional)
+ * @param {string} props.format - Image format: 'svg' (default) or 'png'
  */
-export default function Logo({ variant = 'full', className = '', width, height }) {
+export default function Logo({ variant = 'full', className = '', width, height, format = 'svg' }) {
   const logoPath = variant === 'alt' ? '/images/logo-alt' : '/images/logo'
-  
-  // Check for SVG files first (placeholders), fallback to PNG
-  const extension = 'svg'  // Can be changed to 'png' once actual PNG files are added
   
   return (
     <picture className={className}>
       {/* Dark mode logo */}
       <source
-        srcSet={`${logoPath}-dark.${extension}`}
+        srcSet={`${logoPath}-dark.${format}`}
         media="(prefers-color-scheme: dark)"
       />
       {/* Light mode logo (default) */}
       <img
-        src={`${logoPath}-light.${extension}`}
+        src={`${logoPath}-light.${format}`}
         alt="Goalie Gen - Development Plans"
         width={width}
         height={height}
