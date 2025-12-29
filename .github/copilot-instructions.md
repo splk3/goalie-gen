@@ -43,6 +43,18 @@ The following are created during development/build and excluded via `.gitignore`
 
 ## Development Guidelines
 
+### **CRITICAL: Pre-PR Checklist**
+
+**Before submitting any PR for review, you MUST:**
+
+1. ✅ **Build Verification**: Run `npm run build` and ensure it completes successfully without errors
+2. ✅ **Functional Testing**: Test the site functionality locally using `npm run develop`
+3. ✅ **Static Compatibility**: Verify no server-side rendering (SSR) features are used
+4. ✅ **JAMstack Compliance**: Ensure all dynamic features use client-side JavaScript only
+5. ✅ **Clean Build Output**: Confirm the `public/` directory is generated correctly
+
+**Failure to validate builds will result in broken deployments to GitHub Pages.**
+
 ### Working with Gatsby
 
 1. **Local Development**:
@@ -55,8 +67,8 @@ The following are created during development/build and excluded via `.gitignore`
 2. **GitHub Pages Deployment**:
    - Use `npm run build` to build the production site
    - Use `npm run deploy` to deploy to GitHub Pages
-   - Site is deployed to `https://splk3.github.io/goaltending-development-plan-generator/`
-   - Path prefix is configured in `gatsby-config.js`
+   - Site is deployed to `https://splk3.github.io/goalie-gen/`
+   - Path prefix `/goalie-gen` is configured in `gatsby-config.js`
    - GitHub Actions workflow may automate deployment
 
 ### Code Style
@@ -98,14 +110,27 @@ The site uses USA national colors defined in `tailwind.config.js`:
 - Extend Tailwind theme in `tailwind.config.js` if needed
 - Follow mobile-first responsive design with Tailwind breakpoints
 
-### Testing
+### Testing and Validation
 
-- Test locally with `npm run develop`
-- Preview changes at `http://localhost:8000`
-- Check responsive design on different screen sizes
-- Verify all links and navigation work correctly
-- Run `npm run build` to test production build locally
-- Serve production build with `npm run serve`
+**Every code change MUST be validated before PR submission:**
+
+1. **Development Testing**:
+   - Test locally with `npm run develop`
+   - Preview changes at `http://localhost:8000`
+   - Check responsive design on different screen sizes
+   - Verify all links and navigation work correctly
+
+2. **Production Build Validation** (REQUIRED):
+   - Run `npm run build` to test production build locally
+   - Verify build completes without errors or warnings
+   - Check that all assets are generated in `public/` directory
+   - Serve production build with `npm run serve`
+   - Test the production build at `http://localhost:9000`
+
+3. **Static Site Validation**:
+   - Ensure no server-side APIs or Node.js runtime dependencies
+   - Verify all dynamic features work with client-side JavaScript only
+   - Test that the site works without a backend server
 
 ## CI/CD and Workflows
 
@@ -125,10 +150,83 @@ This repository uses GitHub Actions for automation:
    - Deploys to GitHub Pages using upload-pages-artifact
    - Uses Node.js 20 with npm caching
 
+## JAMstack Architecture & Static Hosting Requirements
+
+### What is JAMstack?
+
+This site follows JAMstack (JavaScript, APIs, and Markup) architecture principles:
+- **JavaScript**: Client-side dynamic functionality
+- **APIs**: Third-party services and APIs (accessed from client-side)
+- **Markup**: Pre-built HTML generated at build time
+
+### Static Hosting Compatibility
+
+**CRITICAL**: This site is hosted on GitHub Pages, which is a **static hosting service**. This means:
+
+1. ❌ **NO Server-Side Rendering (SSR)**:
+   - Do NOT use Gatsby's `getServerData()` function
+   - Do NOT use server-side Node.js APIs at runtime
+   - Do NOT use Express, Next.js SSR, or other server-side frameworks
+
+2. ❌ **NO Server-Side APIs**:
+   - Do NOT create API routes that require a Node.js server
+   - Do NOT use server-side environment variables at runtime
+   - Do NOT rely on server-side sessions or authentication
+
+3. ✅ **ALLOWED Client-Side Features**:
+   - Static Site Generation (SSG) - pages built at compile time
+   - Client-side JavaScript and React hooks
+   - Browser APIs (localStorage, fetch, etc.)
+   - Third-party API calls from the browser
+   - Client-side routing with Gatsby Link
+
+### JAMstack Best Practices for This Project
+
+1. **Pre-render Everything Possible**:
+   - Use Gatsby's build-time data fetching
+   - Generate all pages at build time
+   - Keep dynamic content minimal
+
+2. **Client-Side Dynamic Features**:
+   - Use React state and hooks for interactivity
+   - Store user data in browser localStorage
+   - Make API calls from the browser, not the server
+
+3. **Performance Optimization**:
+   - Leverage Gatsby's automatic code splitting
+   - Use lazy loading for images and components
+   - Minimize bundle sizes
+
+4. **Security**:
+   - Never expose API keys in client-side code
+   - Use serverless functions or third-party services for sensitive operations
+   - Validate and sanitize all user inputs on the client
+
+### Testing for Static Compatibility
+
+Before submitting a PR, verify your code is static-hosting compatible:
+
+```bash
+# Build the static site
+npm run build
+
+# Serve it locally (simulates GitHub Pages)
+npm run serve
+
+# Test at http://localhost:9000
+# The site should work WITHOUT any backend server
+```
+
+If your changes require server-side functionality, you MUST use:
+- **Serverless Functions**: Deploy separate functions (e.g., Netlify Functions, AWS Lambda)
+- **Third-Party APIs**: Use services like Firebase, Supabase, or other cloud providers
+- **Client-Side Processing**: Move logic to the browser when possible
+
 ### Testing Locally Before Committing
 
 - Always run `npm run develop` to test changes locally
 - Verify the build succeeds with `npm run build` before pushing
+- Confirm static compatibility with `npm run serve`
 - Check that linting passes (super-linter will run on push)
 
 ## Working with Copilot Coding Agent
@@ -143,6 +241,36 @@ Copilot coding agent works best on:
 - Fixing bugs with well-defined reproduction steps
 - Updating documentation
 - Improving accessibility
+
+### **MANDATORY: PR Submission Requirements**
+
+Before Copilot submits a PR for review, it MUST:
+
+1. ✅ **Verify Build Success**:
+   ```bash
+   npm run build
+   ```
+   - Build must complete without errors
+   - Verify `public/` directory is generated
+
+2. ✅ **Test Functionality**:
+   ```bash
+   npm run develop
+   ```
+   - Manually test all changed features
+   - Verify existing functionality still works
+
+3. ✅ **Validate Static Compatibility**:
+   - Ensure no SSR features are used
+   - Confirm site works as a static site
+   - Test with `npm run serve`
+
+4. ✅ **Document Changes**:
+   - Provide clear PR description
+   - List all files modified
+   - Explain testing performed
+
+**PRs that fail to build or break existing functionality will be rejected.**
 
 ### Iteration and Feedback
 
@@ -163,10 +291,68 @@ Copilot coding agent works best on:
 
 - **Never commit** build artifacts (`public/`, `.cache/`)
 - **Never commit** `node_modules/` directory
-- The path prefix `/goaltending-development-plan-generator` is required for GitHub Pages deployment
+- The path prefix `/goalie-gen` is required for GitHub Pages deployment
 - Gatsby automatically optimizes images and assets for performance
 - Keep the site lightweight and fast-loading for youth sports teams
 - Use Gatsby's built-in optimizations (code splitting, prefetching, etc.)
+
+## Common Pitfalls to Avoid
+
+### ❌ Server-Side Features (Will Break on GitHub Pages)
+
+**DO NOT use:**
+- `getServerData()` - Requires Node.js server at runtime
+- Server-side API routes (e.g., `/api/*` endpoints)
+- Node.js modules that require server runtime (fs, path, etc.)
+- Server-side environment variables accessed at runtime
+- Database connections from server
+- Express middleware or server-side routing
+
+### ❌ Build-Time Mistakes
+
+**DO NOT:**
+- Commit `public/`, `.cache/`, or `node_modules/` directories
+- Use `require()` for static assets (use `import` instead)
+- Forget to test production builds before submitting PR
+- Skip the `npm run build` validation step
+
+### ✅ Correct Patterns for Static Sites
+
+**DO use:**
+- Static Site Generation (SSG) at build time
+- Client-side React components and hooks
+- Browser APIs (localStorage, sessionStorage, fetch)
+- CSS/Tailwind for styling
+- Client-side form handling
+- Third-party APIs called from the browser
+- Gatsby Link for navigation
+
+### Example: Correct vs. Incorrect
+
+❌ **INCORRECT** (Server-side - will break):
+```javascript
+// This will NOT work on GitHub Pages
+export async function getServerData() {
+  const data = await fetchFromDatabase()
+  return { props: { data } }
+}
+```
+
+✅ **CORRECT** (Client-side - will work):
+```javascript
+// This WILL work on GitHub Pages
+export default function Component() {
+  const [data, setData] = React.useState(null)
+  
+  React.useEffect(() => {
+    fetch('https://api.example.com/data')
+      .then(res => res.json())
+      .then(setData)
+  }, [])
+  
+  return <div>{data ? 'Loaded' : 'Loading...'}</div>
+}
+```
 
 ## Available npm Scripts
 
