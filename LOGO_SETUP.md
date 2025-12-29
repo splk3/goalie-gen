@@ -2,9 +2,34 @@
 
 ## Overview
 
-The code has been set up to display logos and favicons, but placeholder images need to be replaced with the actual assets from the GitHub issue.
+The code infrastructure for displaying logos and favicons has been set up, but placeholder images need to be replaced with the actual assets from the GitHub issue.
 
-## Required Actions
+## Quick Setup (Automated)
+
+### Option 1: Run the Download Script (Recommended)
+
+We've provided a script to download all assets automatically. Run this from your local machine (not in the CI environment):
+
+```bash
+bash download-assets.sh
+```
+
+This will:
+- Download all 4 logo variants
+- Download and extract favicon files
+- Place everything in the correct directories
+
+After running the script:
+```bash
+npm run clean       # Clear Gatsby cache
+npm run develop     # Start development server
+```
+
+### Option 2: Manual Download
+
+If the script doesn't work on your system, follow the manual instructions below.
+
+## Manual Setup Instructions
 
 ### 1. Download Logo Files
 
