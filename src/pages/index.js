@@ -1,6 +1,7 @@
 import * as React from "react"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GeneratePlanButton from "../components/GeneratePlanButton"
+import DownloadDrillButton from "../components/DownloadDrillButton"
 
 export default function Home() {
   return (
@@ -39,9 +40,12 @@ export default function Home() {
           
           <div className="border-2 border-usa-red dark:border-red-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors">
             <h3 className="text-2xl font-bold text-usa-red dark:text-red-400 mb-3">Goalie Drills</h3>
-            <p className="text-gray-700 dark:text-gray-300">
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
               Access a comprehensive library of goalie-specific drills and exercises.
             </p>
+            <div className="flex justify-center">
+              <DownloadDrillButton />
+            </div>
           </div>
         </div>
       </main>
