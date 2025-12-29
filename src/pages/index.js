@@ -1,4 +1,6 @@
 import * as React from "react"
+import SEO from "../components/SEO"
+import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GeneratePlanButton from "../components/GeneratePlanButton"
 import DownloadDrillButton from "../components/DownloadDrillButton"
@@ -6,13 +8,11 @@ import DownloadDrillButton from "../components/DownloadDrillButton"
 export default function Home() {
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
+      <SEO />
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold">Goalie Gen</h1>
-              <p className="text-xl mt-2">Goaltending Development Plan Generator</p>
-            </div>
+            <Logo variant="full" width={300} height={150} />
             <DarkModeToggle />
           </div>
         </div>

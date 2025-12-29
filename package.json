@@ -17,9 +17,12 @@
     "docx": "^9.5.1",
     "file-saver": "^2.0.5",
     "gatsby": "^5.15.0",
+    "gatsby-plugin-manifest": "^5.15.0",
+    "gatsby-plugin-react-helmet": "^6.15.0",
     "jspdf": "^3.0.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-helmet": "^6.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
