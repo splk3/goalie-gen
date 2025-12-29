@@ -150,12 +150,6 @@ This repository uses GitHub Actions for automation:
    - Deploys to GitHub Pages using upload-pages-artifact
    - Uses Node.js 20 with npm caching
 
-### Testing Locally Before Committing
-
-- Always run `npm run develop` to test changes locally
-- Verify the build succeeds with `npm run build` before pushing
-- Check that linting passes (super-linter will run on push)
-
 ## JAMstack Architecture & Static Hosting Requirements
 
 ### What is JAMstack?
