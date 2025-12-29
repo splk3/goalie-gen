@@ -1,0 +1,6 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="400" fill="#1e1e1e"/>
+  <text x="400" y="180" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="white" text-anchor="middle">GOALIE GEN</text>
+  <text x="400" y="240" font-family="Arial, sans-serif" font-size="30" fill="white" text-anchor="middle">DEVELOPMENT PLANS</text>
+  <text x="400" y="280" font-family="Arial, sans-serif" font-size="20" fill="#888" text-anchor="middle">(Dark Mode - Replace with actual logo)</text>
+</svg>

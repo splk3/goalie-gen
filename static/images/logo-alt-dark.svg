@@ -1,0 +1,6 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#1e1e1e"/>
+  <circle cx="200" cy="200" r="120" fill="none" stroke="white" stroke-width="20"/>
+  <text x="200" y="220" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">GG</text>
+  <text x="200" y="350" font-family="Arial, sans-serif" font-size="18" fill="#888" text-anchor="middle">(Replace with actual)</text>
+</svg>

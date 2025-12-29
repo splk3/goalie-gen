@@ -25,17 +25,17 @@ module.exports = {
         background_color: `#FFFFFF`,
         theme_color: `#002868`,
         display: `standalone`,
-        icon: `static/images/logo-alt-light.png`, // Use alternate logo as icon
+        icon: `static/images/logo-alt-light.svg`, // Use alternate logo as icon (will be updated to PNG)
         icons: [
           {
-            src: `static/images/logo-alt-light.png`,
+            src: `static/images/logo-alt-light.svg`,
             sizes: `192x192`,
-            type: `image/png`,
+            type: `image/svg+xml`,
           },
           {
-            src: `static/images/logo-alt-light.png`,
+            src: `static/images/logo-alt-light.svg`,
             sizes: `512x512`,
-            type: `image/png`,
+            type: `image/svg+xml`,
           },
         ],
       },

@@ -11,16 +11,19 @@ import * as React from "react"
 export default function Logo({ variant = 'full', className = '', width, height }) {
   const logoPath = variant === 'alt' ? '/images/logo-alt' : '/images/logo'
   
+  // Check for SVG files first (placeholders), fallback to PNG
+  const extension = 'svg'  // Can be changed to 'png' once actual PNG files are added
+  
   return (
     <picture className={className}>
       {/* Dark mode logo */}
       <source
-        srcSet={`${logoPath}-dark.png`}
+        srcSet={`${logoPath}-dark.${extension}`}
         media="(prefers-color-scheme: dark)"
       />
       {/* Light mode logo (default) */}
       <img
-        src={`${logoPath}-light.png`}
+        src={`${logoPath}-light.${extension}`}
         alt="Goalie Gen - Development Plans"
         width={width}
         height={height}
