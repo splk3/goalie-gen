@@ -12,21 +12,41 @@ import * as React from "react"
 export default function Logo({ variant = 'full', className = '', width, height, format = 'svg' }) {
   const logoPath = variant === 'alt' ? '/images/logo-alt' : '/images/logo'
   
+  // Check if dark mode support is requested via className
+  const isDarkModeAware = className.includes('dark-mode-aware')
+  
+  if (variant === 'alt' && isDarkModeAware) {
+    // Use two images with Tailwind dark mode classes for alt variant
+    return (
+      <div className={className}>
+        <img
+          src={`${logoPath}-light.${format}`}
+          alt="Goalie Gen - Development Plans"
+          width={width}
+          height={height}
+          className="max-w-full h-auto block dark:hidden"
+        />
+        <img
+          src={`${logoPath}-dark.${format}`}
+          alt="Goalie Gen - Development Plans"
+          width={width}
+          height={height}
+          className="max-w-full h-auto hidden dark:block"
+        />
+      </div>
+    )
+  }
+  
+  // Default: use dark variant for all modes
+  const logoSuffix = '-dark'
+  
   return (
-    <picture className={className}>
-      {/* Dark mode logo */}
-      <source
-        srcSet={`${logoPath}-dark.${format}`}
-        media="(prefers-color-scheme: dark)"
-      />
-      {/* Light mode logo (default) */}
-      <img
-        src={`${logoPath}-light.${format}`}
-        alt="Goalie Gen - Development Plans"
-        width={width}
-        height={height}
-        className="max-w-full h-auto"
-      />
-    </picture>
+    <img
+      src={`${logoPath}${logoSuffix}.${format}`}
+      alt="Goalie Gen - Development Plans"
+      width={width}
+      height={height}
+      className={`max-w-full h-auto ${className}`}
+    />
   )
 }

@@ -2,12 +2,12 @@ import * as React from "react"
 import { Helmet } from "react-helmet"
 
 /**
- * SEO component that handles metadata and favicons
+ * Seo component that handles metadata and favicons
  * @param {Object} props - Component props
  * @param {string} props.title - Page title (default: "Goalie Gen")
  * @param {string} props.description - Page description
  */
-export default function SEO({ 
+export default function Seo({ 
   title = "Goalie Gen - Development Plans", 
   description = "Generate customized goaltending development plans for youth ice hockey teams and clubs" 
 }) {

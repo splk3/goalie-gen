@@ -1,5 +1,6 @@
 import * as React from "react"
 import { jsPDF } from "jspdf"
+import Logo from "./Logo"
 
 export default function DownloadDrillButton() {
   const [showModal, setShowModal] = React.useState(false)
@@ -93,12 +94,15 @@ export default function DownloadDrillButton() {
             aria-modal="true"
             aria-labelledby="drill-modal-title"
           >
-            <h2 
-              id="drill-modal-title"
-              className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6"
-            >
-              Download a Goalie Drill
-            </h2>
+            <div className="flex items-center gap-4 mb-6">
+              <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
+              <h2 
+                id="drill-modal-title"
+                className="text-2xl font-bold text-usa-blue dark:text-blue-400"
+              >
+                Download a Goalie Drill
+              </h2>
+            </div>
 
             <div className="mb-4">
               <label htmlFor="ageGroup" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">

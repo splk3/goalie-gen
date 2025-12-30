@@ -1,5 +1,5 @@
 import * as React from "react"
-import SEO from "../components/SEO"
+import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GeneratePlanButton from "../components/GeneratePlanButton"
@@ -8,7 +8,7 @@ import DownloadDrillButton from "../components/DownloadDrillButton"
 export default function Home() {
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
-      <SEO />
+      <Seo />
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
@@ -20,11 +20,18 @@ export default function Home() {
       
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-          <h2 className="text-3xl font-bold mb-4">Welcome</h2>
-          <p className="text-lg">
-            This website makes it easy for youth ice hockey teams and clubs to generate 
-            customized goaltending development plans.
-          </p>
+          <div className="flex items-center gap-6">
+            <div className="flex-shrink-0">
+              <Logo variant="alt" format="png" width={120} height={120} />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Welcome</h2>
+              <p className="text-lg">
+                This website makes it easy for youth ice hockey teams and clubs to generate 
+                customized goaltending development plans.
+              </p>
+            </div>
+          </div>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
