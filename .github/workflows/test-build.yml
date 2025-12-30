@@ -1,0 +1,40 @@
+name: Test Build
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Saturday at 3:00 AM UTC (after super-linter runs)
+    - cron: '0 3 * * 6'
+
+jobs:
+  test-build:
+    name: Test Gatsby Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "public" ]; then
+            echo "Error: public/ directory was not generated"
+            exit 1
+          fi
+          echo "Build successful - public/ directory exists"
+          ls -la public/
