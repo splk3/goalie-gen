@@ -1,4 +1,5 @@
 import * as React from "react"
+import { withPrefix } from "gatsby"
 
 /**
  * Seo component that handles metadata for a page
@@ -11,10 +12,10 @@ export default function Seo({
   title = "Goalie Gen - Development Plans", 
   description = "Generate customized goaltending development plans for youth ice hockey teams and clubs" 
 }) {
-  // For social media, we need absolute URLs including the site URL and path prefix
+  // For social media, we need absolute URLs including the site URL
   const siteUrl = "https://splk3.github.io"
-  const pathPrefix = "/goalie-gen"
-  const socialImageUrl = `${siteUrl}${pathPrefix}/images/logo-light.png`
+  const imagePathWithPrefix = withPrefix("/images/logo-light.png")
+  const socialImageUrl = `${siteUrl}${imagePathWithPrefix}`
   
   return (
     <>
