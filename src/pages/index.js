@@ -8,7 +8,6 @@ import DownloadDrillButton from "../components/DownloadDrillButton"
 export default function Home() {
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
-      <Seo />
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
@@ -65,3 +64,5 @@ export default function Home() {
     </div>
   )
 }
+
+export const Head = () => <Seo />

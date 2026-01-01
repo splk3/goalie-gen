@@ -1,4 +1,5 @@
 import * as React from "react"
+import { withPrefix } from "gatsby"
 
 /**
  * Logo component that displays the Goalie Gen logo with automatic dark mode support
@@ -10,7 +11,7 @@ import * as React from "react"
  * @param {string} props.format - Image format: 'svg' (default) or 'png'
  */
 export default function Logo({ variant = 'full', className = '', width, height, format = 'svg' }) {
-  const logoPath = variant === 'alt' ? '/images/logo-alt' : '/images/logo'
+  const logoPath = withPrefix(variant === 'alt' ? '/images/logo-alt' : '/images/logo')
   
   // Check if dark mode support is requested via className
   const isDarkModeAware = className.includes('dark-mode-aware')
