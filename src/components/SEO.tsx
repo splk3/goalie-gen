@@ -1,6 +1,11 @@
 import * as React from "react"
 import { withPrefix } from "gatsby"
 
+interface SeoProps {
+  title?: string
+  description?: string
+}
+
 /**
  * Seo component that handles metadata for a page
  * This component should be used as a child of the Head export in a page component
@@ -11,7 +16,7 @@ import { withPrefix } from "gatsby"
 export default function Seo({ 
   title = "Goalie Gen - Development Plans", 
   description = "Generate customized goaltending development plans for youth ice hockey teams and clubs" 
-}) {
+}: SeoProps) {
   // For social media, we need absolute URLs including the site URL
   const siteUrl = "https://splk3.github.io"
   const imagePathWithPrefix = withPrefix("/images/logo-light.png")

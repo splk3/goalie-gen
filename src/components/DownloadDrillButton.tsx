@@ -2,14 +2,17 @@ import * as React from "react"
 import { jsPDF } from "jspdf"
 import Logo from "./Logo"
 
-export default function DownloadDrillButton() {
-  const [showModal, setShowModal] = React.useState(false)
-  const [ageGroup, setAgeGroup] = React.useState("")
-  const [skillLevel, setSkillLevel] = React.useState("")
-  const [isGenerating, setIsGenerating] = React.useState(false)
+type AgeGroup = "8u" | "10u" | "12u" | "14u+"
+type SkillLevel = "beginner" | "intermediate" | "advanced"
 
-  const ageGroups = ["8u", "10u", "12u", "14u+"]
-  const skillLevels = ["beginner", "intermediate", "advanced"]
+export default function DownloadDrillButton() {
+  const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [ageGroup, setAgeGroup] = React.useState<string>("")
+  const [skillLevel, setSkillLevel] = React.useState<string>("")
+  const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
+
+  const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"]
+  const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"]
 
   const generatePDF = () => {
     if (!ageGroup) {
