@@ -9,6 +9,7 @@ export default function GeneratePlanButton() {
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
   const [imagePreview, setImagePreview] = React.useState<string | null>(null)
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
+  const [documentType, setDocumentType] = React.useState<'gdoc' | 'docx'>('gdoc')
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -93,6 +94,119 @@ export default function GeneratePlanButton() {
     })
   }
 
+  const generateHTMLDocument = async () => {
+    if (!teamName.trim() || !selectedImage) return
+
+    // Optimize image for HTML
+    const optimizedImageBlob = await optimizeImage(selectedImage)
+    const reader = new FileReader()
+    
+    return new Promise<void>((resolve, reject) => {
+      reader.onloadend = () => {
+        const base64Image = reader.result as string
+        
+        const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${teamName} - Goaltending Development Plan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      color: #002868;
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: #002868;
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #BF0A30;
+      padding-bottom: 5px;
+    }
+    .logo-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .logo-container img {
+      max-width: 400px;
+      height: auto;
+    }
+    p {
+      margin: 10px 0;
+    }
+    .placeholder {
+      font-style: italic;
+      color: #666;
+    }
+    ul {
+      margin: 10px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>${teamName} - Goaltending Development Plan</h1>
+  
+  <div class="logo-container">
+    <img src="${base64Image}" alt="${teamName} Logo" />
+  </div>
+  
+  <h2>Introduction</h2>
+  <p class="placeholder">[Insert introduction to the goaltending development plan here. Describe the purpose, goals, and overview of the program.]</p>
+  
+  <h2>Season Goals</h2>
+  <p class="placeholder">[List the primary goals for the goaltending program this season. Include both team and individual goaltender objectives.]</p>
+  
+  <h2>Training Schedule</h2>
+  <p class="placeholder">[Outline the weekly/monthly training schedule. Include on-ice sessions, off-ice conditioning, and video review sessions.]</p>
+  
+  <h2>Skill Development Areas</h2>
+  <p class="placeholder">[Detail the specific skills to focus on, such as:]</p>
+  <ul>
+    <li>Positioning and angles</li>
+    <li>Butterfly technique</li>
+    <li>Glove and blocker work</li>
+    <li>Rebound control</li>
+    <li>Communication</li>
+    <li>Mental preparation</li>
+  </ul>
+  
+  <h2>Equipment Requirements</h2>
+  <p class="placeholder">[List required and recommended equipment for goaltenders, including sizing guidelines and maintenance tips.]</p>
+  
+  <h2>Progress Tracking & Evaluation</h2>
+  <p class="placeholder">[Describe how progress will be tracked and evaluated throughout the season. Include metrics, evaluation dates, and feedback mechanisms.]</p>
+  
+  <h2>Additional Resources</h2>
+  <p class="placeholder">[Provide links to videos, articles, or other resources that support goaltender development.]</p>
+  
+  <h2>Contact Information</h2>
+  <p class="placeholder">[Include contact information for coaching staff, training coordinators, and other relevant personnel.]</p>
+</body>
+</html>`
+        
+        const blob = new Blob([htmlContent], { type: 'text/html' })
+        const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Goaltending_Development_Plan.html`
+        saveAs(blob, fileName)
+        resolve()
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(optimizedImageBlob)
+    })
+  }
+
   const generateDocument = async () => {
     if (!teamName.trim()) {
       alert('Please enter a team name')
@@ -107,11 +221,14 @@ export default function GeneratePlanButton() {
     setIsGenerating(true)
 
     try {
-      // Optimize image
-      const optimizedImageBlob = await optimizeImage(selectedImage)
-      const arrayBuffer = await optimizedImageBlob.arrayBuffer()
+      if (documentType === 'gdoc') {
+        await generateHTMLDocument()
+      } else {
+        // Optimize image
+        const optimizedImageBlob = await optimizeImage(selectedImage)
+        const arrayBuffer = await optimizedImageBlob.arrayBuffer()
 
-      // Create Word document
+        // Create Word document
       const doc = new Document({
         sections: [{
           properties: {},
@@ -370,12 +487,14 @@ export default function GeneratePlanButton() {
       // Sanitize filename by removing only characters that are invalid in file systems
       const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Goaltending_Development_Plan.docx`
       saveAs(blob, fileName)
+      }
 
       // Close modal and reset form
       setShowModal(false)
       setTeamName("")
       setSelectedImage(null)
       setImagePreview(null)
+      setDocumentType('gdoc')
     } catch (error) {
       console.error('Error generating document:', error)
       alert('There was an error generating the document. Please try again.')
@@ -440,6 +559,40 @@ export default function GeneratePlanButton() {
               )}
             </div>
 
+            <div className="mb-6">
+              <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                Document Type
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="documentType"
+                    value="gdoc"
+                    checked={documentType === 'gdoc'}
+                    onChange={(e) => setDocumentType(e.target.value as 'gdoc' | 'docx')}
+                    className="w-4 h-4 text-usa-blue focus:ring-usa-blue dark:focus:ring-blue-400"
+                  />
+                  <span className="ml-2 text-gray-700 dark:text-gray-300">
+                    Google Docs (.html - upload to Google Drive)
+                  </span>
+                </label>
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="documentType"
+                    value="docx"
+                    checked={documentType === 'docx'}
+                    onChange={(e) => setDocumentType(e.target.value as 'gdoc' | 'docx')}
+                    className="w-4 h-4 text-usa-blue focus:ring-usa-blue dark:focus:ring-blue-400"
+                  />
+                  <span className="ml-2 text-gray-700 dark:text-gray-300">
+                    Microsoft Word (.docx)
+                  </span>
+                </label>
+              </div>
+            </div>
+
             <div className="flex gap-4">
               <button
                 onClick={generateDocument}
@@ -456,6 +609,7 @@ export default function GeneratePlanButton() {
                   setTeamName("")
                   setSelectedImage(null)
                   setImagePreview(null)
+                  setDocumentType('gdoc')
                 }}
                 disabled={isGenerating}
                 className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
