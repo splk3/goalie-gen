@@ -5,11 +5,12 @@
  */
 
 import React from "react"
+import type { GatsbySSR } from "gatsby"
 
 /**
  * Add Google Analytics to every page
  */
-export const onRenderBody = ({ setHeadComponents }) => {
+export const onRenderBody: GatsbySSR['onRenderBody'] = ({ setHeadComponents }) => {
   setHeadComponents([
     <script
       key="gtag-js"

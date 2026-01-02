@@ -23,6 +23,7 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 ## 🛠 Tech Stack
 
 - **GatsbyJS 5** - Latest version of the React-based static site generator
+- **TypeScript** - Strongly typed programming language that builds on JavaScript
 - **Tailwind CSS 3** - Utility-first CSS framework
 - **React 18** - JavaScript library for building user interfaces
 

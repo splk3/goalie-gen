@@ -4,16 +4,16 @@
  * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
  */
 
-/**
- * @type {import('gatsby').GatsbyConfig}
- */
-module.exports = {
+import type { GatsbyConfig } from 'gatsby'
+
+const config: GatsbyConfig = {
   siteMetadata: {
     title: `Goalie Gen`,
     siteUrl: `https://splk3.github.io`,
   },
   pathPrefix: `/goalie-gen`,
   plugins: [
+    `gatsby-plugin-typescript`,
     `gatsby-plugin-postcss`,
     {
       resolve: `gatsby-plugin-manifest`,
@@ -41,3 +41,5 @@ module.exports = {
     },
   ],
 }
+
+export default config

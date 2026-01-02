@@ -4,14 +4,14 @@ import { saveAs } from "file-saver"
 import Logo from "./Logo"
 
 export default function GeneratePlanButton() {
-  const [showModal, setShowModal] = React.useState(false)
-  const [teamName, setTeamName] = React.useState("")
-  const [selectedImage, setSelectedImage] = React.useState(null)
-  const [imagePreview, setImagePreview] = React.useState(null)
-  const [isGenerating, setIsGenerating] = React.useState(false)
+  const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [teamName, setTeamName] = React.useState<string>("")
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null)
+  const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0]
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
@@ -22,7 +22,7 @@ export default function GeneratePlanButton() {
       // Create preview
       const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result)
+        setImagePreview(reader.result as string)
       }
       reader.readAsDataURL(file)
 
@@ -30,7 +30,7 @@ export default function GeneratePlanButton() {
     }
   }
 
-  const optimizeImage = async (file) => {
+  const optimizeImage = async (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -39,6 +39,11 @@ export default function GeneratePlanButton() {
           // Create canvas for image optimization
           const canvas = document.createElement('canvas')
           const ctx = canvas.getContext('2d')
+          
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'))
+            return
+          }
           
           // Set maximum dimensions for print quality (300 DPI recommended)
           // A standard document width is ~6 inches, so 1800px provides good quality
@@ -70,14 +75,18 @@ export default function GeneratePlanButton() {
           // Convert to blob with good quality for print
           canvas.toBlob(
             (blob) => {
-              resolve(blob)
+              if (blob) {
+                resolve(blob)
+              } else {
+                reject(new Error('Could not create blob from canvas'))
+              }
             },
             'image/jpeg',
             0.85 // 85% quality - good balance for print documents
           )
         }
         img.onerror = reject
-        img.src = e.target.result
+        img.src = e.target?.result as string
       }
       reader.onerror = reject
       reader.readAsDataURL(file)

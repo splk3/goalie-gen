@@ -1,8 +1,8 @@
 import * as React from "react"
 
 export default function DarkModeToggle() {
-  const [darkMode, setDarkMode] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
+  const [darkMode, setDarkMode] = React.useState<boolean>(false)
+  const [mounted, setMounted] = React.useState<boolean>(false)
 
   // Run only on client-side after component mounts
   React.useEffect(() => {
