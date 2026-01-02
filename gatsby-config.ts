@@ -13,6 +13,7 @@ const config: GatsbyConfig = {
   },
   pathPrefix: `/goalie-gen`,
   plugins: [
+    `gatsby-plugin-typescript`,
     `gatsby-plugin-postcss`,
     {
       resolve: `gatsby-plugin-manifest`,
