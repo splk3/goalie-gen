@@ -44,19 +44,42 @@ The site uses USA national colors:
 
 ## 🚀 Deployment
 
-This site is configured for GitHub Pages deployment. To deploy:
+This site is configured for GitHub Pages deployment with custom domain support.
 
-1. Build the site with the correct path prefix:
-   ```shell
-   npm run build
-   ```
+### Environment Configuration
 
-2. Deploy to GitHub Pages:
-   ```shell
-   npm run deploy
-   ```
+The site URL is configured via environment variables:
 
-The site will be available at `https://splk3.github.io/goaltending-development-plan-generator/`
+- **Development**: `https://dev.goaliegen.com` (set in `.env.development`)
+- **Production**: `https://goaliegen.com` (set in `.env.production`)
+
+### Deploying to Dev Domain
+
+```shell
+npm run build
+npm run deploy
+```
+
+### Deploying to Production Domain
+
+Set the production URL before building:
+
+```shell
+GATSBY_SITE_URL=https://goaliegen.com npm run build
+npm run deploy
+```
+
+Or simply run a production build (automatically uses `.env.production`):
+
+```shell
+NODE_ENV=production npm run build
+```
+
+### Custom Domain Setup
+
+1. Add a `CNAME` file in the `static/` directory with your domain name
+2. Configure DNS records at your domain provider
+3. Enable GitHub Pages in repository settings and set the custom domain
 
 ## 📝 License
 

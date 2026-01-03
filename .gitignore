@@ -52,7 +52,10 @@ typings/
 *.tgz
 
 # dotenv environment variable files
-.env*
+# Allow .env.development, .env.production, and .env.example
+# Only ignore .env.local and .env (local overrides)
+.env
+.env*.local
 
 # gatsby files
 .cache/

@@ -6,12 +6,16 @@
 
 import type { GatsbyConfig } from 'gatsby'
 
+// Use environment variable to set site URL based on deployment
+// Default to dev domain if GATSBY_SITE_URL is not set
+const siteUrl = process.env.GATSBY_SITE_URL || 'https://dev.goaliegen.com'
+
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `Goalie Gen`,
-    siteUrl: `https://splk3.github.io`,
+    siteUrl: siteUrl,
   },
-  pathPrefix: `/goalie-gen`,
+  // pathPrefix is not needed when using a custom domain
   plugins: [
     `gatsby-plugin-typescript`,
     `gatsby-plugin-postcss`,
