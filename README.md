@@ -53,33 +53,65 @@ The site URL is configured via environment variables:
 - **Development**: `https://dev.goaliegen.com` (set in `.env.development`)
 - **Production**: `https://goaliegen.com` (set in `.env.production`)
 
+### Deployment Strategy
+
+This repository uses a **single GitHub Pages site** that serves from the `gh-pages` branch. The deployment domain is controlled by the `CNAME` file in the `static/` directory.
+
+**Current Configuration**: The `static/CNAME` file is set to `dev.goaliegen.com` for development deployments.
+
 ### Deploying to Dev Domain
 
+The default configuration deploys to the dev domain:
+
 ```shell
-npm run build
 npm run deploy
 ```
+
+This command:
+1. Builds the site using `.env.development` (defaults to `https://dev.goaliegen.com`)
+2. Deploys to the `gh-pages` branch
+3. GitHub Pages serves the site at `dev.goaliegen.com`
 
 ### Deploying to Production Domain
 
-Set the production URL before building:
+To deploy to production, you need to:
 
-```shell
-GATSBY_SITE_URL=https://goaliegen.com npm run build
-npm run deploy
-```
+1. **Update the CNAME file** to `goaliegen.com`:
+   ```shell
+   echo "goaliegen.com" > static/CNAME
+   ```
 
-Or simply run a production build (automatically uses `.env.production`):
+2. **Build with production environment**:
+   ```shell
+   NODE_ENV=production npm run build
+   ```
 
-```shell
-NODE_ENV=production npm run build
-```
+3. **Deploy the production build**:
+   ```shell
+   npx gh-pages -d public
+   ```
+
+4. **Revert CNAME back to dev** (if needed for future dev deployments):
+   ```shell
+   echo "dev.goaliegen.com" > static/CNAME
+   ```
+
+**Note**: Since GitHub Pages can only serve one domain at a time per repository, switching between dev and production requires updating the CNAME file. For simultaneous dev and production environments, consider using separate repositories or branches with different GitHub Pages configurations.
 
 ### Custom Domain Setup
 
-1. Add a `CNAME` file in the `static/` directory with your domain name
-2. Configure DNS records at your domain provider
-3. Enable GitHub Pages in repository settings and set the custom domain
+The custom domain setup is already configured in this repository:
+
+1. ✅ **CNAME file**: Located at `static/CNAME` (currently set to `dev.goaliegen.com`)
+2. **DNS Configuration**: Configure DNS records at your domain provider:
+   - For `dev.goaliegen.com`: Add a CNAME record pointing to `splk3.github.io`
+   - For `goaliegen.com`: Add A records pointing to GitHub Pages IPs:
+     - `185.199.108.153`
+     - `185.199.109.153`
+     - `185.199.110.153`
+     - `185.199.111.153`
+   - Add a CNAME record for `www.goaliegen.com` pointing to `splk3.github.io`
+3. **GitHub Pages Settings**: In the repository settings, GitHub Pages should be enabled on the `gh-pages` branch with the custom domain matching the CNAME file
 
 ## 📝 License
 
