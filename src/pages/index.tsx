@@ -3,6 +3,7 @@ import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GeneratePlanButton from "../components/GeneratePlanButton"
+import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
 import DownloadDrillButton from "../components/DownloadDrillButton"
 import DownloadMaterialButton from "../components/DownloadMaterialButton"
 import GoalieJournalButton from "../components/GoalieJournalButton"
@@ -41,8 +42,9 @@ export default function Home() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Generate development plans tailored to your goaltenders' skill levels and goals.
             </p>
-            <div className="flex justify-center">
+            <div className="flex flex-col gap-4 items-center">
               <GeneratePlanButton />
+              <GenerateTeamPlanButton />
             </div>
           </div>
           

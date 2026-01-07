@@ -390,7 +390,7 @@ export default function GeneratePlanButton() {
         onClick={() => setShowModal(true)}
         className="bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
       >
-        Generate Goalie Development Plan
+        Generate Club-Wide Development Plan
       </button>
 
       {showModal && (
