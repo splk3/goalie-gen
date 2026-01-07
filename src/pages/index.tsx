@@ -84,7 +84,7 @@ export default function Home() {
       
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>© 2026 Goalie Gen</p>
+          <p>© {new Date().getFullYear()} Goalie Gen</p>
         </div>
       </footer>
     </div>
