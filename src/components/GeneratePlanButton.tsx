@@ -388,7 +388,7 @@ export default function GeneratePlanButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="bg-usa-red hover:bg-red-700 dark:bg-red-900 dark:hover:bg-red-800 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
+        className="bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
       >
         Generate Goalie Development Plan
       </button>
