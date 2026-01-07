@@ -33,8 +33,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          PREFIX_PATHS: 'true'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
