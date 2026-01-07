@@ -165,25 +165,10 @@ export default function GenerateTeamPlanButton() {
       doc.setFontSize(16)
       doc.text("Additional Resources and Notes", 20, 20)
       doc.setFontSize(11)
-      doc.text("Equipment Checklist:", 20, 35)
+      doc.text("Progress Tracking:", 20, 35)
       doc.setFontSize(10)
-      const equipment = [
-        "- Goalie pads, gloves, blocker, and helmet",
-        "- Practice pucks (at least 20)",
-        "- Cones for positioning drills",
-        "- Net and goal posts"
-      ]
-      let equipY = 43
-      equipment.forEach(item => {
-        doc.text(item, 25, equipY)
-        equipY += 7
-      })
-      
-      doc.setFontSize(11)
-      doc.text("Progress Tracking:", 20, equipY + 8)
-      doc.setFontSize(10)
-      doc.text("Monitor goaltender development throughout the season. Regular feedback", 25, equipY + 16)
-      doc.text("and positive reinforcement are crucial for youth player development.", 25, equipY + 23)
+      doc.text("Monitor goaltender development throughout the season. Regular feedback", 25, 43)
+      doc.text("and positive reinforcement are crucial for youth player development.", 25, 50)
       
       // Save the PDF
       const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Team_Development_Plan.pdf`
