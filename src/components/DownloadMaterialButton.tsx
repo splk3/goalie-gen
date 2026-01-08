@@ -1,5 +1,6 @@
 import * as React from "react"
 import { withPrefix } from "gatsby"
+import { trackEvent } from "../utils/analytics"
 
 interface DownloadMaterialButtonProps {
   title: string
@@ -21,6 +22,12 @@ export default function DownloadMaterialButton({ title, fileName }: DownloadMate
     // Announce download to screen readers
     setDownloadStatus(`Downloading ${title}`)
     setTimeout(() => setDownloadStatus(""), 3000)
+
+    // Track event
+    trackEvent('download_material', {
+      file_name: fileName,
+      title: title
+    })
   }
 
   return (

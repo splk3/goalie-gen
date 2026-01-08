@@ -1,6 +1,7 @@
 import * as React from "react"
 import { jsPDF } from "jspdf"
 import Logo from "./Logo"
+import { trackEvent } from "../utils/analytics"
 
 type AgeGroup = "8u" | "10u" | "12u" | "14u+"
 type SkillLevel = "beginner" | "intermediate" | "advanced"
@@ -202,6 +203,15 @@ export default function GenerateTeamPlanButton() {
       // Save the PDF
       const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Team_Development_Plan.pdf`
       doc.save(fileName)
+
+      // Track event
+      trackEvent('generate_plan', {
+        type: 'team',
+        team_name: teamName,
+        age_group: ageGroup,
+        skill_level: skillLevel,
+        practices_count: practicesNum
+      })
       
       // Close modal and reset form
       setShowModal(false)

@@ -1,6 +1,7 @@
 import * as React from "react"
 import { jsPDF } from "jspdf"
 import Logo from "./Logo"
+import { trackEvent } from "../utils/analytics"
 
 type AgeGroup = "8u" | "10u" | "12u" | "14u+"
 type SkillLevel = "beginner" | "intermediate" | "advanced"
@@ -67,6 +68,12 @@ export default function DownloadDrillButton() {
       
       // Save the PDF
       doc.save(`goalie_drill_${ageGroup}_${skillLevel}.pdf`)
+
+      // Track event
+      trackEvent('download_drill', {
+        age_group: ageGroup,
+        skill_level: skillLevel
+      })
       
       // Close modal and reset form
       setShowModal(false)

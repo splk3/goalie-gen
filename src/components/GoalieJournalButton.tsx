@@ -2,6 +2,7 @@ import * as React from "react"
 import { jsPDF } from "jspdf"
 import { withPrefix } from "gatsby"
 import Logo from "./Logo"
+import { trackEvent } from "../utils/analytics"
 
 export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false)
@@ -207,6 +208,11 @@ export default function GoalieJournalButton() {
         .trim() || 'Goalie' // Fallback if empty after sanitization
       const fileName = `${sanitizedName}_Goalie_Journal_${season}.pdf`
       doc.save(fileName)
+
+      // Track event
+      trackEvent('generate_journal', {
+        team_name: teamName
+      })
 
       // Close modal and reset form
       setShowModal(false)
