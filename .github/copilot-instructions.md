@@ -173,7 +173,7 @@ This repository uses GitHub Actions for automation:
 
 3. **Test Build** (`test-build.yml`):
    - Tests that the site builds successfully
-   - Runs on pull requests and pushes
+   - Runs on pull requests, manual triggers, and weekly schedule
 
 ## JAMstack Architecture & Static Hosting Requirements
 
