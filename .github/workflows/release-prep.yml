@@ -25,7 +25,13 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: 'update README and copilot instructions',
-              body: 'update README and copilot instructions to update current repository contents',
-              assignees: ['splk3', 'copilot']
+              body: `@copilot update README and copilot instructions to reflect current repository contents
+              
+              Please review the current state of the repository and suggest updates to:
+              - README.md
+              - .github/copilot-instructions.md
+              - Any other relevant documentation`,
+              assignees: ['splk3'],
+              labels: ['documentation', 'copilot']
             });
             console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
