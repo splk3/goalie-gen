@@ -85,6 +85,14 @@ export default function Home() {
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
           <p>© {new Date().getFullYear()} Goalie Gen</p>
+          <div className="mt-4 text-sm text-gray-300 max-w-2xl mx-auto opacity-75">
+            <p>
+              Site usage is tracked for analytics and diagnostic purposes to help improve 
+              the site. Information such as team names and plan settings may be collected, 
+              but no individual player names, contact details, or other direct personal 
+              identifiers are recorded.
+            </p>
+          </div>
         </div>
       </footer>
     </div>

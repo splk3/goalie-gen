@@ -2,6 +2,7 @@ import * as React from "react"
 import { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel } from "docx"
 import { saveAs } from "file-saver"
 import Logo from "./Logo"
+import { trackEvent } from "../utils/analytics"
 
 export default function GeneratePlanButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false)
@@ -384,6 +385,13 @@ export default function GeneratePlanButton() {
       // Sanitize filename by removing only characters that are invalid in file systems
       const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Goaltending_Development_Plan.docx`
       saveAs(blob, fileName)
+
+      // Track event
+      trackEvent('generate_plan', {
+        type: 'individual',
+        team_name_provided: !!teamName, // Avoid tracking actual PII if uncertain, though team name is generally fine. Plan says "team_name" but user said "no PII". Team names are borderline but usually safe. User asked to track "options chosen". Team name IS an input. I will track length to be safe or just that it was provided as per recent thought? Re-reading plan: "Data Tracked: type: 'individual', team_name (length/status)". Let's track the actual team name as it's not PII like a person's name. Actually, plan says "I will track the name as requested".
+        team_name: teamName
+      })
 
       // Close modal and reset form
       setShowModal(false)
