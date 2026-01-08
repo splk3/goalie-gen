@@ -53,7 +53,9 @@ type AnalyticsParams =
  * This function sends events to Google Analytics (gtag) when available,
  * or logs them to the console in development mode when gtag is not loaded.
  * 
- * @param action - The type of event to track (e.g., 'generate_plan', 'download_drill')
+ * Uses function overloads to ensure type-safe parameter matching for each event type.
+ * 
+ * @param action - The type of event to track
  * @param params - Event-specific parameters that provide context about the user action
  * 
  * @example
@@ -72,10 +74,14 @@ type AnalyticsParams =
  * });
  * ```
  */
-export const trackEvent = (
+export function trackEvent(action: 'generate_plan', params?: GeneratePlanParams): void;
+export function trackEvent(action: 'generate_journal', params?: GenerateJournalParams): void;
+export function trackEvent(action: 'download_drill', params?: DownloadDrillParams): void;
+export function trackEvent(action: 'download_material', params?: DownloadMaterialParams): void;
+export function trackEvent(
   action: EventType,
   params?: AnalyticsParams
-) => {
+): void {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', action, params);
   } else {
@@ -84,4 +90,4 @@ export const trackEvent = (
       console.log(`[Analytics] Event: ${action}`, params);
     }
   }
-};
+}
