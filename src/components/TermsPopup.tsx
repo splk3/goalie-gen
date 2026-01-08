@@ -6,20 +6,43 @@ export default function TermsPopup() {
   const openTerms = () => setIsOpen(true)
   const closeTerms = () => setIsOpen(false)
 
+  // Handle Escape key to close modal
+  React.useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        closeTerms()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
+
   return (
     <>
       <button
         onClick={openTerms}
         className="text-usa-white hover:text-gray-300 dark:text-gray-300 dark:hover:text-white underline transition-colors"
+        aria-expanded={isOpen}
       >
         Terms of Use
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="terms-heading"
+        >
           <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-3xl w-full shadow-2xl my-8">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-usa-blue dark:text-blue-400 mb-2">
+              <h2 id="terms-heading" className="text-3xl font-bold text-usa-blue dark:text-blue-400 mb-2">
                 Terms of Use
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
