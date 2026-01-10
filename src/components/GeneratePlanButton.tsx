@@ -116,269 +116,278 @@ export default function GeneratePlanButton() {
       return
     }
 
-    if (!selectedImage) {
-      setValidationError('Please select an image')
-      return
-    }
-
     setIsGenerating(true)
 
     try {
-      // Optimize image
-      const optimizedImageBlob = await optimizeImage(selectedImage)
-      const arrayBuffer = await optimizedImageBlob.arrayBuffer()
+      // Optimize image if provided
+      let arrayBuffer: ArrayBuffer | null = null
+      if (selectedImage) {
+        const optimizedImageBlob = await optimizeImage(selectedImage)
+        arrayBuffer = await optimizedImageBlob.arrayBuffer()
+      }
+
+      // Build children array for the document
+      const documentChildren: Paragraph[] = [
+        // Title
+        new Paragraph({
+          text: `${teamName} - Goaltending Development Plan`,
+          heading: HeadingLevel.HEADING_1,
+          alignment: AlignmentType.CENTER,
+          spacing: {
+            after: 400,
+          },
+        }),
+      ]
+
+      // Add Team Logo if provided
+      if (arrayBuffer) {
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              new ImageRun({
+                data: arrayBuffer,
+                transformation: {
+                  width: 400,
+                  height: 400,
+                },
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: {
+              after: 400,
+            },
+          })
+        )
+      }
+
+      // Continue with the rest of the document
+      documentChildren.push(
+
+        // Introduction Section
+        new Paragraph({
+          text: "Introduction",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[Insert introduction to the goaltending development plan here. Describe the purpose, goals, and overview of the program.]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Goals Section
+        new Paragraph({
+          text: "Season Goals",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[List the primary goals for the goaltending program this season. Include both team and individual goaltender objectives.]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Training Schedule Section
+        new Paragraph({
+          text: "Training Schedule",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[Outline the weekly/monthly training schedule. Include on-ice sessions, off-ice conditioning, and video review sessions.]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Skill Development Areas Section
+        new Paragraph({
+          text: "Skill Development Areas",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[Detail the specific skills to focus on, such as:]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          text: "Positioning and angles",
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        }),
+        new Paragraph({
+          text: "Butterfly technique",
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        }),
+        new Paragraph({
+          text: "Glove and blocker work",
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        }),
+        new Paragraph({
+          text: "Rebound control",
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        }),
+        new Paragraph({
+          text: "Communication",
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        }),
+        new Paragraph({
+          text: "Mental preparation",
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Equipment Section
+        new Paragraph({
+          text: "Equipment Requirements",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[List required and recommended equipment for goaltenders, including sizing guidelines and maintenance tips.]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Progress Tracking Section
+        new Paragraph({
+          text: "Progress Tracking & Evaluation",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[Describe how progress will be tracked and evaluated throughout the season. Include metrics, evaluation dates, and feedback mechanisms.]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Resources Section
+        new Paragraph({
+          text: "Additional Resources",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[Provide links to videos, articles, or other resources that support goaltender development.]",
+              italics: true,
+            }),
+          ],
+          spacing: {
+            after: 300,
+          },
+        }),
+
+        // Contact Information Section
+        new Paragraph({
+          text: "Contact Information",
+          heading: HeadingLevel.HEADING_2,
+          spacing: {
+            before: 400,
+            after: 200,
+          },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "[Include contact information for coaching staff, training coordinators, and other relevant personnel.]",
+              italics: true,
+            }),
+          ],
+        })
+      )
 
       // Create Word document
       const doc = new Document({
         sections: [{
           properties: {},
-          children: [
-            // Title
-            new Paragraph({
-              text: `${teamName} - Goaltending Development Plan`,
-              heading: HeadingLevel.HEADING_1,
-              alignment: AlignmentType.CENTER,
-              spacing: {
-                after: 400,
-              },
-            }),
-
-            // Team Logo
-            new Paragraph({
-              children: [
-                new ImageRun({
-                  data: arrayBuffer,
-                  transformation: {
-                    width: 400,
-                    height: 400,
-                  },
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-              spacing: {
-                after: 400,
-              },
-            }),
-
-            // Introduction Section
-            new Paragraph({
-              text: "Introduction",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[Insert introduction to the goaltending development plan here. Describe the purpose, goals, and overview of the program.]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Goals Section
-            new Paragraph({
-              text: "Season Goals",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[List the primary goals for the goaltending program this season. Include both team and individual goaltender objectives.]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Training Schedule Section
-            new Paragraph({
-              text: "Training Schedule",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[Outline the weekly/monthly training schedule. Include on-ice sessions, off-ice conditioning, and video review sessions.]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Skill Development Areas Section
-            new Paragraph({
-              text: "Skill Development Areas",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[Detail the specific skills to focus on, such as:]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              text: "Positioning and angles",
-              bullet: {
-                level: 0,
-              },
-              spacing: {
-                after: 100,
-              },
-            }),
-            new Paragraph({
-              text: "Butterfly technique",
-              bullet: {
-                level: 0,
-              },
-              spacing: {
-                after: 100,
-              },
-            }),
-            new Paragraph({
-              text: "Glove and blocker work",
-              bullet: {
-                level: 0,
-              },
-              spacing: {
-                after: 100,
-              },
-            }),
-            new Paragraph({
-              text: "Rebound control",
-              bullet: {
-                level: 0,
-              },
-              spacing: {
-                after: 100,
-              },
-            }),
-            new Paragraph({
-              text: "Communication",
-              bullet: {
-                level: 0,
-              },
-              spacing: {
-                after: 100,
-              },
-            }),
-            new Paragraph({
-              text: "Mental preparation",
-              bullet: {
-                level: 0,
-              },
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Equipment Section
-            new Paragraph({
-              text: "Equipment Requirements",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[List required and recommended equipment for goaltenders, including sizing guidelines and maintenance tips.]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Progress Tracking Section
-            new Paragraph({
-              text: "Progress Tracking & Evaluation",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[Describe how progress will be tracked and evaluated throughout the season. Include metrics, evaluation dates, and feedback mechanisms.]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Resources Section
-            new Paragraph({
-              text: "Additional Resources",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[Provide links to videos, articles, or other resources that support goaltender development.]",
-                  italics: true,
-                }),
-              ],
-              spacing: {
-                after: 300,
-              },
-            }),
-
-            // Contact Information Section
-            new Paragraph({
-              text: "Contact Information",
-              heading: HeadingLevel.HEADING_2,
-              spacing: {
-                before: 400,
-                after: 200,
-              },
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: "[Include contact information for coaching staff, training coordinators, and other relevant personnel.]",
-                  italics: true,
-                }),
-              ],
-            }),
-          ],
+          children: documentChildren,
         }],
       })
 
@@ -472,7 +481,7 @@ export default function GeneratePlanButton() {
 
             <div className="mb-6">
               <label htmlFor="teamImage" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
-                Team Logo/Image
+                Team Logo/Image (optional)
               </label>
               <input
                 type="file"
