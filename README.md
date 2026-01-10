@@ -115,7 +115,7 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Actions**: Runs `npm install` and `npm run build`
 
 ### 4. Release Prep (`release-prep.yml`)
-- **Trigger**: Manual workflow dispatch or on release creation (filtered to prereleases by tag suffix)
+- **Trigger**: Manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
 - **Purpose**: Automatically creates documentation update issues
 - **Actions**: Creates GitHub issue for README and copilot instructions updates
 
