@@ -256,7 +256,7 @@ export default function GoalieJournalButton() {
     }
   }
 
-  const handleCancel = () => {
+  const handleCancel = React.useCallback(() => {
     setShowModal(false)
     setGoalieName("")
     setTeamName("")
@@ -265,7 +265,7 @@ export default function GoalieJournalButton() {
     setValidationError('')
     setGeneratedBlob(null)
     setGeneratedFileName("")
-  }
+  }, [])
 
   // Close modal when Escape key is pressed
   React.useEffect(() => {
@@ -279,7 +279,7 @@ export default function GoalieJournalButton() {
       document.addEventListener('keydown', handleEscape)
       return () => document.removeEventListener('keydown', handleEscape)
     }
-  }, [showModal, isGenerating, generatedBlob])
+  }, [showModal, isGenerating, generatedBlob, handleCancel])
 
   return (
     <>
