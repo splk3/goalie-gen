@@ -62,7 +62,7 @@ goalie-gen/
 │   │   ├── Logo.tsx
 │   │   ├── SEO.tsx
 │   │   ├── DarkModeToggle.tsx
-│   │   ├── GeneratePlanButton.tsx
+│   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
 │   │   ├── DownloadDrillButton.tsx

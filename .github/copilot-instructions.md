@@ -27,7 +27,7 @@ The following files and directories are part of the repository:
   - `src/pages/`: Page components (auto-routed by Gatsby) - TypeScript (.tsx)
   - `src/components/`: Reusable React components (TypeScript .tsx files)
     - Logo.tsx, SEO.tsx, DarkModeToggle.tsx
-    - GeneratePlanButton.tsx, GenerateTeamPlanButton.tsx
+    - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
     - GoalieJournalButton.tsx, DownloadDrillButton.tsx
     - DownloadMaterialButton.tsx, TermsPopup.tsx
   - `src/styles/`: Global CSS styles

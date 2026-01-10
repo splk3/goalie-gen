@@ -4,7 +4,7 @@ import { saveAs } from "file-saver"
 import Logo from "./Logo"
 import { trackEvent } from "../utils/analytics"
 
-export default function GeneratePlanButton() {
+export default function GenerateClubPlanButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [teamName, setTeamName] = React.useState<string>("")
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
@@ -402,7 +402,7 @@ export default function GeneratePlanButton() {
 
       // Track event
       trackEvent('generate_plan', {
-        type: 'individual',
+        type: 'club',
         team_name_provided: !!teamName, // Track whether a team name was provided
         team_name: teamName
       })
@@ -420,7 +420,7 @@ export default function GeneratePlanButton() {
       
       // Track download event
       trackEvent('download_plan', {
-        type: 'individual',
+        type: 'club',
         team_name: teamName
       })
       
