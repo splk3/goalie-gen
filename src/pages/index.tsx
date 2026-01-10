@@ -2,7 +2,7 @@ import * as React from "react"
 import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
-import GeneratePlanButton from "../components/GeneratePlanButton"
+import GenerateClubPlanButton from "../components/GenerateClubPlanButton"
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
 import DownloadDrillButton from "../components/DownloadDrillButton"
 import DownloadMaterialButton from "../components/DownloadMaterialButton"
@@ -44,7 +44,7 @@ export default function Home() {
               Generate development plans tailored to your goaltenders' skill levels and goals.
             </p>
             <div className="flex flex-col gap-4 items-center">
-              <GeneratePlanButton />
+              <GenerateClubPlanButton />
               <GenerateTeamPlanButton />
             </div>
           </div>

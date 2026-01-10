@@ -4,7 +4,7 @@ import { saveAs } from "file-saver"
 import Logo from "./Logo"
 import { trackEvent } from "../utils/analytics"
 
-export default function GeneratePlanButton() {
+export default function GenerateClubPlanButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [teamName, setTeamName] = React.useState<string>("")
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
