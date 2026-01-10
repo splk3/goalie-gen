@@ -13,7 +13,7 @@ jobs:
   create-update-issue:
     name: Create Update Issue
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && endsWith(github.event.release.tag_name, '-prerelease'))
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && endsWith(github.event.release.tag_name, '-alpha'))
     
     steps:
       - name: Create Issue
@@ -43,4 +43,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue edit ${{ steps.create-issue.outputs.result }} --add-assignee copilot --repo ${{ github.repository }}
+          gh issue edit ${{ steps.create-issue.outputs.result }} --add-assignee copilot-swe-agent --repo ${{ github.repository }}
