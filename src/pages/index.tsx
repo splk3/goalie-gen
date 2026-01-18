@@ -16,9 +16,11 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
-            <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center flex-1 mx-4">
-              Where every coach is a goalie coach!
-            </p>
+            <div className="hidden md:block flex-1 mx-4">
+              <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
+                Where every coach is a goalie coach!
+              </p>
+            </div>
             <DarkModeToggle />
           </div>
         </div>
