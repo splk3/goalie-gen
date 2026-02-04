@@ -35,8 +35,16 @@ The following files and directories are part of the repository:
 - `static/`: Static assets (copied to public folder as-is)
   - `static/CNAME`: Custom domain configuration file
   - `static/favicons/`: Site icons and favicons
+    - android-chrome-192x192.png, android-chrome-512x512.png
+    - apple-touch-icon.png, favicon-16x16.png, favicon-32x32.png
+    - favicon.ico, site.webmanifest
   - `static/images/`: Static images
+    - logo-alt-dark.png, logo-alt-light.png
+    - logo-dark.png, logo-light.png
   - `static/pdfs/`: PDF resources
+    - coach-z-zone-map.pdf
+    - goalie-evaluation-form.pdf
+    - goalie-single-game-review.pdf
 - `gatsby-config.ts`: Gatsby configuration file (TypeScript)
 - `gatsby-browser.tsx`: Gatsby browser APIs (TypeScript)
 - `gatsby-ssr.tsx`: Gatsby SSR APIs (TypeScript)
@@ -163,20 +171,28 @@ This repository uses GitHub Actions for automation:
 1. **Super Linter** (`super-linter.yml`):
    - Runs on every push to any branch
    - Also runs weekly on Saturday at 2:00 AM UTC
+   - Also runs on manual workflow dispatch
    - Validates code quality across multiple languages and formats
+   - Uses super-linter v8 with Biome linters disabled to avoid conflicts
    - All code changes must pass linting before merge
 
 2. **Deploy to GitHub Pages** (`deploy.yml`):
    - Automatically deploys on push to `main` branch
+   - Also runs on manual workflow dispatch
    - Builds the site with `npm run build`
+   - Uses `npm ci` for clean, reproducible dependency installation
    - Deploys to GitHub Pages using upload-pages-artifact action
    - Uses Node.js 20 with npm caching
+   - Uses actions/deploy-pages@v4 with proper permissions and concurrency control
    - Deploys to custom domain configured in static/CNAME
 
 3. **Test Build** (`test-build.yml`):
    - Tests that the site builds successfully
-   - Runs on pull requests, manual triggers, and weekly schedule
-   - Executes `npm install` and `npm run build` to verify build process
+   - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
+   - Executes `npm ci` and `npm run build` to verify build process
+   - Uses Node.js 20 with npm caching
+   - Verifies that `public/` directory was created successfully
+   - Does not deploy the site
 
 4. **Release Prep** (`release-prep.yml`):
    - Triggers on manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
