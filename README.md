@@ -76,8 +76,22 @@ goalie-gen/
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
 │   ├── favicons/        # Site icons
+│   │   ├── android-chrome-192x192.png
+│   │   ├── android-chrome-512x512.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon.ico
+│   │   └── site.webmanifest
 │   ├── images/          # Static images
+│   │   ├── logo-alt-dark.png
+│   │   ├── logo-alt-light.png
+│   │   ├── logo-dark.png
+│   │   └── logo-light.png
 │   └── pdfs/            # PDF resources
+│       ├── coach-z-zone-map.pdf
+│       ├── goalie-evaluation-form.pdf
+│       └── goalie-single-game-review.pdf
 ├── gatsby-config.ts     # Gatsby configuration (TypeScript)
 ├── gatsby-browser.tsx   # Browser APIs (TypeScript)
 ├── gatsby-ssr.tsx       # SSR APIs (TypeScript)
@@ -99,20 +113,23 @@ This project is fully TypeScript-enabled:
 This repository uses GitHub Actions for automation and CI/CD:
 
 ### 1. Deploy to GitHub Pages (`deploy.yml`)
-- **Trigger**: Automatic on push to `main` branch
+- **Trigger**: Automatic on push to `main` branch + manual dispatch
 - **Purpose**: Builds and deploys the site to GitHub Pages
-- **Actions**: Runs `npm run build`, uploads artifact, and deploys to GitHub Pages
+- **Actions**: Runs `npm ci` and `npm run build`, uploads artifact, and deploys to GitHub Pages
 - **Node Version**: 20.x with npm caching enabled
+- **Deployment**: Uses actions/deploy-pages@v4 with proper permissions and concurrency control
 
 ### 2. Super Linter (`super-linter.yml`)
-- **Trigger**: On every push to any branch + weekly on Saturdays at 2:00 AM UTC
+- **Trigger**: On every push to any branch + weekly on Saturdays at 2:00 AM UTC + manual dispatch
 - **Purpose**: Validates code quality across multiple languages and formats
+- **Configuration**: Uses super-linter v8 with Biome linters disabled to avoid conflicts
 - **Requirement**: All code changes must pass linting before merge
 
 ### 3. Test Build (`test-build.yml`)
-- **Trigger**: Pull requests, manual triggers, and weekly schedule
+- **Trigger**: Pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
 - **Purpose**: Verifies that the site builds successfully without deploying
-- **Actions**: Runs `npm install` and `npm run build`
+- **Actions**: Runs `npm ci` and `npm run build`, then verifies `public/` directory was created
+- **Node Version**: 20.x with npm caching enabled
 
 ### 4. Release Prep (`release-prep.yml`)
 - **Trigger**: Manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
