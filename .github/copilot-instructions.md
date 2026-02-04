@@ -8,10 +8,11 @@ This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help
 
 ## Technology Stack
 
-- **Static Site Generator**: GatsbyJS 5
+- **Static Site Generator**: GatsbyJS 5.16 (with React 19 and Node.js 24 support)
 - **Hosting**: GitHub Pages with custom domain (dev.goaliegen.com / goaliegen.com)
 - **Language**: TypeScript (all config files and components use .ts/.tsx)
-- **Framework**: React 18
+- **Framework**: React 18/19 (React 19 officially supported as of Gatsby 5.16)
+- **Node.js**: 24 (latest version officially supported by Gatsby 5.16)
 - **Styling**: Tailwind CSS 4 (utility-first CSS framework)
 - **Build Tool**: Gatsby with PostCSS
 - **Package Manager**: npm
@@ -52,6 +53,7 @@ The following files and directories are part of the repository:
 - `postcss.config.js`: PostCSS configuration
 - `tsconfig.json`: TypeScript configuration
 - `package.json`: npm dependencies and scripts
+- `.nvmrc`: Node.js version specification (24) for nvm users
 - `.env.development`: Development environment variables (GATSBY_SITE_URL)
 - `.env.production`: Production environment variables (GATSBY_SITE_URL)
 - `.env.example`: Example environment variable template
@@ -182,7 +184,7 @@ This repository uses GitHub Actions for automation:
    - Builds the site with `npm run build`
    - Uses `npm ci` for clean, reproducible dependency installation
    - Deploys to GitHub Pages using upload-pages-artifact action
-   - Uses Node.js 20 with npm caching
+   - Uses Node.js 24 with npm caching
    - Uses actions/deploy-pages@v4 with proper permissions and concurrency control
    - Deploys to custom domain configured in static/CNAME
 
@@ -190,7 +192,7 @@ This repository uses GitHub Actions for automation:
    - Tests that the site builds successfully
    - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
    - Executes `npm ci` and `npm run build` to verify build process
-   - Uses Node.js 20 with npm caching
+   - Uses Node.js 24 with npm caching
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
 
