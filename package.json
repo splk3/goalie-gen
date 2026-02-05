@@ -29,7 +29,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/node": "^25.2.0",
     "@types/react": "^19.2.11",
-    "@types/react-dom": "^18.3.0",
+    "@types/react-dom": "^19.2.11",
     "@types/react-helmet": "^6.1.11",
     "autoprefixer": "^10.4.24",
     "gatsby-plugin-postcss": "^6.16.0",
