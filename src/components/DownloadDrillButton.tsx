@@ -116,13 +116,27 @@ export default function DownloadDrillButton() {
     }
   }
 
-  const handleCancel = () => {
+  const handleCancel = React.useCallback(() => {
     setShowModal(false)
     setAgeGroup("")
     setSkillLevel("")
     setGeneratedBlob(null)
     setGeneratedFileName("")
-  }
+  }, [])
+
+  // Close modal when Escape key is pressed
+  React.useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showModal && !isGenerating && !generatedBlob) {
+        handleCancel()
+      }
+    }
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showModal, isGenerating, generatedBlob, handleCancel])
 
   return (
     <>

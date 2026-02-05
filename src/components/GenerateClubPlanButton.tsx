@@ -435,7 +435,7 @@ export default function GenerateClubPlanButton() {
     }
   }
 
-  const handleCancel = () => {
+  const handleCancel = React.useCallback(() => {
     setShowModal(false)
     setTeamName("")
     setSelectedImage(null)
@@ -443,7 +443,21 @@ export default function GenerateClubPlanButton() {
     setValidationError('')
     setGeneratedBlob(null)
     setGeneratedFileName("")
-  }
+  }, [])
+
+  // Close modal when Escape key is pressed
+  React.useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showModal && !isGenerating && !generatedBlob) {
+        handleCancel()
+      }
+    }
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showModal, isGenerating, generatedBlob, handleCancel])
 
   return (
     <>
