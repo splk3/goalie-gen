@@ -435,7 +435,7 @@ export default function GenerateClubPlanButton() {
     }
   }
 
-  const handleCancel = () => {
+  const handleCancel = React.useCallback(() => {
     setShowModal(false)
     setTeamName("")
     setSelectedImage(null)
@@ -443,7 +443,21 @@ export default function GenerateClubPlanButton() {
     setValidationError('')
     setGeneratedBlob(null)
     setGeneratedFileName("")
-  }
+  }, [])
+
+  // Close modal when Escape key is pressed
+  React.useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showModal && !isGenerating && !generatedBlob) {
+        handleCancel()
+      }
+    }
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showModal, isGenerating, generatedBlob, handleCancel])
 
   return (
     <>
@@ -455,11 +469,27 @@ export default function GenerateClubPlanButton() {
       </button>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full shadow-2xl">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => {
+            if (!isGenerating && !generatedBlob) {
+              handleCancel()
+            }
+          }}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="club-plan-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="flex items-center gap-4 mb-6">
               <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
-              <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400">
+              <h2
+                id="club-plan-modal-title"
+                className="text-2xl font-bold text-usa-blue dark:text-blue-400"
+              >
                 Generate Development Plan
               </h2>
             </div>
