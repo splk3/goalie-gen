@@ -477,13 +477,19 @@ export default function GenerateClubPlanButton() {
             }
           }}
         >
-          <div 
+          <div
             className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="club-plan-modal-title"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center gap-4 mb-6">
               <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
-              <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400">
+              <h2
+                id="club-plan-modal-title"
+                className="text-2xl font-bold text-usa-blue dark:text-blue-400"
+              >
                 Generate Development Plan
               </h2>
             </div>
