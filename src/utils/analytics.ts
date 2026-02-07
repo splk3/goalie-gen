@@ -14,7 +14,8 @@ type EventType =
   | 'generate_plan'
   | 'generate_journal'
   | 'download_drill'
-  | 'download_material';
+  | 'download_material'
+  | 'external_link_click';
 
 // Specific interfaces for each event type's parameters
 interface GeneratePlanParams {
@@ -41,11 +42,17 @@ interface DownloadMaterialParams {
   title: string;
 }
 
+interface ExternalLinkClickParams {
+  label: string;
+  url: string;
+}
+
 type AnalyticsParams = 
   | GeneratePlanParams 
   | GenerateJournalParams 
   | DownloadDrillParams 
-  | DownloadMaterialParams;
+  | DownloadMaterialParams
+  | ExternalLinkClickParams;
 
 /**
  * Tracks user events with Google Analytics.
@@ -80,6 +87,7 @@ export function trackEvent(action: 'generate_plan', params?: GeneratePlanParams)
 export function trackEvent(action: 'generate_journal', params?: GenerateJournalParams): void;
 export function trackEvent(action: 'download_drill', params: DownloadDrillParams): void;
 export function trackEvent(action: 'download_material', params: DownloadMaterialParams): void;
+export function trackEvent(action: 'external_link_click', params: ExternalLinkClickParams): void;
 export function trackEvent(
   action: EventType,
   params?: AnalyticsParams

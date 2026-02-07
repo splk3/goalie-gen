@@ -144,7 +144,7 @@ export default function DownloadDrillButton() {
         onClick={() => setShowModal(true)}
         className="bg-usa-red hover:bg-red-700 dark:bg-red-900 dark:hover:bg-red-800 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
       >
-        Download a Drill
+        I need a Goalie Drill!
       </button>
 
       {showModal && (
