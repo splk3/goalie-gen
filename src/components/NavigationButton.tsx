@@ -13,7 +13,7 @@ export default function NavigationButton({ to, children, className = "" }: Navig
   return (
     <Link
       to={to}
-      className={className || defaultClasses}
+      className={[defaultClasses, className].filter(Boolean).join(" ")}
     >
       {children}
     </Link>
