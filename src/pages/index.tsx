@@ -3,10 +3,8 @@ import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton"
-import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
 import DownloadDrillButton from "../components/DownloadDrillButton"
-import DownloadMaterialButton from "../components/DownloadMaterialButton"
-import GoalieJournalButton from "../components/GoalieJournalButton"
+import NavigationButton from "../components/NavigationButton"
 import TermsPopup from "../components/TermsPopup"
 
 export default function Home() {
@@ -44,45 +42,46 @@ export default function Home() {
         
         <div className="grid md:grid-cols-3 gap-6">
           <div className="border-2 border-usa-blue dark:border-blue-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors">
-            <h3 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3">Customized Plans</h3>
+            <h3 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3">For Organizations</h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Generate development plans tailored to your goaltenders' skill levels and goals.
+              Tools and resources for managing club-wide goaltending development programs.
             </p>
             <div className="flex flex-col gap-4 items-center">
               <GenerateClubPlanButton />
-              <GenerateTeamPlanButton />
+              <NavigationButton to="/club-resources">
+                More Club Resources
+              </NavigationButton>
             </div>
           </div>
           
           <div className="border-2 border-usa-red dark:border-red-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors">
-            <h3 className="text-2xl font-bold text-usa-red dark:text-red-400 mb-3">Goalie Drills</h3>
+            <h3 className="text-2xl font-bold text-usa-red dark:text-red-400 mb-3">For Coaches</h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Access a comprehensive library of goalie-specific drills and exercises.
+              Access drills, evaluation forms, and coaching resources for goalie development.
             </p>
-            <div className="flex justify-center">
+            <div className="flex flex-col gap-3 items-center">
               <DownloadDrillButton />
+              <NavigationButton to="/coach-resources">
+                More Coach Resources
+              </NavigationButton>
+              <NavigationButton to="/team-drills">
+                Team Drills with Goalie Focus
+              </NavigationButton>
+              <NavigationButton to="/team-drills">
+                Goalie Drills
+              </NavigationButton>
             </div>
           </div>
           
           <div className="border-2 border-usa-blue dark:border-blue-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors">
-            <h3 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3">Additional Materials</h3>
+            <h3 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3">For Goalies</h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Download useful forms and tools for goaltender development and tracking.
+              Resources and tools to support your goalie development journey.
             </p>
-            <div className="space-y-3">
-              <DownloadMaterialButton 
-                title="Goalie Evaluation Form" 
-                fileName="goalie-evaluation-form.pdf" 
-              />
-              <DownloadMaterialButton 
-                title="Single-Game Review Form" 
-                fileName="goalie-single-game-review.pdf" 
-              />
-              <DownloadMaterialButton 
-                title="Coach Z's Zone Map" 
-                fileName="coach-z-zone-map.pdf" 
-              />
-              <GoalieJournalButton />
+            <div className="flex justify-center">
+              <NavigationButton to="/goalie-resources">
+                Goalie Resources
+              </NavigationButton>
             </div>
           </div>
         </div>
