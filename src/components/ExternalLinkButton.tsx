@@ -13,9 +13,9 @@ export default function ExternalLinkButton({ href, children, className = "", tra
   
   const handleClick = () => {
     if (trackingLabel) {
-      trackEvent('external_link_click', {
+      ;(trackEvent as (event: string, params?: unknown) => void)('external_link_click', {
         label: trackingLabel,
-        url: href
+        url: href,
       })
     }
   }
