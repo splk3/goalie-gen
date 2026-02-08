@@ -9,7 +9,9 @@ This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help
 ## Technology Stack
 
 - **Static Site Generator**: GatsbyJS 5
-- **Hosting**: GitHub Pages with custom domain (dev.goaliegen.com / goaliegen.com)
+- **Hosting**:
+  - GitHub Pages with custom domain (dev.goaliegen.com)
+  - CloufFlare Pages with custom domain (goaliegen.com)
 - **Language**: TypeScript (all config files and components use .ts/.tsx)
 - **Framework**: React 18
 - **Styling**: Tailwind CSS 4 (utility-first CSS framework)
@@ -79,7 +81,7 @@ The following are created during development/build and excluded via `.gitignore`
 4. ✅ **JAMstack Compliance**: Ensure all dynamic features use client-side JavaScript only
 5. ✅ **Clean Build Output**: Confirm the `public/` directory is generated correctly
 
-**Failure to validate builds will result in broken deployments to GitHub Pages.**
+**Failure to validate builds will result in broken deployments to GitHub Pages or CloudFlare Pages.**
 
 ### Working with Gatsby
 
