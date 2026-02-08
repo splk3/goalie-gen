@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help youth ice hockey teams and clubs generate customized goaltending development plans.
+This repository hosts a **GatsbyJS-based static website** designed to help youth ice hockey teams and clubs generate customized goaltending development plans. The site is deployed to both GitHub Pages and Cloudflare Pages.
 
 **Note**: This is a Gatsby project (not Jekyll). The `.gitignore` is configured for Gatsby with entries for `public/`, `.cache/`, and `node_modules/`.
 
@@ -11,7 +11,7 @@ This repository hosts a **GatsbyJS-based GitHub Pages website** designed to help
 - **Static Site Generator**: GatsbyJS 5
 - **Hosting**:
   - GitHub Pages with custom domain (dev.goaliegen.com)
-  - CloufFlare Pages with custom domain (goaliegen.com)
+  - Cloudflare Pages with custom domain (goaliegen.com)
 - **Language**: TypeScript (all config files and components use .ts/.tsx)
 - **Framework**: React 18
 - **Styling**: Tailwind CSS 4 (utility-first CSS framework)
@@ -81,7 +81,7 @@ The following are created during development/build and excluded via `.gitignore`
 4. ✅ **JAMstack Compliance**: Ensure all dynamic features use client-side JavaScript only
 5. ✅ **Clean Build Output**: Confirm the `public/` directory is generated correctly
 
-**Failure to validate builds will result in broken deployments to GitHub Pages or CloudFlare Pages.**
+**Failure to validate builds will result in broken deployments to GitHub Pages or Cloudflare Pages.**
 
 ### Working with Gatsby
 
@@ -92,13 +92,14 @@ The following are created during development/build and excluded via `.gitignore`
    - GraphQL playground available at `http://localhost:8000/___graphql`
    - Test changes locally before committing
 
-2. **GitHub Pages Deployment**:
+2. **Deployment**:
    - Use `npm run build` to build the production site
-   - Use `npm run deploy` to deploy to GitHub Pages
-   - Site uses custom domains: dev.goaliegen.com (dev) and goaliegen.com (prod)
-   - Custom domain configured in `static/CNAME` file
+   - Use `npm run deploy` to deploy to GitHub Pages (dev.goaliegen.com)
+   - Cloudflare Pages automatically deploys on push to `main` branch (goaliegen.com)
+   - Site uses custom domains configured appropriately for each platform
+   - Custom domain for GitHub Pages configured in `static/CNAME` file
    - No path prefix needed with custom domain setup
-   - GitHub Actions workflow automates deployment on push to main branch
+   - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
 
 ### Code Style
 
@@ -213,7 +214,7 @@ This site follows JAMstack (JavaScript, APIs, and Markup) architecture principle
 
 ### Static Hosting Compatibility
 
-**CRITICAL**: This site is hosted on GitHub Pages, which is a **static hosting service**. This means:
+**CRITICAL**: This site is hosted on GitHub Pages and Cloudflare Pages, which are **static hosting services**. This means:
 
 1. ❌ **NO Server-Side Rendering (SSR)**:
    - Do NOT use Gatsby's `getServerData()` function
@@ -262,7 +263,7 @@ Before submitting a PR, verify your code is static-hosting compatible:
 # Build the static site
 npm run build
 
-# Serve it locally (simulates GitHub Pages)
+# Serve it locally (simulates static hosting)
 npm run serve
 
 # Test at http://localhost:9000
@@ -356,7 +357,7 @@ Before Copilot submits a PR for review, it MUST:
 
 ## Common Pitfalls to Avoid
 
-### ❌ Server-Side Features (Will Break on GitHub Pages)
+### ❌ Server-Side Features (Will Break on Static Hosting)
 
 **DO NOT use:**
 - `getServerData()` - Requires Node.js server at runtime
@@ -391,7 +392,7 @@ Before Copilot submits a PR for review, it MUST:
 
 ❌ **INCORRECT** (Server-side - will break):
 ```typescript
-// This will NOT work on GitHub Pages
+// This will NOT work on static hosting
 export async function getServerData() {
   const data = await fetchFromDatabase()
   return { props: { data } }
@@ -400,7 +401,7 @@ export async function getServerData() {
 
 ✅ **CORRECT** (Client-side - will work):
 ```typescript
-// This WILL work on GitHub Pages
+// This WILL work on static hosting
 import React from 'react'
 
 interface DataType {
