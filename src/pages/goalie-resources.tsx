@@ -15,11 +15,6 @@ export default function GoalieResources() {
             <Link to="/">
               <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
             </Link>
-            <div className="hidden md:block flex-1 mx-4">
-              <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
-                Goalie Resources
-              </p>
-            </div>
             <DarkModeToggle />
           </div>
         </div>
