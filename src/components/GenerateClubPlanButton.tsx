@@ -463,9 +463,9 @@ export default function GenerateClubPlanButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
+        className="bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
       >
-        Generate Club-Wide Development Plan
+        Generate Club Development Plan
       </button>
 
       {showModal && (

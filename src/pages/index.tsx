@@ -3,6 +3,7 @@ import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton"
+import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
 import DownloadDrillButton from "../components/DownloadDrillButton"
 import NavigationButton from "../components/NavigationButton"
 import TermsPopup from "../components/TermsPopup"
@@ -30,12 +31,15 @@ export default function Home() {
             <div className="flex-shrink-0">
               <Logo variant="alt" format="png" width={120} height={120} />
             </div>
-            <div>
+            <div className="flex-1">
               <h2 className="text-3xl font-bold mb-4">Welcome</h2>
               <p className="text-lg">
                 This website makes it easy for youth ice hockey teams and clubs to generate 
                 customized goaltending development plans.
               </p>
+            </div>
+            <div className="flex-shrink-0">
+              <DownloadDrillButton />
             </div>
           </div>
         </div>
@@ -46,7 +50,7 @@ export default function Home() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Tools and resources for managing club-wide goaltending development programs.
             </p>
-            <div className="flex flex-col gap-4 items-center">
+            <div className="w-full px-4 flex flex-col gap-4 items-stretch">
               <GenerateClubPlanButton />
               <NavigationButton to="/club-resources">
                 More Club Resources
@@ -59,16 +63,16 @@ export default function Home() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Access drills, evaluation forms, and coaching resources for goalie development.
             </p>
-            <div className="flex flex-col gap-3 items-center">
-              <DownloadDrillButton />
-              <NavigationButton to="/coach-resources">
-                More Coach Resources
-              </NavigationButton>
-              <NavigationButton to="/team-drills">
+            <div className="w-full px-4 flex flex-col gap-3 items-stretch">
+              <GenerateTeamPlanButton variant="red" />
+              <NavigationButton to="/team-drills" variant="red">
                 Team Drills with Goalie Focus
               </NavigationButton>
-              <NavigationButton to="/team-drills">
+              <NavigationButton to="/team-drills" variant="red">
                 Goalie Drills
+              </NavigationButton>
+              <NavigationButton to="/coach-resources" variant="red">
+                More Coach Resources
               </NavigationButton>
             </div>
           </div>
@@ -78,7 +82,7 @@ export default function Home() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Resources and tools to support your goalie development journey.
             </p>
-            <div className="flex justify-center">
+            <div className="w-full px-4 flex flex-col items-stretch">
               <NavigationButton to="/goalie-resources">
                 Goalie Resources
               </NavigationButton>

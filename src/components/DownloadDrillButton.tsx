@@ -142,9 +142,9 @@ export default function DownloadDrillButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="bg-usa-red hover:bg-red-700 dark:bg-red-900 dark:hover:bg-red-800 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
+        className="bg-white hover:bg-gray-100 dark:bg-gray-100 dark:hover:bg-gray-200 text-usa-blue font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
       >
-        I need a Goalie Drill!
+        I Need a Drill!
       </button>
 
       {showModal && (
@@ -182,7 +182,7 @@ export default function DownloadDrillButton() {
                 value={ageGroup}
                 onChange={(e) => setAgeGroup(e.target.value)}
                 disabled={!!generatedBlob}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue text-gray-900 dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select age group</option>
                 {ageGroups.map((age) => (
@@ -202,7 +202,7 @@ export default function DownloadDrillButton() {
                 value={skillLevel}
                 onChange={(e) => setSkillLevel(e.target.value)}
                 disabled={!!generatedBlob}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue text-gray-900 dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select skill level</option>
                 {skillLevels.map((level) => (
