@@ -6,7 +6,11 @@ import { trackEvent } from "../utils/analytics"
 type AgeGroup = "8u" | "10u" | "12u" | "14u+"
 type SkillLevel = "beginner" | "intermediate" | "advanced"
 
-export default function GenerateTeamPlanButton() {
+interface GenerateTeamPlanButtonProps {
+  variant?: "blue" | "red"
+}
+
+export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTeamPlanButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [teamName, setTeamName] = React.useState<string>("")
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
@@ -285,13 +289,18 @@ export default function GenerateTeamPlanButton() {
     }
   }, [showModal, isGenerating, generatedBlob, handleCancel])
 
+  const variantClasses = {
+    blue: "bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700",
+    red: "bg-usa-red hover:bg-red-700 dark:bg-red-900 dark:hover:bg-red-800"
+  }
+
   return (
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105"
+        className={`${variantClasses[variant]} text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center`}
       >
-        Generate Team-Level Development Plan
+        Generate Team Development Plan
       </button>
 
       {showModal && (
