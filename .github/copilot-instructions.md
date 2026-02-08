@@ -95,11 +95,11 @@ The following are created during development/build and excluded via `.gitignore`
 2. **Deployment**:
    - Use `npm run build` to build the production site
    - Use `npm run deploy` to deploy to GitHub Pages (dev.goaliegen.com)
-   - Cloudflare Pages automatically deploys on push to main branch (goaliegen.com)
+   - Cloudflare Pages automatically deploys on push to `main` branch (goaliegen.com)
    - Site uses custom domains configured appropriately for each platform
    - Custom domain for GitHub Pages configured in `static/CNAME` file
    - No path prefix needed with custom domain setup
-   - GitHub Actions workflow automates deployment to GitHub Pages on push to main branch
+   - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
 
 ### Code Style
 
