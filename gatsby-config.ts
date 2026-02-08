@@ -14,6 +14,7 @@ const config: GatsbyConfig = {
   siteMetadata: {
     title: `Goalie Gen`,
     siteUrl: siteUrl,
+    copyrightYear: new Date().getFullYear().toString(),
   },
   // pathPrefix is not needed when using a custom domain
   plugins: [

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useStaticQuery, graphql } from "gatsby"
 import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
@@ -9,6 +10,16 @@ import NavigationButton from "../components/NavigationButton"
 import TermsPopup from "../components/TermsPopup"
 
 export default function Home() {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          copyrightYear
+        }
+      }
+    }
+  `)
+
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
@@ -93,7 +104,7 @@ export default function Home() {
       
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>© {new Date().getFullYear()} Patrick Boyle</p>
+          <p>© {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James Kujawski</p>
           <div className="mt-2">
             <TermsPopup />
           </div>

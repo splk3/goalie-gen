@@ -182,8 +182,8 @@ export default function TermsPopup() {
                 </h3>
                 <p className="mb-2">
                   All content on this Site, including but not limited to text, graphics, logos, 
-                  images, and software, is the property of Patrick Boyle or his content suppliers and 
-                  is protected by copyright and other intellectual property laws. The content is 
+                  images, and software, is the property of Patrick Boyle, Katie Jablynski, and James Kujawski and of their respective content suppliers. 
+                  This content is protected by copyright and other intellectual property laws. The content is 
                   provided for your personal, non-commercial use only.
                 </p>
               </section>
