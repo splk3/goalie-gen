@@ -26,7 +26,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^25.2.2",
-    "@types/react": "^19.2.11",
+    "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.24",
     "gatsby-plugin-postcss": "^6.16.0",
