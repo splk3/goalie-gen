@@ -1,0 +1,33 @@
+---
+name: Drill Name
+description: A brief description of the drill.
+coaching_points:
+  - Coaching point 1
+  - Coaching point 2
+  - Coaching point 3
+skill_level:
+  - beginner
+  - intermediate
+  - advanced
+team_drill:
+  - yes
+  - no
+age_level:
+  - all
+  - 10U_below
+  - 12U
+  - 14U
+  - 16U_and_older
+fundamental_skill:
+  - skating
+  - positioning
+  - stance
+  - save selection
+  - rebound control
+  - recovery
+skating_skill:
+  - shuffle
+  - t-push
+  - c-cut
+  - butterfly
+  - powerpush
