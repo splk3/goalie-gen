@@ -19,7 +19,7 @@ export default function Seo({
 }: SeoProps) {
   // For social media, we need absolute URLs including the site URL
   const siteUrl = "https://splk3.github.io"
-  const imagePathWithPrefix = withPrefix("/images/logo-light.png")
+  const imagePathWithPrefix = withPrefix("/images/logos/logo-light.png")
   const socialImageUrl = `${siteUrl}${imagePathWithPrefix}`
   
   return (

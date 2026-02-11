@@ -25,7 +25,7 @@ export default function Logo({
   height, 
   format = 'svg' 
 }: LogoProps) {
-  const logoPath = withPrefix(variant === 'alt' ? '/images/logo-alt' : '/images/logo')
+  const logoPath = withPrefix(variant === 'alt' ? '/images/logos/logo-alt' : '/images/logos/logo')
   
   // Check if dark mode support is requested via className
   const isDarkModeAware = className.includes('dark-mode-aware')
