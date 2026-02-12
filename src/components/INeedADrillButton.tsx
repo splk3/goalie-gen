@@ -2,6 +2,7 @@ import * as React from "react"
 import { useStaticQuery, graphql, navigate } from "gatsby"
 import Logo from "./Logo"
 import { trackEvent } from "../utils/analytics"
+import { useDrillFilters } from "../hooks/useDrillFilters"
 
 interface DrillNode {
   slug: string
@@ -39,45 +40,21 @@ export default function INeedADrillButton() {
   const drills: DrillNode[] = data.allDrill.nodes
 
   const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>({
-    skill_level: [],
-    team_drill: [],
-    age_level: [],
-    fundamental_skill: [],
-    skating_skill: [],
-    equipment: []
-  })
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
   const dropdownRef = React.useRef<HTMLDivElement>(null)
 
-  // Dynamically derive tag categories from actual drill data
-  const tagCategories = React.useMemo(() => {
-    const categories: Record<string, Set<string>> = {
-      skill_level: new Set(),
-      team_drill: new Set(),
-      age_level: new Set(),
-      fundamental_skill: new Set(),
-      skating_skill: new Set(),
-      equipment: new Set()
-    }
-
-    // Collect all unique tag values from drills
-    drills.forEach(drill => {
-      Object.entries(drill.tags).forEach(([category, values]) => {
-        if (Array.isArray(values)) {
-          values.forEach(value => categories[category]?.add(value))
-        }
-      })
-    })
-
-    // Convert Sets to sorted arrays for consistent display
-    return Object.fromEntries(
-      Object.entries(categories).map(([key, set]) => [
-        key,
-        Array.from(set).sort()
-      ])
-    )
-  }, [drills])
+  // Use the shared drill filtering hook
+  const {
+    selectedFilters,
+    tagCategories,
+    filteredDrills,
+    toggleFilter,
+    removeFilter,
+    resetFilters,
+    formatTagName,
+    formatTagValue,
+    activeFilters
+  } = useDrillFilters(drills)
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -95,25 +72,6 @@ export default function INeedADrillButton() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [openDropdown])
-
-  // Filter drills based on selected filters
-  const filteredDrills = React.useMemo(() => {
-    return drills.filter(drill => {
-      // Check each filter category
-      for (const category in selectedFilters) {
-        const selectedValues = selectedFilters[category]
-        if (selectedValues.length > 0) {
-          const drillTagValues = drill.tags[category as keyof typeof drill.tags] || []
-          // Check if any selected value is in the drill's tags for this category
-          const hasMatch = selectedValues.some(value => drillTagValues.includes(value))
-          if (!hasMatch) {
-            return false
-          }
-        }
-      }
-      return true
-    })
-  }, [drills, selectedFilters])
 
   const getDrill = () => {
     if (filteredDrills.length === 0) {
@@ -140,62 +98,11 @@ export default function INeedADrillButton() {
     navigate(`/drills/${selectedDrill.slug}`)
   }
 
-  // Toggle filter selection
-  const toggleFilter = (category: string, value: string) => {
-    setSelectedFilters(prev => {
-      const current = prev[category] || []
-      const newValues = current.includes(value)
-        ? current.filter(v => v !== value)
-        : [...current, value]
-      return { ...prev, [category]: newValues }
-    })
-  }
-
-  // Remove a specific filter
-  const removeFilter = (category: string, value: string) => {
-    setSelectedFilters(prev => ({
-      ...prev,
-      [category]: prev[category].filter(v => v !== value)
-    }))
-  }
-
-  // Reset all filters
-  const resetFilters = () => {
-    setSelectedFilters({
-      skill_level: [],
-      team_drill: [],
-      age_level: [],
-      fundamental_skill: [],
-      skating_skill: [],
-      equipment: []
-    })
-  }
-
-  // Format tag name for display
-  const formatTagName = (tag: string) => {
-    return tag.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-  }
-
-  // Format tag value for display
-  const formatTagValue = (value: string) => {
-    return value.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-  }
-
-  // Get all active filters
-  const activeFilters = React.useMemo(() => {
-    const filters: Array<{ category: string, value: string }> = []
-    for (const category in selectedFilters) {
-      selectedFilters[category].forEach(value => {
-        filters.push({ category, value })
-      })
-    }
-    return filters
-  }, [selectedFilters])
-
   const handleCancel = React.useCallback(() => {
     setShowModal(false)
+    setOpenDropdown(null)
     resetFilters()
-  }, [])
+  }, [resetFilters])
 
   // Close modal when Escape key is pressed
   React.useEffect(() => {
@@ -255,7 +162,6 @@ export default function INeedADrillButton() {
                       onClick={() => setOpenDropdown(openDropdown === category ? null : category)}
                       className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
                       aria-expanded={openDropdown === category}
-                      aria-haspopup="listbox"
                       aria-controls={dropdownId}
                     >
                       <span className="font-semibold">{formatTagName(category)}</span>
@@ -268,7 +174,8 @@ export default function INeedADrillButton() {
                     {openDropdown === category && (
                       <div
                         id={dropdownId}
-                        role="listbox"
+                        role="group"
+                        aria-label={`${formatTagName(category)} filters`}
                         className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto"
                       >
                         {values.map(value => (
