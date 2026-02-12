@@ -12,10 +12,9 @@ coaching_points:
   - Coaching point 3
 
 images:
-  - test-drill-image.yml
+  - test-drill-image.png
 
-video:
-  - <video_url>
+video: <video_url>
 
 tags:
   skill_level:
