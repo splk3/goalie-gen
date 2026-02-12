@@ -14,7 +14,6 @@
     "deploy": "gatsby build && gh-pages -d public"
   },
   "dependencies": {
-    "@types/js-yaml": "^4.0.9",
     "docx": "^9.5.1",
     "file-saver": "^2.0.5",
     "gatsby": "^5.16.0",
@@ -27,6 +26,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "@types/file-saver": "^2.0.7",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.2.2",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",

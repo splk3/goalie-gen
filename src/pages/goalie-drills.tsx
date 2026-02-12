@@ -1,35 +1,30 @@
 import * as React from "react"
-import { Link } from "gatsby"
+import { Link, graphql } from "gatsby"
 import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 
-// This data will be embedded at build time via gatsby-node
-// For now, we'll use a simple approach
-const drills = [
-  {
-    slug: 'power-push-quick-movement-blaze-pods',
-    name: 'Power Push Quick Movement with Blaze Pods',
-    image: 'test-drill-image.png'
-  },
-  {
-    slug: 'test-drill-advanced-teams',
-    name: 'Advanced Test Drill for Teams',
-    image: 'test-drill-image-1.png'
-  },
-  {
-    slug: 'test-drill-beginner',
-    name: 'Test Drill for Beginner Goalies',
-    image: 'test-drill-image.png'
-  },
-  {
-    slug: 'test-drill-intermediate',
-    name: 'Intermediate Test Drill',
-    image: 'test-drill-image.png'
-  }
-]
+interface DrillNode {
+  slug: string
+  name: string
+  images: string[]
+}
 
-export default function GoalieDrills() {
+interface GoalieDrillsProps {
+  data: {
+    allDrill: {
+      nodes: DrillNode[]
+    }
+  }
+}
+
+export default function GoalieDrills({ data }: GoalieDrillsProps) {
+  const drills = data.allDrill.nodes.map(node => ({
+    slug: node.slug,
+    name: node.name,
+    image: node.images && node.images.length > 0 ? node.images[0] : 'placeholder.png'
+  }))
+
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
@@ -93,3 +88,15 @@ export default function GoalieDrills() {
 }
 
 export const Head = () => <Seo title="Goalie Drills" />
+
+export const query = graphql`
+  query GoalieDrillsPage {
+    allDrill {
+      nodes {
+        slug
+        name
+        images
+      }
+    }
+  }
+`

@@ -140,7 +140,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 Coaching Points
               </h2>
               <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                {drillData.coaching_points.map((point, index) => (
+                {(drillData.coaching_points || []).map((point, index) => (
                   <li key={index}>{point}</li>
                 ))}
               </ul>
@@ -149,7 +149,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
           {/* Right Column: Images */}
           <div className="space-y-4 print:space-y-2">
-            {drillData.images.map((image, index) => (
+            {(drillData.images || []).map((image, index) => (
               <div key={index} className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
                 <img
                   src={`/drills/${drillFolder}/${image}`}
