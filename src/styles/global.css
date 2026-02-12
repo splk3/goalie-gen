@@ -20,3 +20,111 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Print styles */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.75in;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Hide elements not needed in print */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Show elements only in print */
+  .print\:block {
+    display: block !important;
+  }
+
+  /* Print-specific spacing */
+  .print\:mb-6 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .print\:mb-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  .print\:mb-3 {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .print\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .print\:pt-3 {
+    padding-top: 0.75rem !important;
+  }
+
+  .print\:py-0 {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .print\:px-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Print-specific layouts */
+  .print\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .print\:gap-4 {
+    gap: 1rem !important;
+  }
+
+  .print\:gap-3 {
+    gap: 0.75rem !important;
+  }
+
+  .print\:space-y-2 > * + * {
+    margin-top: 0.5rem !important;
+  }
+
+  /* Print-specific text sizes */
+  .print\:text-2xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+
+  .print\:text-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  .print\:text-sm {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  /* Print-specific colors */
+  .print\:text-usa-blue {
+    color: #002868 !important;
+  }
+
+  .print\:text-gray-900 {
+    color: rgb(17 24 39) !important;
+  }
+
+  .print\:text-gray-800 {
+    color: rgb(31 41 55) !important;
+  }
+
+  .print\:bg-white {
+    background-color: white !important;
+  }
+
+  .print\:border-gray-400 {
+    border-color: rgb(156 163 175) !important;
+  }
+}

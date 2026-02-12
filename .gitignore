@@ -64,6 +64,9 @@ public
 # Mac files
 .DS_Store
 
+# Copied drill files in static (source is in drills/)
+static/drills/
+
 # Yarn
 yarn-error.log
 .pnp/
