@@ -14,7 +14,7 @@ coaching_points:
 images:
   - test-drill-image.png
 
-video: "https://www.youtube.com/watch?v=L4C5hPBv-LA"
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
 
 tags:
   skill_level:
