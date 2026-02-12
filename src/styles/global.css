@@ -33,6 +33,23 @@
     -webkit-print-color-adjust: exact;
   }
 
+  /* Force light theme for printing - override all dark mode styles */
+  * {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  /* Restore specific print colors after global reset */
+  .text-usa-blue,
+  .print\:text-usa-blue,
+  h1, h2, h3 {
+    color: #002868 !important;
+  }
+
+  .border-usa-red {
+    border-color: #BF0A30 !important;
+  }
+
   /* Hide elements not needed in print */
   .print\:hidden {
     display: none !important;
