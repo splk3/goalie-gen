@@ -112,8 +112,8 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       currentY += 5
 
       // Note about drill diagrams
-      const pageHeightForImages = doc.internal.pageSize.height
-      if (currentY > pageHeightForImages - 40) {
+      const pageHeight = doc.internal.pageSize.height
+      if (currentY > pageHeight - 40) {
         doc.addPage()
         currentY = 20
       }
@@ -128,7 +128,6 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       currentY += noteLines.length * 5 + 12
 
       // Skills Focus section
-      const pageHeight = doc.internal.pageSize.height
       if (currentY > pageHeight - 60) {
         doc.addPage()
         currentY = 20
