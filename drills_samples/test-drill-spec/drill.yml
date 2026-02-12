@@ -43,3 +43,9 @@ tags:
     - c_cut
     - butterfly
     - power_push
+  equipment:
+    - blaze_pods
+    - cones
+    - ice_marker
+    - bumpers
+    - none

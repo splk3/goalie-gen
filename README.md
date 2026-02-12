@@ -83,11 +83,12 @@ goalie-gen/
 │   │   ├── favicon-32x32.png
 │   │   ├── favicon.ico
 │   │   └── site.webmanifest
-│   ├── images/          # Static images
-│   │   ├── logo-alt-dark.png
-│   │   ├── logo-alt-light.png
-│   │   ├── logo-dark.png
-│   │   └── logo-light.png
+│   ├── images/         # Static images
+|   |   └── logos/      # Site Logos
+│   │       ├── logo-alt-dark.png
+│   │       ├── logo-alt-light.png
+│   │       ├── logo-dark.png
+│   │       └── logo-light.png
 │   └── pdfs/            # PDF resources
 │       ├── coach-z-zone-map.pdf
 │       ├── goalie-evaluation-form.pdf

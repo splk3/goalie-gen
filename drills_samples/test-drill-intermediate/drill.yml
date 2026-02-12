@@ -30,3 +30,5 @@ tags:
   skating_skill:
     - butterfly
     - power_push
+  equipment:
+    - ice_marker
