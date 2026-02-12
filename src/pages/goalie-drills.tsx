@@ -178,7 +178,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       return
     }
 
-    const searchParams = new URLSearchParams(location?.search || window.location.search)
+    const searchParams = new URLSearchParams(window.location.search)
 
     if (currentPage > 1) {
       searchParams.set("page", String(currentPage))
@@ -194,7 +194,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       window.location.hash
 
     window.history.replaceState(null, "", newUrl)
-  }, [currentPage, location?.search])
+  }, [currentPage])
 
   // Calculate pagination values
   const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
