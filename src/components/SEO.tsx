@@ -31,7 +31,7 @@ export default function Seo({
   // For social media, we need absolute URLs including the site URL
   const siteUrl = data.site.siteMetadata.siteUrl
   const imagePathWithPrefix = withPrefix("/images/logos/logo-light.png")
-  const socialImageUrl = `${siteUrl}${imagePathWithPrefix}`
+  const socialImageUrl = new URL(imagePathWithPrefix, siteUrl).toString()
   
   return (
     <>
