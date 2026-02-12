@@ -13,7 +13,7 @@ This repository hosts a **GatsbyJS-based static website** designed to help youth
   - GitHub Pages with custom domain (dev.goaliegen.com)
   - Cloudflare Pages with custom domain (goaliegen.com)
 - **Language**: TypeScript (all config files and components use .ts/.tsx)
-- **Framework**: React 18
+- **Framework**: React 19
 - **Styling**: Tailwind CSS 4 (utility-first CSS framework)
 - **Build Tool**: Gatsby with PostCSS
 - **Package Manager**: npm
@@ -27,13 +27,21 @@ The following files and directories are part of the repository:
 
 - `src/`: Source code directory
   - `src/pages/`: Page components (auto-routed by Gatsby) - TypeScript (.tsx)
+    - index.tsx, goalie-drills.tsx, team-drills.tsx
+    - goalie-resources.tsx, coach-resources.tsx, club-resources.tsx
+  - `src/templates/`: Dynamic page templates (TypeScript .tsx files)
+    - drill.tsx - Template for individual drill pages
   - `src/components/`: Reusable React components (TypeScript .tsx files)
-    - Logo.tsx, SEO.tsx, DarkModeToggle.tsx
+    - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
     - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
-    - GoalieJournalButton.tsx, DownloadDrillButton.tsx
-    - DownloadMaterialButton.tsx, TermsPopup.tsx
+    - GoalieJournalButton.tsx, DownloadDrillButton.tsx, DownloadMaterialButton.tsx
+    - ExternalLinkButton.tsx, NavigationButton.tsx, TermsPopup.tsx
   - `src/styles/`: Global CSS styles
   - `src/utils/`: Utility functions (e.g., analytics.ts)
+- `drills/`: Drill database (YAML-based drill definitions with images)
+  - Each subdirectory contains a drill.yml and associated images
+  - Drills are automatically converted to pages via gatsby-node.ts
+- `drills_samples/`: Example drill specifications and templates
 - `static/`: Static assets (copied to public folder as-is)
   - `static/CNAME`: Custom domain configuration file
   - `static/favicons/`: Site icons and favicons
@@ -41,15 +49,17 @@ The following files and directories are part of the repository:
     - apple-touch-icon.png, favicon-16x16.png, favicon-32x32.png
     - favicon.ico, site.webmanifest
   - `static/images/`: Static images
-    - logo-alt-dark.png, logo-alt-light.png
-    - logo-dark.png, logo-light.png
+    - logos/ - Site logos (light/dark/alt variants)
+    - usahockey/ - USA Hockey resource images
   - `static/pdfs/`: PDF resources
     - coach-z-zone-map.pdf
     - goalie-evaluation-form.pdf
     - goalie-single-game-review.pdf
 - `gatsby-config.ts`: Gatsby configuration file (TypeScript)
 - `gatsby-browser.tsx`: Gatsby browser APIs (TypeScript)
+- `gatsby-node.ts`: Gatsby Node APIs for dynamic page generation (TypeScript)
 - `gatsby-ssr.tsx`: Gatsby SSR APIs (TypeScript)
+- `wrangler.jsonc`: Cloudflare Pages configuration
 - `tailwind.config.js`: Tailwind CSS configuration
 - `postcss.config.js`: PostCSS configuration
 - `tsconfig.json`: TypeScript configuration
@@ -96,8 +106,9 @@ The following are created during development/build and excluded via `.gitignore`
    - Use `npm run build` to build the production site
    - Use `npm run deploy` to deploy to GitHub Pages (dev.goaliegen.com)
    - Cloudflare Pages automatically deploys on push to `main` branch (goaliegen.com)
-   - Site uses custom domains configured appropriately for each platform
-   - Custom domain for GitHub Pages configured in `static/CNAME` file
+   - Site uses custom domains configured appropriately for each platform:
+     - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`)
+     - Cloudflare Pages: goaliegen.com (configured via Cloudflare dashboard and `wrangler.jsonc`)
    - No path prefix needed with custom domain setup
    - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
 
@@ -117,6 +128,35 @@ The following are created during development/build and excluded via `.gitignore`
 - Focus on youth hockey goaltending development
 - Ensure content is age-appropriate and educationally valuable
 - Make development plans customizable and practical
+
+### Working with Drills
+
+This project uses a YAML-based drill system with dynamic page generation:
+
+1. **Drill Structure**:
+   - Each drill has its own folder in `drills/` directory
+   - Each drill folder contains a `drill.yml` file and images
+   - Drill pages are automatically generated at `/drills/{folder-name}`
+
+2. **Required drill.yml Fields**:
+   - `name` (string): Drill name
+   - `description` (string): Drill description
+   - `coaching_points` (array): List of coaching tips
+   - `images` (array): Array of image filenames
+   - `tags` (object): Categorization tags
+
+3. **Dynamic Page Generation**:
+   - `gatsby-node.ts` handles drill page creation via the `createPages` API
+   - Each drill.yml is validated during build
+   - Drill data is also added to GraphQL via the `sourceNodes` API
+   - The `src/templates/drill.tsx` template is used for all drill pages
+   - Build will fail if drill.yml files are invalid or missing required fields
+
+4. **Adding New Drills**:
+   - Create a new folder in `drills/` with a URL-friendly name
+   - Add a `drill.yml` file with all required fields
+   - Add drill images to the same folder
+   - Run `npm run build` to generate the page and validate
 
 ### Color Scheme
 

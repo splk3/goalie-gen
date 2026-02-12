@@ -35,8 +35,9 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 - **GatsbyJS 5** - React-based static site generator
 - **TypeScript** - Strongly typed programming language that builds on JavaScript
 - **Tailwind CSS 4** - Utility-first CSS framework
-- **React 18** - JavaScript library for building user interfaces
+- **React 19** - JavaScript library for building user interfaces
 - **PDF/Document Generation** - jsPDF and docx libraries for exporting development plans
+- **YAML Parsing** - js-yaml for drill definitions
 
 ## 🎨 Design
 
@@ -59,20 +60,35 @@ The site uses USA national colors:
 goalie-gen/
 ├── src/
 │   ├── components/       # React components (TypeScript)
-│   │   ├── Logo.tsx
-│   │   ├── SEO.tsx
 │   │   ├── DarkModeToggle.tsx
+│   │   ├── DownloadDrillButton.tsx
+│   │   ├── DownloadMaterialButton.tsx
+│   │   ├── ExternalLinkButton.tsx
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
-│   │   ├── DownloadDrillButton.tsx
-│   │   ├── DownloadMaterialButton.tsx
+│   │   ├── Logo.tsx
+│   │   ├── NavigationButton.tsx
+│   │   ├── SEO.tsx
 │   │   └── TermsPopup.tsx
-│   ├── pages/            # Page components (auto-routed)
-│   │   └── index.tsx     # Home page
+│   ├── pages/            # Page components (auto-routed by Gatsby)
+│   │   ├── club-resources.tsx
+│   │   ├── coach-resources.tsx
+│   │   ├── goalie-drills.tsx
+│   │   ├── goalie-resources.tsx
+│   │   ├── index.tsx
+│   │   └── team-drills.tsx
+│   ├── templates/        # Dynamic page templates
+│   │   └── drill.tsx     # Template for individual drill pages
 │   ├── styles/           # Global CSS styles
 │   └── utils/            # Utility functions
 │       └── analytics.ts  # Analytics utilities
+├── drills/               # Drill database (YAML + images)
+│   ├── power-push-quick-movement-blaze-pods/
+│   ├── test-drill-advanced-teams/
+│   ├── test-drill-beginner/
+│   └── test-drill-intermediate/
+├── drills_samples/       # Drill specification examples
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
 │   ├── favicons/        # Site icons
@@ -83,19 +99,18 @@ goalie-gen/
 │   │   ├── favicon-32x32.png
 │   │   ├── favicon.ico
 │   │   └── site.webmanifest
-│   ├── images/         # Static images
-|   |   └── logos/      # Site Logos
-│   │       ├── logo-alt-dark.png
-│   │       ├── logo-alt-light.png
-│   │       ├── logo-dark.png
-│   │       └── logo-light.png
+│   ├── images/          # Static images
+│   │   ├── logos/       # Site logos (light/dark variants)
+│   │   └── usahockey/   # USA Hockey resources
 │   └── pdfs/            # PDF resources
 │       ├── coach-z-zone-map.pdf
 │       ├── goalie-evaluation-form.pdf
 │       └── goalie-single-game-review.pdf
 ├── gatsby-config.ts     # Gatsby configuration (TypeScript)
 ├── gatsby-browser.tsx   # Browser APIs (TypeScript)
+├── gatsby-node.ts       # Node APIs for dynamic page generation
 ├── gatsby-ssr.tsx       # SSR APIs (TypeScript)
+├── wrangler.jsonc       # Cloudflare Pages configuration
 ├── tailwind.config.js   # Tailwind CSS configuration
 ├── postcss.config.js    # PostCSS configuration
 └── tsconfig.json        # TypeScript configuration
@@ -104,6 +119,8 @@ goalie-gen/
 ## 🧊 Drills
 
 Drill examples live in [drills_samples/](drills_samples/) and the full field specification is in [drills_samples/test-drill-spec/drill.yml](drills_samples/test-drill-spec/drill.yml).
+
+Active drills that appear on the site are in the [drills/](drills/) directory. Each drill gets its own dynamically generated page at `/drills/{drill-folder-name}` via the `gatsby-node.ts` configuration.
 
 To add a new drill for the site, create a new folder under [drills/](drills/) named for the drill (one folder per drill). Each drill folder should include:
 
@@ -115,9 +132,18 @@ Required fields in drill.yml:
 - name
 - description
 - coaching_points
+- images
 - tags
 
-All other fields (such as `images` and `video`) are optional. For tags, each sub-field is optional, and the allowed values for each tag sub-field are the options listed in the spec file. For media fields, `images` should be an array of image filenames, and `video` should be a single URL string.
+All other fields (such as `video`) are optional. For tags, each sub-field is optional, and the allowed values for each tag sub-field are the options listed in the spec file. For media fields, `images` should be an array of image filenames, and `video` should be a single URL string.
+
+### How Drill Pages Are Generated
+
+Drill pages are automatically created at build time by `gatsby-node.ts`:
+1. The `createPages` API reads all drill folders from the `drills/` directory
+2. Each drill's `drill.yml` file is parsed and validated
+3. A page is created at `/drills/{folder-name}` using the `src/templates/drill.tsx` template
+4. Drill data is also added to Gatsby's GraphQL layer via the `sourceNodes` API for querying
 
 ## 🔧 TypeScript Support
 
@@ -157,20 +183,21 @@ This repository uses GitHub Actions for automation and CI/CD:
 
 ## 🚀 Deployment
 
-This site is deployed to GitHub Pages with custom domain support via GitHub Actions.
+This site is deployed to both **GitHub Pages** and **Cloudflare Pages** with custom domain support.
 
 ### Automated Deployment
 
-The site automatically deploys to GitHub Pages when changes are pushed to the `main` branch using the `.github/workflows/deploy.yml` workflow.
+- **GitHub Pages**: Automatically deploys when changes are pushed to the `main` branch using the `.github/workflows/deploy.yml` workflow.
+- **Cloudflare Pages**: Automatically deploys on push to `main` branch via Cloudflare's Git integration. Configuration is in `wrangler.jsonc`.
 
 ### Custom Domains
 
 The site is configured to support both development and production custom domains:
 
-- **Development**: `https://dev.goaliegen.com` (set in `.env.development`)
-- **Production**: `https://goaliegen.com` (set in `.env.production`)
+- **Development**: `https://dev.goaliegen.com` (set in `.env.development`, deployed to GitHub Pages)
+- **Production**: `https://goaliegen.com` (set in `.env.production`, deployed to Cloudflare Pages)
 
-The custom domain is configured via the `static/CNAME` file (currently set to `dev.goaliegen.com`).
+The custom domain for GitHub Pages is configured via the `static/CNAME` file (currently set to `dev.goaliegen.com`).
 
 ### Manual Deployment
 
