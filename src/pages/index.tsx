@@ -38,7 +38,7 @@ export default function Home() {
       
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="flex-shrink-0">
               <Logo variant="alt" format="png" width={120} height={120} />
             </div>
@@ -49,7 +49,7 @@ export default function Home() {
                 customized goaltending development plans.
               </p>
             </div>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
               <INeedADrillButton />
             </div>
           </div>
