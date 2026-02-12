@@ -95,11 +95,26 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     return initialFilters
   }, [location?.search])
 
+  // Initialize pagination from URL "page" query parameter if present
+  const getInitialPage = React.useCallback(() => {
+    if (location?.search) {
+      const searchParams = new URLSearchParams(location.search)
+      const pageParam = searchParams.get("page")
+      if (pageParam) {
+        const parsed = parseInt(pageParam, 10)
+        if (!Number.isNaN(parsed) && parsed > 0) {
+          return parsed
+        }
+      }
+    }
+    return 1
+  }, [location?.search])
+
   // State for selected filters - initialize from URL if present
   const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>(getInitialFilters)
 
-  // State for pagination
-  const [currentPage, setCurrentPage] = React.useState(1)
+  // State for pagination - initialize from URL if present
+  const [currentPage, setCurrentPage] = React.useState<number>(getInitialPage)
   const itemsPerPage = 15
 
   // State for dropdown visibility
@@ -148,7 +163,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     // Create a stable key by sorting categories and their values
     const sortedEntries = Object.entries(selectedFilters)
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([key, values]) => `${key}:${values.sort().join(',')}`)
+      .map(([key, values]) => `${key}:${[...values].sort().join(',')}`)
       .join('|')
     return sortedEntries
   }, [selectedFilters])
@@ -156,6 +171,30 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   React.useEffect(() => {
     setCurrentPage(1)
   }, [filterKey])
+
+  // Keep pagination state synchronized with the URL
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const searchParams = new URLSearchParams(location?.search || window.location.search)
+
+    if (currentPage > 1) {
+      searchParams.set("page", String(currentPage))
+    } else {
+      // Remove "page" when on the first page to keep URLs clean
+      searchParams.delete("page")
+    }
+
+    const searchString = searchParams.toString()
+    const newUrl =
+      window.location.pathname +
+      (searchString ? `?${searchString}` : "") +
+      window.location.hash
+
+    window.history.replaceState(null, "", newUrl)
+  }, [currentPage, location?.search])
 
   // Calculate pagination values
   const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
