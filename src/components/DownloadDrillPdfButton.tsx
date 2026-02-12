@@ -33,7 +33,7 @@ const formatTag = (tag: string): string => {
 export default function DownloadDrillPdfButton({ drillData, drillFolder }: DownloadDrillPdfButtonProps) {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
 
-  const loadImageAsDataURL = (imagePath: string): Promise<string> => {
+  const loadImageAsDataURL = (imagePath: string): Promise<{ dataURL: string; width: number; height: number }> => {
     return new Promise((resolve, reject) => {
       const img = new Image()
       img.crossOrigin = 'anonymous'
@@ -53,7 +53,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
         
         try {
           const dataURL = canvas.toDataURL('image/png')
-          resolve(dataURL)
+          resolve({ dataURL, width: img.width, height: img.height })
         } catch (error) {
           reject(error)
         }
@@ -159,21 +159,31 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
 
           try {
             const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`
-            const imageData = await loadImageAsDataURL(imagePath)
+            const imageInfo = await loadImageAsDataURL(imagePath)
             
-            // Calculate image dimensions to fit within page width
+            // Calculate dimensions to fit within page width while preserving aspect ratio
             const maxWidth = pageWidth - 40
             const maxHeight = 80
             
+            const aspectRatio = imageInfo.width / imageInfo.height
+            let imgWidth = maxWidth
+            let imgHeight = imgWidth / aspectRatio
+            
+            // If height exceeds max, scale down based on height
+            if (imgHeight > maxHeight) {
+              imgHeight = maxHeight
+              imgWidth = imgHeight * aspectRatio
+            }
+            
             // Add image to PDF
-            doc.addImage(imageData, 'PNG', 20, currentY, maxWidth, maxHeight)
-            currentY += maxHeight + 8
+            doc.addImage(imageInfo.dataURL, 'PNG', 20, currentY, imgWidth, imgHeight)
+            currentY += imgHeight + 8
           } catch (error) {
-            console.error(`Error adding image ${i + 1}:`, error)
+            console.error(`Error adding image ${i + 1} (${drillData.images[i]}):`, error)
             // If image fails to load, add a note
             doc.setFontSize(9)
             doc.setTextColor(100)
-            doc.text(`[Drill diagram ${i + 1} - unable to load]`, 20, currentY)
+            doc.text(`[Drill diagram ${i + 1} (${drillData.images[i]}) - unable to load]`, 20, currentY)
             currentY += 10
             doc.setTextColor(0)
           }
