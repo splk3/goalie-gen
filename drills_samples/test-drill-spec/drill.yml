@@ -14,7 +14,7 @@ coaching_points:
 images:
   - test-drill-image.png
 
-video: <video_url>
+video: https://example.com/video-url
 
 tags:
   skill_level:
