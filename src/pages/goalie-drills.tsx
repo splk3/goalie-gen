@@ -3,6 +3,7 @@ import { Link, graphql } from "gatsby"
 import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
+import Pagination from "../components/Pagination"
 
 interface DrillNode {
   slug: string
@@ -97,6 +98,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   // State for selected filters - initialize from URL if present
   const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>(getInitialFilters)
 
+  // State for pagination
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const itemsPerPage = 15
+
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
   const dropdownRef = React.useRef<HTMLDivElement>(null)
@@ -136,6 +141,17 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       return true
     })
   }, [drills, selectedFilters])
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedFilters])
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedDrills = filteredDrills.slice(startIndex, endIndex)
 
   // Toggle filter selection
   const toggleFilter = (category: string, value: string) => {
@@ -301,7 +317,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {filteredDrills.map((drill) => (
+          {paginatedDrills.map((drill) => (
             <div 
               key={drill.slug}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
@@ -327,6 +343,13 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
             </div>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         <div className="mt-8 text-center">
           <Link 
