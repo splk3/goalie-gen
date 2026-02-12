@@ -27,14 +27,14 @@ export interface FilterState {
  * Extracts shared logic between goalie-drills page and INeedADrillButton component
  */
 export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: FilterState) {
-  const defaultFilters: FilterState = {
+  const defaultFilters: FilterState = React.useMemo(() => ({
     skill_level: [],
     team_drill: [],
     age_level: [],
     fundamental_skill: [],
     skating_skill: [],
     equipment: []
-  }
+  }), [])
 
   const [selectedFilters, setSelectedFilters] = React.useState<FilterState>(
     initialFilters || defaultFilters
@@ -110,7 +110,7 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
   // Reset all filters
   const resetFilters = React.useCallback(() => {
     setSelectedFilters(defaultFilters)
-  }, [])
+  }, [defaultFilters])
 
   // Format tag name for display
   const formatTagName = React.useCallback((tag: string) => {
