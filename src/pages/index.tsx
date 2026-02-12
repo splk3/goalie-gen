@@ -5,7 +5,7 @@ import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton"
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
-import DownloadDrillButton from "../components/DownloadDrillButton"
+import INeedADrillButton from "../components/INeedADrillButton"
 import NavigationButton from "../components/NavigationButton"
 import TermsPopup from "../components/TermsPopup"
 
@@ -50,7 +50,7 @@ export default function Home() {
               </p>
             </div>
             <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
-              <DownloadDrillButton />
+              <INeedADrillButton />
             </div>
           </div>
         </div>

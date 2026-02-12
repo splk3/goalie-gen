@@ -3,6 +3,7 @@ import { Link, graphql } from "gatsby"
 import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
+import Pagination from "../components/Pagination"
 
 interface DrillNode {
   slug: string
@@ -94,8 +95,27 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     return initialFilters
   }, [location?.search])
 
+  // Initialize pagination from URL "page" query parameter if present
+  const getInitialPage = React.useCallback(() => {
+    if (location?.search) {
+      const searchParams = new URLSearchParams(location.search)
+      const pageParam = searchParams.get("page")
+      if (pageParam) {
+        const parsed = parseInt(pageParam, 10)
+        if (!Number.isNaN(parsed) && parsed > 0) {
+          return parsed
+        }
+      }
+    }
+    return 1
+  }, [location?.search])
+
   // State for selected filters - initialize from URL if present
   const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>(getInitialFilters)
+
+  // State for pagination - initialize from URL if present
+  const [currentPage, setCurrentPage] = React.useState<number>(getInitialPage)
+  const itemsPerPage = 15
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
@@ -136,6 +156,51 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       return true
     })
   }, [drills, selectedFilters])
+
+  // Reset to page 1 when filters change
+  // Use a stable key to prevent unnecessary rerenders
+  const filterKey = React.useMemo(() => {
+    // Create a stable key by sorting categories and their values
+    const sortedEntries = Object.entries(selectedFilters)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, values]) => `${key}:${[...values].sort().join(',')}`)
+      .join('|')
+    return sortedEntries
+  }, [selectedFilters])
+
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [filterKey])
+
+  // Keep pagination state synchronized with the URL
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const searchParams = new URLSearchParams(window.location.search)
+
+    if (currentPage > 1) {
+      searchParams.set("page", String(currentPage))
+    } else {
+      // Remove "page" when on the first page to keep URLs clean
+      searchParams.delete("page")
+    }
+
+    const searchString = searchParams.toString()
+    const newUrl =
+      window.location.pathname +
+      (searchString ? `?${searchString}` : "") +
+      window.location.hash
+
+    window.history.replaceState(null, "", newUrl)
+  }, [currentPage])
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedDrills = filteredDrills.slice(startIndex, endIndex)
 
   // Toggle filter selection
   const toggleFilter = (category: string, value: string) => {
@@ -301,7 +366,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {filteredDrills.map((drill) => (
+          {paginatedDrills.map((drill) => (
             <div 
               key={drill.slug}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
@@ -327,6 +392,13 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
             </div>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         <div className="mt-8 text-center">
           <Link 
