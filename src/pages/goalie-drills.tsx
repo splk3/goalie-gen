@@ -24,9 +24,12 @@ interface GoalieDrillsProps {
       nodes: DrillNode[]
     }
   }
+  location?: {
+    search: string
+  }
 }
 
-export default function GoalieDrills({ data }: GoalieDrillsProps) {
+export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const drills = data.allDrill.nodes.map(node => ({
     slug: node.slug,
     name: node.name,
@@ -64,15 +67,35 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
     )
   }, [drills])
 
-  // State for selected filters
-  const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>({
-    skill_level: [],
-    team_drill: [],
-    age_level: [],
-    fundamental_skill: [],
-    skating_skill: [],
-    equipment: []
-  })
+  // Parse URL search parameters to initialize filters
+  const getInitialFilters = React.useCallback(() => {
+    const initialFilters: Record<string, string[]> = {
+      skill_level: [],
+      team_drill: [],
+      age_level: [],
+      fundamental_skill: [],
+      skating_skill: [],
+      equipment: []
+    }
+
+    if (location?.search) {
+      const searchParams = new URLSearchParams(location.search)
+      
+      // Check for each filter category in URL params
+      Object.keys(initialFilters).forEach(category => {
+        const paramValue = searchParams.get(category)
+        if (paramValue) {
+          // Support comma-separated values for multiple selections
+          initialFilters[category] = paramValue.split(',').filter(v => v.trim())
+        }
+      })
+    }
+
+    return initialFilters
+  }, [location?.search])
+
+  // State for selected filters - initialize from URL if present
+  const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>(getInitialFilters)
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
