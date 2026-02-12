@@ -116,7 +116,7 @@ Required fields in drill.yml:
 - coaching_points
 - tags
 
-All other fields are optional. For tags, each sub-field is optional, and the allowed values for each tag sub-field are the options listed in the spec file.
+All other fields (such as `images` and `video`) are optional. For tags, each sub-field is optional, and the allowed values for each tag sub-field are the options listed in the spec file. For media fields, `images` should be an array of image filenames, and `video` should be a single URL string.
 
 ## 🔧 TypeScript Support
 
