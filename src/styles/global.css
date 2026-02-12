@@ -34,7 +34,8 @@
   }
 
   /* Force light theme for printing - override all dark mode styles */
-  * {
+  body,
+  body * {
     background-color: white !important;
     color: black !important;
   }
