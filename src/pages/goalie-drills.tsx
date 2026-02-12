@@ -27,14 +27,15 @@ interface GoalieDrillsProps {
 }
 
 export default function GoalieDrills({ data }: GoalieDrillsProps) {
-  const allDrills = data.allDrill.nodes.map(node => ({
+  const drills = data.allDrill.nodes.map(node => ({
     slug: node.slug,
     name: node.name,
     image: node.images && node.images.length > 0 ? node.images[0] : 'placeholder.png',
     tags: node.tags
   }))
 
-  // Get all unique tag values from the spec
+  // Tag categories and options from drill spec (drills_samples/test-drill-spec/drill.yml)
+  // These define the available filter options for each category
   const tagCategories = {
     skill_level: ['beginner', 'intermediate', 'advanced'],
     team_drill: ['yes', 'no'],
@@ -56,12 +57,12 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
+  const dropdownRef = React.useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
-      if (!target.closest('.dropdown-container')) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpenDropdown(null)
       }
     }
@@ -76,7 +77,7 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
 
   // Filter drills based on selected filters
   const filteredDrills = React.useMemo(() => {
-    return allDrills.filter(drill => {
+    return drills.filter(drill => {
       // Check each filter category
       for (const category in selectedFilters) {
         const selectedValues = selectedFilters[category]
@@ -91,7 +92,7 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
       }
       return true
     })
-  }, [allDrills, selectedFilters])
+  }, [drills, selectedFilters])
 
   // Toggle filter selection
   const toggleFilter = (category: string, value: string) => {
@@ -145,8 +146,6 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
     return filters
   }, [selectedFilters])
 
-  const drills = filteredDrills
-
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
@@ -173,9 +172,9 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">Filter Drills</h2>
           
           {/* Filter Dropdowns */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div ref={dropdownRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {Object.entries(tagCategories).map(([category, values]) => (
-              <div key={category} className="relative dropdown-container">
+              <div key={category} className="relative">
                 <button
                   onClick={() => setOpenDropdown(openDropdown === category ? null : category)}
                   className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
@@ -247,7 +246,7 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {drills.map((drill) => (
+          {filteredDrills.map((drill) => (
             <div 
               key={drill.slug}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
