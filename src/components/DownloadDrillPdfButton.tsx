@@ -72,164 +72,231 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
 
     try {
       const doc = new jsPDF()
-      let currentY = 20
-
-      // Add header with USA Hockey branding
       const pageWidth = doc.internal.pageSize.width
       const pageHeight = doc.internal.pageSize.height
+      const margin = 20
+      const usaBlue = [0, 40, 104] // RGB for #002868
+      const usaRed = [191, 10, 48] // RGB for #BF0A30
       
-      // Title section
-      doc.setFontSize(24)
-      doc.setFont(undefined, 'bold')
-      doc.text("DRILLS", pageWidth / 2, currentY, { align: "center" })
-      currentY += 15
+      let currentY = 15
+
+      // Header with USA Hockey logos and title
+      try {
+        const leftLogoInfo = await loadImageAsDataURL('/images/usahockey/usahockey-goaltending.jpg')
+        const rightLogoInfo = await loadImageAsDataURL('/images/usahockey/51-in-30.jpg')
+        
+        // Add left logo
+        const logoHeight = 16
+        const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight
+        doc.addImage(leftLogoInfo.dataURL, 'JPEG', margin, currentY, leftLogoWidth, logoHeight)
+        
+        // Add center title
+        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+        doc.setFontSize(20)
+        doc.setFont(undefined, 'bold')
+        doc.text("DRILLS", pageWidth / 2, currentY + 12, { align: "center" })
+        
+        // Add right logo
+        const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight
+        doc.addImage(rightLogoInfo.dataURL, 'JPEG', pageWidth - margin - rightLogoWidth, currentY, rightLogoWidth, logoHeight)
+        
+        currentY += logoHeight + 4
+        
+        // Red underline
+        doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2])
+        doc.setLineWidth(2)
+        doc.line(margin, currentY, pageWidth - margin, currentY)
+        currentY += 8
+      } catch (error) {
+        console.error('Error loading header images:', error)
+        // Fallback to simple header
+        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+        doc.setFontSize(20)
+        doc.setFont(undefined, 'bold')
+        doc.text("DRILLS", pageWidth / 2, currentY, { align: "center" })
+        currentY += 10
+        doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2])
+        doc.setLineWidth(2)
+        doc.line(margin, currentY, pageWidth - margin, currentY)
+        currentY += 8
+      }
 
       // Drill name
-      doc.setFontSize(16)
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+      doc.setFontSize(14)
       doc.setFont(undefined, 'bold')
-      const drillNameLines = doc.splitTextToSize(drillData.name, pageWidth - 40)
-      doc.text(drillNameLines, 20, currentY)
-      currentY += drillNameLines.length * 8 + 5
+      const drillNameLines = doc.splitTextToSize(drillData.name, pageWidth - 2 * margin)
+      doc.text(drillNameLines, margin, currentY)
+      currentY += drillNameLines.length * 6 + 4
 
-      // Age Group, Skill Level, Equipment
-      doc.setFontSize(10)
-      doc.setFont(undefined, 'normal')
+      // Tags section - all on one line with bold labels
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+      let tagsLine = ''
       
       if (drillData.tags.age_level && drillData.tags.age_level.length > 0) {
-        const ageText = `Age Group: ${drillData.tags.age_level.map(formatTag).join(', ')}`
-        doc.text(ageText, 20, currentY)
-        currentY += 6
+        tagsLine += `Age Group: ${drillData.tags.age_level.map(formatTag).join(', ')}  `
       }
       
       if (drillData.tags.skill_level && drillData.tags.skill_level.length > 0) {
-        const skillText = `Skill Level: ${drillData.tags.skill_level.map(formatTag).join(', ')}`
-        doc.text(skillText, 20, currentY)
-        currentY += 6
+        tagsLine += `Skill Level: ${drillData.tags.skill_level.map(formatTag).join(', ')}  `
       }
       
       if (drillData.tags.equipment && drillData.tags.equipment.length > 0) {
-        const equipmentText = `Equipment Needed: ${drillData.tags.equipment.map(formatTag).join(', ')}`
-        doc.text(equipmentText, 20, currentY)
-        currentY += 6
+        tagsLine += `Equipment Needed: ${drillData.tags.equipment.map(formatTag).join(', ')}`
       }
       
-      currentY += 5
+      const tagLines = doc.splitTextToSize(tagsLine, pageWidth - 2 * margin)
+      doc.text(tagLines, margin, currentY)
+      currentY += tagLines.length * 4 + 6
 
-      // Description section
-      doc.setFontSize(14)
+      // Calculate available space for images
+      const leftColumnWidth = (pageWidth - 3 * margin) / 2
+      const rightColumnWidth = (pageWidth - 3 * margin) / 2
+      const rightColumnX = margin + leftColumnWidth + margin
+      
+      // Load images first to calculate total height
+      const imageInfos: Array<{ dataURL: string; width: number; height: number }> = []
+      let totalImageHeight = 0
+      
+      if (drillData.images && drillData.images.length > 0) {
+        for (let i = 0; i < drillData.images.length; i++) {
+          try {
+            const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`
+            const imageInfo = await loadImageAsDataURL(imagePath)
+            imageInfos.push(imageInfo)
+          } catch (error) {
+            console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, error)
+          }
+        }
+        
+        // Calculate scaled image heights
+        const maxImageWidth = rightColumnWidth
+        const availableHeight = pageHeight - currentY - 50 // Reserve space for skills section
+        const maxImageHeight = imageInfos.length > 0 ? (availableHeight - (imageInfos.length - 1) * 4) / imageInfos.length : 0
+        
+        imageInfos.forEach((imageInfo) => {
+          const aspectRatio = imageInfo.width / imageInfo.height
+          let imgWidth = maxImageWidth
+          let imgHeight = imgWidth / aspectRatio
+          
+          if (imgHeight > maxImageHeight) {
+            imgHeight = maxImageHeight
+            imgWidth = imgHeight * aspectRatio
+          }
+          
+          totalImageHeight += imgHeight + 4
+        })
+      }
+
+      // Left column: Description and Coaching Points
+      const contentStartY = currentY
+      let leftY = contentStartY
+      
+      // Description
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+      doc.setFontSize(12)
       doc.setFont(undefined, 'bold')
-      doc.text("Description", 20, currentY)
-      currentY += 8
-
-      doc.setFontSize(10)
+      doc.text("Description", margin, leftY)
+      leftY += 6
+      
+      doc.setTextColor(0, 0, 0)
+      doc.setFontSize(9)
       doc.setFont(undefined, 'normal')
-      const descriptionLines = doc.splitTextToSize(drillData.description, pageWidth - 40)
-      doc.text(descriptionLines, 20, currentY)
-      currentY += descriptionLines.length * 5 + 8
-
-      // Coaching Points section
-      doc.setFontSize(14)
+      const descriptionLines = doc.splitTextToSize(drillData.description, leftColumnWidth)
+      doc.text(descriptionLines, margin, leftY)
+      leftY += descriptionLines.length * 4 + 5
+      
+      // Coaching Points
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+      doc.setFontSize(12)
       doc.setFont(undefined, 'bold')
-      doc.text("Coaching Points", 20, currentY)
-      currentY += 8
-
-      doc.setFontSize(10)
+      doc.text("Coaching Points", margin, leftY)
+      leftY += 6
+      
+      doc.setTextColor(0, 0, 0)
+      doc.setFontSize(9)
       doc.setFont(undefined, 'normal')
       
       if (drillData.coaching_points && drillData.coaching_points.length > 0) {
         drillData.coaching_points.forEach((point) => {
-          const pointLines = doc.splitTextToSize(`• ${point}`, pageWidth - 45)
-          doc.text(pointLines, 25, currentY)
-          currentY += pointLines.length * 5 + 2
+          const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5)
+          doc.text(pointLines, margin + 3, leftY)
+          leftY += pointLines.length * 4 + 1
         })
       }
+
+      // Right column: Images
+      let rightY = contentStartY
       
-      currentY += 5
-
-      // Load and add drill diagrams
-      if (drillData.images && drillData.images.length > 0) {
-        doc.setTextColor(0)
+      if (imageInfos.length > 0) {
+        const maxImageWidth = rightColumnWidth
+        const availableHeight = pageHeight - contentStartY - 50
+        const maxImageHeight = (availableHeight - (imageInfos.length - 1) * 4) / imageInfos.length
         
-        for (let i = 0; i < drillData.images.length; i++) {
-          // Check if we need a new page
-          if (currentY > pageHeight - 80) {
-            doc.addPage()
-            currentY = 20
+        imageInfos.forEach((imageInfo) => {
+          const aspectRatio = imageInfo.width / imageInfo.height
+          let imgWidth = maxImageWidth
+          let imgHeight = imgWidth / aspectRatio
+          
+          if (imgHeight > maxImageHeight) {
+            imgHeight = maxImageHeight
+            imgWidth = imgHeight * aspectRatio
           }
-
-          try {
-            const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`
-            const imageInfo = await loadImageAsDataURL(imagePath)
-            
-            // Calculate dimensions to fit within page width while preserving aspect ratio
-            const maxWidth = pageWidth - 40
-            const maxHeight = 80
-            
-            const aspectRatio = imageInfo.width / imageInfo.height
-            let imgWidth = maxWidth
-            let imgHeight = imgWidth / aspectRatio
-            
-            // If height exceeds max, scale down based on height
-            if (imgHeight > maxHeight) {
-              imgHeight = maxHeight
-              imgWidth = imgHeight * aspectRatio
-            }
-            
-            // Add image to PDF
-            doc.addImage(imageInfo.dataURL, 'PNG', 20, currentY, imgWidth, imgHeight)
-            currentY += imgHeight + 8
-          } catch (error) {
-            console.error(`Error adding image ${i + 1} (${drillData.images[i]}):`, error)
-            // If image fails to load, add a note
-            doc.setFontSize(9)
-            doc.setTextColor(100)
-            doc.text(`[Drill diagram ${i + 1} (${drillData.images[i]}) - unable to load]`, 20, currentY)
-            currentY += 10
-            doc.setTextColor(0)
-          }
-        }
+          
+          // Center image in right column
+          const imgX = rightColumnX + (rightColumnWidth - imgWidth) / 2
+          doc.addImage(imageInfo.dataURL, 'PNG', imgX, rightY, imgWidth, imgHeight)
+          rightY += imgHeight + 4
+        })
       }
 
-      currentY += 5
+      // Position for skills section (below both columns)
+      currentY = Math.max(leftY, rightY) + 8
+      
+      // Border line before Skills Focus
+      doc.setDrawColor(150, 150, 150)
+      doc.setLineWidth(0.5)
+      doc.line(margin, currentY, pageWidth - margin, currentY)
+      currentY += 6
 
       // Skills Focus section
-      if (currentY > pageHeight - 60) {
-        doc.addPage()
-        currentY = 20
-      } else {
-        currentY += 5
-      }
-
-      doc.setFontSize(14)
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+      doc.setFontSize(12)
       doc.setFont(undefined, 'bold')
-      doc.text("Skills Focus", 20, currentY)
-      currentY += 8
+      doc.text("Skills Focus", margin, currentY)
+      currentY += 6
 
-      doc.setFontSize(10)
-      doc.setFont(undefined, 'normal')
-
+      // Two-column layout for skills
+      const skillsLeftX = margin
+      const skillsRightX = margin + leftColumnWidth + margin
+      let skillsLeftY = currentY
+      let skillsRightY = currentY
+      
+      doc.setTextColor(0, 0, 0)
+      doc.setFontSize(9)
+      
       if (drillData.tags.fundamental_skill && drillData.tags.fundamental_skill.length > 0) {
         doc.setFont(undefined, 'bold')
-        doc.text("Fundamental Skills:", 20, currentY)
+        doc.text("Fundamental Skills:", skillsLeftX, skillsLeftY)
         doc.setFont(undefined, 'normal')
-        currentY += 6
+        skillsLeftY += 4
         
         drillData.tags.fundamental_skill.forEach((skill) => {
-          doc.text(`• ${formatTag(skill)}`, 25, currentY)
-          currentY += 5
+          doc.text(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY)
+          skillsLeftY += 4
         })
-        currentY += 3
       }
 
       if (drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0) {
         doc.setFont(undefined, 'bold')
-        doc.text("Skating Skills:", 20, currentY)
+        doc.text("Skating Skills:", skillsRightX, skillsRightY)
         doc.setFont(undefined, 'normal')
-        currentY += 6
+        skillsRightY += 4
         
         drillData.tags.skating_skill.forEach((skill) => {
-          doc.text(`• ${formatTag(skill)}`, 25, currentY)
-          currentY += 5
+          doc.text(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY)
+          skillsRightY += 4
         })
       }
 
