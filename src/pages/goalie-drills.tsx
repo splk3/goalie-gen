@@ -206,7 +206,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
           <h1 className="text-4xl font-bold mb-4">Goalie Drills</h1>
           <p className="text-lg">
-            Hockey drills that incorporate the entire team while emphasizing goaltender development.
+            Develop your goalies during goalie-focused time or involve the whole team!
           </p>
         </div>
 
