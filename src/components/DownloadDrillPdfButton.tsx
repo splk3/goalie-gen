@@ -186,7 +186,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       }
 
       // Generate PDF blob and download
-      const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, '_')}.pdf`
+      const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, ' ').trim().replace(/_+/g, '_')}.pdf`
       const blob = doc.output('blob')
       
       const url = URL.createObjectURL(blob)
@@ -205,7 +205,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       })
     } catch (error) {
       console.error('Error generating PDF:', error)
-      alert('There was an error generating the PDF. Please try again.')
+      alert('Failed to generate PDF. Please ensure your browser supports PDF generation and try again.')
     } finally {
       setIsGenerating(false)
     }
