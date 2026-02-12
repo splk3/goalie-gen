@@ -15,6 +15,8 @@ images:
   - test-drill-image-1.yml
   - test-drill-image-2.yml
 
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+
 tags:
   skill_level:
     - advanced
@@ -26,9 +28,9 @@ tags:
   fundamental_skill:
     - skating
     - positioning
-    - save selection
+    - save_selection
   skating_skill:
     - shuffle
-    - t-push
+    - t_push
     - butterfly
-    - powerpush
+    - power_push

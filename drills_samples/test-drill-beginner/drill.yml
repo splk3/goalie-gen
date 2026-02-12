@@ -14,6 +14,8 @@ coaching_points:
 images:
   - test-drill-image.yml
 
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+
 tags:
   skill_level:
     - beginner
@@ -26,10 +28,10 @@ tags:
     - skating
     - positioning
     - stance
-    - save selection
-    - rebound control
+    - save_selection
+    - rebound_control
     - recovery
   skating_skill:
     - shuffle
-    - c-cut
+    - c_cut
     - butterfly

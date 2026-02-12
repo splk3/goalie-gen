@@ -14,7 +14,9 @@ coaching_points:
 images:
   - test-drill-image.yml
 
-tags:
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+
+`tags:
   skill_level:
     - intermediate
   team_drill:
@@ -27,4 +29,4 @@ tags:
     - recovery
   skating_skill:
     - butterfly
-    - powerpush
+    - power_push

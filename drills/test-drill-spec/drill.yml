@@ -1,5 +1,5 @@
 ---
-name: Advanced Test Drill for Teams
+name: Drill Name
 
 description: |-
   A brief description of the drill.  This can be multiple lines and should provide
@@ -12,25 +12,34 @@ coaching_points:
   - Coaching point 3
 
 images:
-  - test-drill-image-1.yml
-  - test-drill-image-2.yml
+  - test-drill-image.yml
 
-video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+video: "https://www.youtube.com/watch?v=L4C5hPBv-LA"
 
 tags:
   skill_level:
+    - beginner
+    - intermediate
     - advanced
   team_drill:
     - yes
+    - no
   age_level:
+    - all
+    - 10U_below
+    - 12U
     - 14U
     - 16U_and_older
   fundamental_skill:
     - skating
     - positioning
+    - stance
     - save_selection
+    - rebound_control
+    - recovery
   skating_skill:
     - shuffle
     - t_push
+    - c_cut
     - butterfly
     - power_push
