@@ -145,7 +145,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   // Reset to page 1 when filters change
   // Use a stable key to prevent unnecessary rerenders
   const filterKey = React.useMemo(() => {
-    return JSON.stringify(selectedFilters)
+    // Create a stable key by sorting categories and their values
+    const sortedEntries = Object.entries(selectedFilters)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, values]) => `${key}:${values.sort().join(',')}`)
+      .join('|')
+    return sortedEntries
   }, [selectedFilters])
 
   React.useEffect(() => {

@@ -37,7 +37,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <div 
         className="text-lg font-semibold text-gray-900 dark:text-gray-100"
         aria-live="polite"
-        aria-label={`Page ${currentPage} of ${totalPages}`}
       >
         Page {currentPage} of {totalPages}
       </div>
