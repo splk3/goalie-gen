@@ -36,7 +36,7 @@ const formatTag = (tag: string): string => {
 }
 
 const getVideoThumbnail = (videoUrl: string): string => {
-  const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/
+  const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/
   const match = videoUrl.match(youtubeRegex)
   if (match && match[1]) {
     return `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg`
@@ -46,14 +46,9 @@ const getVideoThumbnail = (videoUrl: string): string => {
 
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext
-  const [isPrintView, setIsPrintView] = React.useState(false)
 
   const handlePrint = () => {
-    setIsPrintView(true)
-    setTimeout(() => {
-      window.print()
-      setIsPrintView(false)
-    }, 100)
+    window.print()
   }
 
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : ''

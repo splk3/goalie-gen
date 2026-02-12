@@ -54,6 +54,12 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions }) => {
   const { createPage } = actions
   
   const drillsDir = path.resolve(__dirname, 'drills')
+  
+  if (!fs.existsSync(drillsDir)) {
+    console.warn('Warning: drills directory does not exist. No drill pages will be generated.')
+    return
+  }
+  
   const drillFolders = fs.readdirSync(drillsDir).filter(item => {
     const itemPath = path.join(drillsDir, item)
     return fs.statSync(itemPath).isDirectory()
@@ -65,7 +71,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions }) => {
     
     if (fs.existsSync(ymlPath)) {
       const ymlContent = fs.readFileSync(ymlPath, 'utf8')
-      const drillData = yaml.load(ymlContent) as DrillData
+      const drillData = yaml.load(ymlContent, { schema: yaml.FAILSAFE_SCHEMA }) as DrillData
       
       createPage({
         path: `/drills/${folder}`,

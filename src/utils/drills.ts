@@ -43,7 +43,7 @@ export function getAllDrills(): DrillInfo[] {
 
     if (fs.existsSync(ymlPath)) {
       const ymlContent = fs.readFileSync(ymlPath, 'utf8')
-      const drillData = yaml.load(ymlContent) as DrillData
+      const drillData = yaml.load(ymlContent, { schema: yaml.FAILSAFE_SCHEMA }) as DrillData
 
       drills.push({
         slug: folder,
