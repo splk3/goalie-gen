@@ -33,6 +33,40 @@ const formatTag = (tag: string): string => {
 export default function DownloadDrillPdfButton({ drillData, drillFolder }: DownloadDrillPdfButtonProps) {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
 
+  const loadImageAsDataURL = (imagePath: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width
+        canvas.height = img.height
+        
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'))
+          return
+        }
+        
+        ctx.drawImage(img, 0, 0)
+        
+        try {
+          const dataURL = canvas.toDataURL('image/png')
+          resolve(dataURL)
+        } catch (error) {
+          reject(error)
+        }
+      }
+      
+      img.onerror = () => {
+        reject(new Error(`Failed to load image: ${imagePath}`))
+      }
+      
+      img.src = imagePath
+    })
+  }
+
   const generatePDF = async () => {
     setIsGenerating(true)
 
@@ -42,6 +76,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
 
       // Add header with USA Hockey branding
       const pageWidth = doc.internal.pageSize.width
+      const pageHeight = doc.internal.pageSize.height
       
       // Title section
       doc.setFontSize(24)
@@ -111,21 +146,41 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       
       currentY += 5
 
-      // Note about drill diagrams
-      const pageHeight = doc.internal.pageSize.height
-      if (currentY > pageHeight - 40) {
-        doc.addPage()
-        currentY = 20
+      // Load and add drill diagrams
+      if (drillData.images && drillData.images.length > 0) {
+        doc.setTextColor(0)
+        
+        for (let i = 0; i < drillData.images.length; i++) {
+          // Check if we need a new page
+          if (currentY > pageHeight - 80) {
+            doc.addPage()
+            currentY = 20
+          }
+
+          try {
+            const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`
+            const imageData = await loadImageAsDataURL(imagePath)
+            
+            // Calculate image dimensions to fit within page width
+            const maxWidth = pageWidth - 40
+            const maxHeight = 80
+            
+            // Add image to PDF
+            doc.addImage(imageData, 'PNG', 20, currentY, maxWidth, maxHeight)
+            currentY += maxHeight + 8
+          } catch (error) {
+            console.error(`Error adding image ${i + 1}:`, error)
+            // If image fails to load, add a note
+            doc.setFontSize(9)
+            doc.setTextColor(100)
+            doc.text(`[Drill diagram ${i + 1} - unable to load]`, 20, currentY)
+            currentY += 10
+            doc.setTextColor(0)
+          }
+        }
       }
 
-      doc.setFontSize(10)
-      doc.setTextColor(100)
-      const noteLines = doc.splitTextToSize(
-        "Drill diagrams are available on the website but are not included in this PDF.",
-        pageWidth - 40
-      )
-      doc.text(noteLines, 20, currentY)
-      currentY += noteLines.length * 5 + 12
+      currentY += 5
 
       // Skills Focus section
       if (currentY > pageHeight - 60) {
