@@ -3,6 +3,7 @@ import { Link } from 'gatsby'
 import Seo from '../components/SEO'
 import Logo from '../components/Logo'
 import DarkModeToggle from '../components/DarkModeToggle'
+import DownloadDrillPdfButton from '../components/DownloadDrillPdfButton'
 
 interface DrillPageContext {
   slug: string
@@ -228,6 +229,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           >
             Print Drill
           </button>
+          <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
           <Link
             to="/goalie-drills"
             className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
