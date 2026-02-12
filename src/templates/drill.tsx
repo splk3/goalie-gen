@@ -150,14 +150,14 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
           {/* Right Column: Images */}
           <div className="space-y-4 print:space-y-2">
-            {(drillData.images || []).map((image, index) => {
+            {(() => {
               // Apply max height when there are multiple images to keep layout compact
               const hasMultipleImages = (drillData.images || []).length > 1
               const imageClasses = hasMultipleImages
                 ? "w-full h-auto object-contain max-h-[300px] print:max-h-[280px]"
                 : "w-full h-auto object-contain"
               
-              return (
+              return (drillData.images || []).map((image, index) => (
                 <div key={index} className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
                   <img
                     src={`/drills/${drillFolder}/${image}`}
@@ -165,8 +165,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     className={imageClasses}
                   />
                 </div>
-              )
-            })}
+              ))
+            })()}
           </div>
         </div>
 
