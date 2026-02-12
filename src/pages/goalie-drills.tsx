@@ -143,9 +143,14 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   }, [drills, selectedFilters])
 
   // Reset to page 1 when filters change
+  // Use a stable key to prevent unnecessary rerenders
+  const filterKey = React.useMemo(() => {
+    return JSON.stringify(selectedFilters)
+  }, [selectedFilters])
+
   React.useEffect(() => {
     setCurrentPage(1)
-  }, [selectedFilters])
+  }, [filterKey])
 
   // Calculate pagination values
   const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
