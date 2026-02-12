@@ -129,26 +129,46 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       doc.text(drillNameLines, margin, currentY)
       currentY += drillNameLines.length * 6 + 4
 
-      // Tags section - all on one line with bold labels
+      // Tags section - bold labels, normal values, equipment on separate line
       doc.setFontSize(9)
       doc.setTextColor(0, 0, 0)
-      let tagsLine = ''
+      
+      // Age Group and Skill Level on same line
+      let firstLineX = margin
       
       if (drillData.tags.age_level && drillData.tags.age_level.length > 0) {
-        tagsLine += `Age Group: ${drillData.tags.age_level.map(formatTag).join(', ')}  `
+        doc.setFont(undefined, 'bold')
+        doc.text('Age Group: ', firstLineX, currentY)
+        const labelWidth = doc.getTextWidth('Age Group: ')
+        doc.setFont(undefined, 'normal')
+        const ageValues = drillData.tags.age_level.map(formatTag).join(', ')
+        doc.text(ageValues, firstLineX + labelWidth, currentY)
+        firstLineX += labelWidth + doc.getTextWidth(ageValues) + 5
       }
       
       if (drillData.tags.skill_level && drillData.tags.skill_level.length > 0) {
-        tagsLine += `Skill Level: ${drillData.tags.skill_level.map(formatTag).join(', ')}  `
+        doc.setFont(undefined, 'bold')
+        doc.text('Skill Level: ', firstLineX, currentY)
+        const labelWidth = doc.getTextWidth('Skill Level: ')
+        doc.setFont(undefined, 'normal')
+        const skillValues = drillData.tags.skill_level.map(formatTag).join(', ')
+        doc.text(skillValues, firstLineX + labelWidth, currentY)
       }
       
+      currentY += 4
+      
+      // Equipment Needed on its own line
       if (drillData.tags.equipment && drillData.tags.equipment.length > 0) {
-        tagsLine += `Equipment Needed: ${drillData.tags.equipment.map(formatTag).join(', ')}`
+        doc.setFont(undefined, 'bold')
+        doc.text('Equipment Needed: ', margin, currentY)
+        const labelWidth = doc.getTextWidth('Equipment Needed: ')
+        doc.setFont(undefined, 'normal')
+        const equipmentValues = drillData.tags.equipment.map(formatTag).join(', ')
+        doc.text(equipmentValues, margin + labelWidth, currentY)
+        currentY += 4
       }
       
-      const tagLines = doc.splitTextToSize(tagsLine, pageWidth - 2 * margin)
-      doc.text(tagLines, margin, currentY)
-      currentY += tagLines.length * 4 + 6
+      currentY += 2
 
       // Calculate available space for images
       const leftColumnWidth = (pageWidth - 3 * margin) / 2
