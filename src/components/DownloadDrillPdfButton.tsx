@@ -111,37 +111,21 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       
       currentY += 5
 
-      // Add images if there's space or add new page
-      if (drillData.images && drillData.images.length > 0) {
-        const pageHeight = doc.internal.pageSize.height
-        
-        for (let i = 0; i < drillData.images.length; i++) {
-          // Check if we need a new page
-          if (currentY > pageHeight - 80) {
-            doc.addPage()
-            currentY = 20
-          }
-
-          try {
-            // Load image and add to PDF
-            const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`
-            const imgWidth = pageWidth - 40
-            const imgHeight = 60 // Fixed height for consistency
-            
-            // Note: In a real implementation, we would need to load the image properly
-            // For now, we'll add a placeholder box
-            doc.setDrawColor(200)
-            doc.setFillColor(240, 240, 240)
-            doc.rect(20, currentY, imgWidth, imgHeight, 'FD')
-            doc.setFontSize(9)
-            doc.text(`Drill diagram ${i + 1}`, pageWidth / 2, currentY + imgHeight / 2, { align: "center" })
-            
-            currentY += imgHeight + 8
-          } catch (error) {
-            console.error(`Error adding image ${i + 1}:`, error)
-          }
-        }
+      // Note about drill diagrams
+      const pageHeightForImages = doc.internal.pageSize.height
+      if (currentY > pageHeightForImages - 40) {
+        doc.addPage()
+        currentY = 20
       }
+
+      doc.setFontSize(10)
+      doc.setTextColor(100)
+      const noteLines = doc.splitTextToSize(
+        "Drill diagrams are available on the website but are not included in this PDF.",
+        pageWidth - 40
+      )
+      doc.text(noteLines, 20, currentY)
+      currentY += noteLines.length * 5 + 12
 
       // Skills Focus section
       const pageHeight = doc.internal.pageSize.height
@@ -186,7 +170,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       }
 
       // Generate PDF blob and download
-      const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, ' ').trim().replace(/_+/g, '_')}.pdf`
+      const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, '_')}.pdf`
       const blob = doc.output('blob')
       
       const url = URL.createObjectURL(blob)
@@ -199,9 +183,10 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       URL.revokeObjectURL(url)
 
       // Track event
-      trackEvent('download_drill_pdf', {
+      trackEvent('download_drill', {
         drill_name: drillData.name,
-        drill_folder: drillFolder
+        age_group: drillData.tags.age_level?.join(', ') || '',
+        skill_level: drillData.tags.skill_level?.join(', ') || ''
       })
     } catch (error) {
       console.error('Error generating PDF:', error)
