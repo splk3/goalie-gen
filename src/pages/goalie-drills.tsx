@@ -1,10 +1,30 @@
 import * as React from "react"
-import { Link } from "gatsby"
+import { Link, graphql } from "gatsby"
 import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 
-export default function GoalieDrills() {
+interface DrillNode {
+  slug: string
+  name: string
+  images: string[]
+}
+
+interface GoalieDrillsProps {
+  data: {
+    allDrill: {
+      nodes: DrillNode[]
+    }
+  }
+}
+
+export default function GoalieDrills({ data }: GoalieDrillsProps) {
+  const drills = data.allDrill.nodes.map(node => ({
+    slug: node.slug,
+    name: node.name,
+    image: node.images && node.images.length > 0 ? node.images[0] : 'placeholder.png'
+  }))
+
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
@@ -26,44 +46,41 @@ export default function GoalieDrills() {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
-              About Goalie Drills
-            </h2>
-            <div className="text-gray-700 dark:text-gray-300 space-y-4">
-              <p>
-                This section will feature hockey drills that engage the entire team while
-                providing focused development opportunities for goalies.
-              </p>
-              <p>
-                These drills help goalies practice game-realistic situations while keeping
-                all players active and engaged during practice.
-              </p>
-              <p>
-                Categories will include:
-              </p>
-              <ul className="list-disc list-inside ml-4 space-y-2">
-                <li>Breakout drills with goalie participation</li>
-                <li>Shooting drills with defensive pressure</li>
-                <li>2-on-1 and 3-on-2 scenarios</li>
-                <li>Rebound control exercises</li>
-                <li>Cross-ice small-area games</li>
-              </ul>
-              <p className="font-semibold mt-6">
-                Check back soon for comprehensive drill libraries!
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link 
-              to="/"
-              className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          {drills.map((drill) => (
+            <div 
+              key={drill.slug}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
-              ← Back to Home
-            </Link>
-          </div>
+              <div className="aspect-video bg-gray-200 dark:bg-gray-700">
+                <img
+                  src={`/drills/${drill.slug}/${drill.image}`}
+                  alt={drill.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-usa-blue dark:text-blue-400 mb-4">
+                  {drill.name}
+                </h2>
+                <Link
+                  to={`/drills/${drill.slug}`}
+                  className="inline-block bg-usa-blue hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition-colors"
+                >
+                  View Drill
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link 
+            to="/"
+            className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
+          >
+            ← Back to Home
+          </Link>
         </div>
       </main>
     </div>
@@ -71,3 +88,15 @@ export default function GoalieDrills() {
 }
 
 export const Head = () => <Seo title="Goalie Drills" />
+
+export const query = graphql`
+  query GoalieDrillsPage {
+    allDrill {
+      nodes {
+        slug
+        name
+        images
+      }
+    }
+  }
+`
