@@ -125,13 +125,15 @@ export default function INeedADrillButton() {
     const randomIndex = Math.floor(Math.random() * filteredDrills.length)
     const selectedDrill = filteredDrills[randomIndex]
 
-    // Track event
+    // Extract filter values for analytics
+    const ageGroup = selectedFilters.age_level?.[0] || ''
+    const skillLevel = selectedFilters.skill_level?.[0] || ''
+
+    // Track event (reusing download_drill event type for consistency)
     trackEvent('download_drill', {
       drill_name: selectedDrill.name,
-      filters_applied: Object.entries(selectedFilters)
-        .filter(([, values]) => values.length > 0)
-        .map(([key, values]) => `${key}:${values.join(',')}`)
-        .join(';')
+      age_group: ageGroup,
+      skill_level: skillLevel
     })
 
     // Navigate to the drill page
@@ -318,7 +320,7 @@ export default function INeedADrillButton() {
 
             {/* Results count */}
             <div className="mb-4 text-center text-gray-700 dark:text-gray-300">
-              {filteredDrills.length} drill{filteredDrills.length !== 1 ? 's' : ''} match{filteredDrills.length === 1 ? 'es' : ''} your filters
+              {filteredDrills.length} drill{filteredDrills.length !== 1 ? 's' : ''} {filteredDrills.length === 1 ? 'matches' : 'match'} your filters
             </div>
 
             <div className="flex gap-4">
