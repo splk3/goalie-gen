@@ -53,6 +53,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   }
 
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : ''
+  
+  // Apply max height when there are multiple images to keep layout compact
+  const hasMultipleImages = (drillData.images || []).length >= 2
+  const imageClasses = hasMultipleImages
+    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[280px]"
+    : "w-full h-auto object-contain"
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
@@ -155,7 +161,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 <img
                   src={`/drills/${drillFolder}/${image}`}
                   alt={`Drill diagram ${index + 1}`}
-                  className="w-full h-auto object-contain"
+                  className={imageClasses}
                 />
               </div>
             ))}
