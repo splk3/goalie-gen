@@ -34,16 +34,35 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
     tags: node.tags
   }))
 
-  // Tag categories and options from drill spec (drills_samples/test-drill-spec/drill.yml)
-  // These define the available filter options for each category
-  const tagCategories = {
-    skill_level: ['beginner', 'intermediate', 'advanced'],
-    team_drill: ['yes', 'no'],
-    age_level: ['all', '10U_below', '12U', '14U', '16U_and_older'],
-    fundamental_skill: ['skating', 'positioning', 'stance', 'save_selection', 'rebound_control', 'recovery'],
-    skating_skill: ['shuffle', 't_push', 'c_cut', 'butterfly', 'power_push'],
-    equipment: ['blaze_pods', 'cones', 'ice_marker', 'bumpers', 'none']
-  }
+  // Dynamically derive tag categories from actual drill data
+  // This ensures the filter options always match the available drills
+  const tagCategories = React.useMemo(() => {
+    const categories: Record<string, Set<string>> = {
+      skill_level: new Set(),
+      team_drill: new Set(),
+      age_level: new Set(),
+      fundamental_skill: new Set(),
+      skating_skill: new Set(),
+      equipment: new Set()
+    }
+
+    // Collect all unique tag values from drills
+    drills.forEach(drill => {
+      Object.entries(drill.tags).forEach(([category, values]) => {
+        if (values && Array.isArray(values)) {
+          values.forEach(value => categories[category]?.add(value))
+        }
+      })
+    })
+
+    // Convert Sets to sorted arrays for consistent display
+    return Object.fromEntries(
+      Object.entries(categories).map(([key, set]) => [
+        key,
+        Array.from(set).sort()
+      ])
+    )
+  }, [drills])
 
   // State for selected filters
   const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>({
@@ -61,6 +80,8 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
+    if (!openDropdown) return
+
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpenDropdown(null)
@@ -171,39 +192,51 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
           
           {/* Filter Dropdowns */}
           <div ref={dropdownRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {Object.entries(tagCategories).map(([category, values]) => (
-              <div key={category} className="relative">
-                <button
-                  onClick={() => setOpenDropdown(openDropdown === category ? null : category)}
-                  className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
-                >
-                  <span className="font-semibold">{formatTagName(category)}</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {selectedFilters[category].length > 0 && `(${selectedFilters[category].length})`}
-                    <span className="ml-2">{openDropdown === category ? '▲' : '▼'}</span>
-                  </span>
-                </button>
-                
-                {openDropdown === category && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto">
-                    {values.map(value => (
-                      <label
-                        key={value}
-                        className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedFilters[category].includes(value)}
-                          onChange={() => toggleFilter(category, value)}
-                          className="mr-3 w-4 h-4"
-                        />
-                        <span className="text-gray-900 dark:text-gray-100">{formatTagValue(value)}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            {Object.entries(tagCategories).map(([category, values]) => {
+              const dropdownId = `filter-${category}-menu`
+              
+              return (
+                <div key={category} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setOpenDropdown(openDropdown === category ? null : category)}
+                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
+                    aria-expanded={openDropdown === category}
+                    aria-haspopup="listbox"
+                    aria-controls={dropdownId}
+                  >
+                    <span className="font-semibold">{formatTagName(category)}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {selectedFilters[category].length > 0 && `(${selectedFilters[category].length})`}
+                      <span className="ml-2">{openDropdown === category ? '▲' : '▼'}</span>
+                    </span>
+                  </button>
+                  
+                  {openDropdown === category && (
+                    <div
+                      id={dropdownId}
+                      role="listbox"
+                      className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto"
+                    >
+                      {values.map(value => (
+                        <label
+                          key={value}
+                          className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters[category].includes(value)}
+                            onChange={() => toggleFilter(category, value)}
+                            className="mr-3 w-4 h-4"
+                          />
+                          <span className="text-gray-900 dark:text-gray-100">{formatTagValue(value)}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
           {/* Reset Button */}
