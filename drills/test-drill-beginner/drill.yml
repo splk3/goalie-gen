@@ -1,0 +1,40 @@
+---
+name: Test Drill for Beginner Goalies
+
+description: |-
+  A brief description of the drill.  This can be multiple lines and should provide
+  an overview of what the drill is about, its purpose, and any key details that
+  would help someone understand what the drill entails.
+
+coaching_points:
+  - Coaching point 1
+  - Coaching point 2
+  - Coaching point 3
+
+images:
+  - test-drill-image.png
+
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+
+tags:
+  skill_level:
+    - beginner
+  team_drill:
+    - no
+  age_level:
+    - 10U_below
+    - 12U
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - c_cut
+    - butterfly
+  equipment:
+    - ice_marker
+    - bumpers

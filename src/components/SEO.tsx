@@ -1,5 +1,5 @@
 import * as React from "react"
-import { withPrefix } from "gatsby"
+import { withPrefix, useStaticQuery, graphql } from "gatsby"
 
 interface SeoProps {
   title?: string
@@ -17,10 +17,21 @@ export default function Seo({
   title = "Goalie Gen - Development Plans", 
   description = "Generate customized goaltending development plans for youth ice hockey teams and clubs" 
 }: SeoProps) {
+  // Get site URL from gatsby-config.ts siteMetadata
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          siteUrl
+        }
+      }
+    }
+  `)
+  
   // For social media, we need absolute URLs including the site URL
-  const siteUrl = "https://splk3.github.io"
-  const imagePathWithPrefix = withPrefix("/images/logo-light.png")
-  const socialImageUrl = `${siteUrl}${imagePathWithPrefix}`
+  const siteUrl = data.site.siteMetadata.siteUrl
+  const imagePathWithPrefix = withPrefix("/images/logos/logo-light.png")
+  const socialImageUrl = new URL(imagePathWithPrefix, siteUrl).toString()
   
   return (
     <>

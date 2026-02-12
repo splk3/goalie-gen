@@ -83,11 +83,12 @@ goalie-gen/
 │   │   ├── favicon-32x32.png
 │   │   ├── favicon.ico
 │   │   └── site.webmanifest
-│   ├── images/          # Static images
-│   │   ├── logo-alt-dark.png
-│   │   ├── logo-alt-light.png
-│   │   ├── logo-dark.png
-│   │   └── logo-light.png
+│   ├── images/         # Static images
+|   |   └── logos/      # Site Logos
+│   │       ├── logo-alt-dark.png
+│   │       ├── logo-alt-light.png
+│   │       ├── logo-dark.png
+│   │       └── logo-light.png
 │   └── pdfs/            # PDF resources
 │       ├── coach-z-zone-map.pdf
 │       ├── goalie-evaluation-form.pdf
@@ -99,6 +100,24 @@ goalie-gen/
 ├── postcss.config.js    # PostCSS configuration
 └── tsconfig.json        # TypeScript configuration
 ```
+
+## 🧊 Drills
+
+Drill examples live in [drills_samples/](drills_samples/) and the full field specification is in [drills_samples/test-drill-spec/drill.yml](drills_samples/test-drill-spec/drill.yml).
+
+To add a new drill for the site, create a new folder under [drills/](drills/) named for the drill (one folder per drill). Each drill folder should include:
+
+- A drill.yml file that contains all applicable fields
+- One or more images for the drill
+
+Required fields in drill.yml:
+
+- name
+- description
+- coaching_points
+- tags
+
+All other fields (such as `images` and `video`) are optional. For tags, each sub-field is optional, and the allowed values for each tag sub-field are the options listed in the spec file. For media fields, `images` should be an array of image filenames, and `video` should be a single URL string.
 
 ## 🔧 TypeScript Support
 

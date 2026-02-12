@@ -4,7 +4,7 @@ import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 
-export default function TeamDrills() {
+export default function GoalieDrills() {
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
@@ -13,11 +13,6 @@ export default function TeamDrills() {
             <Link to="/">
               <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
             </Link>
-            <div className="hidden md:block flex-1 mx-4">
-              <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
-                Team Drills with Goalie Focus
-              </p>
-            </div>
             <DarkModeToggle />
           </div>
         </div>
@@ -25,7 +20,7 @@ export default function TeamDrills() {
       
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-          <h1 className="text-4xl font-bold mb-4">Team Drills with Goalie Focus</h1>
+          <h1 className="text-4xl font-bold mb-4">Goalie Drills</h1>
           <p className="text-lg">
             Hockey drills that incorporate the entire team while emphasizing goaltender development.
           </p>
@@ -34,7 +29,7 @@ export default function TeamDrills() {
         <div className="max-w-2xl mx-auto">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
-              About Team Drills
+              About Goalie Drills
             </h2>
             <div className="text-gray-700 dark:text-gray-300 space-y-4">
               <p>
@@ -75,4 +70,4 @@ export default function TeamDrills() {
   )
 }
 
-export const Head = () => <Seo title="Team Drills with Goalie Focus" />
+export const Head = () => <Seo title="Goalie Drills" />

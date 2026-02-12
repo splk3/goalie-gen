@@ -73,7 +73,7 @@ export default function GoalieJournalButton() {
         resolve(null)
       }
       // Use the alt light logo as default with proper path prefix
-      img.src = withPrefix('/images/logo-alt-light.png')
+      img.src = withPrefix('/images/logos/logo-alt-light.png')
     })
   }
 

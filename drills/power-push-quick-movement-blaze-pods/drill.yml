@@ -1,0 +1,39 @@
+---
+name: Power Push Quick Movement with Blaze Pods
+
+description: |-
+  Goalie will start in butterfly position.
+  Find light and then power push to the proper angle,
+  maintaining depth and posture.
+
+coaching_points:
+  - Head turn on finding next light, then hands/hips follow.
+  - Watch stick, glove, and blocker position until end of drill.
+  - Adjust Lights Out Timeout and duration based on player.
+  - Alternate equipment - use cones instead of Blaze Pods
+
+images:
+  - test-drill-image.png
+
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill:
+    - no
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+  skating_skill:
+    - butterfly
+    - power_push
+  equipment:
+    - blaze_pods
+    - cones
