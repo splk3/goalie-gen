@@ -49,7 +49,7 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
     // Collect all unique tag values from drills
     drills.forEach(drill => {
       Object.entries(drill.tags).forEach(([category, values]) => {
-        if (values && Array.isArray(values)) {
+        if (Array.isArray(values)) {
           values.forEach(value => categories[category]?.add(value))
         }
       })
@@ -80,15 +80,16 @@ export default function GoalieDrills({ data }: GoalieDrillsProps) {
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
-    if (!openDropdown) return
-
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpenDropdown(null)
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+    if (openDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
