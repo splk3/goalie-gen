@@ -14,7 +14,7 @@
     "deploy": "gatsby build && gh-pages -d public"
   },
   "dependencies": {
-    "docx": "^9.5.1",
+    "docx": "^9.5.3",
     "file-saver": "^2.0.5",
     "gatsby": "^5.16.0",
     "gatsby-plugin-manifest": "^5.16.0",
