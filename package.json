@@ -16,7 +16,7 @@
   "dependencies": {
     "docx": "^9.5.1",
     "file-saver": "^2.0.5",
-    "gatsby": "^5.16.0",
+    "gatsby": "^5.16.1",
     "gatsby-plugin-manifest": "^5.16.0",
     "js-yaml": "^4.1.1",
     "jspdf": "^4.1.0",
