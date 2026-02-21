@@ -27,7 +27,7 @@ const config: GatsbyConfig = {
         short_name: `Goalie Gen`,
         start_url: `/`,
         background_color: `#FFFFFF`,
-        theme_color: `#002868`,
+        theme_color: `#00205B`,
         display: `standalone`,
         icon: `static/favicons/android-chrome-512x512.png`,
         icons: [

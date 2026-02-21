@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-usa-red: #BF0A30;
-  --color-usa-blue: #002868;
+  --color-usa-red: #AF272F;
+  --color-usa-blue: #00205B;
   --color-usa-white: #FFFFFF;
 }
 
@@ -44,11 +44,11 @@
   .text-usa-blue,
   .print\:text-usa-blue,
   h1, h2, h3 {
-    color: #002868 !important;
+    color: #00205B !important;
   }
 
   .border-usa-red {
-    border-color: #BF0A30 !important;
+    border-color: #AF272F !important;
   }
 
   /* Hide elements not needed in print */
@@ -127,7 +127,7 @@
 
   /* Print-specific colors */
   .print\:text-usa-blue {
-    color: #002868 !important;
+    color: #00205B !important;
   }
 
   .print\:text-gray-900 {

@@ -75,8 +75,8 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       const pageWidth = doc.internal.pageSize.width
       const pageHeight = doc.internal.pageSize.height
       const margin = 20
-      const usaBlue = [0, 40, 104] // RGB for #002868
-      const usaRed = [191, 10, 48] // RGB for #BF0A30
+      const usaBlue = [0, 32, 91] // RGB for #00205B
+      const usaRed = [175, 39, 47] // RGB for #AF272F
       
       let currentY = 15
 

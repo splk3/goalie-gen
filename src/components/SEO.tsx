@@ -53,7 +53,7 @@ export default function Seo({
       <meta name="twitter:image" content={socialImageUrl} />
       
       {/* Theme color */}
-      <meta name="theme-color" content="#002868" />
+      <meta name="theme-color" content="#00205B" />
     </>
   )
 }
