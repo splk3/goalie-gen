@@ -42,8 +42,8 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 ## 🎨 Design
 
 The site uses USA national colors:
-- Blue: `#002868` (usa-blue)
-- Red: `#BF0A30` (usa-red)
+- Blue: `#00205B` (usa-blue)
+- Red: `#AF272F` (usa-red)
 - White: `#FFFFFF` (usa-white)
 
 ## 📦 Available Scripts
