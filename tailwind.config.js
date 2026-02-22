@@ -9,8 +9,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'usa-red': '#BF0A30',
-        'usa-blue': '#002868',
+        'usa-red': '#AF272F',
+        'usa-blue': '#00205B',
         'usa-white': '#FFFFFF',
       },
     },
