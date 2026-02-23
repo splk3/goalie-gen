@@ -35,7 +35,7 @@
     "gatsby-plugin-typescript": "^5.16.0",
     "gh-pages": "^6.2.0",
     "postcss": "^8.4.49",
-    "tailwindcss": "^4.1.17",
+    "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3"
   },
   "repository": {
