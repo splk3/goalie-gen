@@ -8,11 +8,10 @@ export default function DarkModeToggle() {
   React.useEffect(() => {
     setMounted(true)
     
-    // Check for saved preference or system preference
+    // Only restore dark mode if the user has explicitly saved that preference
     const savedTheme = localStorage.getItem('theme')
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+    if (savedTheme === 'dark') {
       setDarkMode(true)
     } else {
       setDarkMode(false)
