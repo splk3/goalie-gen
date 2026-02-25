@@ -24,10 +24,10 @@
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/postcss": "^4.2.0",
     "@types/file-saver": "^2.0.7",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^25.2.3",
+    "@types/node": "^25.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.24",
@@ -35,7 +35,7 @@
     "gatsby-plugin-typescript": "^5.16.0",
     "gh-pages": "^6.2.0",
     "postcss": "^8.4.49",
-    "tailwindcss": "^4.1.17",
+    "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3"
   },
   "repository": {
