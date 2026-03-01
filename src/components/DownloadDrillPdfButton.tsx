@@ -1,6 +1,7 @@
 import * as React from "react"
 import { jsPDF } from "jspdf"
 import { trackEvent } from "../utils/analytics"
+import { getVideoThumbnailUrl } from "../utils/videoUtils"
 
 interface DrillData {
   name: string
@@ -28,36 +29,6 @@ const formatTag = (tag: string): string => {
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
-}
-
-const getYouTubeVideoId = (url: string): string => {
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/)
-  return match ? match[1] : ''
-}
-
-const getVimeoVideoId = (url: string): string => {
-  const match = url.match(/vimeo\.com\/(\d+)/)
-  return match ? match[1] : ''
-}
-
-const getVideoThumbnailUrl = async (videoUrl: string): Promise<string> => {
-  const youtubeId = getYouTubeVideoId(videoUrl)
-  if (youtubeId) {
-    return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
-  }
-  const vimeoId = getVimeoVideoId(videoUrl)
-  if (vimeoId) {
-    try {
-      const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`)
-      const data = await res.json()
-      if (data && data.thumbnail_url) {
-        return data.thumbnail_url
-      }
-    } catch (err) {
-      console.error('Failed to fetch Vimeo thumbnail URL:', err)
-    }
-  }
-  return ''
 }
 
 export default function DownloadDrillPdfButton({ drillData, drillFolder }: DownloadDrillPdfButtonProps) {
@@ -371,7 +342,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
             const thumbInfo = await loadImageAsDataURL(thumbnailUrl)
             const thumbHeight = 18
             const thumbWidth = (thumbInfo.width / thumbInfo.height) * thumbHeight
-            doc.addImage(thumbInfo.dataURL, 'JPEG', margin, currentY, thumbWidth, thumbHeight)
+            doc.addImage(thumbInfo.dataURL, 'PNG', margin, currentY, thumbWidth, thumbHeight)
             doc.setTextColor(0, 0, 0)
             doc.setFontSize(8)
             doc.setFont(undefined, 'normal')
