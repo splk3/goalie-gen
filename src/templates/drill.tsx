@@ -249,7 +249,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       {/* Gold Certification Footer - Hidden in print */}
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-8 mt-12 print:hidden">
         <div className="container mx-auto px-4">
-          <UsaHockeyGoldBanner showCopyright />
+          <UsaHockeyGoldBanner showCopyright showTerms />
         </div>
       </footer>
     </div>

@@ -1,8 +1,10 @@
 import * as React from "react"
 import { withPrefix } from "gatsby"
+import TermsPopup from "./TermsPopup"
 
 interface UsaHockeyGoldBannerProps {
   showCopyright?: boolean
+  showTerms?: boolean
 }
 
 /**
@@ -10,7 +12,7 @@ interface UsaHockeyGoldBannerProps {
  * Displays the Gold Level Coach certification badge alongside program information.
  * Used in the welcome section of the home page and as a footer on all other pages.
  */
-export default function UsaHockeyGoldBanner({ showCopyright = false }: UsaHockeyGoldBannerProps) {
+export default function UsaHockeyGoldBanner({ showCopyright = false, showTerms = false }: UsaHockeyGoldBannerProps) {
   return (
     <>
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -46,6 +48,11 @@ export default function UsaHockeyGoldBanner({ showCopyright = false }: UsaHockey
         <p className="text-center text-sm mt-4 opacity-80">
           © {new Date().getFullYear()} Patrick Boyle, Katie Jablynski, and James Kujawski
         </p>
+      )}
+      {showTerms && (
+        <div className="text-center mt-2">
+          <TermsPopup />
+        </div>
       )}
     </>
   )
