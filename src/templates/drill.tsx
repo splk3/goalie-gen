@@ -242,6 +242,17 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
+        {/* Gold Certification Footer - Only visible when printing */}
+        <div className="hidden print:block print:mt-6 print:pt-4 print:border-t-2 print:border-gray-300">
+          <div className="flex items-center gap-4">
+            <img
+              src="/images/usahockey/usahockey-gold-certification.png"
+              alt="USA Hockey Goaltending Gold Level Coach Certification"
+              className="h-16 object-contain"
+            />
+          </div>
+        </div>
+
         {/* Print and Back Buttons - Hidden in print */}
         <div className="mt-8 flex gap-4 print:hidden">
           <button

@@ -365,6 +365,17 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
         }
       }
 
+      // Gold certification logo at bottom of page
+      try {
+        const goldLogoInfo = await loadImageAsDataURL('/images/usahockey/usahockey-gold-certification.png')
+        const goldLogoHeight = 16
+        const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight
+        const goldLogoY = pageHeight - margin - goldLogoHeight
+        doc.addImage(goldLogoInfo.dataURL, 'PNG', margin, goldLogoY, goldLogoWidth, goldLogoHeight)
+      } catch (error) {
+        console.error('Error loading gold certification logo:', error)
+      }
+
       // Generate PDF blob and download
       const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, '_')}.pdf`
       const blob = doc.output('blob')
