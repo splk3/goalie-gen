@@ -20,7 +20,7 @@ export default function UsaHockeyGoldBanner() {
       </div>
       <div className="flex-1">
         <p className="text-lg">
-          This website was developed to meet the requirements of the{" "}
+          This website was developed as part of the{" "}
           <a
             href="https://lms.usahockeylearningcenter.com/pages/36/goalie-development"
             target="_blank"
