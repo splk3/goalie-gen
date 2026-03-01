@@ -1,6 +1,7 @@
 import * as React from "react"
 import { jsPDF } from "jspdf"
 import { trackEvent } from "../utils/analytics"
+import { getVideoThumbnailUrl } from "../utils/videoUtils"
 
 interface DrillData {
   name: string
@@ -318,6 +319,50 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
           doc.text(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY)
           skillsRightY += 4
         })
+      }
+
+      // Video section
+      if (drillData.video) {
+        currentY = Math.max(skillsLeftY, skillsRightY) + 6
+
+        doc.setDrawColor(150, 150, 150)
+        doc.setLineWidth(0.5)
+        doc.line(margin, currentY, pageWidth - margin, currentY)
+        currentY += 6
+
+        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+        doc.setFontSize(12)
+        doc.setFont(undefined, 'bold')
+        doc.text("Video Demonstration", margin, currentY)
+        currentY += 6
+
+        try {
+          const thumbnailUrl = await getVideoThumbnailUrl(drillData.video)
+          if (thumbnailUrl) {
+            const thumbInfo = await loadImageAsDataURL(thumbnailUrl)
+            const thumbHeight = 18
+            const thumbWidth = (thumbInfo.width / thumbInfo.height) * thumbHeight
+            doc.addImage(thumbInfo.dataURL, 'PNG', margin, currentY, thumbWidth, thumbHeight)
+            doc.setTextColor(0, 0, 0)
+            doc.setFontSize(8)
+            doc.setFont(undefined, 'normal')
+            const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin - thumbWidth - 4)
+            doc.text(videoLines, margin + thumbWidth + 4, currentY + 6)
+          } else {
+            addVideoUrlText()
+          }
+        } catch (err) {
+          console.error('Error loading video thumbnail for PDF:', err)
+          addVideoUrlText()
+        }
+
+        function addVideoUrlText() {
+          doc.setTextColor(0, 0, 0)
+          doc.setFontSize(8)
+          doc.setFont(undefined, 'normal')
+          const videoLines = doc.splitTextToSize(drillData.video!, pageWidth - 2 * margin)
+          doc.text(videoLines, margin, currentY)
+        }
       }
 
       // Generate PDF blob and download
