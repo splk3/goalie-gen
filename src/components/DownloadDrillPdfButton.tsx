@@ -30,6 +30,36 @@ const formatTag = (tag: string): string => {
     .join(' ')
 }
 
+const getYouTubeVideoId = (url: string): string => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/)
+  return match ? match[1] : ''
+}
+
+const getVimeoVideoId = (url: string): string => {
+  const match = url.match(/vimeo\.com\/(\d+)/)
+  return match ? match[1] : ''
+}
+
+const getVideoThumbnailUrl = async (videoUrl: string): Promise<string> => {
+  const youtubeId = getYouTubeVideoId(videoUrl)
+  if (youtubeId) {
+    return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
+  }
+  const vimeoId = getVimeoVideoId(videoUrl)
+  if (vimeoId) {
+    try {
+      const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`)
+      const data = await res.json()
+      if (data && data.thumbnail_url) {
+        return data.thumbnail_url
+      }
+    } catch (err) {
+      console.error('Failed to fetch Vimeo thumbnail URL:', err)
+    }
+  }
+  return ''
+}
+
 export default function DownloadDrillPdfButton({ drillData, drillFolder }: DownloadDrillPdfButtonProps) {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
 
@@ -318,6 +348,50 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
           doc.text(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY)
           skillsRightY += 4
         })
+      }
+
+      // Video section
+      if (drillData.video) {
+        currentY = Math.max(skillsLeftY, skillsRightY) + 6
+
+        doc.setDrawColor(150, 150, 150)
+        doc.setLineWidth(0.5)
+        doc.line(margin, currentY, pageWidth - margin, currentY)
+        currentY += 6
+
+        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2])
+        doc.setFontSize(12)
+        doc.setFont(undefined, 'bold')
+        doc.text("Video Demonstration", margin, currentY)
+        currentY += 6
+
+        try {
+          const thumbnailUrl = await getVideoThumbnailUrl(drillData.video)
+          if (thumbnailUrl) {
+            const thumbInfo = await loadImageAsDataURL(thumbnailUrl)
+            const thumbHeight = 18
+            const thumbWidth = (thumbInfo.width / thumbInfo.height) * thumbHeight
+            doc.addImage(thumbInfo.dataURL, 'JPEG', margin, currentY, thumbWidth, thumbHeight)
+            doc.setTextColor(0, 0, 0)
+            doc.setFontSize(8)
+            doc.setFont(undefined, 'normal')
+            const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin - thumbWidth - 4)
+            doc.text(videoLines, margin + thumbWidth + 4, currentY + 6)
+          } else {
+            addVideoUrlText()
+          }
+        } catch (err) {
+          console.error('Error loading video thumbnail for PDF:', err)
+          addVideoUrlText()
+        }
+
+        function addVideoUrlText() {
+          doc.setTextColor(0, 0, 0)
+          doc.setFontSize(8)
+          doc.setFont(undefined, 'normal')
+          const videoLines = doc.splitTextToSize(drillData.video!, pageWidth - 2 * margin)
+          doc.text(videoLines, margin, currentY)
+        }
       }
 
       // Generate PDF blob and download

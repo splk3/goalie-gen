@@ -36,23 +36,62 @@ const formatTag = (tag: string): string => {
     .join(' ')
 }
 
+const getYouTubeVideoId = (url: string): string => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/)
+  return match ? match[1] : ''
+}
+
+const getVimeoVideoId = (url: string): string => {
+  const match = url.match(/vimeo\.com\/(\d+)/)
+  return match ? match[1] : ''
+}
+
+const getEmbedUrl = (videoUrl: string): string => {
+  const youtubeId = getYouTubeVideoId(videoUrl)
+  if (youtubeId) return `https://www.youtube.com/embed/${youtubeId}`
+  const vimeoId = getVimeoVideoId(videoUrl)
+  if (vimeoId) return `https://player.vimeo.com/video/${vimeoId}`
+  return ''
+}
+
 const getVideoThumbnail = (videoUrl: string): string => {
-  const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/
-  const match = videoUrl.match(youtubeRegex)
-  if (match && match[1]) {
-    return `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg`
+  const youtubeId = getYouTubeVideoId(videoUrl)
+  if (youtubeId) {
+    return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
   }
   return ''
 }
 
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext
+  const [vimeoThumbnail, setVimeoThumbnail] = React.useState<string>('')
+
+  React.useEffect(() => {
+    if (drillData.video) {
+      const vimeoId = getVimeoVideoId(drillData.video)
+      if (vimeoId) {
+        fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.thumbnail_url) {
+              setVimeoThumbnail(data.thumbnail_url)
+            }
+          })
+          .catch((err) => {
+            console.error('Failed to fetch Vimeo thumbnail:', err)
+          })
+      }
+    }
+  }, [drillData.video])
 
   const handlePrint = () => {
     window.print()
   }
 
-  const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : ''
+  const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : ''
+  const videoThumbnail = drillData.video
+    ? getVideoThumbnail(drillData.video) || vimeoThumbnail
+    : ''
   
   // Apply max height when there are multiple images to keep layout compact
   const hasMultipleImages = (drillData.images || []).length >= 2
@@ -168,13 +207,24 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Video Section - Hidden in print */}
-        {drillData.video && (
-          <div className="mb-8 print:hidden">
-            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
+        {/* Video Section */}
+        {drillData.video && embedUrl && (
+          <div className="mb-8 print:mb-4">
+            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4 print:text-lg print:mb-2 print:text-usa-blue">
               Video Demonstration
             </h2>
-            <div className="flex items-center gap-4">
+            {/* Embedded player - hidden when printing */}
+            <div className="relative w-full print:hidden" style={{ paddingBottom: '56.25%' }}>
+              <iframe
+                src={embedUrl}
+                title="Video Demonstration"
+                className="absolute inset-0 w-full h-full rounded-lg"
+                allowFullScreen
+                allow="autoplay; fullscreen; picture-in-picture"
+              />
+            </div>
+            {/* Thumbnail + link - only visible when printing */}
+            <div className="hidden print:flex items-center gap-4">
               {videoThumbnail && (
                 <img
                   src={videoThumbnail}
@@ -182,14 +232,9 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                   className="w-32 h-24 object-cover rounded"
                 />
               )}
-              <a
-                href={drillData.video}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-usa-blue dark:text-blue-400 hover:underline font-semibold"
-              >
-                Watch Video →
-              </a>
+              <span className="text-usa-blue font-semibold print:text-sm break-all">
+                Video: {drillData.video}
+              </span>
             </div>
           </div>
         )}
