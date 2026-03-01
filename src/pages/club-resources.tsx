@@ -75,7 +75,7 @@ export default function ClubResources() {
 
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-8 mt-12">
         <div className="container mx-auto px-4">
-          <UsaHockeyGoldBanner />
+          <UsaHockeyGoldBanner showCopyright />
         </div>
       </footer>
     </div>
