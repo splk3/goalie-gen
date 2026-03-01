@@ -86,7 +86,7 @@ export default function CoachResources() {
       </main>
 
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-8 mt-12">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container mx-auto px-4">
           <UsaHockeyGoldBanner />
         </div>
       </footer>
