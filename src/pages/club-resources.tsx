@@ -4,6 +4,7 @@ import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import ExternalLinkButton from "../components/ExternalLinkButton"
+import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner"
 
 export default function ClubResources() {
   return (
@@ -71,6 +72,12 @@ export default function ClubResources() {
           </div>
         </div>
       </main>
+
+      <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-8 mt-12">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <UsaHockeyGoldBanner />
+        </div>
+      </footer>
     </div>
   )
 }

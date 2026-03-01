@@ -8,6 +8,7 @@ import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
 import INeedADrillButton from "../components/INeedADrillButton"
 import NavigationButton from "../components/NavigationButton"
 import TermsPopup from "../components/TermsPopup"
+import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner"
 
 export default function Home() {
   const data = useStaticQuery(graphql`
@@ -39,15 +40,9 @@ export default function Home() {
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-shrink-0">
-              <Logo variant="alt" format="png" width={120} height={120} />
-            </div>
             <div className="flex-1">
               <h2 className="text-3xl font-bold mb-4">Welcome</h2>
-              <p className="text-lg">
-                This website makes it easy for youth ice hockey teams and clubs to generate 
-                customized goaltending development plans.
-              </p>
+              <UsaHockeyGoldBanner />
             </div>
             <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
               <INeedADrillButton />

@@ -6,6 +6,7 @@ import DarkModeToggle from "../components/DarkModeToggle"
 import ExternalLinkButton from "../components/ExternalLinkButton"
 import DownloadMaterialButton from "../components/DownloadMaterialButton"
 import GoalieJournalButton from "../components/GoalieJournalButton"
+import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner"
 
 export default function CoachResources() {
   return (
@@ -83,6 +84,12 @@ export default function CoachResources() {
           </div>
         </div>
       </main>
+
+      <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-8 mt-12">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <UsaHockeyGoldBanner />
+        </div>
+      </footer>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import Seo from "../components/SEO"
 import Logo from "../components/Logo"
 import DarkModeToggle from "../components/DarkModeToggle"
 import Pagination from "../components/Pagination"
+import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner"
 
 interface DrillNode {
   slug: string
@@ -409,6 +410,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           </Link>
         </div>
       </main>
+
+      <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-8 mt-12">
+        <div className="container mx-auto px-4">
+          <UsaHockeyGoldBanner />
+        </div>
+      </footer>
     </div>
   )
 }
