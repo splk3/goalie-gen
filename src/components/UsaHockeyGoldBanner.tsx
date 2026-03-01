@@ -15,7 +15,6 @@ export default function UsaHockeyGoldBanner() {
           alt="USA Hockey Goaltending Gold Level Coach Certification"
           width={120}
           height={120}
-          loading="lazy"
           className="max-w-full h-auto"
         />
       </div>
