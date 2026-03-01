@@ -1,5 +1,5 @@
 import * as React from "react"
-import { withPrefix } from "gatsby"
+import { withPrefix, useStaticQuery, graphql } from "gatsby"
 import TermsPopup from "./TermsPopup"
 
 interface UsaHockeyGoldBannerProps {
@@ -13,6 +13,15 @@ interface UsaHockeyGoldBannerProps {
  * Used in the welcome section of the home page and as a footer on all other pages.
  */
 export default function UsaHockeyGoldBanner({ showCopyright = false, showTerms = false }: UsaHockeyGoldBannerProps) {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          copyrightYear
+        }
+      }
+    }
+  `)
   return (
     <>
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -46,7 +55,7 @@ export default function UsaHockeyGoldBanner({ showCopyright = false, showTerms =
       </div>
       {showCopyright && (
         <p className="text-center text-sm mt-4 opacity-80">
-          © {new Date().getFullYear()} Patrick Boyle, Katie Jablynski, and James Kujawski
+          © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James Kujawski
         </p>
       )}
       {showTerms && (
