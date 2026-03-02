@@ -250,7 +250,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <img
               src="/images/usahockey/usahockey-gold-certification.png"
               alt="USA Hockey Goaltending Gold Level Coach Certification"
-              className="h-10 object-contain"
+              className="object-contain"
+              style={{ maxHeight: '0.5in', width: 'auto', height: 'auto' }}
             />
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com
