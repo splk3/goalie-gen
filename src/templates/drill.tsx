@@ -51,8 +51,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   // Apply max height when there are multiple images to keep layout compact
   const hasMultipleImages = (drillData.images || []).length >= 2
   const imageClasses = hasMultipleImages
-    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[200px]"
-    : "w-full h-auto object-contain print:max-h-[300px]"
+    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[140px]"
+    : "w-full h-auto object-contain print:max-h-[200px]"
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
@@ -245,14 +245,14 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
 
         {/* Gold Certification Footer - Only visible when printing */}
-        <div className="hidden print:block print:mt-6 print:pt-4 print:border-t-2 print:border-gray-300 break-before-avoid">
-          <div className="flex items-center gap-4">
+        <div className="hidden print:block print:mt-3 print:pt-2 print:border-t-2 print:border-gray-300 break-before-avoid">
+          <div className="flex items-center gap-3">
             <img
               src="/images/usahockey/usahockey-gold-certification.png"
               alt="USA Hockey Goaltending Gold Level Coach Certification"
-              className="h-16 object-contain"
+              className="h-10 object-contain"
             />
-            <p className="text-xs text-gray-700">
+            <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com
             </p>
           </div>
