@@ -78,6 +78,15 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       const margin = 20
       const usaBlue = [0, 32, 91] // RGB for #00205B
       const usaRed = [175, 39, 47] // RGB for #AF272F
+
+      // Gold section dimensions - defined early so image height calculations can reserve space
+      const goldLogoHeight = 16
+      const goldLogoY = pageHeight - margin - goldLogoHeight
+      const contentBottomLimit = goldLogoY - 12  // separator gap + padding above gold logo
+
+      // Estimated space (mm) needed for sections rendered below the main content columns
+      const skillsSectionEstimate = 40
+      const videoSectionEstimate = drillData.video ? 35 : 0
       
       let currentY = 15
 
@@ -193,7 +202,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
         
         // Calculate scaled image heights
         const maxImageWidth = rightColumnWidth
-        const availableHeight = pageHeight - currentY - 50 // Reserve space for skills section
+        const availableHeight = contentBottomLimit - currentY - skillsSectionEstimate - videoSectionEstimate
         const maxImageHeight = imageInfos.length > 0 ? (availableHeight - (imageInfos.length - 1) * 4) / imageInfos.length : 0
         
         imageInfos.forEach((imageInfo) => {
@@ -252,7 +261,7 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       
       if (imageInfos.length > 0) {
         const maxImageWidth = rightColumnWidth
-        const availableHeight = pageHeight - contentStartY - 50
+        const availableHeight = contentBottomLimit - contentStartY - skillsSectionEstimate - videoSectionEstimate
         const maxImageHeight = (availableHeight - (imageInfos.length - 1) * 4) / imageInfos.length
         
         imageInfos.forEach((imageInfo) => {
@@ -368,10 +377,22 @@ export default function DownloadDrillPdfButton({ drillData, drillFolder }: Downl
       // Gold certification logo at bottom of page
       try {
         const goldLogoInfo = await loadImageAsDataURL('/images/usahockey/usahockey-gold-certification.png')
-        const goldLogoHeight = 16
         const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight
-        const goldLogoY = pageHeight - margin - goldLogoHeight
+
+        // Separator line before gold logo section
+        doc.setDrawColor(150, 150, 150)
+        doc.setLineWidth(0.5)
+        doc.line(margin, goldLogoY - 4, pageWidth - margin, goldLogoY - 4)
+
         doc.addImage(goldLogoInfo.dataURL, 'PNG', margin, goldLogoY, goldLogoWidth, goldLogoHeight)
+
+        // Text next to gold logo
+        doc.setTextColor(0, 0, 0)
+        doc.setFontSize(7)
+        doc.setFont(undefined, 'normal')
+        const goldText = "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com"
+        const goldTextLines = doc.splitTextToSize(goldText, pageWidth - margin - goldLogoWidth - margin - 4)
+        doc.text(goldTextLines, margin + goldLogoWidth + 4, goldLogoY + 5)
       } catch (error) {
         console.error('Error loading gold certification logo:', error)
       }

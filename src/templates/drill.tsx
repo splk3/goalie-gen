@@ -51,8 +51,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   // Apply max height when there are multiple images to keep layout compact
   const hasMultipleImages = (drillData.images || []).length >= 2
   const imageClasses = hasMultipleImages
-    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[280px]"
-    : "w-full h-auto object-contain"
+    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[200px]"
+    : "w-full h-auto object-contain print:max-h-[300px]"
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
@@ -62,13 +62,13 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <img 
             src="/images/usahockey/usahockey-goaltending.jpg" 
             alt="USA Hockey Goaltending"
-            className="h-16 object-contain"
+            className="h-12 object-contain"
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img 
             src="/images/usahockey/51-in-30.jpg" 
             alt="51 in 30 USA Hockey Goaltending"
-            className="h-16 object-contain"
+            className="h-12 object-contain"
           />
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
       <main className="container mx-auto px-4 py-8 print:py-0 print:px-0">
         {/* Drill Name */}
-        <div className="mb-6">
+        <div className="mb-6 print:mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
             {drillData.name}
           </h1>
@@ -243,13 +243,16 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
 
         {/* Gold Certification Footer - Only visible when printing */}
-        <div className="hidden print:block print:mt-6 print:pt-4 print:border-t-2 print:border-gray-300">
+        <div className="hidden print:block print:mt-6 print:pt-4 print:border-t-2 print:border-gray-300 break-before-avoid">
           <div className="flex items-center gap-4">
             <img
               src="/images/usahockey/usahockey-gold-certification.png"
               alt="USA Hockey Goaltending Gold Level Coach Certification"
               className="h-16 object-contain"
             />
+            <p className="text-xs text-gray-700">
+              This drill and the website on which it is hosted were developed as part of USA Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com
+            </p>
           </div>
         </div>
 
