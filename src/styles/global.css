@@ -146,6 +146,19 @@
     border-color: rgb(156 163 175) !important;
   }
 
+  .print\:border-t-2 {
+    border-top-width: 2px !important;
+    border-top-style: solid !important;
+  }
+
+  .print\:mt-3 {
+    margin-top: 0.75rem !important;
+  }
+
+  .print\:pt-2 {
+    padding-top: 0.5rem !important;
+  }
+
   /* Header logos: fixed physical size so they render consistently on all devices */
   .print-header-logo {
     height: auto !important;
