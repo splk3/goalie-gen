@@ -149,7 +149,8 @@
   /* Header logos: fixed physical size so they render consistently on all devices */
   .print-header-logo {
     height: auto !important;
-    max-height: 0.5in !important;
+    max-height: 0.4in !important;
+    max-width: 20% !important;
     width: auto !important;
   }
 }

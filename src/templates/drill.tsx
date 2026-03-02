@@ -62,13 +62,15 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <img 
             src="/images/usahockey/usahockey-goaltending.jpg" 
             alt="USA Hockey Goaltending"
-            className="h-8 object-contain print-header-logo"
+            className="object-contain print-header-logo"
+            style={{ maxHeight: '0.4in', width: 'auto', height: 'auto' }}
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img 
             src="/images/usahockey/51-in-30.jpg" 
             alt="51 in 30 USA Hockey Goaltending"
-            className="h-8 object-contain print-header-logo"
+            className="object-contain print-header-logo"
+            style={{ maxHeight: '0.4in', width: 'auto', height: 'auto' }}
           />
         </div>
       </div>
