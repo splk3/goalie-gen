@@ -145,4 +145,11 @@
   .print\:border-gray-400 {
     border-color: rgb(156 163 175) !important;
   }
+
+  /* Header logos: fixed physical size so they render consistently on all devices */
+  .print-header-logo {
+    height: auto !important;
+    max-height: 0.5in !important;
+    width: auto !important;
+  }
 }
