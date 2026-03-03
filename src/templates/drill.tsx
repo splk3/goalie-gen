@@ -5,6 +5,7 @@ import Logo from '../components/Logo'
 import DarkModeToggle from '../components/DarkModeToggle'
 import DownloadDrillPdfButton from '../components/DownloadDrillPdfButton'
 import { getEmbedUrl, getVideoThumbnail } from '../utils/videoUtils'
+import { generateDrillPdf } from '../utils/generateDrillPdf'
 import UsaHockeyGoldBanner from '../components/UsaHockeyGoldBanner'
 
 interface DrillPageContext {
@@ -41,8 +42,26 @@ const formatTag = (tag: string): string => {
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext
 
-  const handlePrint = () => {
-    window.print()
+  const [isPrinting, setIsPrinting] = React.useState(false)
+
+  const handlePrint = async () => {
+    setIsPrinting(true)
+    try {
+      const doc = await generateDrillPdf(drillData, drillFolder)
+      doc.autoPrint()
+      const blob = doc.output('blob')
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      // Revoke the object URL after the window has had time to load,
+      // or after a delay even if the window could not be opened
+      setTimeout(() => URL.revokeObjectURL(url), 60000)
+    } catch (error) {
+      console.error('Error generating print PDF:', error)
+      // Fallback to native browser print
+      window.print()
+    } finally {
+      setIsPrinting(false)
+    }
   }
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : ''
@@ -51,7 +70,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   // Apply max height when there are multiple images to keep layout compact
   const hasMultipleImages = (drillData.images || []).length >= 2
   const imageClasses = hasMultipleImages
-    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[280px]"
+    ? "w-full h-auto object-contain max-h-[300px]"
     : "w-full h-auto object-contain"
 
   return (
@@ -62,13 +81,15 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <img 
             src="/images/usahockey/usahockey-goaltending.jpg" 
             alt="USA Hockey Goaltending"
-            className="h-16 object-contain"
+            className="object-contain print-header-logo"
+            style={{ maxHeight: '0.4in', width: 'auto', height: 'auto' }}
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img 
             src="/images/usahockey/51-in-30.jpg" 
             alt="51 in 30 USA Hockey Goaltending"
-            className="h-16 object-contain"
+            className="object-contain print-header-logo"
+            style={{ maxHeight: '0.4in', width: 'auto', height: 'auto' }}
           />
         </div>
       </div>
@@ -87,7 +108,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
       <main className="container mx-auto px-4 py-8 print:py-0 print:px-0">
         {/* Drill Name */}
-        <div className="mb-6">
+        <div className="mb-6 print:mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
             {drillData.name}
           </h1>
@@ -242,13 +263,31 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
+        {/* Gold Certification Footer - Only visible when printing */}
+        <div className="hidden print:block print:mt-3 print:pt-2 print:border-t-2 print:border-gray-400 break-before-avoid">
+          <div className="flex items-center gap-3">
+            <img
+              src="/images/usahockey/usahockey-gold-certification.png"
+              alt="USA Hockey Goaltending Gold Level Coach Certification"
+              className="object-contain"
+              style={{ maxHeight: '0.5in', width: 'auto', height: 'auto' }}
+            />
+            <p className="text-[10px] text-gray-700">
+              This drill and the website on which it is hosted were developed as part of USA Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com
+            </p>
+          </div>
+        </div>
+
         {/* Print and Back Buttons - Hidden in print */}
         <div className="mt-8 flex gap-4 print:hidden">
           <button
             onClick={handlePrint}
-            className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            disabled={isPrinting}
+            className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+              isPrinting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Print Drill
+            {isPrinting ? 'Generating...' : 'Print Drill'}
           </button>
           <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
           <Link
