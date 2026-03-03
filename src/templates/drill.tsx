@@ -5,6 +5,7 @@ import Logo from '../components/Logo'
 import DarkModeToggle from '../components/DarkModeToggle'
 import DownloadDrillPdfButton from '../components/DownloadDrillPdfButton'
 import { getEmbedUrl, getVideoThumbnail } from '../utils/videoUtils'
+import { generateDrillPdf } from '../utils/generateDrillPdf'
 import UsaHockeyGoldBanner from '../components/UsaHockeyGoldBanner'
 
 interface DrillPageContext {
@@ -41,8 +42,27 @@ const formatTag = (tag: string): string => {
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext
 
-  const handlePrint = () => {
-    window.print()
+  const [isPrinting, setIsPrinting] = React.useState(false)
+
+  const handlePrint = async () => {
+    setIsPrinting(true)
+    try {
+      const doc = await generateDrillPdf(drillData, drillFolder)
+      doc.autoPrint()
+      const blob = doc.output('blob')
+      const url = URL.createObjectURL(blob)
+      const printWindow = window.open(url, '_blank')
+      // Revoke the object URL after the window has had time to load
+      if (printWindow) {
+        setTimeout(() => URL.revokeObjectURL(url), 60000)
+      }
+    } catch (error) {
+      console.error('Error generating print PDF:', error)
+      // Fallback to native browser print
+      window.print()
+    } finally {
+      setIsPrinting(false)
+    }
   }
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : ''
@@ -263,9 +283,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         <div className="mt-8 flex gap-4 print:hidden">
           <button
             onClick={handlePrint}
-            className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            disabled={isPrinting}
+            className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+              isPrinting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Print Drill
+            {isPrinting ? 'Generating...' : 'Print Drill'}
           </button>
           <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
           <Link
