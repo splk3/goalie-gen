@@ -372,16 +372,20 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               key={drill.slug}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700">
-                <img
-                  src={`/drills/${drill.slug}/${drill.image}`}
-                  alt={drill.name}
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <Link to={`/drills/${drill.slug}`} className="block">
+                <div className="aspect-video bg-gray-200 dark:bg-gray-700">
+                  <img
+                    src={`/drills/${drill.slug}/${drill.image}`}
+                    alt={drill.name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </Link>
               <div className="p-6">
                 <h2 className="text-xl font-bold text-usa-blue dark:text-blue-400 mb-4">
-                  {drill.name}
+                  <Link to={`/drills/${drill.slug}`} className="hover:underline">
+                    {drill.name}
+                  </Link>
                 </h2>
                 <Link
                   to={`/drills/${drill.slug}`}
