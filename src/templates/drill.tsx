@@ -200,6 +200,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     allowFullScreen
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                     referrerPolicy="strict-origin-when-cross-origin"
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-presentation"
                   />
                 </div>
                 {/* Thumbnail + link - only visible when printing */}
