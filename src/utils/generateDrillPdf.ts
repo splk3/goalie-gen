@@ -172,9 +172,8 @@ export const generateDrillPdf = async (drillData: DrillData, drillFolder: string
   const rightColumnWidth = (pageWidth - 3 * margin) / 2
   const rightColumnX = margin + leftColumnWidth + margin
 
-  // Load images first to calculate total height
+  // Load images first so right-column rendering can calculate scaled heights
   const imageInfos: Array<{ dataURL: string; width: number; height: number }> = []
-  let totalImageHeight = 0
 
   if (drillData.images && drillData.images.length > 0) {
     for (let i = 0; i < drillData.images.length; i++) {
@@ -186,28 +185,7 @@ export const generateDrillPdf = async (drillData: DrillData, drillFolder: string
         console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, error)
       }
     }
-
-    // Calculate scaled image heights
-    const maxImageWidth = rightColumnWidth
-    const availableHeight = contentBottomLimit - currentY - skillsSectionEstimate - videoSectionEstimate
-    const maxImageHeight = imageInfos.length > 0 ? (availableHeight - (imageInfos.length - 1) * 4) / imageInfos.length : 0
-
-    imageInfos.forEach((imageInfo) => {
-      const aspectRatio = imageInfo.width / imageInfo.height
-      let imgWidth = maxImageWidth
-      let imgHeight = imgWidth / aspectRatio
-
-      if (imgHeight > maxImageHeight) {
-        imgHeight = maxImageHeight
-        imgWidth = imgHeight * aspectRatio
-      }
-
-      totalImageHeight += imgHeight + 4
-    })
   }
-
-  // Suppress unused variable warning
-  void totalImageHeight
 
   // Left column: Description and Coaching Points
   const contentStartY = currentY

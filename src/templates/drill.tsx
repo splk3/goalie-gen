@@ -51,11 +51,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       doc.autoPrint()
       const blob = doc.output('blob')
       const url = URL.createObjectURL(blob)
-      const printWindow = window.open(url, '_blank')
-      // Revoke the object URL after the window has had time to load
-      if (printWindow) {
-        setTimeout(() => URL.revokeObjectURL(url), 60000)
-      }
+      window.open(url, '_blank')
+      // Revoke the object URL after the window has had time to load,
+      // or after a delay even if the window could not be opened
+      setTimeout(() => URL.revokeObjectURL(url), 60000)
     } catch (error) {
       console.error('Error generating print PDF:', error)
       // Fallback to native browser print
@@ -71,8 +70,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   // Apply max height when there are multiple images to keep layout compact
   const hasMultipleImages = (drillData.images || []).length >= 2
   const imageClasses = hasMultipleImages
-    ? "w-full h-auto object-contain max-h-[300px] print:max-h-[140px]"
-    : "w-full h-auto object-contain print:max-h-[200px]"
+    ? "w-full h-auto object-contain max-h-[300px]"
+    : "w-full h-auto object-contain"
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
