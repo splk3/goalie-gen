@@ -198,8 +198,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     title="Video Demonstration"
                     className="absolute inset-0 w-full h-full rounded-lg"
                     allowFullScreen
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    sandbox="allow-scripts allow-presentation allow-popups"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                    referrerPolicy="strict-origin-when-cross-origin"
                   />
                 </div>
                 {/* Thumbnail + link - only visible when printing */}
