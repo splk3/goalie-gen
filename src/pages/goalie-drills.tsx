@@ -368,33 +368,27 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           {paginatedDrills.map((drill) => (
-            <div 
+            <Link
               key={drill.slug}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+              to={`/drills/${drill.slug}`}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow block"
             >
-              <Link to={`/drills/${drill.slug}`} className="block">
-                <div className="aspect-video bg-gray-200 dark:bg-gray-700">
-                  <img
-                    src={`/drills/${drill.slug}/${drill.image}`}
-                    alt={drill.name}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              </Link>
+              <div className="aspect-video bg-gray-200 dark:bg-gray-700">
+                <img
+                  src={`/drills/${drill.slug}/${drill.image}`}
+                  alt={drill.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div className="p-6">
                 <h2 className="text-xl font-bold text-usa-blue dark:text-blue-400 mb-4">
-                  <Link to={`/drills/${drill.slug}`} className="hover:underline">
-                    {drill.name}
-                  </Link>
+                  {drill.name}
                 </h2>
-                <Link
-                  to={`/drills/${drill.slug}`}
-                  className="inline-block bg-usa-blue hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition-colors"
-                >
+                <span className="inline-block bg-usa-blue dark:bg-blue-600 text-white font-semibold py-2 px-6 rounded">
                   View Drill
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
