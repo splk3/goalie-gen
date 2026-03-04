@@ -10,6 +10,7 @@ interface DrillNode {
   slug: string
   name: string
   images: string[]
+  drill_creation_date?: string
   tags: {
     skill_level?: string[]
     team_drill?: string[]
@@ -36,6 +37,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     slug: node.slug,
     name: node.name,
     image: node.images && node.images.length > 0 ? node.images[0] : 'placeholder.png',
+    drill_creation_date: node.drill_creation_date,
     tags: node.tags
   }))
 
@@ -111,12 +113,27 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     return 1
   }, [location?.search])
 
+  // Initialize sort from URL "sort" query parameter if present
+  const getInitialSort = React.useCallback(() => {
+    if (location?.search) {
+      const searchParams = new URLSearchParams(location.search)
+      const sortParam = searchParams.get("sort")
+      if (sortParam === "newest" || sortParam === "oldest") {
+        return sortParam
+      }
+    }
+    return "newest"
+  }, [location?.search])
+
   // State for selected filters - initialize from URL if present
   const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>(getInitialFilters)
 
   // State for pagination - initialize from URL if present
   const [currentPage, setCurrentPage] = React.useState<number>(getInitialPage)
   const itemsPerPage = 15
+
+  // State for sorting - initialize from URL if present
+  const [sortOrder, setSortOrder] = React.useState<"newest" | "oldest">(getInitialSort)
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
@@ -158,6 +175,25 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     })
   }, [drills, selectedFilters])
 
+  // Sort drills based on sortOrder
+  const sortedDrills = React.useMemo(() => {
+    const sorted = [...filteredDrills]
+
+    sorted.sort((a, b) => {
+      // Handle drills without dates - they go to the end
+      if (!a.drill_creation_date && !b.drill_creation_date) return 0
+      if (!a.drill_creation_date) return 1
+      if (!b.drill_creation_date) return -1
+
+      const dateA = new Date(a.drill_creation_date).getTime()
+      const dateB = new Date(b.drill_creation_date).getTime()
+
+      return sortOrder === "newest" ? dateB - dateA : dateA - dateB
+    })
+
+    return sorted
+  }, [filteredDrills, sortOrder])
+
   // Reset to page 1 when filters change
   // Use a stable key to prevent unnecessary rerenders
   const filterKey = React.useMemo(() => {
@@ -197,11 +233,35 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     window.history.replaceState(null, "", newUrl)
   }, [currentPage])
 
+  // Keep sort state synchronized with the URL
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const searchParams = new URLSearchParams(window.location.search)
+
+    if (sortOrder !== "newest") {
+      searchParams.set("sort", sortOrder)
+    } else {
+      // Remove "sort" when it's the default value to keep URLs clean
+      searchParams.delete("sort")
+    }
+
+    const searchString = searchParams.toString()
+    const newUrl =
+      window.location.pathname +
+      (searchString ? `?${searchString}` : "") +
+      window.location.hash
+
+    window.history.replaceState(null, "", newUrl)
+  }, [sortOrder])
+
   // Calculate pagination values
-  const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
+  const totalPages = Math.ceil(sortedDrills.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const paginatedDrills = filteredDrills.slice(startIndex, endIndex)
+  const paginatedDrills = sortedDrills.slice(startIndex, endIndex)
 
   // Toggle filter selection
   const toggleFilter = (category: string, value: string) => {
@@ -274,6 +334,29 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           <p className="text-lg">
             Develop your goalies during goalie-focused time or involve the whole team!
           </p>
+        </div>
+
+        {/* Sort Section */}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg mb-4">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-900 dark:text-gray-100 font-semibold">
+              Showing {sortedDrills.length} drill{sortedDrills.length !== 1 ? 's' : ''}
+            </span>
+            <div className="flex items-center gap-2">
+              <label htmlFor="sort-select" className="text-gray-900 dark:text-gray-100 font-semibold">
+                Sort by:
+              </label>
+              <select
+                id="sort-select"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+                className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Filter Section */}
@@ -429,6 +512,7 @@ export const query = graphql`
         slug
         name
         images
+        drill_creation_date
         tags {
           skill_level
           team_drill
