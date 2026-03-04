@@ -9,6 +9,7 @@ interface DrillData {
   coaching_points: string[]
   images: string[]
   video?: string
+  drill_creation_date?: string
   tags: {
     skill_level?: string[]
     team_drill?: string[]
@@ -187,6 +188,7 @@ export const sourceNodes: GatsbyNode['sourceNodes'] = async ({
           coaching_points: drillData.coaching_points,
           images: drillData.images,
           video: drillData.video,
+          drill_creation_date: drillData.drill_creation_date,
           tags: drillData.tags,
         }
         

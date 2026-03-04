@@ -16,6 +16,8 @@ images:
 
 video: https://example.com/video-url
 
+drill_creation_date: 2024-01-01
+
 tags:
   skill_level:
     - beginner
