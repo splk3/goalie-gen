@@ -10,6 +10,8 @@ interface DrillNode {
   slug: string
   name: string
   images: string[]
+  drill_creation_date: string
+  drill_updated_date?: string
   tags: {
     skill_level?: string[]
     team_drill?: string[]
@@ -36,6 +38,8 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     slug: node.slug,
     name: node.name,
     image: node.images && node.images.length > 0 ? node.images[0] : 'placeholder.png',
+    drill_creation_date: node.drill_creation_date,
+    drill_updated_date: node.drill_updated_date,
     tags: node.tags
   }))
 
@@ -111,12 +115,27 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     return 1
   }, [location?.search])
 
+  // Initialize sort from URL "sort" query parameter if present
+  const getInitialSort = React.useCallback(() => {
+    if (location?.search) {
+      const searchParams = new URLSearchParams(location.search)
+      const sortParam = searchParams.get("sort")
+      if (sortParam === "created_newest" || sortParam === "created_oldest" || sortParam === "updated_newest" || sortParam === "updated_oldest") {
+        return sortParam
+      }
+    }
+    return "updated_newest"
+  }, [location?.search])
+
   // State for selected filters - initialize from URL if present
   const [selectedFilters, setSelectedFilters] = React.useState<Record<string, string[]>>(getInitialFilters)
 
   // State for pagination - initialize from URL if present
   const [currentPage, setCurrentPage] = React.useState<number>(getInitialPage)
   const itemsPerPage = 15
+
+  // State for sorting - initialize from URL if present
+  const [sortOrder, setSortOrder] = React.useState<"created_newest" | "created_oldest" | "updated_newest" | "updated_oldest">(getInitialSort)
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
@@ -158,6 +177,41 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     })
   }, [drills, selectedFilters])
 
+  // Sort drills based on sortOrder
+  const sortedDrills = React.useMemo(() => {
+    const sorted = [...filteredDrills]
+
+    sorted.sort((a, b) => {
+      // Determine which date field to use based on sort order
+      const isUpdatedSort = sortOrder === "updated_newest" || sortOrder === "updated_oldest"
+      // When sorting by updated date, fall back to creation date if updated date is missing
+      const dateFieldA = isUpdatedSort ? (a.drill_updated_date || a.drill_creation_date) : a.drill_creation_date
+      const dateFieldB = isUpdatedSort ? (b.drill_updated_date || b.drill_creation_date) : b.drill_creation_date
+
+      // Handle drills without dates - they go to the end
+      if (!dateFieldA && !dateFieldB) return 0
+      if (!dateFieldA) return 1
+      if (!dateFieldB) return -1
+
+      const dateA = new Date(dateFieldA).getTime()
+      const dateB = new Date(dateFieldB).getTime()
+
+      // NaN guard - treat invalid dates as missing
+      const isInvalidA = Number.isNaN(dateA)
+      const isInvalidB = Number.isNaN(dateB)
+
+      if (isInvalidA && isInvalidB) return 0
+      if (isInvalidA) return 1
+      if (isInvalidB) return -1
+
+      // Sort based on direction (newest vs oldest)
+      const isNewest = sortOrder === "created_newest" || sortOrder === "updated_newest"
+      return isNewest ? dateB - dateA : dateA - dateB
+    })
+
+    return sorted
+  }, [filteredDrills, sortOrder])
+
   // Reset to page 1 when filters change
   // Use a stable key to prevent unnecessary rerenders
   const filterKey = React.useMemo(() => {
@@ -197,11 +251,35 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     window.history.replaceState(null, "", newUrl)
   }, [currentPage])
 
+  // Keep sort state synchronized with the URL
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const searchParams = new URLSearchParams(window.location.search)
+
+    if (sortOrder !== "updated_newest") {
+      searchParams.set("sort", sortOrder)
+    } else {
+      // Remove "sort" when it's the default value to keep URLs clean
+      searchParams.delete("sort")
+    }
+
+    const searchString = searchParams.toString()
+    const newUrl =
+      window.location.pathname +
+      (searchString ? `?${searchString}` : "") +
+      window.location.hash
+
+    window.history.replaceState(null, "", newUrl)
+  }, [sortOrder])
+
   // Calculate pagination values
-  const totalPages = Math.ceil(filteredDrills.length / itemsPerPage)
+  const totalPages = Math.ceil(sortedDrills.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const paginatedDrills = filteredDrills.slice(startIndex, endIndex)
+  const paginatedDrills = sortedDrills.slice(startIndex, endIndex)
 
   // Toggle filter selection
   const toggleFilter = (category: string, value: string) => {
@@ -274,6 +352,31 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           <p className="text-lg">
             Develop your goalies during goalie-focused time or involve the whole team!
           </p>
+        </div>
+
+        {/* Sort Section */}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg mb-4">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-900 dark:text-gray-100 font-semibold">
+              Showing {sortedDrills.length} drill{sortedDrills.length !== 1 ? 's' : ''}
+            </span>
+            <div className="flex items-center gap-2">
+              <label htmlFor="sort-select" className="text-gray-900 dark:text-gray-100 font-semibold">
+                Sort by:
+              </label>
+              <select
+                id="sort-select"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as "created_newest" | "created_oldest" | "updated_newest" | "updated_oldest")}
+                className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                <option value="created_newest">Creation Date: Newest First</option>
+                <option value="created_oldest">Creation Date: Oldest First</option>
+                <option value="updated_newest">Updated Date: Newest First</option>
+                <option value="updated_oldest">Updated Date: Oldest First</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Filter Section */}
@@ -428,6 +531,8 @@ export const query = graphql`
         slug
         name
         images
+        drill_creation_date
+        drill_updated_date
         tags {
           skill_level
           team_drill

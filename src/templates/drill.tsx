@@ -16,6 +16,8 @@ interface DrillPageContext {
     coaching_points: string[]
     images: string[]
     video?: string
+    drill_creation_date: string
+    drill_updated_date?: string
     tags: {
       skill_level?: string[]
       team_drill?: string[]
@@ -66,7 +68,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : ''
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : ''
-  
+
+  // Calculate the last updated date (use updated date if available, otherwise creation date)
+  const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date
+
   // Apply max height when there are multiple images to keep layout compact
   const hasMultipleImages = (drillData.images || []).length >= 2
   const imageClasses = hasMultipleImages
@@ -112,6 +117,14 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
             {drillData.name}
           </h1>
+        </div>
+
+        {/* Last Updated Date */}
+        <div className="mb-6 print:mb-4">
+          <span className="text-sm text-gray-600 dark:text-gray-400 print:text-gray-700">
+            <span className="font-semibold">Last Updated: </span>
+            {lastUpdatedDate}
+          </span>
         </div>
 
         {/* Age Group, Skill Level, Equipment */}
