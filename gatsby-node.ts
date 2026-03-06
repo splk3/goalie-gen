@@ -9,7 +9,8 @@ interface DrillData {
   coaching_points: string[]
   images: string[]
   video?: string
-  drill_creation_date?: string
+  drill_creation_date: string
+  drill_updated_date?: string
   tags: {
     skill_level?: string[]
     team_drill?: string[]
@@ -64,27 +65,61 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
   if (!data || typeof data !== 'object') {
     throw new Error(`[${drillFolder}] drill.yml must contain an object`)
   }
-  
+
   if (!data.name || typeof data.name !== 'string') {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'name' (string)`)
   }
-  
+
   if (!data.description || typeof data.description !== 'string') {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`)
   }
-  
+
   if (!Array.isArray(data.coaching_points)) {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'coaching_points' (array)`)
   }
-  
+
   if (!Array.isArray(data.images)) {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'images' (array)`)
   }
-  
+
   if (!data.tags || typeof data.tags !== 'object') {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'tags' (object)`)
   }
-  
+
+  // Validate drill_creation_date (required)
+  if (!data.drill_creation_date || typeof data.drill_creation_date !== 'string') {
+    throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_creation_date' (string in YYYY-MM-DD format)`)
+  }
+
+  // Validate date format and calendar validity
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+  if (!dateRegex.test(data.drill_creation_date)) {
+    throw new Error(`[${drillFolder}] drill_creation_date must be in YYYY-MM-DD format (e.g., 2024-01-15)`)
+  }
+
+  // Round-trip check to catch invalid dates like 2024-02-31
+  const creationDate = new Date(data.drill_creation_date)
+  if (creationDate.toISOString().slice(0, 10) !== data.drill_creation_date) {
+    throw new Error(`[${drillFolder}] drill_creation_date '${data.drill_creation_date}' is not a valid calendar date`)
+  }
+
+  // Validate drill_updated_date (optional, but must be valid if present)
+  if (data.drill_updated_date) {
+    if (typeof data.drill_updated_date !== 'string') {
+      throw new Error(`[${drillFolder}] drill_updated_date must be a string in YYYY-MM-DD format`)
+    }
+
+    if (!dateRegex.test(data.drill_updated_date)) {
+      throw new Error(`[${drillFolder}] drill_updated_date must be in YYYY-MM-DD format (e.g., 2024-01-15)`)
+    }
+
+    // Round-trip check for updated date
+    const updatedDate = new Date(data.drill_updated_date)
+    if (updatedDate.toISOString().slice(0, 10) !== data.drill_updated_date) {
+      throw new Error(`[${drillFolder}] drill_updated_date '${data.drill_updated_date}' is not a valid calendar date`)
+    }
+  }
+
   return true
 }
 
@@ -189,6 +224,7 @@ export const sourceNodes: GatsbyNode['sourceNodes'] = async ({
           images: drillData.images,
           video: drillData.video,
           drill_creation_date: drillData.drill_creation_date,
+          drill_updated_date: drillData.drill_updated_date,
           tags: drillData.tags,
         }
         

@@ -10,7 +10,8 @@ interface DrillNode {
   slug: string
   name: string
   images: string[]
-  drill_creation_date?: string
+  drill_creation_date: string
+  drill_updated_date?: string
   tags: {
     skill_level?: string[]
     team_drill?: string[]
@@ -38,6 +39,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     name: node.name,
     image: node.images && node.images.length > 0 ? node.images[0] : 'placeholder.png',
     drill_creation_date: node.drill_creation_date,
+    drill_updated_date: node.drill_updated_date,
     tags: node.tags
   }))
 
@@ -118,11 +120,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     if (location?.search) {
       const searchParams = new URLSearchParams(location.search)
       const sortParam = searchParams.get("sort")
-      if (sortParam === "newest" || sortParam === "oldest") {
+      if (sortParam === "created_newest" || sortParam === "created_oldest" || sortParam === "updated_newest" || sortParam === "updated_oldest") {
         return sortParam
       }
     }
-    return "newest"
+    return "created_newest"
   }, [location?.search])
 
   // State for selected filters - initialize from URL if present
@@ -133,7 +135,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const itemsPerPage = 15
 
   // State for sorting - initialize from URL if present
-  const [sortOrder, setSortOrder] = React.useState<"newest" | "oldest">(getInitialSort)
+  const [sortOrder, setSortOrder] = React.useState<"created_newest" | "created_oldest" | "updated_newest" | "updated_oldest">(getInitialSort)
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
@@ -180,15 +182,30 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     const sorted = [...filteredDrills]
 
     sorted.sort((a, b) => {
+      // Determine which date field to use based on sort order
+      const isUpdatedSort = sortOrder === "updated_newest" || sortOrder === "updated_oldest"
+      const dateFieldA = isUpdatedSort ? a.drill_updated_date : a.drill_creation_date
+      const dateFieldB = isUpdatedSort ? b.drill_updated_date : b.drill_creation_date
+
       // Handle drills without dates - they go to the end
-      if (!a.drill_creation_date && !b.drill_creation_date) return 0
-      if (!a.drill_creation_date) return 1
-      if (!b.drill_creation_date) return -1
+      if (!dateFieldA && !dateFieldB) return 0
+      if (!dateFieldA) return 1
+      if (!dateFieldB) return -1
 
-      const dateA = new Date(a.drill_creation_date).getTime()
-      const dateB = new Date(b.drill_creation_date).getTime()
+      const dateA = new Date(dateFieldA).getTime()
+      const dateB = new Date(dateFieldB).getTime()
 
-      return sortOrder === "newest" ? dateB - dateA : dateA - dateB
+      // NaN guard - treat invalid dates as missing
+      const isInvalidA = Number.isNaN(dateA)
+      const isInvalidB = Number.isNaN(dateB)
+
+      if (isInvalidA && isInvalidB) return 0
+      if (isInvalidA) return 1
+      if (isInvalidB) return -1
+
+      // Sort based on direction (newest vs oldest)
+      const isNewest = sortOrder === "created_newest" || sortOrder === "updated_newest"
+      return isNewest ? dateB - dateA : dateA - dateB
     })
 
     return sorted
@@ -241,7 +258,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
     const searchParams = new URLSearchParams(window.location.search)
 
-    if (sortOrder !== "newest") {
+    if (sortOrder !== "created_newest") {
       searchParams.set("sort", sortOrder)
     } else {
       // Remove "sort" when it's the default value to keep URLs clean
@@ -349,11 +366,13 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               <select
                 id="sort-select"
                 value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+                onChange={(e) => setSortOrder(e.target.value as "created_newest" | "created_oldest" | "updated_newest" | "updated_oldest")}
                 className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
+                <option value="created_newest">Creation Date: Newest First</option>
+                <option value="created_oldest">Creation Date: Oldest First</option>
+                <option value="updated_newest">Updated Date: Newest First</option>
+                <option value="updated_oldest">Updated Date: Oldest First</option>
               </select>
             </div>
           </div>
@@ -512,6 +531,7 @@ export const query = graphql`
         name
         images
         drill_creation_date
+        drill_updated_date
         tags {
           skill_level
           team_drill
