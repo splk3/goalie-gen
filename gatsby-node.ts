@@ -99,6 +99,9 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
 
   // Round-trip check to catch invalid dates like 2024-02-31
   const creationDate = new Date(data.drill_creation_date)
+  if (Number.isNaN(creationDate.getTime())) {
+    throw new Error(`[${drillFolder}] drill_creation_date '${data.drill_creation_date}' is not a valid calendar date`)
+  }
   if (creationDate.toISOString().slice(0, 10) !== data.drill_creation_date) {
     throw new Error(`[${drillFolder}] drill_creation_date '${data.drill_creation_date}' is not a valid calendar date`)
   }
@@ -115,8 +118,16 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
 
     // Round-trip check for updated date
     const updatedDate = new Date(data.drill_updated_date)
+    if (Number.isNaN(updatedDate.getTime())) {
+      throw new Error(`[${drillFolder}] drill_updated_date '${data.drill_updated_date}' is not a valid calendar date`)
+    }
     if (updatedDate.toISOString().slice(0, 10) !== data.drill_updated_date) {
       throw new Error(`[${drillFolder}] drill_updated_date '${data.drill_updated_date}' is not a valid calendar date`)
+    }
+
+    // Ensure drill_updated_date is not earlier than drill_creation_date
+    if (updatedDate < creationDate) {
+      throw new Error(`[${drillFolder}] drill_updated_date '${data.drill_updated_date}' cannot be earlier than drill_creation_date '${data.drill_creation_date}'`)
     }
   }
 

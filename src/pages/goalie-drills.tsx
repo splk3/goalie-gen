@@ -184,8 +184,9 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     sorted.sort((a, b) => {
       // Determine which date field to use based on sort order
       const isUpdatedSort = sortOrder === "updated_newest" || sortOrder === "updated_oldest"
-      const dateFieldA = isUpdatedSort ? a.drill_updated_date : a.drill_creation_date
-      const dateFieldB = isUpdatedSort ? b.drill_updated_date : b.drill_creation_date
+      // When sorting by updated date, fall back to creation date if updated date is missing
+      const dateFieldA = isUpdatedSort ? (a.drill_updated_date || a.drill_creation_date) : a.drill_creation_date
+      const dateFieldB = isUpdatedSort ? (b.drill_updated_date || b.drill_creation_date) : b.drill_creation_date
 
       // Handle drills without dates - they go to the end
       if (!dateFieldA && !dateFieldB) return 0
