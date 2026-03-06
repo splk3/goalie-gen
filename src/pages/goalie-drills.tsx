@@ -124,7 +124,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         return sortParam
       }
     }
-    return "created_newest"
+    return "updated_newest"
   }, [location?.search])
 
   // State for selected filters - initialize from URL if present
@@ -259,7 +259,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
     const searchParams = new URLSearchParams(window.location.search)
 
-    if (sortOrder !== "created_newest") {
+    if (sortOrder !== "updated_newest") {
       searchParams.set("sort", sortOrder)
     } else {
       // Remove "sort" when it's the default value to keep URLs clean
