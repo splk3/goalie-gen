@@ -11,20 +11,26 @@ coaching_points:
   - Coaching point 2
   - Coaching point 3
 
+# must be a list
 images:
   - test-drill-image.png
 
+# youtube or vimeo only
 video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
+# must on or before today's date
 drill_creation_date: 2024-01-01
 
+# optional - use if updating existing drill
 drill_updated_date: 2024-06-15
 
+# remove irrelevant tags
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
+# should only be one of below
   team_drill:
     - yes
     - no
@@ -50,6 +56,7 @@ tags:
   equipment:
     - blaze_pods
     - cones
+    - goal
     - ice_marker
     - bumpers
     - none
