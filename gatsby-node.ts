@@ -168,6 +168,13 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     }
   }
 
+  // Validate video URL if present
+  if (data.video !== undefined && data.video !== null) {
+    if (typeof data.video !== 'string' || (!data.video.startsWith('https://') && !data.video.startsWith('http://'))) {
+      throw new Error(`[${drillFolder}] invalid video URL '${data.video}'. Must be a string starting with https:// or http://`)
+    }
+  }
+
   // Validate drill_creation_date (required)
   if (!data.drill_creation_date || typeof data.drill_creation_date !== 'string') {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_creation_date' (string in YYYY-MM-DD format)`)
