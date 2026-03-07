@@ -172,8 +172,8 @@ All other fields (such as `video`) are optional. For tags, each sub-field is opt
 Other tags (like `team_drill`) allow free-text or defined input from the spec file, but they are dynamically aggregated to form the filter options on the frontend site. This allows flexibility for adding new categories on the fly.
 For media fields, `images` should be an array of image filenames, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
-- **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID`, `https://youtu.be/VIDEO_ID`, or `https://www.youtube.com/embed/VIDEO_ID`
-- **Vimeo**: `https://vimeo.com/VIDEO_ID` or `https://player.vimeo.com/video/VIDEO_ID`
+- **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (with `v` as the first query parameter) or `https://youtu.be/VIDEO_ID`
+- **Vimeo**: `https://vimeo.com/VIDEO_ID`
 
 The build will fail if a `video` field contains a URL from any other domain or in an unrecognized format.
 

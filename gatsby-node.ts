@@ -101,15 +101,14 @@ const ALLOWED_EQUIPMENT = [
   'none'
 ]
 
-// Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only
-// YouTube: https://www.youtube.com/watch?v=VIDEO_ID (v= may appear anywhere in query string)
-const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?([^#]*&)?v=[\w-]+([&#].*)?$/
+// Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
+// Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
+// YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID — v= must be the first query parameter
+const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+([&#].*)?$/
 // YouTube short URL: https://youtu.be/VIDEO_ID
 const YOUTUBE_SHORT_REGEX = /^https:\/\/youtu\.be\/[\w-]+(\?.*)?$/
-// YouTube embed: https://www.youtube.com/embed/VIDEO_ID
-const YOUTUBE_EMBED_REGEX = /^https:\/\/(www\.)?youtube\.com\/embed\/[\w-]+(\?.*)?$/
-// Vimeo standard and player: https://vimeo.com/VIDEO_ID or https://player.vimeo.com/video/VIDEO_ID
-const VIMEO_REGEX = /^https:\/\/(www\.|player\.)?vimeo\.com\/(video\/)?\d+(\?.*)?$/
+// Vimeo: https://vimeo.com/VIDEO_ID — numeric ID only; player.vimeo.com not accepted as input
+const VIMEO_REGEX = /^https:\/\/(www\.)?vimeo\.com\/\d+(\?.*)?$/
 
 // Validate drill data structure
 function validateDrillData(data: any, drillFolder: string): data is DrillData {
@@ -202,14 +201,13 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     const isValidVideoUrl =
       YOUTUBE_WATCH_REGEX.test(data.video) ||
       YOUTUBE_SHORT_REGEX.test(data.video) ||
-      YOUTUBE_EMBED_REGEX.test(data.video) ||
       VIMEO_REGEX.test(data.video)
 
     if (!isValidVideoUrl) {
       throw new Error(
         `[${drillFolder}] invalid video URL '${data.video}'. Must be a valid YouTube ` +
-        `(https://www.youtube.com/watch?v=..., https://youtu.be/..., or https://www.youtube.com/embed/...) ` +
-        `or Vimeo (https://vimeo.com/..., https://player.vimeo.com/video/...) URL`
+        `(https://www.youtube.com/watch?v=... or https://youtu.be/...) ` +
+        `or Vimeo (https://vimeo.com/...) URL`
       )
     }
   }
