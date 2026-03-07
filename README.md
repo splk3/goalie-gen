@@ -199,7 +199,7 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Trigger**: Automatic on push to `main` branch + manual dispatch
 - **Purpose**: Builds and deploys the site to GitHub Pages
 - **Actions**: Runs `npm ci` and `npm run build`, uploads artifact, and deploys to GitHub Pages
-- **Node Version**: 20.x with npm caching enabled
+- **Node Version**: 24.x with npm caching enabled
 - **Deployment**: Uses actions/deploy-pages@v4 with proper permissions and concurrency control
 
 ### 2. Super Linter (`super-linter.yml`)
@@ -214,7 +214,7 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Trigger**: Pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
 - **Purpose**: Verifies that the site builds successfully without deploying
 - **Actions**: Runs `npm ci` and `npm run build`, then verifies `public/` directory was created
-- **Node Version**: 20.x with npm caching enabled
+- **Node Version**: 24.x with npm caching enabled
 
 ### 4. Release Prep (`release-prep.yml`)
 
