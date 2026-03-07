@@ -42,6 +42,7 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 ## 🎨 Design
 
 The site uses USA national colors:
+
 - Blue: `#00205B` (usa-blue)
 - Red: `#AF272F` (usa-red)
 - White: `#FFFFFF` (usa-white)
@@ -135,11 +136,46 @@ Required fields in drill.yml:
 - images
 - tags
 
-All other fields (such as `video`) are optional. For tags, each sub-field is optional, and the allowed values for each tag sub-field are the options listed in the spec file. For media fields, `images` should be an array of image filenames, and `video` should be a single URL string.
+All other fields (such as `video`) are optional. For tags, each sub-field is optional, but some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`):
+
+- `fundamental_skill`: Allowed values are:
+  - `skating`
+  - `positioning`
+  - `stance`
+  - `save_selection`
+  - `rebound_control`
+  - `recovery`
+- `skating_skill`: Allowed values are:
+  - `butterfly`
+  - `power_push`
+  - `shuffle`
+  - `t_push`
+  - `c_cut`
+- `age_level`: Allowed values are:
+  - `10U_below`
+  - `12U`
+  - `14U`
+  - `16U_and_older`
+  - `all`
+- `skill_level`: Allowed values are:
+  - `beginner`
+  - `intermediate`
+  - `advanced`
+- `equipment`: Allowed values are:
+  - `blaze_pods`
+  - `bumpers`
+  - `cones`
+  - `goal`
+  - `ice_marker`
+  - `none`
+
+Other tags (like `team_drill`) allow free-text or defined input from the spec file, but they are dynamically aggregated to form the filter options on the frontend site. This allows flexibility for adding new categories on the fly.
+For media fields, `images` should be an array of image filenames, and `video` should be a single URL string.
 
 ### How Drill Pages Are Generated
 
 Drill pages are automatically created at build time by `gatsby-node.ts`:
+
 1. The `createPages` API reads all drill folders from the `drills/` directory
 2. Each drill's `drill.yml` file is parsed and validated
 3. A page is created at `/drills/{folder-name}` using the `src/templates/drill.tsx` template
@@ -148,6 +184,7 @@ Drill pages are automatically created at build time by `gatsby-node.ts`:
 ## 🔧 TypeScript Support
 
 This project is fully TypeScript-enabled:
+
 - All Gatsby configuration files use TypeScript (`.ts` extensions)
 - All components and pages use TypeScript/TSX (`.tsx` extensions)
 - Type definitions included for all dependencies
@@ -158,6 +195,7 @@ This project is fully TypeScript-enabled:
 This repository uses GitHub Actions for automation and CI/CD:
 
 ### 1. Deploy to GitHub Pages (`deploy.yml`)
+
 - **Trigger**: Automatic on push to `main` branch + manual dispatch
 - **Purpose**: Builds and deploys the site to GitHub Pages
 - **Actions**: Runs `npm ci` and `npm run build`, uploads artifact, and deploys to GitHub Pages
@@ -165,18 +203,21 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Deployment**: Uses actions/deploy-pages@v4 with proper permissions and concurrency control
 
 ### 2. Super Linter (`super-linter.yml`)
+
 - **Trigger**: On every push to any branch + weekly on Saturdays at 2:00 AM UTC + manual dispatch
 - **Purpose**: Validates code quality across multiple languages and formats
 - **Configuration**: Uses super-linter v8 with Biome linters disabled to avoid conflicts
 - **Requirement**: All code changes must pass linting before merge
 
 ### 3. Test Build (`test-build.yml`)
+
 - **Trigger**: Pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
 - **Purpose**: Verifies that the site builds successfully without deploying
 - **Actions**: Runs `npm ci` and `npm run build`, then verifies `public/` directory was created
 - **Node Version**: 20.x with npm caching enabled
 
 ### 4. Release Prep (`release-prep.yml`)
+
 - **Trigger**: Manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
 - **Purpose**: Automatically creates documentation update issues
 - **Actions**: Creates GitHub issue for README and copilot instructions updates
@@ -219,15 +260,19 @@ This command builds the site and pushes the `public/` directory to the `gh-pages
 ## 🔧 Repository Configuration
 
 ### CODEOWNERS
+
 The repository uses a `.github/CODEOWNERS` file to define code ownership. Currently, `@splk3` is the default owner for all files.
 
 ### Dependabot
+
 Dependabot is configured via `.github/dependabot.yml` to automatically check for:
+
 - npm package updates (weekly)
 - GitHub Actions updates (weekly)
 - Maximum of 10 open pull requests per ecosystem
 
 ### Environment Variables
+
 - `.env.development`: Development environment configuration (e.g., `GATSBY_SITE_URL=https://dev.goaliegen.com`)
 - `.env.production`: Production environment configuration (e.g., `GATSBY_SITE_URL=https://goaliegen.com`)
 - `.env.example`: Template for environment variables

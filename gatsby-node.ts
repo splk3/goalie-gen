@@ -60,6 +60,47 @@ function deleteDirectorySync(dir: string) {
   }
 }
 
+// Allowed tag values for validation
+const ALLOWED_FUNDAMENTAL_SKILLS = [
+  'skating',
+  'positioning',
+  'stance',
+  'save_selection',
+  'rebound_control',
+  'recovery'
+]
+
+const ALLOWED_SKATING_SKILLS = [
+  'butterfly',
+  'power_push',
+  'shuffle',
+  't_push',
+  'c_cut'
+]
+
+const ALLOWED_AGE_LEVELS = [
+  '10U_below',
+  '12U',
+  '14U',
+  '16U_and_older',
+  'all'
+]
+
+const ALLOWED_SKILL_LEVELS = [
+  'beginner',
+  'intermediate',
+  'advanced'
+]
+
+const ALLOWED_EQUIPMENT = [
+  'blaze_pods',
+  'bumpers',
+  'cones',
+  'goals',
+  'ice_marker',
+  'none'
+]
+
 // Validate drill data structure
 function validateDrillData(data: any, drillFolder: string): data is DrillData {
   if (!data || typeof data !== 'object') {
@@ -84,6 +125,47 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
 
   if (!data.tags || typeof data.tags !== 'object') {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'tags' (object)`)
+  }
+
+  // Validate fundamental_skill and skating_skill against allowed lists
+  if (Array.isArray(data.tags.fundamental_skill)) {
+    for (const skill of data.tags.fundamental_skill) {
+      if (!ALLOWED_FUNDAMENTAL_SKILLS.includes(skill)) {
+        throw new Error(`[${drillFolder}] invalid fundamental_skill '${skill}'. Allowed values: ${ALLOWED_FUNDAMENTAL_SKILLS.join(', ')}`)
+      }
+    }
+  }
+
+  if (Array.isArray(data.tags.skating_skill)) {
+    for (const skill of data.tags.skating_skill) {
+      if (!ALLOWED_SKATING_SKILLS.includes(skill)) {
+        throw new Error(`[${drillFolder}] invalid skating_skill '${skill}'. Allowed values: ${ALLOWED_SKATING_SKILLS.join(', ')}`)
+      }
+    }
+  }
+
+  if (Array.isArray(data.tags.age_level)) {
+    for (const age of data.tags.age_level) {
+      if (!ALLOWED_AGE_LEVELS.includes(age)) {
+        throw new Error(`[${drillFolder}] invalid age_level '${age}'. Allowed values: ${ALLOWED_AGE_LEVELS.join(', ')}`)
+      }
+    }
+  }
+
+  if (Array.isArray(data.tags.skill_level)) {
+    for (const skill of data.tags.skill_level) {
+      if (!ALLOWED_SKILL_LEVELS.includes(skill)) {
+        throw new Error(`[${drillFolder}] invalid skill_level '${skill}'. Allowed values: ${ALLOWED_SKILL_LEVELS.join(', ')}`)
+      }
+    }
+  }
+
+  if (Array.isArray(data.tags.equipment)) {
+    for (const eq of data.tags.equipment) {
+      if (!ALLOWED_EQUIPMENT.includes(eq)) {
+        throw new Error(`[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(', ')}`)
+      }
+    }
   }
 
   // Validate drill_creation_date (required)
