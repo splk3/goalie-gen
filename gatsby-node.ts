@@ -96,7 +96,7 @@ const ALLOWED_EQUIPMENT = [
   'blaze_pods',
   'bumpers',
   'cones',
-  'goals',
+  'goal',
   'ice_marker',
   'none'
 ]
