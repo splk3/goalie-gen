@@ -137,7 +137,10 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'tags' (object)`)
   }
 
-  // Validate fundamental_skill and skating_skill against allowed lists
+  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment)
+  if (typeof data.tags.fundamental_skill !== 'undefined' && !Array.isArray(data.tags.fundamental_skill)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.fundamental_skill' must be an array of strings`)
+  }
   if (Array.isArray(data.tags.fundamental_skill)) {
     for (const skill of data.tags.fundamental_skill) {
       if (!ALLOWED_FUNDAMENTAL_SKILLS.includes(skill)) {
@@ -146,6 +149,9 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     }
   }
 
+  if (typeof data.tags.skating_skill !== 'undefined' && !Array.isArray(data.tags.skating_skill)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.skating_skill' must be an array of strings`)
+  }
   if (Array.isArray(data.tags.skating_skill)) {
     for (const skill of data.tags.skating_skill) {
       if (!ALLOWED_SKATING_SKILLS.includes(skill)) {
@@ -154,6 +160,9 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     }
   }
 
+  if (typeof data.tags.age_level !== 'undefined' && !Array.isArray(data.tags.age_level)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.age_level' must be an array of strings`)
+  }
   if (Array.isArray(data.tags.age_level)) {
     for (const age of data.tags.age_level) {
       if (!ALLOWED_AGE_LEVELS.includes(age)) {
@@ -162,6 +171,9 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     }
   }
 
+  if (typeof data.tags.skill_level !== 'undefined' && !Array.isArray(data.tags.skill_level)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.skill_level' must be an array of strings`)
+  }
   if (Array.isArray(data.tags.skill_level)) {
     for (const skill of data.tags.skill_level) {
       if (!ALLOWED_SKILL_LEVELS.includes(skill)) {
@@ -170,6 +182,9 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     }
   }
 
+  if (typeof data.tags.equipment !== 'undefined' && !Array.isArray(data.tags.equipment)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.equipment' must be an array of strings`)
+  }
   if (Array.isArray(data.tags.equipment)) {
     for (const eq of data.tags.equipment) {
       if (!ALLOWED_EQUIPMENT.includes(eq)) {
