@@ -101,6 +101,15 @@ const ALLOWED_EQUIPMENT = [
   'none'
 ]
 
+// Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
+// Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
+// YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID — v= must be the first query parameter
+const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+([&#].*)?$/
+// YouTube short URL: https://youtu.be/VIDEO_ID
+const YOUTUBE_SHORT_REGEX = /^https:\/\/youtu\.be\/[\w-]+(\?.*)?$/
+// Vimeo: https://vimeo.com/VIDEO_ID — numeric ID only; player.vimeo.com not accepted as input
+const VIMEO_REGEX = /^https:\/\/(www\.)?vimeo\.com\/\d+(\?.*)?$/
+
 // Validate drill data structure
 function validateDrillData(data: any, drillFolder: string): data is DrillData {
   if (!data || typeof data !== 'object') {
@@ -180,6 +189,26 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
       if (!ALLOWED_EQUIPMENT.includes(eq)) {
         throw new Error(`[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(', ')}`)
       }
+    }
+  }
+
+  // Validate video URL if present — must be a valid YouTube or Vimeo link
+  if (data.video !== undefined && data.video !== null) {
+    if (typeof data.video !== 'string') {
+      throw new Error(`[${drillFolder}] video must be a string URL`)
+    }
+
+    const isValidVideoUrl =
+      YOUTUBE_WATCH_REGEX.test(data.video) ||
+      YOUTUBE_SHORT_REGEX.test(data.video) ||
+      VIMEO_REGEX.test(data.video)
+
+    if (!isValidVideoUrl) {
+      throw new Error(
+        `[${drillFolder}] invalid video URL '${data.video}'. Must be a valid YouTube ` +
+        `(https://www.youtube.com/watch?v=... or https://youtu.be/...) ` +
+        `or Vimeo (https://vimeo.com/...) URL`
+      )
     }
   }
 
