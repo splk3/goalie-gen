@@ -101,6 +101,16 @@ const ALLOWED_EQUIPMENT = [
   'none'
 ]
 
+// Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only
+// YouTube: https://www.youtube.com/watch?v=VIDEO_ID (v= may appear anywhere in query string)
+const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?([^#]*&)?v=[\w-]+([&#].*)?$/
+// YouTube short URL: https://youtu.be/VIDEO_ID
+const YOUTUBE_SHORT_REGEX = /^https:\/\/youtu\.be\/[\w-]+(\?.*)?$/
+// YouTube embed: https://www.youtube.com/embed/VIDEO_ID
+const YOUTUBE_EMBED_REGEX = /^https:\/\/(www\.)?youtube\.com\/embed\/[\w-]+(\?.*)?$/
+// Vimeo standard and player: https://vimeo.com/VIDEO_ID or https://player.vimeo.com/video/VIDEO_ID
+const VIMEO_REGEX = /^https:\/\/(www\.|player\.)?vimeo\.com\/(video\/)?\d+(\?.*)?$/
+
 // Validate drill data structure
 function validateDrillData(data: any, drillFolder: string): data is DrillData {
   if (!data || typeof data !== 'object') {
@@ -168,10 +178,24 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     }
   }
 
-  // Validate video URL if present
+  // Validate video URL if present — must be a valid YouTube or Vimeo link
   if (data.video !== undefined && data.video !== null) {
-    if (typeof data.video !== 'string' || (!data.video.startsWith('https://') && !data.video.startsWith('http://'))) {
-      throw new Error(`[${drillFolder}] invalid video URL '${data.video}'. Must be a string starting with https:// or http://`)
+    if (typeof data.video !== 'string') {
+      throw new Error(`[${drillFolder}] video must be a string URL`)
+    }
+
+    const isValidVideoUrl =
+      YOUTUBE_WATCH_REGEX.test(data.video) ||
+      YOUTUBE_SHORT_REGEX.test(data.video) ||
+      YOUTUBE_EMBED_REGEX.test(data.video) ||
+      VIMEO_REGEX.test(data.video)
+
+    if (!isValidVideoUrl) {
+      throw new Error(
+        `[${drillFolder}] invalid video URL '${data.video}'. Must be a valid YouTube ` +
+        `(https://www.youtube.com/watch?v=..., https://youtu.be/..., or https://www.youtube.com/embed/...) ` +
+        `or Vimeo (https://vimeo.com/..., https://player.vimeo.com/video/...) URL`
+      )
     }
   }
 
