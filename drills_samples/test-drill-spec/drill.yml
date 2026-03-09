@@ -18,7 +18,7 @@ images:
 # youtube or vimeo only
 video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
-# must be on or before today's date
+# must be a valid calendar date in YYYY-MM-DD format
 drill_creation_date: 2024-01-01
 
 # optional - use if updating existing drill
@@ -30,10 +30,9 @@ tags:
     - beginner
     - intermediate
     - advanced
-  # allowed values: yes or no
+  # allowed values: yes or no (exactly one value)
   team_drill:
     - yes
-    - no
   age_level:
     - all
     - 10U_below
