@@ -101,6 +101,8 @@ const ALLOWED_EQUIPMENT = [
   'none'
 ]
 
+const ALLOWED_TEAM_DRILL = ['yes', 'no']
+
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
 // Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
 // YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID — v= must be the first query parameter
@@ -136,7 +138,7 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'tags' (object)`)
   }
 
-  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment)
+  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment, team_drill)
   if (typeof data.tags.fundamental_skill !== 'undefined' && !Array.isArray(data.tags.fundamental_skill)) {
     throw new Error(`[${drillFolder}] drill.yml field 'tags.fundamental_skill' must be an array of strings`)
   }
@@ -189,6 +191,19 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
       if (!ALLOWED_EQUIPMENT.includes(eq)) {
         throw new Error(`[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(', ')}`)
       }
+    }
+  }
+
+  if (typeof data.tags.team_drill !== 'undefined' && !Array.isArray(data.tags.team_drill)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.team_drill' must be an array`)
+  }
+  if (Array.isArray(data.tags.team_drill)) {
+    if (data.tags.team_drill.length !== 1) {
+      throw new Error(`[${drillFolder}] 'tags.team_drill' must contain exactly one value ('yes' or 'no')`)
+    }
+    const tdValue = data.tags.team_drill[0]
+    if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
+      throw new Error(`[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(', ')}`)
     }
   }
 
