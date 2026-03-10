@@ -169,7 +169,7 @@ All other fields (such as `video`) are optional. For tags, each sub-field is opt
   - `ice_marker`
   - `none`
 
-- `team_drill`: Must be exactly one of:
+- `team_drill`: Must be an array containing exactly one of:
   - `yes`
   - `no`
 

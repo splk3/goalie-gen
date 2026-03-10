@@ -134,7 +134,7 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'images' (array)`)
   }
 
-  if (!data.tags || typeof data.tags !== 'object') {
+  if (!data.tags || typeof data.tags !== 'object' || Array.isArray(data.tags)) {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'tags' (object)`)
   }
 
@@ -195,7 +195,7 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
   }
 
   if (typeof data.tags.team_drill !== 'undefined' && !Array.isArray(data.tags.team_drill)) {
-    throw new Error(`[${drillFolder}] drill.yml field 'tags.team_drill' must be an array`)
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`)
   }
   if (Array.isArray(data.tags.team_drill)) {
     if (data.tags.team_drill.length !== 1) {
