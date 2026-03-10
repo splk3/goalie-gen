@@ -11,23 +11,28 @@ coaching_points:
   - Coaching point 2
   - Coaching point 3
 
+# must be a list
 images:
   - test-drill-image.png
 
-video: https://example.com/video-url
+# youtube or vimeo only
+video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
+# must be a valid calendar date in YYYY-MM-DD format
 drill_creation_date: 2024-01-01
 
+# optional - use if updating existing drill
 drill_updated_date: 2024-06-15
 
+# remove irrelevant tags
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
+  # allowed values: yes or no (exactly one value)
   team_drill:
     - yes
-    - no
   age_level:
     - all
     - 10U_below
@@ -50,6 +55,7 @@ tags:
   equipment:
     - blaze_pods
     - cones
+    - goal
     - ice_marker
     - bumpers
     - none

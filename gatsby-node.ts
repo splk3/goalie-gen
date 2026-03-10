@@ -60,6 +60,58 @@ function deleteDirectorySync(dir: string) {
   }
 }
 
+// Allowed tag values for validation
+const ALLOWED_FUNDAMENTAL_SKILLS = [
+  'skating',
+  'positioning',
+  'stance',
+  'save_selection',
+  'rebound_control',
+  'recovery'
+]
+
+const ALLOWED_SKATING_SKILLS = [
+  'butterfly',
+  'power_push',
+  'shuffle',
+  't_push',
+  'c_cut'
+]
+
+const ALLOWED_AGE_LEVELS = [
+  '10U_below',
+  '12U',
+  '14U',
+  '16U_and_older',
+  'all'
+]
+
+const ALLOWED_SKILL_LEVELS = [
+  'beginner',
+  'intermediate',
+  'advanced'
+]
+
+const ALLOWED_EQUIPMENT = [
+  'blaze_pods',
+  'bumpers',
+  'cones',
+  'goal',
+  'ice_marker',
+  'none'
+]
+
+const ALLOWED_TEAM_DRILL = ['yes', 'no']
+
+// Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
+// Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
+// YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID — v= must be the first query parameter
+const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+([&#].*)?$/
+// YouTube short URL: https://youtu.be/VIDEO_ID
+const YOUTUBE_SHORT_REGEX = /^https:\/\/youtu\.be\/[\w-]+(\?.*)?$/
+// Vimeo: https://vimeo.com/VIDEO_ID — numeric ID only; player.vimeo.com not accepted as input
+const VIMEO_REGEX = /^https:\/\/(www\.)?vimeo\.com\/\d+(\?.*)?$/
+
 // Validate drill data structure
 function validateDrillData(data: any, drillFolder: string): data is DrillData {
   if (!data || typeof data !== 'object') {
@@ -82,8 +134,97 @@ function validateDrillData(data: any, drillFolder: string): data is DrillData {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'images' (array)`)
   }
 
-  if (!data.tags || typeof data.tags !== 'object') {
+  if (!data.tags || typeof data.tags !== 'object' || Array.isArray(data.tags)) {
     throw new Error(`[${drillFolder}] drill.yml missing required field 'tags' (object)`)
+  }
+
+  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment, team_drill)
+  if (typeof data.tags.fundamental_skill !== 'undefined' && !Array.isArray(data.tags.fundamental_skill)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.fundamental_skill' must be an array of strings`)
+  }
+  if (Array.isArray(data.tags.fundamental_skill)) {
+    for (const skill of data.tags.fundamental_skill) {
+      if (!ALLOWED_FUNDAMENTAL_SKILLS.includes(skill)) {
+        throw new Error(`[${drillFolder}] invalid fundamental_skill '${skill}'. Allowed values: ${ALLOWED_FUNDAMENTAL_SKILLS.join(', ')}`)
+      }
+    }
+  }
+
+  if (typeof data.tags.skating_skill !== 'undefined' && !Array.isArray(data.tags.skating_skill)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.skating_skill' must be an array of strings`)
+  }
+  if (Array.isArray(data.tags.skating_skill)) {
+    for (const skill of data.tags.skating_skill) {
+      if (!ALLOWED_SKATING_SKILLS.includes(skill)) {
+        throw new Error(`[${drillFolder}] invalid skating_skill '${skill}'. Allowed values: ${ALLOWED_SKATING_SKILLS.join(', ')}`)
+      }
+    }
+  }
+
+  if (typeof data.tags.age_level !== 'undefined' && !Array.isArray(data.tags.age_level)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.age_level' must be an array of strings`)
+  }
+  if (Array.isArray(data.tags.age_level)) {
+    for (const age of data.tags.age_level) {
+      if (!ALLOWED_AGE_LEVELS.includes(age)) {
+        throw new Error(`[${drillFolder}] invalid age_level '${age}'. Allowed values: ${ALLOWED_AGE_LEVELS.join(', ')}`)
+      }
+    }
+  }
+
+  if (typeof data.tags.skill_level !== 'undefined' && !Array.isArray(data.tags.skill_level)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.skill_level' must be an array of strings`)
+  }
+  if (Array.isArray(data.tags.skill_level)) {
+    for (const skill of data.tags.skill_level) {
+      if (!ALLOWED_SKILL_LEVELS.includes(skill)) {
+        throw new Error(`[${drillFolder}] invalid skill_level '${skill}'. Allowed values: ${ALLOWED_SKILL_LEVELS.join(', ')}`)
+      }
+    }
+  }
+
+  if (typeof data.tags.equipment !== 'undefined' && !Array.isArray(data.tags.equipment)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.equipment' must be an array of strings`)
+  }
+  if (Array.isArray(data.tags.equipment)) {
+    for (const eq of data.tags.equipment) {
+      if (!ALLOWED_EQUIPMENT.includes(eq)) {
+        throw new Error(`[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(', ')}`)
+      }
+    }
+  }
+
+  if (typeof data.tags.team_drill !== 'undefined' && !Array.isArray(data.tags.team_drill)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`)
+  }
+  if (Array.isArray(data.tags.team_drill)) {
+    if (data.tags.team_drill.length !== 1) {
+      throw new Error(`[${drillFolder}] 'tags.team_drill' must contain exactly one value ('yes' or 'no')`)
+    }
+    const tdValue = data.tags.team_drill[0]
+    if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
+      throw new Error(`[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(', ')}`)
+    }
+  }
+
+  // Validate video URL if present — must be a valid YouTube or Vimeo link
+  if (data.video !== undefined && data.video !== null) {
+    if (typeof data.video !== 'string') {
+      throw new Error(`[${drillFolder}] video must be a string URL`)
+    }
+
+    const isValidVideoUrl =
+      YOUTUBE_WATCH_REGEX.test(data.video) ||
+      YOUTUBE_SHORT_REGEX.test(data.video) ||
+      VIMEO_REGEX.test(data.video)
+
+    if (!isValidVideoUrl) {
+      throw new Error(
+        `[${drillFolder}] invalid video URL '${data.video}'. Must be a valid YouTube ` +
+        `(https://www.youtube.com/watch?v=... or https://youtu.be/...) ` +
+        `or Vimeo (https://vimeo.com/...) URL`
+      )
+    }
   }
 
   // Validate drill_creation_date (required)
