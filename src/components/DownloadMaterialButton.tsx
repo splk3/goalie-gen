@@ -5,14 +5,15 @@ import { trackEvent } from "../utils/analytics"
 interface DownloadMaterialButtonProps {
   title: string
   fileName: string
+  folder?: string
 }
 
-export default function DownloadMaterialButton({ title, fileName }: DownloadMaterialButtonProps) {
+export default function DownloadMaterialButton({ title, fileName, folder = "pdfs" }: DownloadMaterialButtonProps) {
   const [downloadStatus, setDownloadStatus] = React.useState<string>("")
 
   const handleDownload = () => {
     const link = document.createElement('a')
-    link.href = withPrefix(`/pdfs/${fileName}`)
+    link.href = withPrefix(`/${folder}/${fileName}`)
     link.download = fileName
     link.setAttribute('aria-label', `Download ${title}`)
     document.body.appendChild(link)

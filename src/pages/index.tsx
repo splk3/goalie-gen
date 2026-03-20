@@ -77,6 +77,9 @@ export default function Home() {
               <NavigationButton to="/goalie-drills" variant="red">
                 Goalie Drills
               </NavigationButton>
+              <NavigationButton to="/goalie-evals" variant="red">
+                Goalie Evaluations
+              </NavigationButton>
               <NavigationButton to="/coach-resources" variant="red">
                 More Coach Resources
               </NavigationButton>
