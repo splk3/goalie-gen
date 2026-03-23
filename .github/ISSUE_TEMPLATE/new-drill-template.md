@@ -2,8 +2,8 @@
 name: New Drill Template
 about: Use this template to submit a new drill for the site
 title: Add a new drill - [DRILL NAME HERE]
-labels: drills-goalie, drills-team
-assignees: splk3, Copilot
+labels: new-drill
+assignees: splk3, copilot-swe-agent
 
 ---
 
@@ -11,7 +11,7 @@ assignees: splk3, Copilot
 
 ## Instructions
 
-This is the new drill template.  To submit a new drill, fill out the `Drill Information` section below. 
+This is the new drill template. To submit a new drill, fill out the `Drill Information` section below.
 Don't forget to update the tags section to reflect the specifics of your drill.
 
 Attach any diagrams to the issue, making sure that the `images` section matches the file names of the images that you attach.
@@ -39,7 +39,7 @@ images:
   - test-drill-image.png
 
 # youtube or vimeo only
-video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+video: 
 
 # must be a valid calendar date in YYYY-MM-DD format
 drill_creation_date: 2024-01-01
@@ -47,7 +47,7 @@ drill_creation_date: 2024-01-01
 # optional - use if updating existing drill
 drill_updated_date: 2024-06-15
 
-# remove irrelevant tags
+# For each category below, remove the values that do not apply
 tags:
   skill_level:
     - beginner
