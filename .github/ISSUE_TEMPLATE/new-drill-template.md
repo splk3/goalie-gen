@@ -83,3 +83,16 @@ tags:
     - bumpers
     - none
 ```
+
+## Copilot Instructions
+
+**NOTE**: This section is for copilot use only.  When 
+
+Use the content in the `Drill Information` section to create a new drill.
+
+- Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field
+- use the text to create the `drill.yml` file in that folder
+- add the images to the folder, updating the `images` field, as needed
+- submit the proposed changes as a PR
+- confirm image files are actual images, and that video links are real youtube or vimeo video links
+- make sure the new drill passes build validation and that the site builds properly
