@@ -38,7 +38,10 @@ coaching_points:
 images:
   - test-drill-image.png
 
-# youtube or vimeo only
+# HTTPS-only YouTube or Vimeo URL. Accepted formats:
+#   https://www.youtube.com/watch?v=VIDEO_ID
+#   https://youtu.be/VIDEO_ID
+#   https://vimeo.com/NUMERIC_ID
 video: 
 
 # must be a valid calendar date in YYYY-MM-DD format
