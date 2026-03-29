@@ -45,10 +45,10 @@ images:
 video: 
 
 # must be a valid calendar date in YYYY-MM-DD format
-drill_creation_date: 2024-01-01
+drill_creation_date: YYYY-MM-DD
 
 # optional - use if updating existing drill
-drill_updated_date: 2024-06-15
+drill_updated_date: YYYY-MM-DD
 
 # For each category below, remove the values that do not apply
 tags:
@@ -56,14 +56,14 @@ tags:
     - beginner
     - intermediate
     - advanced
-  # allowed values: yes or no (exactly one value)
+  # allowed values: yes or no (select exactly one and delete the other)
   team_drill:
     - yes
+    - no
   age_level:
     - all
     - 10U_below
     - 12U
-    - 14U
     - 16U_and_older
   fundamental_skill:
     - skating
@@ -89,7 +89,7 @@ tags:
 
 ## Copilot Instructions
 
-**NOTE**: This section is for copilot use only.  When 
+**NOTE**: This section is for copilot use only.
 
 Use the content in the `Drill Information` section to create a new drill.
 
