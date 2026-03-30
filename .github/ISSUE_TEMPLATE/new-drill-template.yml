@@ -63,8 +63,8 @@ body:
         # must be a valid calendar date in YYYY-MM-DD format
         drill_creation_date: YYYY-MM-DD
 
-        # optional - use if updating existing drill
-        drill_updated_date: YYYY-MM-DD
+        # optional - use if updating existing drill - must be a valid calendar date in YYYY-MM-DD format
+        drill_updated_date: ''
 
         # For each category below, remove the values that do not apply
         tags:
@@ -72,9 +72,9 @@ body:
             - beginner
             - intermediate
             - advanced
-          # allowed values: yes or no (exactly one value required — change to "no" if not a team drill)
+          # allowed values: yes or no (exactly one value required — change to "yes" if this is a team drill)
           team_drill:
-            - yes
+            - no
           age_level:
             - all
             - 10U_below

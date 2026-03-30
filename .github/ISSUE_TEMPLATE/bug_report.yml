@@ -42,6 +42,14 @@ body:
       description: If applicable, add screenshots to help explain your problem.
       placeholder: Drag and drop screenshots here.
 
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Desktop Environment (if applicable)"
+
   - type: input
     id: desktop_os
     attributes:
@@ -60,8 +68,16 @@ body:
     id: desktop_browser_version
     attributes:
       label: Desktop browser version
-      description: e.g. 22
-      placeholder: "123"
+      description: e.g. 123.0
+      placeholder: 123
+
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Smartphone Environment (if applicable)"
 
   - type: input
     id: smartphone_device
@@ -89,7 +105,7 @@ body:
     attributes:
       label: Smartphone browser version (if known)
       description: e.g. 22
-      placeholder: "22"
+      placeholder: 22
 
   - type: textarea
     id: additional_context
