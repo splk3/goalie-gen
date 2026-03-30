@@ -1,0 +1,114 @@
+name: Bug report
+description: Create a report to help us improve
+title: ""
+labels:
+  - bug
+body:
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce_steps
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      placeholder: Drag and drop screenshots here.
+
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Desktop Environment (if applicable)"
+
+  - type: input
+    id: desktop_os
+    attributes:
+      label: Desktop OS
+      description: e.g. Windows 11, macOS 14, Ubuntu 22.04
+      placeholder: Ubuntu 24.04
+
+  - type: input
+    id: desktop_browser
+    attributes:
+      label: Desktop browser
+      description: e.g. Chrome, Firefox, Safari
+      placeholder: Firefox
+
+  - type: input
+    id: desktop_browser_version
+    attributes:
+      label: Desktop browser version
+      description: e.g. 123.0
+      placeholder: 123
+
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Smartphone Environment (if applicable)"
+
+  - type: input
+    id: smartphone_device
+    attributes:
+      label: Smartphone device
+      description: e.g. iPhone 6
+      placeholder: iPhone 15
+
+  - type: input
+    id: smartphone_os
+    attributes:
+      label: Smartphone OS
+      description: e.g. iOS 8.1
+      placeholder: iOS 18.3
+
+  - type: input
+    id: smartphone_browser
+    attributes:
+      label: Smartphone browser
+      description: e.g. stock browser, Safari
+      placeholder: Safari
+
+  - type: input
+    id: smartphone_browser_version
+    attributes:
+      label: Smartphone browser version (if known)
+      description: e.g. 22
+      placeholder: 22
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
