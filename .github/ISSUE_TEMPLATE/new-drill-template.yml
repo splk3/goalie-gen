@@ -72,10 +72,9 @@ body:
             - beginner
             - intermediate
             - advanced
-          # allowed values: yes or no (select exactly one and delete the other)
+          # allowed values: yes or no (exactly one value required — change to "no" if not a team drill)
           team_drill:
             - yes
-            - no
           age_level:
             - all
             - 10U_below
