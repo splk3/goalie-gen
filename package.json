@@ -10,7 +10,7 @@
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
+    "test": "jest",
     "deploy": "gatsby build && gh-pages -d public"
   },
   "dependencies": {
@@ -24,16 +24,27 @@
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-typescript": "^7.28.5",
     "@tailwindcss/postcss": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/file-saver": "^2.0.7",
+    "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.3.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.27",
+    "babel-jest": "^30.3.0",
+    "babel-preset-gatsby": "^3.16.0",
     "gatsby-plugin-postcss": "^6.16.0",
     "gatsby-plugin-typescript": "^5.16.0",
     "gh-pages": "^6.2.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.0",
     "typescript": "^6.0.2"
