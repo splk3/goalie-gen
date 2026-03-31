@@ -4,8 +4,8 @@ const gatsby = jest.requireActual("gatsby")
 module.exports = {
   ...gatsby,
   graphql: jest.fn(),
-  Link: jest.fn().mockImplementation(({ to, children, className }) =>
-    React.createElement("a", { href: to, className }, children)
+  Link: jest.fn().mockImplementation(({ to, children, className, ...rest }) =>
+    React.createElement("a", { href: to, className, ...rest }, children)
   ),
   StaticQuery: jest.fn(),
   useStaticQuery: jest.fn(),
