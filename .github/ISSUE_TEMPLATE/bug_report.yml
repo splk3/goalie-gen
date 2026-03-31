@@ -1,6 +1,6 @@
 name: Bug report
 description: Create a report to help us improve
-title: ""
+title: "Bug Report - ISSUE-NAME-HERE"
 labels:
   - bug
 body:
@@ -69,7 +69,7 @@ body:
     attributes:
       label: Desktop browser version
       description: e.g. 123.0
-      placeholder: 123
+      placeholder: "123.0"
 
   - type: markdown
     attributes:
@@ -105,7 +105,7 @@ body:
     attributes:
       label: Smartphone browser version (if known)
       description: e.g. 22
-      placeholder: 22
+      placeholder: "22.0"
 
   - type: textarea
     id: additional_context
