@@ -51,15 +51,15 @@ body:
     validations:
       required: true
 
-  - type: checkboxes
+  - type: dropdown
     id: severity
     attributes:
       label: Severity
       description: How severe is this accessibility issue?
       options:
-        - label: "🔴 Blocker - Cannot use the site at all"
-        - label: "🟠 Major - Significant barrier to using key features"
-        - label: "🟡 Minor - Inconvenience, but workaround exists"
+        - "🔴 Blocker - Cannot use the site at all"
+        - "🟠 Major - Significant barrier to using key features"
+        - "🟡 Minor - Inconvenience, but workaround exists"
     validations:
       required: true
 
