@@ -1,0 +1,95 @@
+name: Accessibility Issue
+description: Report accessibility barriers that prevent users from accessing the site
+title: "Accessibility Issue - ISSUE-NAME-HERE"
+labels:
+  - accessibility
+body:
+  - type: textarea
+    id: accessibility_issue
+    attributes:
+      label: Describe the accessibility issue
+      description: What accessibility barrier did you encounter? How does it affect your ability to use the site?
+      placeholder: |
+        e.g., "I cannot read the drill titles because the text color contrast is too low"
+        or "The export buttons are not accessible via keyboard navigation"
+      validations:
+        required: true
+
+  - type: textarea
+    id: affected_page
+    attributes:
+      label: Which page or feature is affected?
+      description: Specify the page, component, or feature where you encountered this issue.
+      placeholder: |
+        e.g., "Goalie Drills page", "Generate Team Plan button", "Dark mode toggle", etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce (if applicable)
+      description: If applicable, provide steps to reproduce the accessibility issue.
+      placeholder: |
+        1. Navigate to...
+        2. Try to access via screen reader/keyboard...
+        3. Notice that...
+
+  - type: checkboxes
+    id: accessibility_type
+    attributes:
+      label: Type of accessibility issue
+      description: What type of accessibility barrier is this?
+      options:
+        - label: Screen Reader - content not read correctly
+        - label: Keyboard Navigation - cannot access via keyboard
+        - label: Color Contrast - text is hard to read
+        - label: Focus Indicators - cannot see where I am on the page
+        - label: Form Labels - form inputs not properly labeled
+        - label: Mobile/Touch - hard to use on mobile devices
+        - label: Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this accessibility issue?
+      options:
+        - label: "🔴 Blocker - Cannot use the site at all"
+        - label: "🟠 Major - Significant barrier to using key features"
+        - label: "🟡 Minor - Inconvenience, but workaround exists"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Browser & Device Information"
+
+  - type: input
+    id: browser_device
+    attributes:
+      label: Browser and device
+      description: What browser/assistive technology are you using? (e.g., Chrome with NVDA screen reader, Safari with VoiceOver on iPhone)
+      placeholder: Firefox with NVDA screen reader on Windows 10
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: e.g. Windows 11, macOS 14, Ubuntu 22.04, iOS 18, Android 14
+      placeholder: Windows 11
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Any other information that would help us fix this issue (e.g., links to WCAG guidelines, screenshots, videos).
+      placeholder: Links, screenshots, or videos demonstrating the issue...
