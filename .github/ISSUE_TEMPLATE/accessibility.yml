@@ -12,8 +12,8 @@ body:
       placeholder: |
         e.g., "I cannot read the drill titles because the text color contrast is too low"
         or "The export buttons are not accessible via keyboard navigation"
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: textarea
     id: affected_page
