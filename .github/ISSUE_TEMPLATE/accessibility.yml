@@ -12,8 +12,8 @@ body:
       placeholder: |
         e.g., "I cannot read the drill titles because the text color contrast is too low"
         or "The export buttons are not accessible via keyboard navigation"
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: textarea
     id: affected_page
@@ -51,15 +51,15 @@ body:
     validations:
       required: true
 
-  - type: checkboxes
+  - type: dropdown
     id: severity
     attributes:
       label: Severity
       description: How severe is this accessibility issue?
       options:
-        - label: "🔴 Blocker - Cannot use the site at all"
-        - label: "🟠 Major - Significant barrier to using key features"
-        - label: "🟡 Minor - Inconvenience, but workaround exists"
+        - "🔴 Blocker - Cannot use the site at all"
+        - "🟠 Major - Significant barrier to using key features"
+        - "🟡 Minor - Inconvenience, but workaround exists"
     validations:
       required: true
 
