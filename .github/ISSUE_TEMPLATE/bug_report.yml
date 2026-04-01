@@ -1,5 +1,5 @@
 name: Bug report
-description: Create a report to help us improve, including accessibility barriers
+description: Create a report to help us improve, including accessibility barriers and documentation corrections, additions, or updates
 title: "Bug Report - ISSUE-NAME-HERE"
 labels:
   - bug
@@ -7,14 +7,15 @@ body:
   - type: textarea
     id: bug_description
     attributes:
-      label: Describe the bug
+      label: Describe the bug or issue
       description: |
-        A clear and concise description of what the bug is.
+        A clear and concise description of what the bug or issue is.
         If reporting an accessibility issue, describe the barrier you encountered and how it affects your ability to use the site.
+        If reporting a documentation issue, describe what is missing, incorrect, or unclear.
       placeholder: |
         What happened?
         e.g., "I cannot read the drill titles because the text color contrast is too low"
-        or "The export buttons are not accessible via keyboard navigation"
+        or "The README is missing information about how to add new drills"
     validations:
       required: true
 
@@ -160,8 +161,53 @@ body:
       description: e.g. 22
       placeholder: "22.0"
 
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Documentation (if applicable)"
+
+  - type: textarea
+    id: doc_location
+    attributes:
+      label: Where is documentation missing or incorrect?
+      description: Specify which file, section, or area the documentation issue relates to.
+      placeholder: |
+        e.g., README.md, Drill creation guide, Contributing guide, local development setup, etc.
+
+  - type: textarea
+    id: doc_proposed_content
+    attributes:
+      label: Proposed documentation content
+      description: If you have suggestions for what should be added or changed, include them here.
+      placeholder: Suggested text, examples, diagrams, or links to reference material...
+
+  - type: textarea
+    id: doc_impact
+    attributes:
+      label: Who is impacted by this documentation gap?
+      description: Describe who needs this documentation.
+      placeholder: |
+        e.g., "Coaches trying to create custom development plans"
+        or "New contributors setting up the development environment"
+
+  - type: checkboxes
+    id: doc_type
+    attributes:
+      label: Type of documentation
+      description: If this is a documentation issue, what kind of documentation is needed?
+      options:
+        - label: User Guide (how to use the site)
+        - label: Developer Guide (development setup, contributing code)
+        - label: Drill Creator Guide (how to create/submit drills)
+        - label: API/Technical Reference
+        - label: Troubleshooting Guide
+        - label: Other
+
   - type: textarea
     id: additional_context
     attributes:
       label: Additional context
-      description: Add any other context about the problem here (e.g., links to WCAG guidelines, error messages).
+      description: Add any other context about the problem here (e.g., links to WCAG guidelines, error messages, links to relevant docs).
