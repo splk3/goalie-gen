@@ -1,5 +1,5 @@
 name: Bug report
-description: Create a report to help us improve
+description: Create a report to help us improve, including accessibility barriers
 title: "Bug Report - ISSUE-NAME-HERE"
 labels:
   - bug
@@ -8,8 +8,13 @@ body:
     id: bug_description
     attributes:
       label: Describe the bug
-      description: A clear and concise description of what the bug is.
-      placeholder: What happened?
+      description: |
+        A clear and concise description of what the bug is.
+        If reporting an accessibility issue, describe the barrier you encountered and how it affects your ability to use the site.
+      placeholder: |
+        What happened?
+        e.g., "I cannot read the drill titles because the text color contrast is too low"
+        or "The export buttons are not accessible via keyboard navigation"
     validations:
       required: true
 
@@ -36,11 +41,52 @@ body:
       required: true
 
   - type: textarea
+    id: affected_page
+    attributes:
+      label: Which page or feature is affected?
+      description: Specify the page, component, or feature where you encountered this issue.
+      placeholder: |
+        e.g., "Goalie Drills page", "Generate Team Plan button", "Dark mode toggle", etc.
+
+  - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
-      description: If applicable, add screenshots to help explain your problem.
+      description: If applicable, add screenshots or videos to help explain your problem.
       placeholder: Drag and drop screenshots here.
+
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Accessibility (if applicable)"
+
+  - type: checkboxes
+    id: accessibility_type
+    attributes:
+      label: Type of accessibility issue
+      description: If this is an accessibility issue, select all that apply.
+      options:
+        - label: Screen Reader - content not read correctly
+        - label: Keyboard Navigation - cannot access via keyboard
+        - label: Color Contrast - text is hard to read
+        - label: Focus Indicators - cannot see where I am on the page
+        - label: Form Labels - form inputs not properly labeled
+        - label: Mobile/Touch - hard to use on mobile devices
+        - label: Other
+
+  - type: dropdown
+    id: accessibility_severity
+    attributes:
+      label: Accessibility severity
+      description: If this is an accessibility issue, how severe is the barrier?
+      options:
+        - "N/A - Not an accessibility issue"
+        - "🔴 Blocker - Cannot use the site at all"
+        - "🟠 Major - Significant barrier to using key features"
+        - "🟡 Minor - Inconvenience, but workaround exists"
 
   - type: markdown
     attributes:
@@ -70,6 +116,13 @@ body:
       label: Desktop browser version
       description: e.g. 123.0
       placeholder: "123.0"
+
+  - type: input
+    id: assistive_technology
+    attributes:
+      label: Assistive technology (if applicable)
+      description: e.g., NVDA screen reader, VoiceOver, JAWS, Windows High Contrast mode
+      placeholder: NVDA screen reader on Windows 11
 
   - type: markdown
     attributes:
@@ -111,4 +164,4 @@ body:
     id: additional_context
     attributes:
       label: Additional context
-      description: Add any other context about the problem here.
+      description: Add any other context about the problem here (e.g., links to WCAG guidelines, error messages).
