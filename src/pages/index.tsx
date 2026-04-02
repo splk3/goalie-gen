@@ -8,6 +8,7 @@ import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton"
 import INeedADrillButton from "../components/INeedADrillButton"
 import NavigationButton from "../components/NavigationButton"
 import TermsPopup from "../components/TermsPopup"
+import FeedbackPopup from "../components/FeedbackPopup"
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner"
 
 export default function Home() {
@@ -103,8 +104,10 @@ export default function Home() {
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
           <p>© {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James Kujawski</p>
-          <div className="mt-2">
+          <div className="mt-2 flex items-center justify-center gap-4">
             <TermsPopup />
+            <span className="opacity-70">|</span>
+            <FeedbackPopup />
           </div>
         </div>
       </footer>

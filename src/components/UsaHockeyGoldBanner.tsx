@@ -1,6 +1,7 @@
 import * as React from "react"
 import { withPrefix, useStaticQuery, graphql } from "gatsby"
 import TermsPopup from "./TermsPopup"
+import FeedbackPopup from "./FeedbackPopup"
 
 interface UsaHockeyGoldBannerProps {
   showCopyright?: boolean
@@ -59,8 +60,10 @@ export default function UsaHockeyGoldBanner({ showCopyright = false, showTerms =
         </p>
       )}
       {showTerms && (
-        <div className="text-center mt-2">
+        <div className="text-center mt-2 flex items-center justify-center gap-4">
           <TermsPopup />
+          <span className="opacity-70">|</span>
+          <FeedbackPopup />
         </div>
       )}
     </>
