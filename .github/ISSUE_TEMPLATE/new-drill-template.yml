@@ -5,7 +5,6 @@ labels:
   - new-drill
 assignees:
   - splk3
-  - copilot-swe-agent
 body:
   - type: markdown
     attributes:
