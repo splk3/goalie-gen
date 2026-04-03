@@ -90,9 +90,6 @@ goalie-gen/
 │   ├── styles/           # Global CSS styles
 │   ├── hooks/            # Custom React hooks
 │   │   └── useDrillFilters.ts
-│   ├── styles/           # Global CSS styles
-│   ├── templates/        # Dynamic page templates
-│   │   └── drill.tsx     # Template for individual drill pages
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
 │       ├── generateDrillPdf.ts
