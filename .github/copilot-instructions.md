@@ -29,15 +29,19 @@ The following files and directories are part of the repository:
   - `src/pages/`: Page components (auto-routed by Gatsby) - TypeScript (.tsx)
     - index.tsx, goalie-drills.tsx, team-drills.tsx
     - goalie-resources.tsx, coach-resources.tsx, club-resources.tsx
+    - goalie-evals.tsx, 404.tsx
   - `src/templates/`: Dynamic page templates (TypeScript .tsx files)
     - drill.tsx - Template for individual drill pages
   - `src/components/`: Reusable React components (TypeScript .tsx files)
     - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
     - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
-    - GoalieJournalButton.tsx, DownloadDrillButton.tsx, DownloadMaterialButton.tsx
+    - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
     - ExternalLinkButton.tsx, NavigationButton.tsx, TermsPopup.tsx
+    - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
+  - `src/hooks/`: Custom React hooks (TypeScript .ts files)
+    - useDrillFilters.ts - Hook for drill filtering logic
   - `src/styles/`: Global CSS styles
-  - `src/utils/`: Utility functions (e.g., analytics.ts)
+  - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts)
 - `drills/`: Drill database (YAML-based drill definitions with images)
   - Each subdirectory contains a drill.yml and associated images
   - Drills are automatically converted to pages via gatsby-node.ts
@@ -107,7 +111,7 @@ The following are created during development/build and excluded via `.gitignore`
    - Use `npm run deploy` to deploy to GitHub Pages (dev.goaliegen.com)
    - Cloudflare Pages automatically deploys on push to `main` branch (goaliegen.com)
    - Site uses custom domains configured appropriately for each platform:
-     - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`)
+     - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`); CI deploys on push to `dev` branch
      - Cloudflare Pages: goaliegen.com (configured via Cloudflare dashboard and `wrangler.jsonc`)
    - No path prefix needed with custom domain setup
    - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
@@ -144,6 +148,11 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `coaching_points` (array): List of coaching tips
    - `images` (array): Array of image filenames
    - `tags` (object): Categorization tags
+   - `drill_creation_date` (string): Date drill was created, in `YYYY-MM-DD` format
+
+3. **Optional drill.yml Fields**:
+   - `video` (string): YouTube or Vimeo URL
+   - `drill_updated_date` (string): Date drill was last updated, in `YYYY-MM-DD` format (must not be earlier than `drill_creation_date`)
 
 3. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API
@@ -161,8 +170,8 @@ This project uses a YAML-based drill system with dynamic page generation:
 ### Color Scheme
 
 The site uses USA national colors defined in `tailwind.config.js`:
-- **usa-blue**: `#002868` - Primary blue
-- **usa-red**: `#BF0A30` - Accent red
+- **usa-blue**: `#00205B` - Primary blue
+- **usa-red**: `#AF272F` - Accent red
 - **usa-white**: `#FFFFFF` - Background/text
 
 ## Common Tasks
@@ -220,20 +229,20 @@ This repository uses GitHub Actions for automation:
    - All code changes must pass linting before merge
 
 2. **Deploy to GitHub Pages** (`deploy.yml`):
-   - Automatically deploys on push to `main` branch
+   - Automatically deploys on push to `dev` branch
    - Also runs on manual workflow dispatch
    - Builds the site with `npm run build`
    - Uses `npm ci` for clean, reproducible dependency installation
    - Deploys to GitHub Pages using upload-pages-artifact action
-   - Uses Node.js 20 with npm caching
-   - Uses actions/deploy-pages@v4 with proper permissions and concurrency control
+   - Uses Node.js 24 with npm caching
+   - Uses actions/deploy-pages with proper permissions and concurrency control
    - Deploys to custom domain configured in static/CNAME
 
 3. **Test Build** (`test-build.yml`):
    - Tests that the site builds successfully
    - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
-   - Executes `npm ci` and `npm run build` to verify build process
-   - Uses Node.js 20 with npm caching
+   - Executes `npm ci`, runs `npm test` (unit tests), then `npm run build` to verify build process
+   - Uses Node.js 24 with npm caching
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
 
@@ -463,6 +472,7 @@ export default function Component() {
 - `npm run build` - Build production site
 - `npm run serve` - Serve production build locally
 - `npm run clean` - Clean cache and public directories
+- `npm test` - Run unit tests
 - `npm run deploy` - Build and deploy to GitHub Pages
 
 ## Target Audience
