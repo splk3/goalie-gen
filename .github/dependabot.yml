@@ -15,7 +15,7 @@ updates:
   
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
-    directory: "/.github/workflows"
+    directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
