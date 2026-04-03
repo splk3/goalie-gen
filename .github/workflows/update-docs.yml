@@ -28,10 +28,9 @@ jobs:
               Please review the current state of the repository and suggest updates to:
               - README.md
               - .github/copilot-instructions.md
-              - Any other relevant documentation`,
-
-              Make sure you follow this repositories Copilot Instructions.
-
+              - Any other relevant documentation
+              
+              Make sure you follow this repositories Copilot Instructions.`,
               assignees: ['splk3'],
               labels: ['documentation', 'copilot']
             });
