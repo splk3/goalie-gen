@@ -54,6 +54,7 @@ The site uses USA national colors:
 - `npm run serve` - Serve the production build locally
 - `npm run clean` - Clean the cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
+- `npm test` - Run unit tests with Jest
 
 ## 📁 Project Structure
 
@@ -62,28 +63,37 @@ goalie-gen/
 ├── src/
 │   ├── components/       # React components (TypeScript)
 │   │   ├── DarkModeToggle.tsx
-│   │   ├── DownloadDrillButton.tsx
+│   │   ├── DownloadDrillPdfButton.tsx
 │   │   ├── DownloadMaterialButton.tsx
 │   │   ├── ExternalLinkButton.tsx
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
+│   │   ├── INeedADrillButton.tsx
 │   │   ├── Logo.tsx
 │   │   ├── NavigationButton.tsx
+│   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
-│   │   └── TermsPopup.tsx
+│   │   ├── TermsPopup.tsx
+│   │   └── UsaHockeyGoldBanner.tsx
 │   ├── pages/            # Page components (auto-routed by Gatsby)
+│   │   ├── 404.tsx
 │   │   ├── club-resources.tsx
 │   │   ├── coach-resources.tsx
 │   │   ├── goalie-drills.tsx
+│   │   ├── goalie-evals.tsx
 │   │   ├── goalie-resources.tsx
 │   │   ├── index.tsx
 │   │   └── team-drills.tsx
 │   ├── templates/        # Dynamic page templates
 │   │   └── drill.tsx     # Template for individual drill pages
 │   ├── styles/           # Global CSS styles
+│   ├── hooks/            # Custom React hooks
+│   │   └── useDrillFilters.ts
 │   └── utils/            # Utility functions
-│       └── analytics.ts  # Analytics utilities
+│       ├── analytics.ts
+│       ├── generateDrillPdf.ts
+│       └── videoUtils.ts
 ├── drills/               # Drill database (YAML + images)
 │   ├── power-push-quick-movement-blaze-pods/
 │   ├── test-drill-advanced-teams/
@@ -208,7 +218,7 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Purpose**: Builds and deploys the site to GitHub Pages
 - **Actions**: Runs `npm ci` and `npm run build`, uploads artifact, and deploys to GitHub Pages
 - **Node Version**: 24.x with npm caching enabled
-- **Deployment**: Uses actions/deploy-pages@v4 with proper permissions and concurrency control
+- **Deployment**: Uses actions/deploy-pages@v5 with proper permissions and concurrency control
 
 ### 2. Super Linter (`super-linter.yml`)
 
