@@ -28,16 +28,19 @@ The following files and directories are part of the repository:
 - `src/`: Source code directory
   - `src/pages/`: Page components (auto-routed by Gatsby) - TypeScript (.tsx)
     - index.tsx, goalie-drills.tsx, team-drills.tsx
-    - goalie-resources.tsx, coach-resources.tsx, club-resources.tsx
+    - goalie-resources.tsx, goalie-evals.tsx, coach-resources.tsx, club-resources.tsx
+    - 404.tsx
   - `src/templates/`: Dynamic page templates (TypeScript .tsx files)
     - drill.tsx - Template for individual drill pages
   - `src/components/`: Reusable React components (TypeScript .tsx files)
     - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
     - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
-    - GoalieJournalButton.tsx, DownloadDrillButton.tsx, DownloadMaterialButton.tsx
+    - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
     - ExternalLinkButton.tsx, NavigationButton.tsx, TermsPopup.tsx
+    - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
   - `src/styles/`: Global CSS styles
-  - `src/utils/`: Utility functions (e.g., analytics.ts)
+  - `src/hooks/`: Custom React hooks (e.g., useDrillFilters.ts)
+  - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts)
 - `drills/`: Drill database (YAML-based drill definitions with images)
   - Each subdirectory contains a drill.yml and associated images
   - Drills are automatically converted to pages via gatsby-node.ts
@@ -110,7 +113,7 @@ The following are created during development/build and excluded via `.gitignore`
      - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`)
      - Cloudflare Pages: goaliegen.com (configured via Cloudflare dashboard and `wrangler.jsonc`)
    - No path prefix needed with custom domain setup
-   - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
+   - GitHub Actions workflow automates deployment to GitHub Pages on push to `dev` branch
 
 ### Code Style
 
@@ -161,8 +164,8 @@ This project uses a YAML-based drill system with dynamic page generation:
 ### Color Scheme
 
 The site uses USA national colors defined in `tailwind.config.js`:
-- **usa-blue**: `#002868` - Primary blue
-- **usa-red**: `#BF0A30` - Accent red
+- **usa-blue**: `#00205B` - Primary blue
+- **usa-red**: `#AF272F` - Accent red
 - **usa-white**: `#FFFFFF` - Background/text
 
 ## Common Tasks
@@ -220,20 +223,20 @@ This repository uses GitHub Actions for automation:
    - All code changes must pass linting before merge
 
 2. **Deploy to GitHub Pages** (`deploy.yml`):
-   - Automatically deploys on push to `main` branch
+   - Automatically deploys on push to `dev` branch
    - Also runs on manual workflow dispatch
    - Builds the site with `npm run build`
    - Uses `npm ci` for clean, reproducible dependency installation
    - Deploys to GitHub Pages using upload-pages-artifact action
-   - Uses Node.js 20 with npm caching
-   - Uses actions/deploy-pages@v4 with proper permissions and concurrency control
+   - Uses Node.js 24 with npm caching
+   - Uses actions/deploy-pages@v5 with proper permissions and concurrency control
    - Deploys to custom domain configured in static/CNAME
 
 3. **Test Build** (`test-build.yml`):
    - Tests that the site builds successfully
    - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
-   - Executes `npm ci` and `npm run build` to verify build process
-   - Uses Node.js 20 with npm caching
+   - Executes `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process
+   - Uses Node.js 24 with npm caching
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
 
@@ -464,6 +467,7 @@ export default function Component() {
 - `npm run serve` - Serve production build locally
 - `npm run clean` - Clean cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
+- `npm test` - Run unit tests with Jest
 
 ## Target Audience
 
