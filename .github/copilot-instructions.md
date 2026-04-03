@@ -237,12 +237,6 @@ This repository uses GitHub Actions for automation:
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
 
-4. **Release Prep** (`release-prep.yml`):
-   - Triggers on manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
-   - Automatically creates GitHub issues for documentation updates
-   - Creates issues titled "update README and copilot instructions"
-   - Helps maintain documentation currency after releases
-
 ## JAMstack Architecture & Static Hosting Requirements
 
 ### What is JAMstack?
