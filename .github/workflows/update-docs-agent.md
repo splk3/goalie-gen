@@ -21,8 +21,7 @@ safe-outputs:
   create-pull-request:
     title-prefix: "[docs] "
     labels: [documentation]
-    reviewers: [splk3]
-    draft: false
+    draft: true
     if-no-changes: warn
 ---
 
