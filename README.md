@@ -224,12 +224,6 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Actions**: Runs `npm ci` and `npm run build`, then verifies `public/` directory was created
 - **Node Version**: 24.x with npm caching enabled
 
-### 4. Release Prep (`release-prep.yml`)
-
-- **Trigger**: Manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
-- **Purpose**: Automatically creates documentation update issues
-- **Actions**: Creates GitHub issue for README and copilot instructions updates
-
 ## 🚀 Deployment
 
 This site is deployed to both **GitHub Pages** and **Cloudflare Pages** with custom domain support.
