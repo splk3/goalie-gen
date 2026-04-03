@@ -36,9 +36,3 @@ jobs:
             });
             console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
             return issue.data.number;
-      
-      - name: Assign Copilot to Issue
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue edit ${{ steps.create-issue.outputs.result }} --add-assignee copilot-swe-agent --repo ${{ github.repository }}
