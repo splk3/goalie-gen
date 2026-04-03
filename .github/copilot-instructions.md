@@ -113,7 +113,7 @@ The following are created during development/build and excluded via `.gitignore`
      - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`)
      - Cloudflare Pages: goaliegen.com (configured via Cloudflare dashboard and `wrangler.jsonc`)
    - No path prefix needed with custom domain setup
-   - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
+   - GitHub Actions workflow automates deployment to GitHub Pages on push to `dev` branch
 
 ### Code Style
 
@@ -223,7 +223,7 @@ This repository uses GitHub Actions for automation:
    - All code changes must pass linting before merge
 
 2. **Deploy to GitHub Pages** (`deploy.yml`):
-   - Automatically deploys on push to `main` branch
+   - Automatically deploys on push to `dev` branch
    - Also runs on manual workflow dispatch
    - Builds the site with `npm run build`
    - Uses `npm ci` for clean, reproducible dependency installation
@@ -235,7 +235,7 @@ This repository uses GitHub Actions for automation:
 3. **Test Build** (`test-build.yml`):
    - Tests that the site builds successfully
    - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
-   - Executes `npm ci` and `npm run build` to verify build process
+   - Executes `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process
    - Uses Node.js 24 with npm caching
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
