@@ -243,7 +243,7 @@ This repository uses GitHub Actions for automation:
 4. **Update Docs Agent** (`update-docs-agent.lock.yml`):
    - Runs weekly and on manual workflow dispatch
    - Uses an AI workflow to propose documentation-only updates
-   - Safe outputs are configured to block changes under `.github/workflows/` and `.github/aw/`
+   - Safe outputs are configured to block changes under `.github/workflows/` or `.github/aw/`
 
 ## JAMstack Architecture & Static Hosting Requirements
 
