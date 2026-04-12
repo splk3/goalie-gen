@@ -23,9 +23,13 @@ safe-outputs:
     labels: [documentation]
     draft: true
     if-no-changes: warn
+    allowed-files:
+      - README.md
+      - .github/copilot-instructions.md
     excluded-files:
       - .github/workflows/**
       - .github/aw/**
+      - .github/aw/actions-lock.json
 ---
 
 # Update Repository Documentation
@@ -65,4 +69,5 @@ You are a technical documentation writer. Your task is to review the current sta
 - Preserve all existing formatting, headings, and tone
 - If you find no meaningful changes are needed, state that clearly and do not create a PR
 - **Do NOT modify any workflow files** — files under `.github/workflows/` must never be edited or included in the pull request
+- **Do NOT modify generated agent lock files** — `.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml` must never be edited
 - The PR must only include documentation changes outside `.github/workflows/` and `.github/aw/`
