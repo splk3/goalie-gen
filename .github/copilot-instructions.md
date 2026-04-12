@@ -240,6 +240,11 @@ This repository uses GitHub Actions for automation:
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
 
+4. **Update Docs Agent** (`update-docs-agent.lock.yml`):
+   - Runs weekly and on manual workflow dispatch
+   - Uses an AI workflow to propose documentation-only updates
+   - Safe outputs are configured to block changes under `.github/workflows/` and `.agents/`
+
 ## JAMstack Architecture & Static Hosting Requirements
 
 ### What is JAMstack?

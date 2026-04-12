@@ -234,6 +234,12 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Actions**: Runs `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process, then verifies `public/` directory was created
 - **Node Version**: 24.x with npm caching enabled
 
+### 4. Update Docs Agent (`update-docs-agent.lock.yml`)
+
+- **Trigger**: Weekly schedule + manual dispatch
+- **Purpose**: Runs an AI docs-maintenance workflow that reviews repository state and proposes documentation updates
+- **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.agents/`
+
 ## 🚀 Deployment
 
 This site is deployed to both **GitHub Pages** and **Cloudflare Pages** with custom domain support.
