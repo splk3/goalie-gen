@@ -238,7 +238,7 @@ This repository uses GitHub Actions for automation and CI/CD:
 
 - **Trigger**: Weekly schedule + manual dispatch
 - **Purpose**: Runs an AI docs-maintenance workflow that reviews repository state and proposes documentation updates
-- **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.agents/`
+- **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.github/aw/`
 
 ## 🚀 Deployment
 
