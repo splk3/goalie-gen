@@ -25,7 +25,7 @@ safe-outputs:
     if-no-changes: warn
     excluded-files:
       - .github/workflows/**
-      - .agents/**
+      - .github/aw/**
 ---
 
 # Update Repository Documentation
@@ -65,4 +65,4 @@ You are a technical documentation writer. Your task is to review the current sta
 - Preserve all existing formatting, headings, and tone
 - If you find no meaningful changes are needed, state that clearly and do not create a PR
 - **Do NOT modify any workflow files** — files under `.github/workflows/` must never be edited or included in the pull request
-- The PR must only include documentation changes outside `.github/workflows/` and `.agents/`
+- The PR must only include documentation changes outside `.github/workflows/` and `.github/aw/`
