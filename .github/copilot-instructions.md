@@ -392,6 +392,10 @@ Before Copilot submits a PR for review, it MUST:
 - **Never commit** build artifacts (`public/`, `.cache/`)
 - **Never commit** `node_modules/` directory
 - **Always use TypeScript** - new files should use .ts or .tsx extensions
+- **Do not modify generated agent lock files** unless explicitly asked for lockfile maintenance:
+   - `.github/aw/actions-lock.json`
+   - `.github/workflows/*.lock.yml`
+   - These files are generated artifacts and must not be edited during feature work, bug fixes, refactors, or documentation updates
 - **Repository URL**: `https://github.com/splk3/goalie-gen` (ensure package.json uses correct URL)
 - Custom domain eliminates need for path prefix in gatsby-config.ts
 - Site URL is set via GATSBY_SITE_URL environment variable
@@ -422,6 +426,7 @@ Before Copilot submits a PR for review, it MUST:
 - Forget to test production builds before submitting PR
 - Skip the `npm run build` validation step
 - Use .js or .jsx extensions for new files (use .ts or .tsx)
+- Edit generated lock artifacts (`.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml`) unless the task is explicitly to regenerate/update those lock files
 
 ### ✅ Correct Patterns for Static Sites
 

@@ -4,3 +4,7 @@
 
 # Default owner for all files in the repository
 * @splk3
+
+# Generated agent/workflow lock artifacts (must not be edited during normal feature work)
+/.github/aw/actions-lock.json @splk3
+/.github/workflows/*.lock.yml @splk3
