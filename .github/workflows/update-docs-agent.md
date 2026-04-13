@@ -23,6 +23,7 @@ safe-outputs:
     labels: [documentation]
     draft: true
     if-no-changes: warn
+    protected-files: allowed
     allowed-files:
       - README.md
       - .github/copilot-instructions.md
