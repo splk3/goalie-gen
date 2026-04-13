@@ -153,14 +153,14 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `video` (string): YouTube or Vimeo URL for the drill
    - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
 
-3. **Dynamic Page Generation**:
+4. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API
    - Each drill.yml is validated during build
    - Drill data is also added to GraphQL via the `sourceNodes` API
    - The `src/templates/drill.tsx` template is used for all drill pages
    - Build will fail if drill.yml files are invalid or missing required fields
 
-4. **Adding New Drills**:
+5. **Adding New Drills**:
    - Create a new folder in `drills/` with a URL-friendly name
    - Add a `drill.yml` file with all required fields
    - Add drill images to the same folder
