@@ -147,6 +147,11 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `coaching_points` (array): List of coaching tips
    - `images` (array): Array of image filenames
    - `tags` (object): Categorization tags
+   - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
+
+3. **Optional drill.yml Fields**:
+   - `video` (string): YouTube or Vimeo URL for the drill
+   - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
 
 3. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API

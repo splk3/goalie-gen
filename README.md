@@ -145,8 +145,12 @@ Required fields in drill.yml:
 - coaching_points
 - images
 - tags
+- `drill_creation_date` (string in `YYYY-MM-DD` format, e.g. `2024-01-15`)
 
-All other fields (such as `video`) are optional. For tags, each sub-field is optional, but some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`):
+All other fields are optional. Known optional fields include:
+
+- `video` — a YouTube or Vimeo URL (see format details below)
+- `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date` For tags, each sub-field is optional, but some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`):
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
