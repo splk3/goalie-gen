@@ -145,8 +145,9 @@ Required fields in drill.yml:
 - `coaching_points`
 - `images`
 - `tags`
-- `drill_creation_date` (string in `YYYY-MM-DD` format, e.g. `2024-01-15`)
+- `drill_creation_date`
 
+`drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
 All other fields are optional. Known optional fields include:
 
 - `video` — a YouTube or Vimeo URL (see format details below)
