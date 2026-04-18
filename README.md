@@ -75,7 +75,8 @@ goalie-gen/
 │   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
 │   │   ├── TermsPopup.tsx
-│   │   └── UsaHockeyGoldBanner.tsx
+│   │   ├── UsaHockeyGoldBanner.tsx
+│   │   └── __tests__/   # Unit tests for components
 │   ├── pages/            # Page components (auto-routed by Gatsby)
 │   │   ├── 404.tsx
 │   │   ├── club-resources.tsx
@@ -89,11 +90,13 @@ goalie-gen/
 │   │   └── drill.tsx     # Template for individual drill pages
 │   ├── styles/           # Global CSS styles
 │   ├── hooks/            # Custom React hooks
-│   │   └── useDrillFilters.ts
+│   │   ├── useDrillFilters.ts
+│   │   └── __tests__/   # Unit tests for hooks
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
 │       ├── generateDrillPdf.ts
-│       └── videoUtils.ts
+│       ├── videoUtils.ts
+│       └── __tests__/   # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
 │   ├── power-push-quick-movement-blaze-pods/
 │   ├── test-drill-advanced-teams/
@@ -153,7 +156,7 @@ All other fields are optional. Known optional fields include:
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
 
-The `tags` field is required, but each sub-field is optional. Some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`):
+The `tags` field is required, but each sub-field is optional. Some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`). Each of these sub-fields accepts an **array** of one or more values from the allowed list:
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
