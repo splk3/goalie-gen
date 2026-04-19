@@ -102,6 +102,7 @@ The following are created during development/build and excluded via `.gitignore`
 ### Working with Gatsby
 
 1. **Local Development**:
+   - Requires **Node.js 24** (`engines: ">=24"` in `package.json`; use `.nvmrc` with `nvm use`)
    - Use `npm install` to install dependencies
    - Use `npm run develop` or `npm start` to run the development server
    - Server runs at `http://localhost:8000`
