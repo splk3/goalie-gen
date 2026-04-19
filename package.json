@@ -4,6 +4,9 @@
   "description": "Goalie Gen - Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans",
   "version": "0.1.0",
   "license": "BSD-3-Clause",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
@@ -36,7 +39,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "autoprefixer": "^10.4.27",
+    "autoprefixer": "^10.5.0",
     "babel-jest": "^30.3.0",
     "babel-preset-gatsby": "^3.16.0",
     "gatsby-plugin-postcss": "^6.16.0",
@@ -45,7 +48,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
-    "postcss": "^8.5.9",
+    "postcss": "^8.5.10",
     "tailwindcss": "^4.2.0",
     "typescript": "^6.0.2"
   },
