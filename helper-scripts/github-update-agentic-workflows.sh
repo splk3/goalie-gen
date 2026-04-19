@@ -16,6 +16,8 @@ run_step() {
 }
 
 main() {
+	# Ensure the script runs from the repository root
+	cd "$(dirname "$0")/.."
 	run_step "gh extension upgrade gh-aw" gh extension upgrade gh-aw
 	run_step "gh aw upgrade" gh aw upgrade
 	run_step "gh aw compile" gh aw compile
