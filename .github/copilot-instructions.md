@@ -38,9 +38,12 @@ The following files and directories are part of the repository:
     - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
     - ExternalLinkButton.tsx, NavigationButton.tsx, TermsPopup.tsx
     - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
+    - `__tests__/` - Unit tests for components
   - `src/styles/`: Global CSS styles
   - `src/hooks/`: Custom React hooks (e.g., useDrillFilters.ts)
+    - `__tests__/` - Unit tests for hooks
   - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts)
+    - `__tests__/` - Unit tests for utilities
 - `drills/`: Drill database (YAML-based drill definitions with images)
   - Each subdirectory contains a drill.yml and associated images
   - Drills are automatically converted to pages via gatsby-node.ts
