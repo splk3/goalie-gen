@@ -5,7 +5,7 @@ description: AI agent that reviews the repository and updates README.md and .git
 on:
   workflow_dispatch:
   schedule:
-    - cron: 'weekly on saturday'
+    - cron: "weekly on saturday"
 
 permissions:
   contents: read
@@ -70,5 +70,5 @@ You are a technical documentation writer. Your task is to review the current sta
 - Preserve all existing formatting, headings, and tone
 - If you find no meaningful changes are needed, state that clearly and do not create a PR
 - **Do NOT modify any workflow files** — files under `.github/workflows/` must never be edited or included in the pull request
-- **Do NOT modify generated agent lock files** — `.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml` must never be edited
+- **Do NOT modify generated agent lockfiles** — `.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml` must never be edited
 - The PR must only include documentation changes outside `.github/workflows/` and `.github/aw/`

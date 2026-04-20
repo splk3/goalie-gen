@@ -1,0 +1,4 @@
+skip-check:
+  - CKV_GHA_7
+skip-path:
+  - .github/workflows/update-docs-agent.lock.yml

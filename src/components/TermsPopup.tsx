@@ -60,9 +60,9 @@ export default function TermsPopup() {
                   1. Acceptance of Terms
                 </h3>
                 <p className="mb-2">
-                  By accessing and using Goalie Gen (the "Site"), you acknowledge that you have read, 
-                  understood, and agree to be bound by these Terms of Use. Your use of the Site 
-                  constitutes your acceptance of these terms. If you do not agree to these terms, 
+                  By accessing and using Goalie Gen (the &quot;Site&quot;), you acknowledge that you have
+                  read, understood, and agree to be bound by these Terms of Use. Your use of the Site
+                  constitutes your acceptance of these terms. If you do not agree to these terms,
                   please do not use the Site.
                 </p>
               </section>
@@ -133,11 +133,11 @@ export default function TermsPopup() {
               {/* As-Is and As-Available */}
               <section>
                 <h3 className="text-xl font-semibold text-usa-blue dark:text-blue-400 mb-3">
-                  5. "As-Is" and "As-Available" Basis
+                  5. &quot;As-Is&quot; and &quot;As-Available&quot; Basis
                 </h3>
                 <p className="mb-2">
-                  The Site and all content, materials, and tools are provided on an "AS-IS" and 
-                  "AS-AVAILABLE" basis without warranties of any kind, either express or implied. 
+                  The Site and all content, materials, and tools are provided on an &quot;AS-IS&quot; and
+                  &quot;AS-AVAILABLE&quot; basis without warranties of any kind, either express or implied.
                   We do not warrant that:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -168,10 +168,10 @@ export default function TermsPopup() {
                   7. User Conduct
                 </h3>
                 <p className="mb-2">
-                  You agree to use the Site only for lawful purposes and in a manner that does not 
-                  infringe the rights of, restrict, or inhibit anyone else's use and enjoyment of 
-                  the Site. You may not use the Site in any way that could damage, disable, 
-                  overburden, or impair the Site or interfere with any other party's use of the Site.
+                  You agree to use the Site only for lawful purposes and in a manner that does not
+                  infringe the rights of, restrict, or inhibit anyone else&apos;s use and enjoyment of
+                  the Site. You may not use the Site in any way that could damage, disable,
+                  overburden, or impair the Site or interfere with any other party&apos;s use of the Site.
                 </p>
               </section>
 

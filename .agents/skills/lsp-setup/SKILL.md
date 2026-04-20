@@ -1,12 +1,13 @@
 ---
-description: Enable code intelligence (go-to-definition, find-references, hover, type info) for any programming language by installing and configuring an LSP server for Copilot CLI. Detects the OS, installs the right server, and generates the JSON configuration (user-level or repo-level). Use when you need deeper code understanding and no LSP server is configured, or when the user asks to set up, install, or configure an LSP server.
+description: Enable code intelligence (go-to-definition, find-references, hover, type info) for any programming language by installing and configuring an LSP server for Copilot CLI. Detects the OS, installs the right server, and generates the JSON configuration (user-level or repository-level). Use when you need deeper code understanding and no LSP server is configured, or when the user asks to set up, install, or configure an LSP server.
 metadata:
-    github-path: skills/lsp-setup
-    github-ref: refs/heads/main
-    github-repo: https://github.com/github/awesome-copilot
-    github-tree-sha: 6d96e7a0ae4fa8b34e6415564661ce0d5c365dfa
+  github-path: skills/lsp-setup
+  github-ref: refs/heads/main
+  github-repository: https://github.com/github/awesome-copilot
+  github-tree-sha: 6d96e7a0ae4fa8b34e6415564661ce0d5c365dfa
 name: lsp-setup
 ---
+
 # LSP Setup for GitHub Copilot CLI
 
 **UTILITY SKILL** — installs and configures Language Server Protocol servers for Copilot CLI.
@@ -18,17 +19,17 @@ DO NOT USE FOR: general coding tasks, IDE/editor LSP configuration, non-Copilot-
 1. **Ask the language** — use `ask_user` to ask which programming language(s) the user wants LSP support for
 2. **Detect the OS** — run `uname -s` (or check for Windows via `$env:OS` / `%OS%`) to determine macOS, Linux, or Windows
 3. **Look up the LSP server** — read `references/lsp-servers.md` for known servers, install commands, and config snippets
-4. **Ask scope** — use `ask_user` to ask whether the config should be user-level (`~/.copilot/lsp-config.json`) or repo-level (`lsp.json` at the repo root or `.github/lsp.json`)
+4. **Ask scope** — use `ask_user` to ask whether the config should be user-level (`~/.copilot/lsp-config.json`) or repository-level (`lsp.json` at the repository root or `.github/lsp.json`)
 5. **Install the server** — run the appropriate install command for the detected OS
-6. **Write the config** — merge the new server entry into the chosen config file (`~/.copilot/lsp-config.json` for user-level; `lsp.json` or `.github/lsp.json` for repo-level). If a repo-level config already exists, keep using that location; otherwise ask the user which repo-level location they prefer. Create the file if missing and preserve existing entries.
+6. **Write the config** — merge the new server entry into the chosen config file (`~/.copilot/lsp-config.json` for user-level; `lsp.json` or `.github/lsp.json` for repository-level). If a repository-level config already exists, keep using that location; otherwise ask the user which repository-level location they prefer. Create the file if missing and preserve existing entries.
 7. **Verify** — confirm the LSP binary is on `$PATH` and the config file is valid JSON
 
 ## Configuration Format
 
-Copilot CLI reads LSP configuration from user-level or repo-level locations, and repo-level config takes precedence over user-level config:
+Copilot CLI reads LSP configuration from user-level or repository-level locations, and repository-level config takes precedence over user-level config:
 
 - **User-level**: `~/.copilot/lsp-config.json`
-- **Repo-level**: `lsp.json` (repo root) or `.github/lsp.json`
+- **Repo-level**: `lsp.json` (repository root) or `.github/lsp.json`
 
 The JSON structure:
 

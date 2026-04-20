@@ -8,7 +8,7 @@ export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [goalieName, setGoalieName] = React.useState<string>("")
   const [teamName, setTeamName] = React.useState<string>("")
-  const [selectedLogo, setSelectedLogo] = React.useState<File | null>(null)
+  const [_selectedLogo, setSelectedLogo] = React.useState<File | null>(null)
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null)
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
   const [validationError, setValidationError] = React.useState<string>("")

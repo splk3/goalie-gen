@@ -4,11 +4,11 @@
  * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
  */
 
-import type { GatsbyConfig } from 'gatsby'
+import type { GatsbyConfig } from "gatsby";
 
 // Use environment variable to set site URL based on deployment
 // Default to dev domain if GATSBY_SITE_URL is not set
-const siteUrl = process.env.GATSBY_SITE_URL || 'https://dev.goaliegen.com'
+const siteUrl = process.env.GATSBY_SITE_URL || "https://dev.goaliegen.com";
 
 const config: GatsbyConfig = {
   siteMetadata: {
@@ -45,6 +45,6 @@ const config: GatsbyConfig = {
       },
     },
   ],
-}
+};
 
-export default config
+export default config;
