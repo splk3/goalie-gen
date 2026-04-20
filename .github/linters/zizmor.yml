@@ -1,7 +1,4 @@
 rules:
-  excessive-permissions:
-    ignore:
-      - deploy.yml
   impostor-commit:
     ignore:
       - update-docs-agent.lock.yml
