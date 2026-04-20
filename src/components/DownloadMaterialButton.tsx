@@ -1,35 +1,39 @@
-import * as React from "react"
-import { withPrefix } from "gatsby"
-import { trackEvent } from "../utils/analytics"
+import * as React from "react";
+import { withPrefix } from "gatsby";
+import { trackEvent } from "../utils/analytics";
 
 interface DownloadMaterialButtonProps {
-  title: string
-  fileName: string
-  folder?: string
+  title: string;
+  fileName: string;
+  folder?: string;
 }
 
-export default function DownloadMaterialButton({ title, fileName, folder = "pdfs" }: DownloadMaterialButtonProps) {
-  const [downloadStatus, setDownloadStatus] = React.useState<string>("")
+export default function DownloadMaterialButton({
+  title,
+  fileName,
+  folder = "pdfs",
+}: DownloadMaterialButtonProps) {
+  const [downloadStatus, setDownloadStatus] = React.useState<string>("");
 
   const handleDownload = () => {
-    const link = document.createElement('a')
-    link.href = withPrefix(`/${folder}/${fileName}`)
-    link.download = fileName
-    link.setAttribute('aria-label', `Download ${title}`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
+    const link = document.createElement("a");
+    link.href = withPrefix(`/${folder}/${fileName}`);
+    link.download = fileName;
+    link.setAttribute("aria-label", `Download ${title}`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
     // Announce download to screen readers
-    setDownloadStatus(`Downloading ${title}`)
-    setTimeout(() => setDownloadStatus(""), 3000)
+    setDownloadStatus(`Downloading ${title}`);
+    setTimeout(() => setDownloadStatus(""), 3000);
 
     // Track event
-    trackEvent('download_material', {
+    trackEvent("download_material", {
       file_name: fileName,
-      title: title
-    })
-  }
+      title: title,
+    });
+  };
 
   return (
     <>
@@ -41,14 +45,9 @@ export default function DownloadMaterialButton({ title, fileName, folder = "pdfs
         {title}
       </button>
       {/* Screen reader announcement for download action */}
-      <div 
-        role="status" 
-        aria-live="polite" 
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {downloadStatus}
       </div>
     </>
-  )
+  );
 }
