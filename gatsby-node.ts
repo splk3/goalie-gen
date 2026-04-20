@@ -132,7 +132,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     for (const skill of tags.skating_skill) {
       if (typeof skill !== "string") {
         throw new Error(
-          `[${drillFolder}] drill.yml field 'tags.skating_skill' must be an array of strings`
+          `[${drillFolder}] drill.yml field 'tags.skating_skill' must contain only strings`
         );
       }
       if (!ALLOWED_SKATING_SKILLS.includes(skill)) {
@@ -192,7 +192,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     for (const eq of tags.equipment) {
       if (typeof eq !== "string") {
         throw new Error(
-          `[${drillFolder}] drill.yml field 'tags.equipment' must be an array of strings`
+          `[${drillFolder}] drill.yml field 'tags.equipment' must contain only strings`
         );
       }
       if (!ALLOWED_EQUIPMENT.includes(eq)) {
@@ -217,7 +217,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     const tdValue = tags.team_drill[0];
     if (typeof tdValue !== "string") {
       throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`
+        `[${drillFolder}] drill.yml field 'tags.team_drill' must contain only strings`
       );
     }
     if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
