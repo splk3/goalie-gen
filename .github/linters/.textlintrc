@@ -2,7 +2,5 @@
   "filters": {
     "comments": true
   },
-  "rules": {
-    "terminology": false
-  }
+  "rules": {}
 }
