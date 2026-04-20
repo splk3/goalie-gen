@@ -7,8 +7,8 @@ scan:
     - vuln
     - misconfig
     - secret
-# Only fail on CRITICAL vulnerabilities; HIGH/MEDIUM are in Gatsby dev
-# dependencies with no available fixes (transitive lockfile dependencies).
 severity:
   - CRITICAL
+  - HIGH
+  - MEDIUM
 ignore-unfixed: true
