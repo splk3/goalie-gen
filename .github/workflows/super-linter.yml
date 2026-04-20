@@ -37,3 +37,5 @@ jobs:
           # Disable Biome linters to avoid conflicts with other linters
           VALIDATE_JAVASCRIPT_BIOME: false
           VALIDATE_TYPESCRIPT_BIOME: false
+          # Exclude generated lock file from Prettier (it uses non-standard formatting)
+          YAML_PRETTIER_FILTER_REGEX_EXCLUDE: "update-docs-agent\\.lock\\.yml"
