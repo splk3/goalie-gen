@@ -36,12 +36,15 @@ The following files and directories are part of the repository:
     - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
     - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
     - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
-    - ExternalLinkButton.tsx, NavigationButton.tsx, TermsPopup.tsx
+    - ExternalLinkButton.tsx, NavigationButton.tsx, PageLayout.tsx, TermsPopup.tsx
     - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
     - `__tests__/` - Unit tests for components
   - `src/styles/`: Global CSS styles
   - `src/hooks/`: Custom React hooks (e.g., useDrillFilters.ts)
     - `__tests__/` - Unit tests for hooks
+  - `src/types/`: TypeScript type definitions
+    - drill.ts - `DrillData` interface used by gatsby-node.ts and templates
+  - `src/declarations.d.ts`: Module declarations (e.g., CSS module imports)
   - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts)
     - `__tests__/` - Unit tests for utilities
 - `drills/`: Drill database (YAML-based drill definitions with images)
@@ -254,6 +257,11 @@ This repository uses GitHub Actions for automation:
    - Runs weekly and on manual workflow dispatch
    - Uses an AI workflow to propose documentation-only updates
    - Safe outputs are configured to block changes under `.github/workflows/` or `.github/aw/`
+
+5. **Copilot Setup Steps** (`copilot-setup-steps.yml`):
+   - Runs on manual workflow dispatch and when the workflow file itself is changed
+   - Configures the environment for GitHub Copilot Agent
+   - Installs the `gh-aw` MCP server extension
 
 ## JAMstack Architecture & Static Hosting Requirements
 

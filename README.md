@@ -71,6 +71,7 @@ The site uses USA national colors:
 │   │   ├── INeedADrillButton.tsx
 │   │   ├── Logo.tsx
 │   │   ├── NavigationButton.tsx
+│   │   ├── PageLayout.tsx
 │   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
 │   │   ├── TermsPopup.tsx
@@ -91,6 +92,9 @@ The site uses USA national colors:
 │   ├── hooks/            # Custom React hooks
 │   │   ├── useDrillFilters.ts
 │   │   └── __tests__/     # Unit tests for hooks
+│   ├── types/            # TypeScript type definitions
+│   │   └── drill.ts      # DrillData interface
+│   ├── declarations.d.ts # Module declarations (e.g., CSS modules)
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
 │       ├── generateDrillPdf.ts
@@ -248,6 +252,12 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Trigger**: Weekly schedule + manual dispatch
 - **Purpose**: Runs an AI docs-maintenance workflow that reviews repository state and proposes documentation updates
 - **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.github/aw/`
+
+### 5. Copilot Setup Steps (`copilot-setup-steps.yml`)
+
+- **Trigger**: Manual dispatch + push changes to the workflow file itself
+- **Purpose**: Configures the environment for GitHub Copilot Agent by installing the `gh-aw` MCP server extension
+- **Job**: `copilot-setup-steps` (recognized by GitHub Copilot Agent)
 
 ## 🚀 Deployment
 
