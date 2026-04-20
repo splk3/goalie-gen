@@ -8,7 +8,6 @@ export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [goalieName, setGoalieName] = React.useState<string>("");
   const [teamName, setTeamName] = React.useState<string>("");
-  const [, setSelectedLogo] = React.useState<File | null>(null);
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
@@ -41,7 +40,6 @@ export default function GoalieJournalButton() {
       };
       reader.readAsDataURL(file);
 
-      setSelectedLogo(file);
     }
   };
 
@@ -253,7 +251,6 @@ export default function GoalieJournalButton() {
       setShowModal(false);
       setGoalieName("");
       setTeamName("");
-      setSelectedLogo(null);
       setLogoPreview(null);
       setValidationError("");
       setGeneratedBlob(null);
@@ -265,7 +262,6 @@ export default function GoalieJournalButton() {
     setShowModal(false);
     setGoalieName("");
     setTeamName("");
-    setSelectedLogo(null);
     setLogoPreview(null);
     setValidationError("");
     setGeneratedBlob(null);

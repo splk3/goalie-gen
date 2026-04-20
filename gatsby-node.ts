@@ -396,7 +396,16 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
   const { createNode } = actions;
 
   const drillsDir = path.resolve(__dirname, "drills");
-  const drills = loadDrillsFromDirectory(drillsDir);
+  let drills: Array<{ folder: string; drillData: DrillData }>;
+  try {
+    drills = loadDrillsFromDirectory(drillsDir);
+  } catch (error) {
+    console.error(
+      `Error loading drills for GraphQL:`,
+      error instanceof Error ? error.message : String(error)
+    );
+    throw error;
+  }
 
   for (const { folder, drillData } of drills) {
     try {
