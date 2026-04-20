@@ -9,6 +9,8 @@ on:
     - cron: "0 2 * * 6"
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   super-lint:
     name: Lint Code Base
@@ -34,8 +36,10 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: .github/linters
-          # Disable Biome linters to avoid conflicts with other linters
+          # Disable Biome linters to avoid conflicts with ESLint and Prettier
           VALIDATE_JAVASCRIPT_BIOME: false
           VALIDATE_TYPESCRIPT_BIOME: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
           # Exclude generated lock file from all linters (it's auto-generated, never manually edited)
           FILTER_REGEX_EXCLUDE: ".*update-docs-agent\\.lock\\.yml.*"

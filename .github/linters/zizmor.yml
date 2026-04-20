@@ -1,10 +1,10 @@
 rules:
   excessive-permissions:
     ignore:
-      - .github/workflows/deploy.yml
+      - deploy.yml
   impostor-commit:
     ignore:
-      - .github/workflows/update-docs-agent.lock.yml
+      - update-docs-agent.lock.yml
   artipacked:
     ignore:
-      - .github/workflows/update-docs-agent.lock.yml
+      - update-docs-agent.lock.yml

@@ -9,6 +9,8 @@ on:
     # Run weekly on Saturday at 3:00 AM UTC (after super-linter runs)
     - cron: "0 3 * * 6"
 
+permissions: {}
+
 jobs:
   test-build:
     name: Test Gatsby Build
