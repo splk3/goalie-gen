@@ -5,15 +5,15 @@ module.exports = {
     "./src/components/**/*.{ts,tsx}",
     "./src/templates/**/*.{ts,tsx}",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        'usa-red': '#AF272F',
-        'usa-blue': '#00205B',
-        'usa-white': '#FFFFFF',
+        "usa-red": "#AF272F",
+        "usa-blue": "#00205B",
+        "usa-white": "#FFFFFF",
       },
     },
   },
   plugins: [],
-}
+};

@@ -4,19 +4,18 @@
  * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-ssr/
  */
 
-import React from "react"
-import type { GatsbySSR } from "gatsby"
+import React from "react";
+import type { GatsbySSR } from "gatsby";
 
 /**
  * Add Google Analytics to every page
  */
-export const onRenderBody: GatsbySSR['onRenderBody'] = ({ setHeadComponents, setPreBodyComponents }) => {
+export const onRenderBody: GatsbySSR["onRenderBody"] = ({
+  setHeadComponents,
+  setPreBodyComponents,
+}) => {
   setHeadComponents([
-    <script
-      key="gtag-js"
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-SBH602WP1Z"
-    />,
+    <script key="gtag-js" async src="https://www.googletagmanager.com/gtag/js?id=G-SBH602WP1Z" />,
     <script
       key="gtag-config"
       dangerouslySetInnerHTML={{
@@ -28,7 +27,7 @@ export const onRenderBody: GatsbySSR['onRenderBody'] = ({ setHeadComponents, set
         `,
       }}
     />,
-  ])
+  ]);
 
   // Inline script to apply saved dark mode preference before React hydration,
   // preventing a flash of light content for returning dark-mode users.
@@ -47,5 +46,5 @@ export const onRenderBody: GatsbySSR['onRenderBody'] = ({ setHeadComponents, set
         `,
       }}
     />,
-  ])
-}
+  ]);
+};

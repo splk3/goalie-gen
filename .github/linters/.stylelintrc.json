@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "variant",
+          "apply",
+          "layer",
+          "utility",
+          "responsive",
+          "screen",
+          "tailwind",
+          "source",
+          "custom-variant",
+          "plugin"
+        ]
+      }
+    ],
+    "import-notation": null,
+    "color-hex-length": null,
+    "selector-class-pattern": null,
+    "property-no-deprecated": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null
+  }
+}

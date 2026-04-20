@@ -14,4 +14,4 @@ module.exports = {
   testEnvironment: `jsdom`,
   setupFiles: [`<rootDir>/loadershim.js`],
   setupFilesAfterEnv: [`<rootDir>/jest.setup.js`],
-}
+};

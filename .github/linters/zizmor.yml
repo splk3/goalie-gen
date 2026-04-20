@@ -1,0 +1,7 @@
+rules:
+  impostor-commit:
+    ignore:
+      - update-docs-agent.lock.yml
+  artipacked:
+    ignore:
+      - update-docs-agent.lock.yml

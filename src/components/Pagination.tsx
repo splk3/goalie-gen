@@ -1,27 +1,27 @@
-import * as React from "react"
+import * as React from "react";
 
 interface PaginationProps {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   if (totalPages <= 1) {
-    return null
+    return null;
   }
 
   const handlePrevious = () => {
     if (currentPage > 1) {
-      onPageChange(currentPage - 1)
+      onPageChange(currentPage - 1);
     }
-  }
+  };
 
   const handleNext = () => {
     if (currentPage < totalPages) {
-      onPageChange(currentPage + 1)
+      onPageChange(currentPage + 1);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center gap-4 py-8">
@@ -33,14 +33,11 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       >
         Previous
       </button>
-      
-      <div 
-        className="text-lg font-semibold text-gray-900 dark:text-gray-100"
-        aria-live="polite"
-      >
+
+      <div className="text-lg font-semibold text-gray-900 dark:text-gray-100" aria-live="polite">
         Page {currentPage} of {totalPages}
       </div>
-      
+
       <button
         onClick={handleNext}
         disabled={currentPage === totalPages}
@@ -50,5 +47,5 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         Next
       </button>
     </div>
-  )
+  );
 }

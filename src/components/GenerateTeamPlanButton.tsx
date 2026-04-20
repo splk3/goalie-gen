@@ -1,298 +1,319 @@
-import * as React from "react"
-import { jsPDF } from "jspdf"
-import Logo from "./Logo"
-import { trackEvent } from "../utils/analytics"
+import * as React from "react";
+import { jsPDF } from "jspdf";
+import Logo from "./Logo";
+import { trackEvent } from "../utils/analytics";
 
-type AgeGroup = "8u" | "10u" | "12u" | "14u+"
-type SkillLevel = "beginner" | "intermediate" | "advanced"
+type AgeGroup = "8u" | "10u" | "12u" | "14u+";
+type SkillLevel = "beginner" | "intermediate" | "advanced";
 
 interface GenerateTeamPlanButtonProps {
-  variant?: "blue" | "red"
+  variant?: "blue" | "red";
 }
 
 export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTeamPlanButtonProps) {
-  const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [teamName, setTeamName] = React.useState<string>("")
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
-  const [imagePreview, setImagePreview] = React.useState<string | null>(null)
-  const [ageGroup, setAgeGroup] = React.useState<string>("")
-  const [skillLevel, setSkillLevel] = React.useState<string>("")
-  const [numberOfPractices, setNumberOfPractices] = React.useState<string>("")
-  const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
-  const [validationError, setValidationError] = React.useState<string>("")
-  const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null)
-  const [generatedFileName, setGeneratedFileName] = React.useState<string>("")
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [teamName, setTeamName] = React.useState<string>("");
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const [ageGroup, setAgeGroup] = React.useState<string>("");
+  const [skillLevel, setSkillLevel] = React.useState<string>("");
+  const [numberOfPractices, setNumberOfPractices] = React.useState<string>("");
+  const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
+  const [validationError, setValidationError] = React.useState<string>("");
+  const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
+  const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
 
-  const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"]
-  const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"]
+  const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"];
+  const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setValidationError('Please select an image file')
-        return
+      if (!file.type.startsWith("image/")) {
+        setValidationError("Please select an image file");
+        return;
       }
 
       // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024 // 5MB in bytes
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
       if (file.size > maxSize) {
-        setValidationError('Image file size must be less than 5MB')
-        return
+        setValidationError("Image file size must be less than 5MB");
+        return;
       }
 
       // Clear any previous errors
-      setValidationError('')
+      setValidationError("");
 
       // Create preview
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
 
-      setSelectedImage(file)
+      setSelectedImage(file);
     }
-  }
+  };
 
   const validateInputs = (): boolean => {
     // Clear any previous errors
-    setValidationError('')
+    setValidationError("");
 
     if (!teamName.trim()) {
-      setValidationError('Please enter a team name')
-      return false
+      setValidationError("Please enter a team name");
+      return false;
     }
 
     if (!ageGroup) {
-      setValidationError('Please select an age group')
-      return false
+      setValidationError("Please select an age group");
+      return false;
     }
 
     if (!skillLevel) {
-      setValidationError('Please select a skill level')
-      return false
+      setValidationError("Please select a skill level");
+      return false;
     }
 
     if (!numberOfPractices.trim()) {
-      setValidationError('Please enter the number of practices')
-      return false
+      setValidationError("Please enter the number of practices");
+      return false;
     }
 
     // Check if input contains decimal point or is not a valid integer
-    if (numberOfPractices.includes('.') || numberOfPractices.includes(',')) {
-      setValidationError('Number of practices must be a whole number between 0 and 50')
-      return false
+    if (numberOfPractices.includes(".") || numberOfPractices.includes(",")) {
+      setValidationError("Number of practices must be a whole number between 0 and 50");
+      return false;
     }
 
-    const practicesNum = parseInt(numberOfPractices, 10)
-    if (isNaN(practicesNum) || practicesNum < 0 || practicesNum > 50 || practicesNum.toString() !== numberOfPractices.trim()) {
-      setValidationError('Number of practices must be a whole number between 0 and 50')
-      return false
+    const practicesNum = parseInt(numberOfPractices, 10);
+    if (
+      isNaN(practicesNum) ||
+      practicesNum < 0 ||
+      practicesNum > 50 ||
+      practicesNum.toString() !== numberOfPractices.trim()
+    ) {
+      setValidationError("Number of practices must be a whole number between 0 and 50");
+      return false;
     }
 
-    return true
-  }
+    return true;
+  };
 
   const generatePDF = async () => {
     if (!validateInputs()) {
-      return
+      return;
     }
 
-    setIsGenerating(true)
+    setIsGenerating(true);
 
     try {
-      const doc = new jsPDF()
-      const practicesNum = parseInt(numberOfPractices, 10)
-      
+      const doc = new jsPDF();
+      const practicesNum = parseInt(numberOfPractices, 10);
+
       // Add title page
-      doc.setFontSize(24)
-      doc.text(`${teamName}`, 105, 30, { align: "center" })
-      doc.setFontSize(18)
-      doc.text("Team-Level Goaltending Development Plan", 105, 45, { align: "center" })
-      
+      doc.setFontSize(24);
+      doc.text(`${teamName}`, 105, 30, { align: "center" });
+      doc.setFontSize(18);
+      doc.text("Team-Level Goaltending Development Plan", 105, 45, { align: "center" });
+
       // Add team logo if provided
       if (selectedImage && imagePreview) {
         try {
-          const imgData = imagePreview
+          const imgData = imagePreview;
           // Detect image format from the data URL or file type
-          let format = 'JPEG' // default
-          if (selectedImage.type === 'image/png') {
-            format = 'PNG'
-          } else if (selectedImage.type === 'image/jpeg' || selectedImage.type === 'image/jpg') {
-            format = 'JPEG'
-          } else if (selectedImage.type === 'image/webp') {
-            format = 'WEBP'
+          let format = "JPEG"; // default
+          if (selectedImage.type === "image/png") {
+            format = "PNG";
+          } else if (selectedImage.type === "image/jpeg" || selectedImage.type === "image/jpg") {
+            format = "JPEG";
+          } else if (selectedImage.type === "image/webp") {
+            format = "WEBP";
           }
-          doc.addImage(imgData, format, 65, 55, 80, 80)
+          doc.addImage(imgData, format, 65, 55, 80, 80);
         } catch (error) {
-          console.error('Error adding image to PDF:', error)
+          console.error("Error adding image to PDF:", error);
         }
       }
-      
+
       // Add metadata
-      doc.setFontSize(12)
-      const metadataY = selectedImage ? 145 : 60
-      doc.text(`Age Group: ${ageGroup}`, 20, metadataY)
-      doc.text(`Experience Level: ${skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1)}`, 20, metadataY + 10)
-      doc.text(`Number of Practices: ${practicesNum}`, 20, metadataY + 20)
-      
+      doc.setFontSize(12);
+      const metadataY = selectedImage ? 145 : 60;
+      doc.text(`Age Group: ${ageGroup}`, 20, metadataY);
+      doc.text(
+        `Experience Level: ${skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1)}`,
+        20,
+        metadataY + 10
+      );
+      doc.text(`Number of Practices: ${practicesNum}`, 20, metadataY + 20);
+
       // Add season overview
-      doc.setFontSize(16)
-      doc.text("Season Overview", 20, metadataY + 40)
-      doc.setFontSize(11)
-      doc.text("This team-level development plan provides structured goaltending drills", 20, metadataY + 50)
-      doc.text("and practice guidance throughout the season. Each practice includes", 20, metadataY + 58)
-      doc.text("age-appropriate exercises designed to develop fundamental goaltending skills.", 20, metadataY + 66)
-      
+      doc.setFontSize(16);
+      doc.text("Season Overview", 20, metadataY + 40);
+      doc.setFontSize(11);
+      doc.text(
+        "This team-level development plan provides structured goaltending drills",
+        20,
+        metadataY + 50
+      );
+      doc.text(
+        "and practice guidance throughout the season. Each practice includes",
+        20,
+        metadataY + 58
+      );
+      doc.text(
+        "age-appropriate exercises designed to develop fundamental goaltending skills.",
+        20,
+        metadataY + 66
+      );
+
       // Add development goals section
-      doc.setFontSize(14)
-      doc.text("Key Development Goals", 20, metadataY + 82)
-      doc.setFontSize(10)
+      doc.setFontSize(14);
+      doc.text("Key Development Goals", 20, metadataY + 82);
+      doc.setFontSize(10);
       const goals = [
         "- Improve positioning and angle management",
         "- Develop butterfly technique and recovery",
         "- Enhance glove and blocker skills",
         "- Build confidence in game situations",
-        "- Foster communication with teammates"
-      ]
-      let goalY = metadataY + 90
-      goals.forEach(goal => {
-        doc.text(goal, 25, goalY)
-        goalY += 7
-      })
-      
+        "- Foster communication with teammates",
+      ];
+      let goalY = metadataY + 90;
+      goals.forEach((goal) => {
+        doc.text(goal, 25, goalY);
+        goalY += 7;
+      });
+
       // Add new page for practice plans
-      doc.addPage()
-      doc.setFontSize(18)
-      doc.text("Practice Plans", 105, 20, { align: "center" })
-      
+      doc.addPage();
+      doc.setFontSize(18);
+      doc.text("Practice Plans", 105, 20, { align: "center" });
+
       // Generate practice plan sections
-      let currentY = 35
-      const pageHeight = doc.internal.pageSize.height
-      
+      let currentY = 35;
+      const pageHeight = doc.internal.pageSize.height;
+
       for (let i = 1; i <= practicesNum; i++) {
         // Check if we need a new page
         if (currentY > pageHeight - 60) {
-          doc.addPage()
-          currentY = 20
+          doc.addPage();
+          currentY = 20;
         }
-        
-        doc.setFontSize(14)
-        doc.text(`Practice ${i}`, 20, currentY)
-        doc.setFontSize(10)
-        currentY += 8
-        
-        doc.text("Focus: [Placeholder - specific skill focus]", 25, currentY)
-        currentY += 6
-        doc.text("Drill 1: [Placeholder - drill name and description]", 25, currentY)
-        currentY += 6
-        doc.text("Drill 2: [Placeholder - drill name and description]", 25, currentY)
-        currentY += 6
-        doc.text("Drill 3: [Placeholder - drill name and description]", 25, currentY)
-        currentY += 6
-        doc.text("Coaching Points: [Placeholder - key teaching points]", 25, currentY)
-        currentY += 12
+
+        doc.setFontSize(14);
+        doc.text(`Practice ${i}`, 20, currentY);
+        doc.setFontSize(10);
+        currentY += 8;
+
+        doc.text("Focus: [Placeholder - specific skill focus]", 25, currentY);
+        currentY += 6;
+        doc.text("Drill 1: [Placeholder - drill name and description]", 25, currentY);
+        currentY += 6;
+        doc.text("Drill 2: [Placeholder - drill name and description]", 25, currentY);
+        currentY += 6;
+        doc.text("Drill 3: [Placeholder - drill name and description]", 25, currentY);
+        currentY += 6;
+        doc.text("Coaching Points: [Placeholder - key teaching points]", 25, currentY);
+        currentY += 12;
       }
-      
+
       // Add final page with notes
-      doc.addPage()
-      doc.setFontSize(16)
-      doc.text("Additional Resources and Notes", 20, 20)
-      doc.setFontSize(11)
-      doc.text("Progress Tracking:", 20, 35)
-      doc.setFontSize(10)
-      doc.text("Monitor goaltender development throughout the season. Regular feedback", 25, 43)
-      doc.text("and positive reinforcement are crucial for youth player development.", 25, 50)
-      
+      doc.addPage();
+      doc.setFontSize(16);
+      doc.text("Additional Resources and Notes", 20, 20);
+      doc.setFontSize(11);
+      doc.text("Progress Tracking:", 20, 35);
+      doc.setFontSize(10);
+      doc.text("Monitor goaltender development throughout the season. Regular feedback", 25, 43);
+      doc.text("and positive reinforcement are crucial for youth player development.", 25, 50);
+
       // Generate PDF blob
-      const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Team_Development_Plan.pdf`
-      const blob = doc.output('blob')
-      
+      const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, "_")}_Team_Development_Plan.pdf`;
+      const blob = doc.output("blob");
+
       // Store the blob and filename for download
-      setGeneratedBlob(blob)
-      setGeneratedFileName(fileName)
+      setGeneratedBlob(blob);
+      setGeneratedFileName(fileName);
 
       // Track event
-      trackEvent('generate_plan', {
-        type: 'team',
+      trackEvent("generate_plan", {
+        type: "team",
         team_name: teamName,
         age_group: ageGroup,
         skill_level: skillLevel,
-        practices_count: practicesNum
-      })
+        practices_count: practicesNum,
+      });
     } catch (error) {
-      console.error('Error generating PDF:', error)
-      setValidationError('There was an error generating the PDF. Please try again.')
+      console.error("Error generating PDF:", error);
+      setValidationError("There was an error generating the PDF. Please try again.");
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   const handleDownload = () => {
     if (generatedBlob && generatedFileName) {
       // Create download link
-      const url = URL.createObjectURL(generatedBlob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = generatedFileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-      
+      const url = URL.createObjectURL(generatedBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = generatedFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
       // Track download event
-      trackEvent('download_plan', {
-        type: 'team',
-        team_name: teamName
-      })
-      
+      trackEvent("download_plan", {
+        type: "team",
+        team_name: teamName,
+      });
+
       // Close modal and reset form
-      setShowModal(false)
-      setTeamName("")
-      setSelectedImage(null)
-      setImagePreview(null)
-      setAgeGroup("")
-      setSkillLevel("")
-      setNumberOfPractices("")
-      setValidationError('')
-      setGeneratedBlob(null)
-      setGeneratedFileName("")
+      setShowModal(false);
+      setTeamName("");
+      setSelectedImage(null);
+      setImagePreview(null);
+      setAgeGroup("");
+      setSkillLevel("");
+      setNumberOfPractices("");
+      setValidationError("");
+      setGeneratedBlob(null);
+      setGeneratedFileName("");
     }
-  }
+  };
 
   const handleCancel = React.useCallback(() => {
-    setShowModal(false)
-    setTeamName("")
-    setSelectedImage(null)
-    setImagePreview(null)
-    setAgeGroup("")
-    setSkillLevel("")
-    setNumberOfPractices("")
-    setValidationError('')
-    setGeneratedBlob(null)
-    setGeneratedFileName("")
-  }, [])
+    setShowModal(false);
+    setTeamName("");
+    setSelectedImage(null);
+    setImagePreview(null);
+    setAgeGroup("");
+    setSkillLevel("");
+    setNumberOfPractices("");
+    setValidationError("");
+    setGeneratedBlob(null);
+    setGeneratedFileName("");
+  }, []);
 
   // Close modal when Escape key is pressed
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showModal && !isGenerating && !generatedBlob) {
-        handleCancel()
+      if (event.key === "Escape" && showModal && !isGenerating && !generatedBlob) {
+        handleCancel();
       }
-    }
+    };
 
     if (showModal) {
-      document.addEventListener('keydown', handleEscape)
-      return () => document.removeEventListener('keydown', handleEscape)
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
-  }, [showModal, isGenerating, generatedBlob, handleCancel])
+  }, [showModal, isGenerating, generatedBlob, handleCancel]);
 
   const variantClasses = {
     blue: "bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700",
-    red: "bg-usa-red hover:bg-red-700 dark:bg-red-900 dark:hover:bg-red-800"
-  }
+    red: "bg-usa-red hover:bg-red-700 dark:bg-red-900 dark:hover:bg-red-800",
+  };
 
   return (
     <>
@@ -304,15 +325,15 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       </button>
 
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           onClick={() => {
             if (!isGenerating && !generatedBlob) {
-              handleCancel()
+              handleCancel();
             }
           }}
         >
-          <div 
+          <div
             className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
             role="dialog"
             aria-modal="true"
@@ -321,7 +342,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           >
             <div className="flex items-center gap-4 mb-6">
               <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
-              <h2 
+              <h2
                 id="team-plan-modal-title"
                 className="text-2xl font-bold text-usa-blue dark:text-blue-400"
               >
@@ -330,7 +351,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </div>
 
             <div className="mb-4">
-              <label htmlFor="teamName" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="teamName"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Team Name
               </label>
               <input
@@ -345,7 +369,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </div>
 
             <div className="mb-4">
-              <label htmlFor="teamImage" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="teamImage"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Team/Club Logo (Optional)
               </label>
               <input
@@ -362,14 +389,17 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                     src={imagePreview}
                     alt="Preview"
                     className="max-w-full h-auto rounded-lg border-2 border-gray-300 dark:border-gray-600"
-                    style={{ maxHeight: '150px' }}
+                    style={{ maxHeight: "150px" }}
                   />
                 </div>
               )}
             </div>
 
             <div className="mb-4">
-              <label htmlFor="ageGroup" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="ageGroup"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Age Group
               </label>
               <select
@@ -389,7 +419,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </div>
 
             <div className="mb-4">
-              <label htmlFor="skillLevel" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="skillLevel"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Skill Level
               </label>
               <select
@@ -409,7 +442,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </div>
 
             <div className="mb-6">
-              <label htmlFor="numberOfPractices" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="numberOfPractices"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Number of Practices (0-50)
               </label>
               <input
@@ -444,16 +480,16 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                     onClick={generatePDF}
                     disabled={isGenerating}
                     className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                      isGenerating ? 'opacity-50 cursor-not-allowed' : ''
+                      isGenerating ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
-                    {isGenerating ? 'Generating...' : 'Generate'}
+                    {isGenerating ? "Generating..." : "Generate"}
                   </button>
                   <button
                     onClick={handleCancel}
                     disabled={isGenerating}
                     className={`flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                      isGenerating ? 'opacity-50 cursor-not-allowed' : ''
+                      isGenerating ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
                     Cancel
@@ -480,5 +516,5 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         </div>
       )}
     </>
-  )
+  );
 }

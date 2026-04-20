@@ -1,129 +1,129 @@
-import * as React from "react"
-import { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel } from "docx"
-import { saveAs } from "file-saver"
-import Logo from "./Logo"
-import { trackEvent } from "../utils/analytics"
+import * as React from "react";
+import { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel } from "docx";
+import { saveAs } from "file-saver";
+import Logo from "./Logo";
+import { trackEvent } from "../utils/analytics";
 
 export default function GenerateClubPlanButton() {
-  const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [teamName, setTeamName] = React.useState<string>("")
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
-  const [imagePreview, setImagePreview] = React.useState<string | null>(null)
-  const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
-  const [validationError, setValidationError] = React.useState<string>("")
-  const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null)
-  const [generatedFileName, setGeneratedFileName] = React.useState<string>("")
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [teamName, setTeamName] = React.useState<string>("");
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
+  const [validationError, setValidationError] = React.useState<string>("");
+  const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
+  const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setValidationError('Please select an image file')
-        return
+      if (!file.type.startsWith("image/")) {
+        setValidationError("Please select an image file");
+        return;
       }
 
       // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024 // 5MB in bytes
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
       if (file.size > maxSize) {
-        setValidationError('Image file size must be less than 5MB')
-        return
+        setValidationError("Image file size must be less than 5MB");
+        return;
       }
 
       // Clear any previous errors
-      setValidationError('')
+      setValidationError("");
 
       // Create preview
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
 
-      setSelectedImage(file)
+      setSelectedImage(file);
     }
-  }
+  };
 
   const optimizeImage = async (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const img = new Image()
+        const img = new Image();
         img.onload = () => {
           // Create canvas for image optimization
-          const canvas = document.createElement('canvas')
-          const ctx = canvas.getContext('2d')
-          
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
           if (!ctx) {
-            reject(new Error('Could not get canvas context'))
-            return
+            reject(new Error("Could not get canvas context"));
+            return;
           }
-          
+
           // Set maximum dimensions for print quality (300 DPI recommended)
           // A standard document width is ~6 inches, so 1800px provides good quality
-          const maxWidth = 1800
-          const maxHeight = 1800
-          
-          let width = img.width
-          let height = img.height
-          
+          const maxWidth = 1800;
+          const maxHeight = 1800;
+
+          let width = img.width;
+          let height = img.height;
+
           // Calculate new dimensions maintaining aspect ratio
           if (width > height) {
             if (width > maxWidth) {
-              height = (height * maxWidth) / width
-              width = maxWidth
+              height = (height * maxWidth) / width;
+              width = maxWidth;
             }
           } else {
             if (height > maxHeight) {
-              width = (width * maxHeight) / height
-              height = maxHeight
+              width = (width * maxHeight) / height;
+              height = maxHeight;
             }
           }
-          
-          canvas.width = width
-          canvas.height = height
-          
+
+          canvas.width = width;
+          canvas.height = height;
+
           // Draw and compress image
-          ctx.drawImage(img, 0, 0, width, height)
-          
+          ctx.drawImage(img, 0, 0, width, height);
+
           // Convert to blob with good quality for print
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                resolve(blob)
+                resolve(blob);
               } else {
-                reject(new Error('Could not create blob from canvas'))
+                reject(new Error("Could not create blob from canvas"));
               }
             },
-            'image/jpeg',
+            "image/jpeg",
             0.85 // 85% quality - good balance for print documents
-          )
-        }
-        img.onerror = reject
-        img.src = e.target?.result as string
-      }
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
-  }
+          );
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
   const generateDocument = async () => {
     // Clear any previous errors
-    setValidationError('')
+    setValidationError("");
 
     if (!teamName.trim()) {
-      setValidationError('Please enter a team name')
-      return
+      setValidationError("Please enter a team name");
+      return;
     }
 
-    setIsGenerating(true)
+    setIsGenerating(true);
 
     try {
       // Optimize image if provided
-      let arrayBuffer: ArrayBuffer | null = null
+      let arrayBuffer: ArrayBuffer | null = null;
       if (selectedImage) {
-        const optimizedImageBlob = await optimizeImage(selectedImage)
-        arrayBuffer = await optimizedImageBlob.arrayBuffer()
+        const optimizedImageBlob = await optimizeImage(selectedImage);
+        arrayBuffer = await optimizedImageBlob.arrayBuffer();
       }
 
       // Build children array for the document
@@ -137,7 +137,7 @@ export default function GenerateClubPlanButton() {
             after: 400,
           },
         }),
-      ]
+      ];
 
       // Add Team Logo if provided
       if (arrayBuffer) {
@@ -157,12 +157,11 @@ export default function GenerateClubPlanButton() {
               after: 400,
             },
           })
-        )
+        );
       }
 
       // Continue with the rest of the document
       documentChildren.push(
-
         // Introduction Section
         new Paragraph({
           text: "Introduction",
@@ -381,83 +380,85 @@ export default function GenerateClubPlanButton() {
             }),
           ],
         })
-      )
+      );
 
       // Create Word document
       const doc = new Document({
-        sections: [{
-          properties: {},
-          children: documentChildren,
-        }],
-      })
+        sections: [
+          {
+            properties: {},
+            children: documentChildren,
+          },
+        ],
+      });
 
       // Generate document blob
-      const blob = await Packer.toBlob(doc)
+      const blob = await Packer.toBlob(doc);
       // Sanitize filename by removing only characters that are invalid in file systems
-      const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, '_')}_Goaltending_Development_Plan.docx`
-      
+      const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, "_")}_Goaltending_Development_Plan.docx`;
+
       // Store the blob and filename for download
-      setGeneratedBlob(blob)
-      setGeneratedFileName(fileName)
+      setGeneratedBlob(blob);
+      setGeneratedFileName(fileName);
 
       // Track event
-      trackEvent('generate_plan', {
-        type: 'club',
+      trackEvent("generate_plan", {
+        type: "club",
         team_name_provided: !!teamName, // Track whether a team name was provided
-        team_name: teamName
-      })
+        team_name: teamName,
+      });
     } catch (error) {
-      console.error('Error generating document:', error)
-      setValidationError('There was an error generating the document. Please try again.')
+      console.error("Error generating document:", error);
+      setValidationError("There was an error generating the document. Please try again.");
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   const handleDownload = () => {
     if (generatedBlob && generatedFileName) {
-      saveAs(generatedBlob, generatedFileName)
-      
+      saveAs(generatedBlob, generatedFileName);
+
       // Track download event
-      trackEvent('download_plan', {
-        type: 'club',
-        team_name: teamName
-      })
-      
+      trackEvent("download_plan", {
+        type: "club",
+        team_name: teamName,
+      });
+
       // Close modal and reset form
-      setShowModal(false)
-      setTeamName("")
-      setSelectedImage(null)
-      setImagePreview(null)
-      setValidationError('')
-      setGeneratedBlob(null)
-      setGeneratedFileName("")
+      setShowModal(false);
+      setTeamName("");
+      setSelectedImage(null);
+      setImagePreview(null);
+      setValidationError("");
+      setGeneratedBlob(null);
+      setGeneratedFileName("");
     }
-  }
+  };
 
   const handleCancel = React.useCallback(() => {
-    setShowModal(false)
-    setTeamName("")
-    setSelectedImage(null)
-    setImagePreview(null)
-    setValidationError('')
-    setGeneratedBlob(null)
-    setGeneratedFileName("")
-  }, [])
+    setShowModal(false);
+    setTeamName("");
+    setSelectedImage(null);
+    setImagePreview(null);
+    setValidationError("");
+    setGeneratedBlob(null);
+    setGeneratedFileName("");
+  }, []);
 
   // Close modal when Escape key is pressed
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showModal && !isGenerating && !generatedBlob) {
-        handleCancel()
+      if (event.key === "Escape" && showModal && !isGenerating && !generatedBlob) {
+        handleCancel();
       }
-    }
+    };
 
     if (showModal) {
-      document.addEventListener('keydown', handleEscape)
-      return () => document.removeEventListener('keydown', handleEscape)
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
-  }, [showModal, isGenerating, generatedBlob, handleCancel])
+  }, [showModal, isGenerating, generatedBlob, handleCancel]);
 
   return (
     <>
@@ -469,11 +470,11 @@ export default function GenerateClubPlanButton() {
       </button>
 
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           onClick={() => {
             if (!isGenerating && !generatedBlob) {
-              handleCancel()
+              handleCancel();
             }
           }}
         >
@@ -495,7 +496,10 @@ export default function GenerateClubPlanButton() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="teamName" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="teamName"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Team Name
               </label>
               <input
@@ -510,7 +514,10 @@ export default function GenerateClubPlanButton() {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="teamImage" className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              <label
+                htmlFor="teamImage"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
                 Team Logo/Image (optional)
               </label>
               <input
@@ -527,7 +534,7 @@ export default function GenerateClubPlanButton() {
                     src={imagePreview}
                     alt="Preview"
                     className="max-w-full h-auto rounded-lg border-2 border-gray-300 dark:border-gray-600"
-                    style={{ maxHeight: '200px' }}
+                    style={{ maxHeight: "200px" }}
                   />
                 </div>
               )}
@@ -552,10 +559,10 @@ export default function GenerateClubPlanButton() {
                     onClick={generateDocument}
                     disabled={isGenerating}
                     className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                      isGenerating ? 'opacity-50 cursor-not-allowed' : ''
+                      isGenerating ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
-                    {isGenerating ? 'Generating...' : 'Generate'}
+                    {isGenerating ? "Generating..." : "Generate"}
                   </button>
                   <button
                     onClick={handleCancel}
@@ -586,5 +593,5 @@ export default function GenerateClubPlanButton() {
         </div>
       )}
     </>
-  )
+  );
 }

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository hosts a **GatsbyJS-based static website** designed to help youth ice hockey teams and clubs generate customized goaltending development plans. The site is deployed to both GitHub Pages and Cloudflare Pages.
+This repository hosts a **GatsbyJS-based static site** designed to help youth ice hockey teams and clubs generate customized goaltending development plans. The site is deployed to both GitHub Pages and Cloudflare Pages.
 
 **Note**: This is a Gatsby project (not Jekyll). The `.gitignore` is configured for Gatsby with entries for `public/`, `.cache/`, and `node_modules/`.
 
@@ -28,16 +28,22 @@ The following files and directories are part of the repository:
 - `src/`: Source code directory
   - `src/pages/`: Page components (auto-routed by Gatsby) - TypeScript (.tsx)
     - index.tsx, goalie-drills.tsx, team-drills.tsx
-    - goalie-resources.tsx, coach-resources.tsx, club-resources.tsx
+    - goalie-resources.tsx, goalie-evals.tsx, coach-resources.tsx, club-resources.tsx
+    - 404.tsx
   - `src/templates/`: Dynamic page templates (TypeScript .tsx files)
     - drill.tsx - Template for individual drill pages
   - `src/components/`: Reusable React components (TypeScript .tsx files)
     - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
     - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
-    - GoalieJournalButton.tsx, DownloadDrillButton.tsx, DownloadMaterialButton.tsx
+    - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
     - ExternalLinkButton.tsx, NavigationButton.tsx, TermsPopup.tsx
+    - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
+    - `__tests__/` - Unit tests for components
   - `src/styles/`: Global CSS styles
-  - `src/utils/`: Utility functions (e.g., analytics.ts)
+  - `src/hooks/`: Custom React hooks (e.g., useDrillFilters.ts)
+    - `__tests__/` - Unit tests for hooks
+  - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts)
+    - `__tests__/` - Unit tests for utilities
 - `drills/`: Drill database (YAML-based drill definitions with images)
   - Each subdirectory contains a drill.yml and associated images
   - Drills are automatically converted to pages via gatsby-node.ts
@@ -96,6 +102,7 @@ The following are created during development/build and excluded via `.gitignore`
 ### Working with Gatsby
 
 1. **Local Development**:
+   - Requires **Node.js 24** (`engines: ">=24"` in `package.json`; use `.nvmrc` with `nvm use`)
    - Use `npm install` to install dependencies
    - Use `npm run develop` or `npm start` to run the development server
    - Server runs at `http://localhost:8000`
@@ -110,7 +117,7 @@ The following are created during development/build and excluded via `.gitignore`
      - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`)
      - Cloudflare Pages: goaliegen.com (configured via Cloudflare dashboard and `wrangler.jsonc`)
    - No path prefix needed with custom domain setup
-   - GitHub Actions workflow automates deployment to GitHub Pages on push to `main` branch
+   - GitHub Actions workflow automates deployment to GitHub Pages on push to `dev` branch
 
 ### Code Style
 
@@ -144,15 +151,20 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `coaching_points` (array): List of coaching tips
    - `images` (array): Array of image filenames
    - `tags` (object): Categorization tags
+   - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
 
-3. **Dynamic Page Generation**:
+3. **Optional drill.yml Fields**:
+   - `video` (string): YouTube or Vimeo URL for the drill
+   - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
+
+4. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API
    - Each drill.yml is validated during build
    - Drill data is also added to GraphQL via the `sourceNodes` API
    - The `src/templates/drill.tsx` template is used for all drill pages
    - Build will fail if drill.yml files are invalid or missing required fields
 
-4. **Adding New Drills**:
+5. **Adding New Drills**:
    - Create a new folder in `drills/` with a URL-friendly name
    - Add a `drill.yml` file with all required fields
    - Add drill images to the same folder
@@ -161,8 +173,9 @@ This project uses a YAML-based drill system with dynamic page generation:
 ### Color Scheme
 
 The site uses USA national colors defined in `tailwind.config.js`:
-- **usa-blue**: `#002868` - Primary blue
-- **usa-red**: `#BF0A30` - Accent red
+
+- **usa-blue**: `#00205B` - Primary blue
+- **usa-red**: `#AF272F` - Accent red
 - **usa-white**: `#FFFFFF` - Background/text
 
 ## Common Tasks
@@ -220,34 +233,34 @@ This repository uses GitHub Actions for automation:
    - All code changes must pass linting before merge
 
 2. **Deploy to GitHub Pages** (`deploy.yml`):
-   - Automatically deploys on push to `main` branch
+   - Automatically deploys on push to `dev` branch
    - Also runs on manual workflow dispatch
    - Builds the site with `npm run build`
    - Uses `npm ci` for clean, reproducible dependency installation
    - Deploys to GitHub Pages using upload-pages-artifact action
-   - Uses Node.js 20 with npm caching
-   - Uses actions/deploy-pages@v4 with proper permissions and concurrency control
+   - Uses Node.js 24 with npm caching
+   - Uses actions/deploy-pages@v5 with proper permissions and concurrency control
    - Deploys to custom domain configured in static/CNAME
 
 3. **Test Build** (`test-build.yml`):
    - Tests that the site builds successfully
    - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
-   - Executes `npm ci` and `npm run build` to verify build process
-   - Uses Node.js 20 with npm caching
+   - Executes `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process
+   - Uses Node.js 24 with npm caching
    - Verifies that `public/` directory was created successfully
    - Does not deploy the site
 
-4. **Release Prep** (`release-prep.yml`):
-   - Triggers on manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
-   - Automatically creates GitHub issues for documentation updates
-   - Creates issues titled "update README and copilot instructions"
-   - Helps maintain documentation currency after releases
+4. **Update Docs Agent** (`update-docs-agent.lock.yml`):
+   - Runs weekly and on manual workflow dispatch
+   - Uses an AI workflow to propose documentation-only updates
+   - Safe outputs are configured to block changes under `.github/workflows/` or `.github/aw/`
 
 ## JAMstack Architecture & Static Hosting Requirements
 
 ### What is JAMstack?
 
 This site follows JAMstack (JavaScript, APIs, and Markup) architecture principles:
+
 - **JavaScript**: Client-side dynamic functionality
 - **APIs**: Third-party services and APIs (accessed from client-side)
 - **Markup**: Pre-built HTML generated at build time
@@ -311,6 +324,7 @@ npm run serve
 ```
 
 If your changes require server-side functionality, you MUST use:
+
 - **Serverless Functions**: Deploy separate functions (e.g., Netlify Functions, AWS Lambda)
 - **Third-Party APIs**: Use services like Firebase, Supabase, or other cloud providers
 - **Client-Side Processing**: Move logic to the browser when possible
@@ -327,6 +341,7 @@ If your changes require server-side functionality, you MUST use:
 ### Suitable Tasks for Copilot
 
 Copilot coding agent works best on:
+
 - Adding new React components or pages
 - Implementing new features with clear requirements
 - Updating styling with Tailwind CSS
@@ -340,16 +355,20 @@ Copilot coding agent works best on:
 Before Copilot submits a PR for review, it MUST:
 
 1. ✅ **Verify Build Success**:
+
    ```bash
    npm run build
    ```
+
    - Build must complete without errors
    - Verify `public/` directory is generated
 
 2. ✅ **Test Functionality**:
+
    ```bash
    npm run develop
    ```
+
    - Manually test all changed features
    - Verify existing functionality still works
 
@@ -385,6 +404,10 @@ Before Copilot submits a PR for review, it MUST:
 - **Never commit** build artifacts (`public/`, `.cache/`)
 - **Never commit** `node_modules/` directory
 - **Always use TypeScript** - new files should use .ts or .tsx extensions
+- **Do not modify generated agent lockfiles** unless explicitly asked for lockfile maintenance:
+  - `.github/aw/actions-lock.json`
+  - `.github/workflows/*.lock.yml`
+  - These files are generated artifacts and must not be edited during feature work, bugfixes, refactors, or documentation updates
 - **Repository URL**: `https://github.com/splk3/goalie-gen` (ensure package.json uses correct URL)
 - Custom domain eliminates need for path prefix in gatsby-config.ts
 - Site URL is set via GATSBY_SITE_URL environment variable
@@ -400,6 +423,7 @@ Before Copilot submits a PR for review, it MUST:
 ### ❌ Server-Side Features (Will Break on Static Hosting)
 
 **DO NOT use:**
+
 - `getServerData()` - Requires Node.js server at runtime
 - Server-side API routes (e.g., `/api/*` endpoints)
 - Node.js modules that require server runtime (fs, path, etc.)
@@ -410,15 +434,18 @@ Before Copilot submits a PR for review, it MUST:
 ### ❌ Build-Time Mistakes
 
 **DO NOT:**
+
 - Commit `public/`, `.cache/`, or `node_modules/` directories
 - Use `require()` for static assets (use `import` instead)
 - Forget to test production builds before submitting PR
 - Skip the `npm run build` validation step
 - Use .js or .jsx extensions for new files (use .ts or .tsx)
+- Edit generated lock artifacts (`.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml`) unless the task is explicitly to regenerate/update those lockfiles
 
 ### ✅ Correct Patterns for Static Sites
 
 **DO use:**
+
 - Static Site Generation (SSG) at build time
 - Client-side React components and hooks (TypeScript/TSX)
 - Browser APIs (localStorage, sessionStorage, fetch)
@@ -431,15 +458,17 @@ Before Copilot submits a PR for review, it MUST:
 ### Example: Correct vs. Incorrect
 
 ❌ **INCORRECT** (Server-side - will break):
+
 ```typescript
 // This will NOT work on static hosting
 export async function getServerData() {
-  const data = await fetchFromDatabase()
-  return { props: { data } }
+  const data = await fetchFromDatabase();
+  return { props: { data } };
 }
 ```
 
 ✅ **CORRECT** (Client-side - will work):
+
 ```typescript
 // This WILL work on static hosting
 import React from 'react'
@@ -452,13 +481,13 @@ interface DataType {
 
 export default function Component() {
   const [data, setData] = React.useState<DataType | null>(null)
-  
+
   React.useEffect(() => {
     fetch('https://api.example.com/data')
       .then(res => res.json())
       .then(setData)
   }, [])
-  
+
   return <div>{data ? 'Loaded' : 'Loading...'}</div>
 }
 ```
@@ -470,10 +499,12 @@ export default function Component() {
 - `npm run serve` - Serve production build locally
 - `npm run clean` - Clean cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
+- `npm test` - Run unit tests with Jest
 
 ## Target Audience
 
 The primary users are:
+
 - Youth hockey coaches
 - Goaltending coaches
 - Hockey club administrators

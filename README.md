@@ -14,21 +14,21 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 
 ## 🚀 Quick Start
 
-1.  **Install dependencies**
+1. **Install dependencies**
 
-    ```shell
-    npm install
-    ```
+   ```shell
+   npm install
+   ```
 
-2.  **Start developing**
+2. **Start developing**
 
-    ```shell
-    npm run develop
-    ```
+   ```shell
+   npm run develop
+   ```
 
-3.  **View the site**
+3. **View the site**
 
-    Your site is now running at `http://localhost:8000`!
+   Your site is now running at `http://localhost:8000`!
 
 ## 🛠 Tech Stack
 
@@ -54,36 +54,48 @@ The site uses USA national colors:
 - `npm run serve` - Serve the production build locally
 - `npm run clean` - Clean the cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
+- `npm test` - Run unit tests with Jest
 
 ## 📁 Project Structure
 
-```
-goalie-gen/
+```text
 ├── src/
 │   ├── components/       # React components (TypeScript)
 │   │   ├── DarkModeToggle.tsx
-│   │   ├── DownloadDrillButton.tsx
+│   │   ├── DownloadDrillPdfButton.tsx
 │   │   ├── DownloadMaterialButton.tsx
 │   │   ├── ExternalLinkButton.tsx
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
+│   │   ├── INeedADrillButton.tsx
 │   │   ├── Logo.tsx
 │   │   ├── NavigationButton.tsx
+│   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
-│   │   └── TermsPopup.tsx
+│   │   ├── TermsPopup.tsx
+│   │   ├── UsaHockeyGoldBanner.tsx
+│   │   └── __tests__/     # Unit tests for components
 │   ├── pages/            # Page components (auto-routed by Gatsby)
+│   │   ├── 404.tsx
 │   │   ├── club-resources.tsx
 │   │   ├── coach-resources.tsx
 │   │   ├── goalie-drills.tsx
+│   │   ├── goalie-evals.tsx
 │   │   ├── goalie-resources.tsx
 │   │   ├── index.tsx
 │   │   └── team-drills.tsx
 │   ├── templates/        # Dynamic page templates
 │   │   └── drill.tsx     # Template for individual drill pages
 │   ├── styles/           # Global CSS styles
+│   ├── hooks/            # Custom React hooks
+│   │   ├── useDrillFilters.ts
+│   │   └── __tests__/     # Unit tests for hooks
 │   └── utils/            # Utility functions
-│       └── analytics.ts  # Analytics utilities
+│       ├── analytics.ts
+│       ├── generateDrillPdf.ts
+│       ├── videoUtils.ts
+│       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
 │   ├── power-push-quick-movement-blaze-pods/
 │   ├── test-drill-advanced-teams/
@@ -130,13 +142,20 @@ To add a new drill for the site, create a new folder under [drills/](drills/) na
 
 Required fields in drill.yml:
 
-- name
-- description
-- coaching_points
-- images
-- tags
+- `name`
+- `description`
+- `coaching_points`
+- `images`
+- `tags`
+- `drill_creation_date`
 
-All other fields (such as `video`) are optional. For tags, each sub-field is optional, but some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`):
+`drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
+All other fields are optional. Known optional fields include:
+
+- `video` — a YouTube or Vimeo URL (see format details below)
+- `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
+
+The `tags` field is required, but each sub-field is optional. Some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`). Each of these sub-fields accepts an **array** of values from the allowed list (including an empty array):
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
@@ -204,11 +223,11 @@ This repository uses GitHub Actions for automation and CI/CD:
 
 ### 1. Deploy to GitHub Pages (`deploy.yml`)
 
-- **Trigger**: Automatic on push to `main` branch + manual dispatch
+- **Trigger**: Automatic on push to `dev` branch + manual dispatch
 - **Purpose**: Builds and deploys the site to GitHub Pages
 - **Actions**: Runs `npm ci` and `npm run build`, uploads artifact, and deploys to GitHub Pages
 - **Node Version**: 24.x with npm caching enabled
-- **Deployment**: Uses actions/deploy-pages@v4 with proper permissions and concurrency control
+- **Deployment**: Uses actions/deploy-pages@v5 with proper permissions and concurrency control
 
 ### 2. Super Linter (`super-linter.yml`)
 
@@ -221,14 +240,14 @@ This repository uses GitHub Actions for automation and CI/CD:
 
 - **Trigger**: Pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
 - **Purpose**: Verifies that the site builds successfully without deploying
-- **Actions**: Runs `npm ci` and `npm run build`, then verifies `public/` directory was created
+- **Actions**: Runs `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process, then verifies `public/` directory was created
 - **Node Version**: 24.x with npm caching enabled
 
-### 4. Release Prep (`release-prep.yml`)
+### 4. Update Docs Agent (`update-docs-agent.lock.yml`)
 
-- **Trigger**: Manual workflow dispatch or on release creation (filtered to releases with tags ending in `-alpha`)
-- **Purpose**: Automatically creates documentation update issues
-- **Actions**: Creates GitHub issue for README and copilot instructions updates
+- **Trigger**: Weekly schedule + manual dispatch
+- **Purpose**: Runs an AI docs-maintenance workflow that reviews repository state and proposes documentation updates
+- **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.github/aw/`
 
 ## 🚀 Deployment
 
@@ -236,7 +255,7 @@ This site is deployed to both **GitHub Pages** and **Cloudflare Pages** with cus
 
 ### Automated Deployment
 
-- **GitHub Pages**: Automatically deploys when changes are pushed to the `main` branch using the `.github/workflows/deploy.yml` workflow.
+- **GitHub Pages**: Automatically deploys when changes are pushed to the `dev` branch using the `.github/workflows/deploy.yml` workflow.
 - **Cloudflare Pages**: Automatically deploys on push to `main` branch via Cloudflare's Git integration. Configuration is in `wrangler.jsonc`.
 
 ### Custom Domains
