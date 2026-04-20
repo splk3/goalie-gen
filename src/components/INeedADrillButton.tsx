@@ -1,20 +1,20 @@
-import * as React from "react"
-import { useStaticQuery, graphql, navigate } from "gatsby"
-import Logo from "./Logo"
-import { trackEvent } from "../utils/analytics"
-import { useDrillFilters } from "../hooks/useDrillFilters"
+import * as React from "react";
+import { useStaticQuery, graphql, navigate } from "gatsby";
+import Logo from "./Logo";
+import { trackEvent } from "../utils/analytics";
+import { useDrillFilters } from "../hooks/useDrillFilters";
 
 interface DrillNode {
-  slug: string
-  name: string
+  slug: string;
+  name: string;
   tags: {
-    skill_level?: string[]
-    team_drill?: string[]
-    age_level?: string[]
-    fundamental_skill?: string[]
-    skating_skill?: string[]
-    equipment?: string[]
-  }
+    skill_level?: string[];
+    team_drill?: string[];
+    age_level?: string[];
+    fundamental_skill?: string[];
+    skating_skill?: string[];
+    equipment?: string[];
+  };
 }
 
 export default function INeedADrillButton() {
@@ -35,13 +35,13 @@ export default function INeedADrillButton() {
         }
       }
     }
-  `)
+  `);
 
-  const drills: DrillNode[] = data.allDrill.nodes
+  const drills: DrillNode[] = data.allDrill.nodes;
 
-  const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
-  const dropdownRef = React.useRef<HTMLDivElement>(null)
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   // Use the shared drill filtering hook
   const {
@@ -53,70 +53,70 @@ export default function INeedADrillButton() {
     resetFilters,
     formatTagName,
     formatTagValue,
-    activeFilters
-  } = useDrillFilters(drills)
+    activeFilters,
+  } = useDrillFilters(drills);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpenDropdown(null)
+        setOpenDropdown(null);
       }
-    }
+    };
 
     if (openDropdown) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [openDropdown])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdown]);
 
   const getDrill = () => {
     if (filteredDrills.length === 0) {
-      alert('No drills match the selected filters. Please adjust your filters and try again.')
-      return
+      alert("No drills match the selected filters. Please adjust your filters and try again.");
+      return;
     }
 
     // Select a random drill from filtered drills
-    const randomIndex = Math.floor(Math.random() * filteredDrills.length)
-    const selectedDrill = filteredDrills[randomIndex]
+    const randomIndex = Math.floor(Math.random() * filteredDrills.length);
+    const selectedDrill = filteredDrills[randomIndex];
 
     // Extract filter values for analytics
-    const ageGroup = selectedFilters.age_level?.[0] || ''
-    const skillLevel = selectedFilters.skill_level?.[0] || ''
+    const ageGroup = selectedFilters.age_level?.[0] || "";
+    const skillLevel = selectedFilters.skill_level?.[0] || "";
 
     // Track event (reusing download_drill event type for consistency)
-    trackEvent('download_drill', {
+    trackEvent("download_drill", {
       drill_name: selectedDrill.name,
       age_group: ageGroup,
-      skill_level: skillLevel
-    })
+      skill_level: skillLevel,
+    });
 
     // Navigate to the drill page
-    navigate(`/drills/${selectedDrill.slug}`)
-  }
+    navigate(`/drills/${selectedDrill.slug}`);
+  };
 
   const handleCancel = React.useCallback(() => {
-    setShowModal(false)
-    setOpenDropdown(null)
-    resetFilters()
-  }, [resetFilters])
+    setShowModal(false);
+    setOpenDropdown(null);
+    resetFilters();
+  }, [resetFilters]);
 
   // Close modal when Escape key is pressed
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showModal) {
-        handleCancel()
+      if (event.key === "Escape" && showModal) {
+        handleCancel();
       }
-    }
+    };
 
     if (showModal) {
-      document.addEventListener('keydown', handleEscape)
-      return () => document.removeEventListener('keydown', handleEscape)
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
-  }, [showModal, handleCancel])
+  }, [showModal, handleCancel]);
 
   return (
     <>
@@ -128,11 +128,11 @@ export default function INeedADrillButton() {
       </button>
 
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           onClick={handleCancel}
         >
-          <div 
+          <div
             className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             role="dialog"
             aria-modal="true"
@@ -141,7 +141,7 @@ export default function INeedADrillButton() {
           >
             <div className="flex items-center gap-4 mb-6">
               <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
-              <h2 
+              <h2
                 id="drill-modal-title"
                 className="text-2xl font-bold text-usa-blue dark:text-blue-400"
               >
@@ -152,9 +152,9 @@ export default function INeedADrillButton() {
             {/* Filter Dropdowns */}
             <div ref={dropdownRef} className="grid md:grid-cols-2 gap-4 mb-6">
               {Object.entries(tagCategories).map(([category, values]) => {
-                if (values.length === 0) return null
-                const dropdownId = `filter-${category}-menu`
-                
+                if (values.length === 0) return null;
+                const dropdownId = `filter-${category}-menu`;
+
                 return (
                   <div key={category} className="relative">
                     <button
@@ -166,11 +166,12 @@ export default function INeedADrillButton() {
                     >
                       <span className="font-semibold">{formatTagName(category)}</span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {selectedFilters[category].length > 0 && `(${selectedFilters[category].length})`}
-                        <span className="ml-2">{openDropdown === category ? '▲' : '▼'}</span>
+                        {selectedFilters[category].length > 0 &&
+                          `(${selectedFilters[category].length})`}
+                        <span className="ml-2">{openDropdown === category ? "▲" : "▼"}</span>
                       </span>
                     </button>
-                    
+
                     {openDropdown === category && (
                       <div
                         id={dropdownId}
@@ -178,7 +179,7 @@ export default function INeedADrillButton() {
                         aria-label={`${formatTagName(category)} filters`}
                         className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto"
                       >
-                        {values.map(value => (
+                        {values.map((value) => (
                           <label
                             key={value}
                             className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
@@ -189,20 +190,24 @@ export default function INeedADrillButton() {
                               onChange={() => toggleFilter(category, value)}
                               className="mr-3 w-4 h-4"
                             />
-                            <span className="text-gray-900 dark:text-gray-100">{formatTagValue(value)}</span>
+                            <span className="text-gray-900 dark:text-gray-100">
+                              {formatTagValue(value)}
+                            </span>
                           </label>
                         ))}
                       </div>
                     )}
                   </div>
-                )
+                );
               })}
             </div>
 
             {/* Active Filters Display */}
             {activeFilters.length > 0 && (
               <div className="mb-6 pb-6 border-b border-gray-300 dark:border-gray-600">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Active Filters:</h3>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  Active Filters:
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {activeFilters.map(({ category, value }) => (
                     <div
@@ -227,7 +232,8 @@ export default function INeedADrillButton() {
 
             {/* Results count */}
             <div className="mb-4 text-center text-gray-700 dark:text-gray-300">
-              {filteredDrills.length} drill{filteredDrills.length !== 1 ? 's' : ''} {filteredDrills.length === 1 ? 'matches' : 'match'} your filters
+              {filteredDrills.length} drill{filteredDrills.length !== 1 ? "s" : ""}{" "}
+              {filteredDrills.length === 1 ? "matches" : "match"} your filters
             </div>
 
             <div className="flex gap-4">
@@ -254,5 +260,5 @@ export default function INeedADrillButton() {
         </div>
       )}
     </>
-  )
+  );
 }

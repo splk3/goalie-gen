@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository hosts a **GatsbyJS-based static website** designed to help youth ice hockey teams and clubs generate customized goaltending development plans. The site is deployed to both GitHub Pages and Cloudflare Pages.
+This repository hosts a **GatsbyJS-based static site** designed to help youth ice hockey teams and clubs generate customized goaltending development plans. The site is deployed to both GitHub Pages and Cloudflare Pages.
 
 **Note**: This is a Gatsby project (not Jekyll). The `.gitignore` is configured for Gatsby with entries for `public/`, `.cache/`, and `node_modules/`.
 
@@ -173,6 +173,7 @@ This project uses a YAML-based drill system with dynamic page generation:
 ### Color Scheme
 
 The site uses USA national colors defined in `tailwind.config.js`:
+
 - **usa-blue**: `#00205B` - Primary blue
 - **usa-red**: `#AF272F` - Accent red
 - **usa-white**: `#FFFFFF` - Background/text
@@ -259,6 +260,7 @@ This repository uses GitHub Actions for automation:
 ### What is JAMstack?
 
 This site follows JAMstack (JavaScript, APIs, and Markup) architecture principles:
+
 - **JavaScript**: Client-side dynamic functionality
 - **APIs**: Third-party services and APIs (accessed from client-side)
 - **Markup**: Pre-built HTML generated at build time
@@ -322,6 +324,7 @@ npm run serve
 ```
 
 If your changes require server-side functionality, you MUST use:
+
 - **Serverless Functions**: Deploy separate functions (e.g., Netlify Functions, AWS Lambda)
 - **Third-Party APIs**: Use services like Firebase, Supabase, or other cloud providers
 - **Client-Side Processing**: Move logic to the browser when possible
@@ -338,6 +341,7 @@ If your changes require server-side functionality, you MUST use:
 ### Suitable Tasks for Copilot
 
 Copilot coding agent works best on:
+
 - Adding new React components or pages
 - Implementing new features with clear requirements
 - Updating styling with Tailwind CSS
@@ -351,16 +355,20 @@ Copilot coding agent works best on:
 Before Copilot submits a PR for review, it MUST:
 
 1. ✅ **Verify Build Success**:
+
    ```bash
    npm run build
    ```
+
    - Build must complete without errors
    - Verify `public/` directory is generated
 
 2. ✅ **Test Functionality**:
+
    ```bash
    npm run develop
    ```
+
    - Manually test all changed features
    - Verify existing functionality still works
 
@@ -396,10 +404,10 @@ Before Copilot submits a PR for review, it MUST:
 - **Never commit** build artifacts (`public/`, `.cache/`)
 - **Never commit** `node_modules/` directory
 - **Always use TypeScript** - new files should use .ts or .tsx extensions
-- **Do not modify generated agent lock files** unless explicitly asked for lockfile maintenance:
-   - `.github/aw/actions-lock.json`
-   - `.github/workflows/*.lock.yml`
-   - These files are generated artifacts and must not be edited during feature work, bug fixes, refactors, or documentation updates
+- **Do not modify generated agent lockfiles** unless explicitly asked for lockfile maintenance:
+  - `.github/aw/actions-lock.json`
+  - `.github/workflows/*.lock.yml`
+  - These files are generated artifacts and must not be edited during feature work, bugfixes, refactors, or documentation updates
 - **Repository URL**: `https://github.com/splk3/goalie-gen` (ensure package.json uses correct URL)
 - Custom domain eliminates need for path prefix in gatsby-config.ts
 - Site URL is set via GATSBY_SITE_URL environment variable
@@ -415,6 +423,7 @@ Before Copilot submits a PR for review, it MUST:
 ### ❌ Server-Side Features (Will Break on Static Hosting)
 
 **DO NOT use:**
+
 - `getServerData()` - Requires Node.js server at runtime
 - Server-side API routes (e.g., `/api/*` endpoints)
 - Node.js modules that require server runtime (fs, path, etc.)
@@ -425,16 +434,18 @@ Before Copilot submits a PR for review, it MUST:
 ### ❌ Build-Time Mistakes
 
 **DO NOT:**
+
 - Commit `public/`, `.cache/`, or `node_modules/` directories
 - Use `require()` for static assets (use `import` instead)
 - Forget to test production builds before submitting PR
 - Skip the `npm run build` validation step
 - Use .js or .jsx extensions for new files (use .ts or .tsx)
-- Edit generated lock artifacts (`.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml`) unless the task is explicitly to regenerate/update those lock files
+- Edit generated lock artifacts (`.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml`) unless the task is explicitly to regenerate/update those lockfiles
 
 ### ✅ Correct Patterns for Static Sites
 
 **DO use:**
+
 - Static Site Generation (SSG) at build time
 - Client-side React components and hooks (TypeScript/TSX)
 - Browser APIs (localStorage, sessionStorage, fetch)
@@ -447,15 +458,17 @@ Before Copilot submits a PR for review, it MUST:
 ### Example: Correct vs. Incorrect
 
 ❌ **INCORRECT** (Server-side - will break):
+
 ```typescript
 // This will NOT work on static hosting
 export async function getServerData() {
-  const data = await fetchFromDatabase()
-  return { props: { data } }
+  const data = await fetchFromDatabase();
+  return { props: { data } };
 }
 ```
 
 ✅ **CORRECT** (Client-side - will work):
+
 ```typescript
 // This WILL work on static hosting
 import React from 'react'
@@ -468,13 +481,13 @@ interface DataType {
 
 export default function Component() {
   const [data, setData] = React.useState<DataType | null>(null)
-  
+
   React.useEffect(() => {
     fetch('https://api.example.com/data')
       .then(res => res.json())
       .then(setData)
   }, [])
-  
+
   return <div>{data ? 'Loaded' : 'Loading...'}</div>
 }
 ```
@@ -491,6 +504,7 @@ export default function Component() {
 ## Target Audience
 
 The primary users are:
+
 - Youth hockey coaches
 - Goaltending coaches
 - Hockey club administrators

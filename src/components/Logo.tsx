@@ -1,12 +1,12 @@
-import * as React from "react"
-import { withPrefix } from "gatsby"
+import * as React from "react";
+import { withPrefix } from "gatsby";
 
 interface LogoProps {
-  variant?: 'full' | 'alt'
-  className?: string
-  width?: number
-  height?: number
-  format?: 'svg' | 'png'
+  variant?: "full" | "alt";
+  className?: string;
+  width?: number;
+  height?: number;
+  format?: "svg" | "png";
 }
 
 /**
@@ -18,19 +18,19 @@ interface LogoProps {
  * @param {number} props.height - Logo height in pixels (optional)
  * @param {string} props.format - Image format: 'svg' (default) or 'png'
  */
-export default function Logo({ 
-  variant = 'full', 
-  className = '', 
-  width, 
-  height, 
-  format = 'svg' 
+export default function Logo({
+  variant = "full",
+  className = "",
+  width,
+  height,
+  format = "svg",
 }: LogoProps) {
-  const logoPath = withPrefix(variant === 'alt' ? '/images/logos/logo-alt' : '/images/logos/logo')
-  
+  const logoPath = withPrefix(variant === "alt" ? "/images/logos/logo-alt" : "/images/logos/logo");
+
   // Check if dark mode support is requested via className
-  const isDarkModeAware = className.includes('dark-mode-aware')
-  
-  if (variant === 'alt' && isDarkModeAware) {
+  const isDarkModeAware = className.includes("dark-mode-aware");
+
+  if (variant === "alt" && isDarkModeAware) {
     // Use two images with Tailwind dark mode classes for alt variant
     return (
       <div className={className}>
@@ -49,12 +49,12 @@ export default function Logo({
           className="max-w-full h-auto hidden dark:block"
         />
       </div>
-    )
+    );
   }
-  
+
   // Default: use dark variant for all modes
-  const logoSuffix = '-dark'
-  
+  const logoSuffix = "-dark";
+
   return (
     <img
       src={`${logoPath}${logoSuffix}.${format}`}
@@ -63,5 +63,5 @@ export default function Logo({
       height={height}
       className={`max-w-full h-auto ${className}`}
     />
-  )
+  );
 }

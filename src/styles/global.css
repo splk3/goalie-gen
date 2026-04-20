@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-usa-red: #AF272F;
-  --color-usa-blue: #00205B;
-  --color-usa-white: #FFFFFF;
+  --color-usa-red: #af272f;
+  --color-usa-blue: #00205b;
+  --color-usa-white: #ffffff;
 }
 
 @variant dark (&:where(.dark, .dark *));
@@ -43,12 +43,14 @@
   /* Restore specific print colors after global reset */
   .text-usa-blue,
   .print\:text-usa-blue,
-  h1, h2, h3 {
-    color: #00205B !important;
+  h1,
+  h2,
+  h3 {
+    color: #00205b !important;
   }
 
   .border-usa-red {
-    border-color: #AF272F !important;
+    border-color: #af272f !important;
   }
 
   /* Hide elements not needed in print */
@@ -127,7 +129,7 @@
 
   /* Print-specific colors */
   .print\:text-usa-blue {
-    color: #00205B !important;
+    color: #00205b !important;
   }
 
   .print\:text-gray-900 {

@@ -14,21 +14,21 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 
 ## 🚀 Quick Start
 
-1.  **Install dependencies**
+1. **Install dependencies**
 
-    ```shell
-    npm install
-    ```
+   ```shell
+   npm install
+   ```
 
-2.  **Start developing**
+2. **Start developing**
 
-    ```shell
-    npm run develop
-    ```
+   ```shell
+   npm run develop
+   ```
 
-3.  **View the site**
+3. **View the site**
 
-    Your site is now running at `http://localhost:8000`!
+   Your site is now running at `http://localhost:8000`!
 
 ## 🛠 Tech Stack
 
@@ -58,8 +58,7 @@ The site uses USA national colors:
 
 ## 📁 Project Structure
 
-```
-goalie-gen/
+```text
 ├── src/
 │   ├── components/       # React components (TypeScript)
 │   │   ├── DarkModeToggle.tsx

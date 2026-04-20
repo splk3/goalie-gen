@@ -1,9 +1,9 @@
-import * as React from "react"
-import { withPrefix, useStaticQuery, graphql } from "gatsby"
+import * as React from "react";
+import { withPrefix, useStaticQuery, graphql } from "gatsby";
 
 interface SeoProps {
-  title?: string
-  description?: string
+  title?: string;
+  description?: string;
 }
 
 /**
@@ -13,9 +13,9 @@ interface SeoProps {
  * @param {string} props.title - Page title (default: "Goalie Gen")
  * @param {string} props.description - Page description
  */
-export default function Seo({ 
-  title = "Goalie Gen - Development Plans", 
-  description = "Generate customized goaltending development plans for youth ice hockey teams and clubs" 
+export default function Seo({
+  title = "Goalie Gen - Development Plans",
+  description = "Generate customized goaltending development plans for youth ice hockey teams and clubs",
 }: SeoProps) {
   // Get site URL from gatsby-config.ts siteMetadata
   const data = useStaticQuery(graphql`
@@ -26,34 +26,34 @@ export default function Seo({
         }
       }
     }
-  `)
-  
+  `);
+
   // For social media, we need absolute URLs including the site URL
-  const siteUrl = data.site.siteMetadata.siteUrl
-  const imagePathWithPrefix = withPrefix("/images/logos/logo-light.png")
-  const socialImageUrl = new URL(imagePathWithPrefix, siteUrl).toString()
-  
+  const siteUrl = data.site.siteMetadata.siteUrl;
+  const imagePathWithPrefix = withPrefix("/images/logos/logo-light.png");
+  const socialImageUrl = new URL(imagePathWithPrefix, siteUrl).toString();
+
   return (
     <>
       <html lang="en" />
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      
+
       {/* Open Graph / Social Media */}
       <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={socialImageUrl} />
-      
+
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={socialImageUrl} />
-      
+
       {/* Theme color */}
       <meta name="theme-color" content="#00205B" />
     </>
-  )
+  );
 }

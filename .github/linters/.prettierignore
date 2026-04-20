@@ -1,0 +1,8 @@
+# Lock files (auto-generated, never manually edited)
+package-lock.json
+.github/workflows/update-docs-agent.lock.yml
+.github/aw/actions-lock.json
+
+# Agent skill and workflow definitions (external/generated content)
+.agents/**
+.github/agents/**
