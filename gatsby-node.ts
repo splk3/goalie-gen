@@ -110,6 +110,11 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
   if (Array.isArray(tags.fundamental_skill)) {
     for (const skill of tags.fundamental_skill) {
+      if (typeof skill !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.fundamental_skill' must contain only strings`
+        );
+      }
       if (!ALLOWED_FUNDAMENTAL_SKILLS.includes(skill)) {
         throw new Error(
           `[${drillFolder}] invalid fundamental_skill '${skill}'. Allowed values: ${ALLOWED_FUNDAMENTAL_SKILLS.join(", ")}`
@@ -125,6 +130,11 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
   if (Array.isArray(tags.skating_skill)) {
     for (const skill of tags.skating_skill) {
+      if (typeof skill !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.skating_skill' must be an array of strings`
+        );
+      }
       if (!ALLOWED_SKATING_SKILLS.includes(skill)) {
         throw new Error(
           `[${drillFolder}] invalid skating_skill '${skill}'. Allowed values: ${ALLOWED_SKATING_SKILLS.join(", ")}`
@@ -140,6 +150,11 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
   if (Array.isArray(tags.age_level)) {
     for (const age of tags.age_level) {
+      if (typeof age !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.age_level' must contain only strings`
+        );
+      }
       if (!ALLOWED_AGE_LEVELS.includes(age)) {
         throw new Error(
           `[${drillFolder}] invalid age_level '${age}'. Allowed values: ${ALLOWED_AGE_LEVELS.join(", ")}`
@@ -155,6 +170,11 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
   if (Array.isArray(tags.skill_level)) {
     for (const skill of tags.skill_level) {
+      if (typeof skill !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.skill_level' must contain only strings`
+        );
+      }
       if (!ALLOWED_SKILL_LEVELS.includes(skill)) {
         throw new Error(
           `[${drillFolder}] invalid skill_level '${skill}'. Allowed values: ${ALLOWED_SKILL_LEVELS.join(", ")}`
@@ -170,6 +190,11 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
   if (Array.isArray(tags.equipment)) {
     for (const eq of tags.equipment) {
+      if (typeof eq !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.equipment' must be an array of strings`
+        );
+      }
       if (!ALLOWED_EQUIPMENT.includes(eq)) {
         throw new Error(
           `[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(", ")}`
@@ -190,6 +215,11 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
       );
     }
     const tdValue = tags.team_drill[0];
+    if (typeof tdValue !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`
+      );
+    }
     if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
       throw new Error(
         `[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`

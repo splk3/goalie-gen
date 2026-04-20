@@ -24,6 +24,18 @@ describe("trackEvent", () => {
     });
   });
 
+  it("supports club plan generation analytics payload", () => {
+    const mockGtag = jest.fn();
+    (window as { gtag?: unknown }).gtag = mockGtag;
+
+    trackEvent("generate_plan", { type: "club", team_name: "Metro Club" });
+
+    expect(mockGtag).toHaveBeenCalledWith("event", "generate_plan", {
+      type: "club",
+      team_name: "Metro Club",
+    });
+  });
+
   it("calls window.gtag for download_drill event with required params", () => {
     const mockGtag = jest.fn();
     (window as { gtag?: unknown }).gtag = mockGtag;

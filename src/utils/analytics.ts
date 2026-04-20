@@ -13,13 +13,15 @@ declare global {
 type EventType =
   | "generate_plan"
   | "generate_journal"
+  | "download_plan"
+  | "download_journal"
   | "download_drill"
   | "download_material"
   | "external_link_click";
 
 // Specific interfaces for each event type's parameters
 interface GeneratePlanParams {
-  type: "individual" | "team";
+  type: "individual" | "team" | "club";
   team_name?: string;
   team_name_provided?: boolean;
   age_group?: string;
@@ -28,6 +30,15 @@ interface GeneratePlanParams {
 }
 
 interface GenerateJournalParams {
+  team_name?: string;
+}
+
+interface DownloadPlanParams {
+  type: "team" | "club";
+  team_name?: string;
+}
+
+interface DownloadJournalParams {
   team_name?: string;
 }
 
@@ -50,6 +61,8 @@ interface ExternalLinkClickParams {
 type AnalyticsParams =
   | GeneratePlanParams
   | GenerateJournalParams
+  | DownloadPlanParams
+  | DownloadJournalParams
   | DownloadDrillParams
   | DownloadMaterialParams
   | ExternalLinkClickParams;
@@ -85,6 +98,8 @@ type AnalyticsParams =
  */
 export function trackEvent(action: "generate_plan", params?: GeneratePlanParams): void;
 export function trackEvent(action: "generate_journal", params?: GenerateJournalParams): void;
+export function trackEvent(action: "download_plan", params: DownloadPlanParams): void;
+export function trackEvent(action: "download_journal", params?: DownloadJournalParams): void;
 export function trackEvent(action: "download_drill", params: DownloadDrillParams): void;
 export function trackEvent(action: "download_material", params: DownloadMaterialParams): void;
 export function trackEvent(action: "external_link_click", params: ExternalLinkClickParams): void;
