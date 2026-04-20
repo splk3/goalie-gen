@@ -1,5 +1,0 @@
-severity:
-  - CRITICAL
-  - HIGH
-  - MEDIUM
-ignore-unfixed: true
