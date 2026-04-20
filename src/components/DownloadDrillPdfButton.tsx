@@ -1,5 +1,6 @@
 import * as React from "react";
-import { generateDrillPdf, DrillData } from "../utils/generateDrillPdf";
+import { generateDrillPdf } from "../utils/generateDrillPdf";
+import type { DrillData } from "../types/drill";
 import { trackEvent } from "../utils/analytics";
 
 interface DownloadDrillPdfButtonProps {
