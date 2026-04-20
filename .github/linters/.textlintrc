@@ -3,6 +3,9 @@
     "comments": true
   },
   "rules": {
-    "terminology": true
+    "terminology": {
+      "defaultTerms": true,
+      "terms": [["readme", "README"]]
+    }
   }
 }

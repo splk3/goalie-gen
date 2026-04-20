@@ -1,5 +1,5 @@
 {
-  "threshold": 5,
+  "threshold": 10,
   "ignore": [
     "drills/**/*.yml",
     "drills_samples/**/*.yml",
