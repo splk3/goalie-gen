@@ -2,24 +2,7 @@ import type { GatsbyNode } from "gatsby";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
-
-interface DrillData {
-  name: string;
-  description: string;
-  coaching_points: string[];
-  images: string[];
-  video?: string;
-  drill_creation_date: string;
-  drill_updated_date?: string;
-  tags: {
-    skill_level?: string[];
-    team_drill?: string[];
-    age_level?: string[];
-    fundamental_skill?: string[];
-    skating_skill?: string[];
-    equipment?: string[];
-  };
-}
+import type { DrillData } from "./src/types/drill";
 
 // Helper function to recursively copy directory
 function copyDirectorySync(src: string, dest: string) {
@@ -315,6 +298,35 @@ export const onPreBootstrap: GatsbyNode["onPreBootstrap"] = () => {
   }
 };
 
+function loadDrillsFromDirectory(
+  drillsDir: string
+): Array<{ folder: string; drillData: DrillData }> {
+  if (!fs.existsSync(drillsDir)) {
+    return [];
+  }
+
+  const drillFolders = fs.readdirSync(drillsDir).filter((item) => {
+    const itemPath = path.join(drillsDir, item);
+    return fs.statSync(itemPath).isDirectory();
+  });
+
+  const drills: Array<{ folder: string; drillData: DrillData }> = [];
+
+  for (const folder of drillFolders) {
+    const drillPath = path.join(drillsDir, folder);
+    const ymlPath = path.join(drillPath, "drill.yml");
+
+    if (fs.existsSync(ymlPath)) {
+      const ymlContent = fs.readFileSync(ymlPath, "utf8");
+      const rawData = yaml.load(ymlContent, { schema: yaml.FAILSAFE_SCHEMA });
+      validateDrillData(rawData, folder);
+      drills.push({ folder, drillData: rawData as DrillData });
+    }
+  }
+
+  return drills;
+}
+
 export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
   const { createPage } = actions;
 
@@ -325,41 +337,24 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
     return;
   }
 
-  const drillFolders = fs.readdirSync(drillsDir).filter((item) => {
-    const itemPath = path.join(drillsDir, item);
-    return fs.statSync(itemPath).isDirectory();
-  });
+  let drills: Array<{ folder: string; drillData: DrillData }>;
+  try {
+    drills = loadDrillsFromDirectory(drillsDir);
+  } catch (error) {
+    console.error(`Error loading drills:`, error instanceof Error ? error.message : String(error));
+    throw error;
+  }
 
-  for (const folder of drillFolders) {
-    const drillPath = path.join(drillsDir, folder);
-    const ymlPath = path.join(drillPath, "drill.yml");
-
-    if (fs.existsSync(ymlPath)) {
-      try {
-        const ymlContent = fs.readFileSync(ymlPath, "utf8");
-        const rawData = yaml.load(ymlContent, { schema: yaml.FAILSAFE_SCHEMA });
-
-        // Validate the drill data structure
-        validateDrillData(rawData, folder);
-        const drillData = rawData as DrillData;
-
-        createPage({
-          path: `/drills/${folder}`,
-          component: path.resolve("./src/templates/drill.tsx"),
-          context: {
-            slug: folder,
-            drillData,
-            drillFolder: folder,
-          },
-        });
-      } catch (error) {
-        console.error(
-          `Error processing drill '${folder}':`,
-          error instanceof Error ? error.message : String(error)
-        );
-        throw error; // Fail the build with a clear error
-      }
-    }
+  for (const { folder, drillData } of drills) {
+    createPage({
+      path: `/drills/${folder}`,
+      component: path.resolve("./src/templates/drill.tsx"),
+      context: {
+        slug: folder,
+        drillData,
+        drillFolder: folder,
+      },
+    });
   }
 };
 
@@ -371,57 +366,37 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
   const { createNode } = actions;
 
   const drillsDir = path.resolve(__dirname, "drills");
+  const drills = loadDrillsFromDirectory(drillsDir);
 
-  if (!fs.existsSync(drillsDir)) {
-    return;
-  }
+  for (const { folder, drillData } of drills) {
+    try {
+      const nodeData = {
+        slug: folder,
+        name: drillData.name,
+        description: drillData.description,
+        coaching_points: drillData.coaching_points,
+        images: drillData.images,
+        video: drillData.video,
+        drill_creation_date: drillData.drill_creation_date,
+        drill_updated_date: drillData.drill_updated_date,
+        tags: drillData.tags,
+      };
 
-  const drillFolders = fs.readdirSync(drillsDir).filter((item) => {
-    const itemPath = path.join(drillsDir, item);
-    return fs.statSync(itemPath).isDirectory();
-  });
-
-  for (const folder of drillFolders) {
-    const drillPath = path.join(drillsDir, folder);
-    const ymlPath = path.join(drillPath, "drill.yml");
-
-    if (fs.existsSync(ymlPath)) {
-      try {
-        const ymlContent = fs.readFileSync(ymlPath, "utf8");
-        const rawData = yaml.load(ymlContent, { schema: yaml.FAILSAFE_SCHEMA });
-
-        validateDrillData(rawData, folder);
-        const drillData = rawData as DrillData;
-
-        // Create a node for each drill
-        const nodeData = {
-          slug: folder,
-          name: drillData.name,
-          description: drillData.description,
-          coaching_points: drillData.coaching_points,
-          images: drillData.images,
-          video: drillData.video,
-          drill_creation_date: drillData.drill_creation_date,
-          drill_updated_date: drillData.drill_updated_date,
-          tags: drillData.tags,
-        };
-
-        createNode({
-          ...nodeData,
-          id: createNodeId(`Drill-${folder}`),
-          parent: null,
-          children: [],
-          internal: {
-            type: "Drill",
-            contentDigest: createContentDigest(nodeData),
-          },
-        });
-      } catch (error) {
-        console.error(
-          `Error processing drill '${folder}' for GraphQL:`,
-          error instanceof Error ? error.message : String(error)
-        );
-      }
+      createNode({
+        ...nodeData,
+        id: createNodeId(`Drill-${folder}`),
+        parent: null,
+        children: [],
+        internal: {
+          type: "Drill",
+          contentDigest: createContentDigest(nodeData),
+        },
+      });
+    } catch (error) {
+      console.error(
+        `Error processing drill '${folder}' for GraphQL:`,
+        error instanceof Error ? error.message : String(error)
+      );
     }
   }
 };

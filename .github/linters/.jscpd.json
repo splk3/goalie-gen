@@ -1,0 +1,9 @@
+{
+  "threshold": 5,
+  "ignore": [
+    "drills/**/*.yml",
+    "drills_samples/**/*.yml",
+    ".github/ISSUE_TEMPLATE/**/*.yml",
+    "**/package-lock.json"
+  ]
+}
