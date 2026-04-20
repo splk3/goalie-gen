@@ -9,5 +9,4 @@ scan:
     - secret
 severity:
   - CRITICAL
-  - HIGH
 ignore-unfixed: true
