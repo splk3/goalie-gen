@@ -46,4 +46,4 @@ jobs:
           VALIDATE_BIOME_FORMAT: false
           VALIDATE_BIOME_LINT: false
           # Exclude generated/agent files from all linters (auto-generated or external content)
-          FILTER_REGEX_EXCLUDE: ".*(update-docs-agent\\.lock\\.yml|\\.agents/|\\.github/agents/).*"
+          FILTER_REGEX_EXCLUDE: ".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/).*"
