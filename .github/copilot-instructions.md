@@ -145,7 +145,7 @@ The Prettier configuration (`.github/linters/.prettierrc.json`) requires:
 
 - **Semicolons** (`semi: true`): Always use semicolons at the end of statements
 - **Quotes** (`singleQuote: false`): Use double quotes, not single quotes
-- **Trailing commas** (`trailingComma: "es5"`): Add trailing commas wherever valid in ES5 (objects, arrays, function parameters)
+- **Trailing commas** (`trailingComma: "es5"`): Add trailing commas wherever valid in ES5 (objects, arrays, etc.) — function parameters are **not** included (that requires `"all"`)
 - **Print width** (`printWidth: 100`): Maximum line length of 100 characters
 - **Tab width** (`tabWidth: 2`): Use 2 spaces for indentation (no tabs)
 - **Prose wrap** (`proseWrap: "preserve"`): Preserve existing line breaks in markdown prose
@@ -174,7 +174,7 @@ The yamllint configuration (`.github/linters/.yamllint.yml`) requires:
 
 The markdownlint configuration (`.github/linters/.markdown-lint.yml`) requires:
 
-- **List indentation**: 2 spaces for unordered list items (`MD007: indent: 2`)
+- **List indentation**: Nested unordered lists must be indented by 2 spaces (`MD007: indent: 2`)
 - **Line length**: Maximum 400 characters (very permissive)
 - **Duplicate headings**: Allowed when in different nesting levels (`MD024`)
 - **Inline HTML**: Allowed (`MD033: false`)
@@ -226,7 +226,7 @@ Before submitting a PR, validate your code style:
 ```bash
 # Check Prettier formatting (TypeScript, JS, JSON, YAML, CSS, Markdown)
 npx prettier --check "src/**/*.{ts,tsx,js,css}" "*.{ts,js,json,md}" \
-  "gatsby-*.ts" ".github/**/*.{yml,yaml,md}" "drills/**/*.yml"
+  "gatsby-*.{ts,tsx}" ".github/**/*.{yml,yaml,md}" "drills/**/*.yml"
 
 # Check TypeScript types
 npx tsc --noEmit

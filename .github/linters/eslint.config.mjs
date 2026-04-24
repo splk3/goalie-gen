@@ -72,7 +72,7 @@ export default defineConfig([
       "plugin:@typescript-eslint/recommended",
       "plugin:n/recommended",
       "plugin:react/recommended",
-      "prettier",
+      "prettier"
     ),
 
     plugins: {
@@ -90,11 +90,27 @@ export default defineConfig([
         version: "detect",
       },
     },
+
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
   },
   // Disable n/* rules: they flag Node.js module resolution as errors in a
   // browser-based Gatsby app where node_modules are not present at lint time.
   {
-    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx", "**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
+    files: [
+      "**/*.ts",
+      "**/*.cts",
+      "**/*.mts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.mjs",
+      "**/*.cjs",
+      "**/*.jsx",
+    ],
     rules: {
       "n/no-missing-import": "off",
       "n/no-missing-require": "off",
