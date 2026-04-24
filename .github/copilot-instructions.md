@@ -214,7 +214,7 @@ Tailwind CSS at-rules are allowed (`@apply`, `@tailwind`, `@layer`, `@theme`, et
 
 When modifying GitHub Actions workflows:
 
-- Always pin action versions to a full commit SHA (e.g., `actions/checkout@abc1234`)
+- Always pin action versions to a full commit SHA (e.g., `actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683`)
 - Do not use `pull_request_target` with checkout of untrusted code
 - Avoid storing secrets in workflow outputs or artifacts
 - Use `persist-credentials: false` in checkout steps when possible
