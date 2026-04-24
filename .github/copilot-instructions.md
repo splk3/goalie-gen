@@ -199,11 +199,12 @@ The JSCPD linter detects code duplication with a 10% threshold. Avoid copy-pasti
 
 #### Security Scanning
 
-Trivy scans for CRITICAL security vulnerabilities in dependencies. When adding new npm packages:
+Trivy CI scans for vulnerabilities, misconfigurations, and secrets. The current configuration also sets `ignore-unfixed: true`, so unfixed CVEs are intentionally not treated as CI failures. When adding new npm packages or changing repository configuration:
 
-- Check if the package has known CRITICAL vulnerabilities
+- Check if the package or change introduces known security vulnerabilities
 - Keep dependencies up to date
-- Avoid packages with unresolved CRITICAL CVEs
+- Avoid introducing exposed secrets or insecure configuration
+- Prefer packages and changes with available fixes when vulnerabilities are reported
 
 #### CSS / Stylelint
 
