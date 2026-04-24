@@ -224,8 +224,9 @@ When modifying GitHub Actions workflows:
 Before submitting a PR, validate your code style:
 
 ```bash
-# Check Prettier formatting (TypeScript, JS, JSON, YAML, CSS)
-npx prettier --check "src/**/*.{ts,tsx,js,css}" "*.{ts,js,json}"
+# Check Prettier formatting (TypeScript, JS, JSON, YAML, CSS, Markdown)
+npx prettier --check "src/**/*.{ts,tsx,js,css}" "*.{ts,js,json,md}" \
+  "gatsby-*.ts" ".github/**/*.{yml,yaml,md}" "drills/**/*.yml"
 
 # Check TypeScript types
 npx tsc --noEmit
