@@ -158,7 +158,7 @@ The ESLint configuration (`.github/linters/eslint.config.mjs`) enforces:
   - If a parameter must exist but is unused, prefix it with `_` (e.g., `_event`) or remove it entirely
 - **TypeScript recommended rules**: All `@typescript-eslint/recommended` rules apply
 - **React recommended rules**: All `plugin:react/recommended` rules apply
-- **No unpublished/missing imports**: Node plugin import rules are disabled for Gatsby compatibility
+- **Disabled Node.js import checks**: The `eslint-plugin-n` missing/unpublished import rules (`n/no-missing-import`, `n/no-unpublished-import`, etc.) are **intentionally disabled** for this project. The linter runs without `node_modules` present and Gatsby handles module resolution at build time, so enabling these rules would produce false positives on every import statement. Do not re-enable them.
 
 #### YAML Formatting
 
