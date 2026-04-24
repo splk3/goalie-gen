@@ -99,8 +99,10 @@ The following are created during development/build and excluded via `.gitignore`
 3. ✅ **Static Compatibility**: Verify no server-side rendering (SSR) features are used
 4. ✅ **JAMstack Compliance**: Ensure all dynamic features use client-side JavaScript only
 5. ✅ **Clean Build Output**: Confirm the `public/` directory is generated correctly
+6. ✅ **Linting Compliance**: Ensure code follows all formatting rules (Prettier, ESLint, YAML) — see the [Linting and Code Style Requirements](#linting-and-code-style-requirements) section
 
 **Failure to validate builds will result in broken deployments to GitHub Pages or Cloudflare Pages.**
+**PRs that fail super-linter checks will not be ready for review.**
 
 ### Working with Gatsby
 
@@ -132,6 +134,116 @@ The following are created during development/build and excluded via `.gitignore`
 - Write descriptive commit messages
 - Keep components small and focused
 - Leverage TypeScript type safety
+
+### Linting and Code Style Requirements
+
+**CRITICAL**: All code changes must pass the super-linter CI check before PR review. The super-linter runs automatically on every push and validates multiple languages and formats.
+
+#### Prettier Formatting (applies to TypeScript, JavaScript, JSON, YAML, CSS, Markdown)
+
+The Prettier configuration (`.github/linters/.prettierrc.json`) requires:
+
+- **Semicolons** (`semi: true`): Always use semicolons at the end of statements
+- **Quotes** (`singleQuote: false`): Use double quotes, not single quotes
+- **Trailing commas** (`trailingComma: "es5"`): Add trailing commas wherever valid in ES5 (objects, arrays, etc.) — function parameters are **not** included (that requires `"all"`)
+- **Print width** (`printWidth: 100`): Maximum line length of 100 characters
+- **Tab width** (`tabWidth: 2`): Use 2 spaces for indentation (no tabs)
+- **Prose wrap** (`proseWrap: "preserve"`): Preserve existing line breaks in markdown prose
+
+#### ESLint / TypeScript Rules
+
+The ESLint configuration (`.github/linters/eslint.config.mjs`) enforces:
+
+- **No unused variables**: Never declare variables without using them (`@typescript-eslint/no-unused-vars`)
+  - If a parameter must exist but is unused, prefix it with `_` (e.g., `_event`) or remove it entirely
+- **TypeScript recommended rules**: All `@typescript-eslint/recommended` rules apply
+- **React recommended rules**: All `plugin:react/recommended` rules apply
+- **Disabled Node.js import checks**: The `eslint-plugin-n` missing/unpublished import rules (`n/no-missing-import`, `n/no-unpublished-import`, etc.) are **intentionally disabled** for this project. The linter runs without `node_modules` present and Gatsby handles module resolution at build time, so enabling these rules would produce false positives on every import statement. Do not re-enable them.
+
+#### YAML Formatting
+
+The yamllint configuration (`.github/linters/.yamllint.yml`) requires:
+
+- **Indentation**: 2 spaces (no tabs)
+- **Line length**: Maximum 160 characters (warning only)
+- **Braces**: No or one space inside braces (e.g., `{ key: value }` or `{key: value}`)
+- **Sequences**: Indented sequences required
+- **Document start**: Not required (disabled)
+
+#### Markdown Formatting
+
+The markdownlint configuration (`.github/linters/.markdown-lint.yml`) requires:
+
+- **List indentation**: Nested unordered lists must be indented by 2 spaces (`MD007: indent: 2`)
+- **Line length**: Maximum 400 characters (very permissive)
+- **Duplicate headings**: Allowed when in different nesting levels (`MD024`)
+- **Inline HTML**: Allowed (`MD033: false`)
+- **Bare URLs**: Allowed (`MD034: false`)
+- **Heading punctuation**: Do not end headings with `.`, `,`, `;`, `:`, `!`
+
+#### Spell Checking
+
+Codespell scans for common spelling mistakes. These words are allowed:
+
+- `currentY` (PDF coordinate variable in jsPDF)
+- `dateA` (date comparison variable name)
+- `FitH` (PDF zoom mode parameter in jsPDF)
+
+(These exceptions are defined in `.github/linters/.codespellrc`.)
+
+Always use correct English spelling in code comments, variable names, and documentation.
+
+#### Copy-Paste Detection
+
+The JSCPD linter detects code duplication with a 10% threshold. Avoid copy-pasting large blocks of code — extract shared logic into reusable functions or components instead.
+
+#### Security Scanning
+
+Trivy CI scans for vulnerabilities, misconfigurations, and secrets. The current configuration also sets `ignore-unfixed: true`, so unfixed CVEs are intentionally not treated as CI failures. When adding new npm packages or changing repository configuration:
+
+- Check if the package or change introduces known security vulnerabilities
+- Keep dependencies up to date
+- Avoid introducing exposed secrets or insecure configuration
+- Prefer packages and changes with available fixes when vulnerabilities are reported
+
+#### CSS / Stylelint
+
+Tailwind CSS at-rules are allowed (`@apply`, `@tailwind`, `@layer`, `@theme`, etc.). Standard stylelint rules apply for non-Tailwind CSS.
+
+#### GitHub Actions Security (Zizmor and Checkov)
+
+When modifying GitHub Actions workflows:
+
+- Always pin action versions to a full commit SHA (e.g., `actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683`)
+- Do not use `pull_request_target` with checkout of untrusted code
+- Avoid storing secrets in workflow outputs or artifacts
+- Use `persist-credentials: false` in checkout steps when possible
+
+#### How to Validate Linting Locally
+
+Before submitting a PR, validate your code style:
+
+```bash
+# Check Prettier formatting (TypeScript, JS, JSON, YAML, CSS, Markdown)
+npx prettier --check "src/**/*.{ts,tsx,js,css}" "*.{ts,js,json,md}" \
+  "gatsby-*.{ts,tsx}" ".github/**/*.{yml,yaml,md}" "drills/**/*.yml"
+
+# Check TypeScript types
+npx tsc --noEmit
+
+# Run unit tests
+npm test
+
+# Build verification (catches many issues)
+npm run build
+```
+
+The super-linter runs on every push. If it fails, check the GitHub Actions logs for the specific linter and error message. Common issues and fixes:
+
+- **Prettier**: Run `npx prettier --write <file>` to auto-fix formatting
+- **ESLint unused variable**: Remove the variable or prefix with `_`
+- **YAML line too long**: Break long lines into multiple lines with proper indentation
+- **Spelling error**: Fix the typo or add the word to `.github/linters/.codespellrc`
 
 ### Content Guidelines
 
@@ -385,12 +497,21 @@ Before Copilot submits a PR for review, it MUST:
    - Confirm site works as a static site
    - Test with `npm run serve`
 
-4. ✅ **Document Changes**:
+4. ✅ **Validate Linting**:
+   - Follow all Prettier formatting rules (double quotes, semicolons, 100 char line limit, 2-space indent, trailing commas)
+   - Ensure no unused TypeScript/JavaScript variables or imports
+   - Keep YAML files within 160 character line limits with 2-space indentation
+   - Avoid spelling mistakes in comments and documentation
+   - When creating/modifying GitHub Actions workflows, pin action versions to full commit SHAs
+   - See the [Linting and Code Style Requirements](#linting-and-code-style-requirements) section for complete rules
+
+5. ✅ **Document Changes**:
    - Provide clear PR description
    - List all files modified
    - Explain testing performed
 
 **PRs that fail to build or break existing functionality will be rejected.**
+**PRs that fail super-linter checks will not be ready for review.**
 
 ### Iteration and Feedback
 
