@@ -26,7 +26,7 @@ export default function FeedbackPopup() {
     <>
       <button
         onClick={openFeedback}
-        className="text-usa-white hover:text-gray-300 dark:text-gray-300 dark:hover:text-white underline transition-colors"
+        className="inline-flex items-center justify-center rounded-md border border-white/40 bg-transparent px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-usa-blue dark:border-gray-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white dark:focus-visible:ring-offset-gray-800"
       >
         Give Feedback
       </button>

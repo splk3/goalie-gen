@@ -64,9 +64,8 @@ export default function UsaHockeyGoldBanner({
         </p>
       )}
       {showTerms && (
-        <div className="text-center mt-2 flex items-center justify-center gap-4">
+        <div className="text-center mt-2 flex items-center justify-center gap-3">
           <TermsPopup />
-          <span className="opacity-70">|</span>
           <FeedbackPopup />
         </div>
       )}

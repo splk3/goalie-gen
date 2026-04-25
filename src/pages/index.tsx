@@ -107,9 +107,8 @@ export default function Home() {
             © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
             Kujawski
           </p>
-          <div className="mt-2">
+          <div className="mt-2 flex items-center justify-center gap-3">
             <TermsPopup />
-            <span className="opacity-70">|</span>
             <FeedbackPopup />
           </div>
         </div>
