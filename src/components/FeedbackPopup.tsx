@@ -1,6 +1,7 @@
 import * as React from "react";
 
-const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function FeedbackPopup() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -38,6 +39,13 @@ export default function FeedbackPopup() {
 
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
+
+        // If focus escaped the dialog, pull it back in
+        if (!dialogRef.current?.contains(document.activeElement)) {
+          event.preventDefault();
+          (event.shiftKey ? last : first).focus();
+          return;
+        }
 
         if (event.shiftKey) {
           if (document.activeElement === first) {
