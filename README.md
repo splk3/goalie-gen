@@ -123,10 +123,15 @@ The site uses USA national colors:
 │       ├── coach-z-zone-map.pdf
 │       ├── goalie-evaluation-form.pdf
 │       └── goalie-single-game-review.pdf
+├── __mocks__/            # Jest mocks (Gatsby, static assets)
 ├── gatsby-config.ts     # Gatsby configuration (TypeScript)
 ├── gatsby-browser.tsx   # Browser APIs (TypeScript)
 ├── gatsby-node.ts       # Node APIs for dynamic page generation
 ├── gatsby-ssr.tsx       # SSR APIs (TypeScript)
+├── jest.config.js       # Jest test configuration
+├── jest-preprocess.js   # Babel/TypeScript transformer for Jest
+├── jest.setup.js        # Jest setup (testing-library/jest-dom, Gatsby mock)
+├── loadershim.js        # Gatsby path prefix shim for Jest
 ├── wrangler.jsonc       # Cloudflare Pages configuration
 ├── tailwind.config.js   # Tailwind CSS configuration
 ├── postcss.config.js    # PostCSS configuration
