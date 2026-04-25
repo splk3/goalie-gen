@@ -1,26 +1,26 @@
-import * as React from "react"
+import * as React from "react";
 
 export default function FeedbackPopup() {
-  const [isOpen, setIsOpen] = React.useState<boolean>(false)
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-  const openFeedback = () => setIsOpen(true)
-  const closeFeedback = () => setIsOpen(false)
+  const openFeedback = () => setIsOpen(true);
+  const closeFeedback = () => setIsOpen(false);
 
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isOpen) {
-        closeFeedback()
+        closeFeedback();
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener("keydown", handleEscape)
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEscape)
-    }
-  }, [isOpen])
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
 
   return (
     <>
@@ -43,7 +43,10 @@ export default function FeedbackPopup() {
             aria-labelledby="feedback-heading"
             onClick={(event) => event.stopPropagation()}
           >
-            <h2 id="feedback-heading" className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
+            <h2
+              id="feedback-heading"
+              className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4"
+            >
               Give Feedback
             </h2>
 
@@ -84,5 +87,5 @@ export default function FeedbackPopup() {
         </div>
       )}
     </>
-  )
+  );
 }

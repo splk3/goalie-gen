@@ -122,5 +122,4 @@ body:
       label: Drill Diagram
       description: |
         Attach the drill diagram or a screenshot of the drill here.
-      description: If applicable, provide steps to reproduce the accessibility issue.
       placeholder: Attach the drill diagram or a screenshot of the drill here.
