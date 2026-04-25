@@ -2,7 +2,7 @@ name: New Drill Template
 description: Use this template to submit a new drill for the site
 title: "Add a new drill - [DRILL NAME HERE]"
 labels:
-  - new-drill
+  - goalie-drills
 assignees:
   - splk3
 body:
@@ -115,3 +115,11 @@ body:
           required: true
         - label: I updated the YAML tags to include only applicable values.
           required: true
+
+  - type: textarea
+    id: diagram_image_or_screenshot
+    attributes:
+      label: Drill Diagram
+      description: |
+        Attach the drill diagram or a screenshot of the drill here.
+      placeholder: Attach the drill diagram or a screenshot of the drill here.

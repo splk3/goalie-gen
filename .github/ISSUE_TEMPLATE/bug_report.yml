@@ -1,5 +1,5 @@
 name: Bug report
-description: Create a report to help us improve
+description: Create a report to help us improve, including accessibility barriers and documentation corrections, additions, or updates
 title: "Bug Report - ISSUE-NAME-HERE"
 labels:
   - bug
@@ -7,9 +7,15 @@ body:
   - type: textarea
     id: bug_description
     attributes:
-      label: Describe the bug
-      description: A clear and concise description of what the bug is.
-      placeholder: What happened?
+      label: Describe the bug or issue
+      description: |
+        A clear and concise description of what the bug or issue is.
+        If reporting an accessibility issue, describe the barrier you encountered and how it affects your ability to use the site.
+        If reporting a documentation issue, describe what is missing, incorrect, or unclear.
+      placeholder: |
+        What happened?
+        e.g., "I cannot read the drill titles because the text color contrast is too low"
+        or "The README is missing information about how to add new drills"
     validations:
       required: true
 
@@ -36,11 +42,52 @@ body:
       required: true
 
   - type: textarea
+    id: affected_page
+    attributes:
+      label: Which page or feature is affected?
+      description: Specify the page, component, or feature where you encountered this issue.
+      placeholder: |
+        e.g., "Goalie Drills page", "Generate Team Plan button", "Dark mode toggle", etc.
+
+  - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
-      description: If applicable, add screenshots to help explain your problem.
+      description: If applicable, add screenshots or videos to help explain your problem.
       placeholder: Drag and drop screenshots here.
+
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Accessibility (if applicable)"
+
+  - type: checkboxes
+    id: accessibility_type
+    attributes:
+      label: Type of accessibility issue
+      description: If this is an accessibility issue, select all that apply.
+      options:
+        - label: Screen Reader - content not read correctly
+        - label: Keyboard Navigation - cannot access via keyboard
+        - label: Color Contrast - text is hard to read
+        - label: Focus Indicators - cannot see where I am on the page
+        - label: Form Labels - form inputs not properly labeled
+        - label: Mobile/Touch - hard to use on mobile devices
+        - label: Other
+
+  - type: dropdown
+    id: accessibility_severity
+    attributes:
+      label: Accessibility severity
+      description: If this is an accessibility issue, how severe is the barrier?
+      options:
+        - "N/A - Not an accessibility issue"
+        - "🔴 Blocker - Cannot use the site at all"
+        - "🟠 Major - Significant barrier to using key features"
+        - "🟡 Minor - Inconvenience, but workaround exists"
 
   - type: markdown
     attributes:
@@ -70,6 +117,13 @@ body:
       label: Desktop browser version
       description: e.g. 123.0
       placeholder: "123.0"
+
+  - type: input
+    id: assistive_technology
+    attributes:
+      label: Assistive technology (if applicable)
+      description: e.g., NVDA screen reader, VoiceOver, JAWS, Windows High Contrast mode
+      placeholder: NVDA screen reader on Windows 11
 
   - type: markdown
     attributes:
@@ -107,8 +161,53 @@ body:
       description: e.g. 22
       placeholder: "22.0"
 
+  - type: markdown
+    attributes:
+      value: "---"
+
+  - type: markdown
+    attributes:
+      value: "### Documentation (if applicable)"
+
+  - type: textarea
+    id: doc_location
+    attributes:
+      label: Where is documentation missing or incorrect?
+      description: Specify which file, section, or area the documentation issue relates to.
+      placeholder: |
+        e.g., README.md, Drill creation guide, Contributing guide, local development setup, etc.
+
+  - type: textarea
+    id: doc_proposed_content
+    attributes:
+      label: Proposed documentation content
+      description: If you have suggestions for what should be added or changed, include them here.
+      placeholder: Suggested text, examples, diagrams, or links to reference material...
+
+  - type: textarea
+    id: doc_impact
+    attributes:
+      label: Who is impacted by this documentation gap?
+      description: Describe who needs this documentation.
+      placeholder: |
+        e.g., "Coaches trying to create custom development plans"
+        or "New contributors setting up the development environment"
+
+  - type: checkboxes
+    id: doc_type
+    attributes:
+      label: Type of documentation
+      description: If this is a documentation issue, what kind of documentation is needed?
+      options:
+        - label: User Guide (how to use the site)
+        - label: Developer Guide (development setup, contributing code)
+        - label: Drill Creator Guide (how to create/submit drills)
+        - label: API/Technical Reference
+        - label: Troubleshooting Guide
+        - label: Other
+
   - type: textarea
     id: additional_context
     attributes:
       label: Additional context
-      description: Add any other context about the problem here.
+      description: Add any other context about the problem here (e.g., links to WCAG guidelines, error messages, links to relevant docs).
