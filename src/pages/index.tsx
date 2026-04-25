@@ -8,7 +8,7 @@ import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton";
 import INeedADrillButton from "../components/INeedADrillButton";
 import NavigationButton from "../components/NavigationButton";
 import TermsPopup from "../components/TermsPopup";
-import FeedbackPopup from "../components/FeedbackPopup";
+import FeedbackButton from "../components/FeedbackButton";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 
 export default function Home() {
@@ -109,7 +109,7 @@ export default function Home() {
           </p>
           <div className="mt-2 flex items-center justify-center gap-3">
             <TermsPopup />
-            <FeedbackPopup />
+            <FeedbackButton />
           </div>
         </div>
       </footer>

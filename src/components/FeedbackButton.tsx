@@ -3,7 +3,7 @@ import * as React from "react";
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export default function FeedbackPopup() {
+export default function FeedbackButton() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const dialogRef = React.useRef<HTMLDivElement>(null);
