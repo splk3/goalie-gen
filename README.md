@@ -14,21 +14,21 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 
 ## 🚀 Quick Start
 
-1.  **Install dependencies**
+1. **Install dependencies**
 
-    ```shell
-    npm install
-    ```
+   ```shell
+   npm install
+   ```
 
-2.  **Start developing**
+2. **Start developing**
 
-    ```shell
-    npm run develop
-    ```
+   ```shell
+   npm run develop
+   ```
 
-3.  **View the site**
+3. **View the site**
 
-    Your site is now running at `http://localhost:8000`!
+   Your site is now running at `http://localhost:8000`!
 
 ## 🛠 Tech Stack
 
@@ -58,8 +58,7 @@ The site uses USA national colors:
 
 ## 📁 Project Structure
 
-```
-goalie-gen/
+```text
 ├── src/
 │   ├── components/       # React components (TypeScript)
 │   │   ├── DarkModeToggle.tsx
@@ -72,10 +71,12 @@ goalie-gen/
 │   │   ├── INeedADrillButton.tsx
 │   │   ├── Logo.tsx
 │   │   ├── NavigationButton.tsx
+│   │   ├── PageLayout.tsx
 │   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
 │   │   ├── TermsPopup.tsx
-│   │   └── UsaHockeyGoldBanner.tsx
+│   │   ├── UsaHockeyGoldBanner.tsx
+│   │   └── __tests__/     # Unit tests for components
 │   ├── pages/            # Page components (auto-routed by Gatsby)
 │   │   ├── 404.tsx
 │   │   ├── club-resources.tsx
@@ -89,11 +90,16 @@ goalie-gen/
 │   │   └── drill.tsx     # Template for individual drill pages
 │   ├── styles/           # Global CSS styles
 │   ├── hooks/            # Custom React hooks
-│   │   └── useDrillFilters.ts
+│   │   ├── useDrillFilters.ts
+│   │   └── __tests__/     # Unit tests for hooks
+│   ├── types/            # TypeScript type definitions
+│   │   └── drill.ts      # DrillData interface
+│   ├── declarations.d.ts # Module declarations (e.g., CSS modules)
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
 │       ├── generateDrillPdf.ts
-│       └── videoUtils.ts
+│       ├── videoUtils.ts
+│       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
 │   ├── power-push-quick-movement-blaze-pods/
 │   ├── test-drill-advanced-teams/
@@ -140,13 +146,20 @@ To add a new drill for the site, create a new folder under [drills/](drills/) na
 
 Required fields in drill.yml:
 
-- name
-- description
-- coaching_points
-- images
-- tags
+- `name`
+- `description`
+- `coaching_points`
+- `images`
+- `tags`
+- `drill_creation_date`
 
-All other fields (such as `video`) are optional. For tags, each sub-field is optional, but some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`):
+`drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
+All other fields are optional. Known optional fields include:
+
+- `video` — a YouTube or Vimeo URL (see format details below)
+- `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
+
+The `tags` field is required, but each sub-field is optional. Some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`). Each of these sub-fields accepts an **array** of values from the allowed list (including an empty array):
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
@@ -233,6 +246,18 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Purpose**: Verifies that the site builds successfully without deploying
 - **Actions**: Runs `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process, then verifies `public/` directory was created
 - **Node Version**: 24.x with npm caching enabled
+
+### 4. Update Docs Agent (`update-docs-agent.lock.yml`)
+
+- **Trigger**: Weekly schedule + manual dispatch
+- **Purpose**: Runs an AI docs-maintenance workflow that reviews repository state and proposes documentation updates
+- **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.github/aw/`
+
+### 5. Copilot Setup Steps (`copilot-setup-steps.yml`)
+
+- **Trigger**: Manual dispatch + push changes to the workflow file itself
+- **Purpose**: Configures the environment for GitHub Copilot Agent by installing the `gh-aw` MCP server extension
+- **Job**: `copilot-setup-steps` (recognized by GitHub Copilot Agent)
 
 ## 🚀 Deployment
 

@@ -1,0 +1,25 @@
+---
+###########################
+###########################
+## Markdown Linter rules ##
+###########################
+###########################
+
+# Linter rules doc:
+# - https://github.com/DavidAnson/markdownlint
+#
+
+MD004: false # Unordered list style
+MD007:
+  indent: 2 # Unordered list indentation
+MD013:
+  line_length: 400 # Line length (400 is permissive)
+MD024:
+  allow_different_nesting: true # Allow duplicate headings in different nesting levels
+MD026:
+  punctuation: ".,;:!。，；:" # Punctuation not allowed at end of headings
+MD029: false # Ordered list item prefix
+MD033: false # Allow inline HTML
+MD034: false # Allow bare URLs (needed in agent/skill markdown files)
+MD036: false # Emphasis used instead of a heading
+MD060: false # Table column alignment (style preference)

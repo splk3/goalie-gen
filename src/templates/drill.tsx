@@ -1,100 +1,100 @@
-import * as React from 'react'
-import { Link } from 'gatsby'
-import Seo from '../components/SEO'
-import Logo from '../components/Logo'
-import DarkModeToggle from '../components/DarkModeToggle'
-import DownloadDrillPdfButton from '../components/DownloadDrillPdfButton'
-import { getEmbedUrl, getVideoThumbnail } from '../utils/videoUtils'
-import { generateDrillPdf } from '../utils/generateDrillPdf'
-import UsaHockeyGoldBanner from '../components/UsaHockeyGoldBanner'
+import * as React from "react";
+import { Link } from "gatsby";
+import Seo from "../components/SEO";
+import Logo from "../components/Logo";
+import DarkModeToggle from "../components/DarkModeToggle";
+import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
+import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
+import { generateDrillPdf } from "../utils/generateDrillPdf";
+import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 
 interface DrillPageContext {
-  slug: string
+  slug: string;
   drillData: {
-    name: string
-    description: string
-    coaching_points: string[]
-    images: string[]
-    video?: string
-    drill_creation_date: string
-    drill_updated_date?: string
+    name: string;
+    description: string;
+    coaching_points: string[];
+    images: string[];
+    video?: string;
+    drill_creation_date: string;
+    drill_updated_date?: string;
     tags: {
-      skill_level?: string[]
-      team_drill?: string[]
-      age_level?: string[]
-      fundamental_skill?: string[]
-      skating_skill?: string[]
-      equipment?: string[]
-    }
-  }
-  drillFolder: string
+      skill_level?: string[];
+      team_drill?: string[];
+      age_level?: string[];
+      fundamental_skill?: string[];
+      skating_skill?: string[];
+      equipment?: string[];
+    };
+  };
+  drillFolder: string;
 }
 
 interface DrillTemplateProps {
-  pageContext: DrillPageContext
+  pageContext: DrillPageContext;
 }
 
 const formatTag = (tag: string): string => {
   return tag
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-}
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
-  const { drillData, drillFolder } = pageContext
+  const { drillData, drillFolder } = pageContext;
 
-  const [isPrinting, setIsPrinting] = React.useState(false)
+  const [isPrinting, setIsPrinting] = React.useState(false);
 
   const handlePrint = async () => {
-    setIsPrinting(true)
+    setIsPrinting(true);
     try {
-      const doc = await generateDrillPdf(drillData, drillFolder)
-      doc.autoPrint()
-      const blob = doc.output('blob')
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
+      const doc = await generateDrillPdf(drillData, drillFolder);
+      doc.autoPrint();
+      const blob = doc.output("blob");
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
       // Revoke the object URL after the window has had time to load,
       // or after a delay even if the window could not be opened
-      setTimeout(() => URL.revokeObjectURL(url), 60000)
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (error) {
-      console.error('Error generating print PDF:', error)
+      console.error("Error generating print PDF:", error);
       // Fallback to native browser print
-      window.print()
+      window.print();
     } finally {
-      setIsPrinting(false)
+      setIsPrinting(false);
     }
-  }
+  };
 
-  const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : ''
-  const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : ''
+  const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
+  const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
-  const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date
+  const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
 
   // Apply max height when there are multiple images to keep layout compact
-  const hasMultipleImages = (drillData.images || []).length >= 2
+  const hasMultipleImages = (drillData.images || []).length >= 2;
   const imageClasses = hasMultipleImages
     ? "w-full h-auto object-contain max-h-[300px]"
-    : "w-full h-auto object-contain"
+    : "w-full h-auto object-contain";
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
       {/* Print Header - Only visible when printing */}
       <div className="hidden print:block print:mb-6">
         <div className="flex justify-between items-center border-b-4 border-usa-red pb-4">
-          <img 
-            src="/images/usahockey/usahockey-goaltending.jpg" 
+          <img
+            src="/images/usahockey/usahockey-goaltending.jpg"
             alt="USA Hockey Goaltending"
             className="object-contain print-header-logo"
-            style={{ maxHeight: '0.4in', width: 'auto', height: 'auto' }}
+            style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
-          <img 
-            src="/images/usahockey/51-in-30.jpg" 
+          <img
+            src="/images/usahockey/51-in-30.jpg"
             alt="51 in 30 USA Hockey Goaltending"
             className="object-contain print-header-logo"
-            style={{ maxHeight: '0.4in', width: 'auto', height: 'auto' }}
+            style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
           />
         </div>
       </div>
@@ -132,25 +132,31 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <div className="flex flex-wrap gap-4 text-sm">
             {drillData.tags.age_level && drillData.tags.age_level.length > 0 && (
               <div>
-                <span className="font-bold text-gray-700 dark:text-gray-300 print:text-gray-900">Age Group: </span>
+                <span className="font-bold text-gray-700 dark:text-gray-300 print:text-gray-900">
+                  Age Group:{" "}
+                </span>
                 <span className="text-gray-600 dark:text-gray-400 print:text-gray-800">
-                  {drillData.tags.age_level.map(formatTag).join(', ')}
+                  {drillData.tags.age_level.map(formatTag).join(", ")}
                 </span>
               </div>
             )}
             {drillData.tags.skill_level && drillData.tags.skill_level.length > 0 && (
               <div>
-                <span className="font-bold text-gray-700 dark:text-gray-300 print:text-gray-900">Skill Level: </span>
+                <span className="font-bold text-gray-700 dark:text-gray-300 print:text-gray-900">
+                  Skill Level:{" "}
+                </span>
                 <span className="text-gray-600 dark:text-gray-400 print:text-gray-800">
-                  {drillData.tags.skill_level.map(formatTag).join(', ')}
+                  {drillData.tags.skill_level.map(formatTag).join(", ")}
                 </span>
               </div>
             )}
             {drillData.tags.equipment && drillData.tags.equipment.length > 0 && (
               <div>
-                <span className="font-bold text-gray-700 dark:text-gray-300 print:text-gray-900">Equipment Needed: </span>
+                <span className="font-bold text-gray-700 dark:text-gray-300 print:text-gray-900">
+                  Equipment Needed:{" "}
+                </span>
                 <span className="text-gray-600 dark:text-gray-400 print:text-gray-800">
-                  {drillData.tags.equipment.map(formatTag).join(', ')}
+                  {drillData.tags.equipment.map(formatTag).join(", ")}
                 </span>
               </div>
             )}
@@ -185,7 +191,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           {/* Right Column: Images */}
           <div className="space-y-4 print:space-y-2">
             {(drillData.images || []).map((image, index) => (
-              <div key={index} className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
+              <div
+                key={index}
+                className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
+              >
                 <img
                   src={`/drills/${drillFolder}/${image}`}
                   alt={`Drill diagram ${index + 1}`}
@@ -205,7 +214,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             {embedUrl ? (
               <>
                 {/* Embedded player - hidden when printing */}
-                <div className="relative w-full print:hidden" style={{ paddingBottom: '56.25%' }}>
+                <div className="relative w-full print:hidden" style={{ paddingBottom: "56.25%" }}>
                   <iframe
                     src={embedUrl}
                     title="Video Demonstration"
@@ -284,10 +293,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
               src="/images/usahockey/usahockey-gold-certification.png"
               alt="USA Hockey Goaltending Gold Level Coach Certification"
               className="object-contain"
-              style={{ maxHeight: '0.5in', width: 'auto', height: 'auto' }}
+              style={{ maxHeight: "0.5in", width: "auto", height: "auto" }}
             />
             <p className="text-[10px] text-gray-700">
-              This drill and the website on which it is hosted were developed as part of USA Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com
+              This drill and the website on which it is hosted were developed as part of USA
+              Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending
+              content, visit GoalieGen.com
             </p>
           </div>
         </div>
@@ -298,10 +309,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             onClick={handlePrint}
             disabled={isPrinting}
             className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-              isPrinting ? 'opacity-50 cursor-not-allowed' : ''
+              isPrinting ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {isPrinting ? 'Generating...' : 'Print Drill'}
+            {isPrinting ? "Generating..." : "Print Drill"}
           </button>
           <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
           <Link
@@ -320,9 +331,9 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 export const Head = ({ pageContext }: DrillTemplateProps) => (
   <Seo title={pageContext.drillData.name} />
-)
+);

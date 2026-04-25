@@ -3,11 +3,17 @@ name: Lint Code Base
 on:
   push:
     branches:
-      - '**'
+      - "**"
   schedule:
     # Run weekly on Saturday at 2:00 AM UTC (Friday night US time zones)
-    - cron: '0 2 * * 6'
+    - cron: "0 2 * * 6"
   workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
 
 jobs:
   super-lint:
@@ -25,13 +31,19 @@ jobs:
         with:
           # Full git history is needed for super-linter
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Lint Code Base
-        uses: super-linter/super-linter@9e863354e3ff62e0727d37183162c4a88873df41 # v8.6.0
+        uses: super-linter/super-linter/slim@9e863354e3ff62e0727d37183162c4a88873df41 # v8.6.0
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Disable Biome linters to avoid conflicts with other linters
+          LINTER_RULES_PATH: .github/linters
+          # Disable Biome linters to avoid conflicts with ESLint and Prettier
           VALIDATE_JAVASCRIPT_BIOME: false
           VALIDATE_TYPESCRIPT_BIOME: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+          # Exclude generated/agent files from all linters (auto-generated or external content)
+          FILTER_REGEX_EXCLUDE: ".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/).*"

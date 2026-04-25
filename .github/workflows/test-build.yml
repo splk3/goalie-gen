@@ -3,11 +3,13 @@ name: Test Build
 on:
   pull_request:
     branches:
-      - '**'
+      - "**"
   workflow_dispatch:
   schedule:
     # Run weekly on Saturday at 3:00 AM UTC (after super-linter runs)
-    - cron: '0 3 * * 6'
+    - cron: "0 3 * * 6"
+
+permissions: {}
 
 jobs:
   test-build:
@@ -20,12 +22,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24'
-          cache: 'npm'
+          node-version: "24"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -36,7 +40,7 @@ jobs:
       - name: Build site
         run: npm run build
         env:
-          PREFIX_PATHS: 'true'
+          PREFIX_PATHS: "true"
 
       - name: Verify build output
         run: |
