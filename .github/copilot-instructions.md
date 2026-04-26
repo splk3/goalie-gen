@@ -75,7 +75,7 @@ The following files and directories are part of the repository:
 - `jest.config.js`: Jest test configuration (transforms, module mappers, test environment)
 - `jest-preprocess.js`: Babel/TypeScript transformer for Jest (babel-preset-gatsby + @babel/preset-typescript)
 - `jest.setup.js`: Jest setup file (loads @testing-library/jest-dom, mocks Gatsby)
-- `loadershim.js`: Gatsby `__PATH_PREFIX__` shim required for Jest
+- `loadershim.js`: Gatsby loader mock (`global.___loader`) required for Jest
 - `__mocks__/`: Jest mocks directory
   - `gatsby.js` - Mocks Gatsby's `Link`, `graphql`, `useStaticQuery`, and related exports
   - `fileMock.js` - Stub for static asset imports (images, fonts, etc.)

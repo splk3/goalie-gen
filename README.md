@@ -131,7 +131,7 @@ The site uses USA national colors:
 ├── jest.config.js       # Jest test configuration
 ├── jest-preprocess.js   # Babel/TypeScript transformer for Jest
 ├── jest.setup.js        # Jest setup (testing-library/jest-dom, Gatsby mock)
-├── loadershim.js        # Gatsby path prefix shim for Jest
+├── loadershim.js        # Gatsby loader mock (global.___loader) for Jest
 ├── wrangler.jsonc       # Cloudflare Pages configuration
 ├── tailwind.config.js   # Tailwind CSS configuration
 ├── postcss.config.js    # PostCSS configuration
