@@ -173,8 +173,12 @@ body:
 
         - Use the content in the **Drill Information** section to create a new drill.
         - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
-        - Use the text to create the `drill.yml` file in that folder.
+        - Use the remaining fields to populate the drill YAML file, following the
+          structure of existing drill YAML files and drills_samples as a guide.
         - Add the images to the folder, updating the `images` field as needed.
-        - Submit the proposed changes as a PR.
+          If more than one image is included, add a suffix to the filename
+          (e.g. `drill-name-1.jpg`, `drill-name-2.jpg`, etc.) and list all images in the YAML.
+          Keep them in the order they are uploaded if in the text field, and alphabetical if attached.
         - Confirm image files are actual images, and that video links are real YouTube or Vimeo links.
         - Make sure the new drill passes build validation and that the site builds properly.
+        - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description. Link the PR in this issue.

@@ -5,6 +5,8 @@ labels:
   - bug
 projects:
   - splk3/1
+assignees:
+  - splk3
 body:
   - type: textarea
     id: bug_description
