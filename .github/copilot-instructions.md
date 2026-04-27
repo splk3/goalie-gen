@@ -72,6 +72,13 @@ The following files and directories are part of the repository:
 - `tailwind.config.js`: Tailwind CSS configuration
 - `postcss.config.js`: PostCSS configuration
 - `tsconfig.json`: TypeScript configuration
+- `jest.config.js`: Jest test configuration (transforms, module mappers, test environment)
+- `jest-preprocess.js`: Babel/TypeScript transformer for Jest (babel-preset-gatsby + @babel/preset-typescript)
+- `jest.setup.js`: Jest setup file (loads @testing-library/jest-dom, mocks Gatsby)
+- `loadershim.js`: Gatsby loader mock (`global.___loader`) required for Jest
+- `__mocks__/`: Jest mocks directory
+  - `gatsby.js` - Mocks Gatsby's `Link`, `graphql`, `useStaticQuery`, and related exports
+  - `fileMock.js` - Stub for static asset imports (images, fonts, etc.)
 - `package.json`: npm dependencies and scripts
 - `.env.development`: Development environment variables (GATSBY_SITE_URL)
 - `.env.production`: Production environment variables (GATSBY_SITE_URL)
@@ -192,6 +199,20 @@ Codespell scans for common spelling mistakes. These words are allowed:
 (These exceptions are defined in `.github/linters/.codespellrc`.)
 
 Always use correct English spelling in code comments, variable names, and documentation.
+
+#### Terminology (textlint)
+
+Textlint enforces consistent terminology in all files. Currently the only enforced term is:
+
+- Always write `README` (all caps), never `readme` or `Readme`.
+
+(This rule is defined in `.github/linters/.textlintrc`.)
+
+#### Prose Style (Vale)
+
+Vale checks prose writing style in Markdown files (`.md`). Configuration is in `.github/linters/.vale.ini`.
+The accepted vocabulary list is at `.github/linters/vale-styles/Vale/accept.txt`. Write clear, consistent
+prose in all documentation and avoid style errors flagged by the Vale base style rules.
 
 #### Copy-Paste Detection
 
