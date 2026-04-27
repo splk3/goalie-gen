@@ -170,7 +170,8 @@ body:
       value: |
         ## GitHub Copilot Instructions
 
-        - Use the content in the **Drill Information** section to create a new drill.
+        - Use the information in the fields above to create a new drill YAML file in the `drills` folder.
+        - Follow the instructions below to create the new drill.
         - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
