@@ -3,6 +3,8 @@ description: Create a report to help us improve, including accessibility barrier
 title: "Bug Report - ISSUE-NAME-HERE"
 labels:
   - bug
+projects:
+  - splk3/1
 body:
   - type: textarea
     id: bug_description
@@ -48,13 +50,15 @@ body:
       description: Specify the page, component, or feature where you encountered this issue.
       placeholder: |
         e.g., "Goalie Drills page", "Generate Team Plan button", "Dark mode toggle", etc.
+    validations:
+      required: true
 
   - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
       description: If applicable, add screenshots or videos to help explain your problem.
-      placeholder: Drag and drop screenshots here.
+      placeholder: Drag and drop or copy/paste screenshots here.
 
   - type: markdown
     attributes:
@@ -192,22 +196,3 @@ body:
       placeholder: |
         e.g., "Coaches trying to create custom development plans"
         or "New contributors setting up the development environment"
-
-  - type: checkboxes
-    id: doc_type
-    attributes:
-      label: Type of documentation
-      description: If this is a documentation issue, what kind of documentation is needed?
-      options:
-        - label: User Guide (how to use the site)
-        - label: Developer Guide (development setup, contributing code)
-        - label: Drill Creator Guide (how to create/submit drills)
-        - label: API/Technical Reference
-        - label: Troubleshooting Guide
-        - label: Other
-
-  - type: textarea
-    id: additional_context
-    attributes:
-      label: Additional context
-      description: Add any other context about the problem here (e.g., links to WCAG guidelines, error messages, links to relevant docs).

@@ -3,6 +3,8 @@ description: Use this template to submit a new drill for the site
 title: "Add a new drill - [DRILL NAME HERE]"
 labels:
   - goalie-drills
+projects:
+  - splk3/1
 assignees:
   - splk3
 body:
@@ -16,89 +18,153 @@ body:
         - If you have any trouble with the drill submission process, email us at 
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
-  - type: textarea
-    id: drill_information
+  - type: markdown
     attributes:
-      label: Drill Information
-      description: Paste and complete this YAML. Keep valid YAML formatting.
-      render: yaml
       value: |
-        ---
-        name: Drill Name
+        ## Drill Information
 
-        description: |-
-          A brief description of the drill. This can be multiple lines and should provide
-          an overview of what the drill is about, its purpose, and any key details that
-          would help someone understand what the drill entails.
+        Fill out each field below. These values will be used to build the drill YAML.
 
-        coaching_points:
-          - Coaching point 1
-          - Coaching point 2
-          - Coaching point 3
+  - type: textarea
+    id: drill_name
+    attributes:
+      label: Name
+      description: Enter the drill name.
+      placeholder: Drill Name
+    validations:
+      required: true
 
-        # must be a list
-        images:
-          - test-drill-image.png
+  - type: textarea
+    id: drill_description
+    attributes:
+      label: Description
+      description: Provide a brief overview and purpose of the drill.
+      placeholder: |
+        A brief description of the drill. This can be multiple lines and should provide
+        an overview of what the drill is about, its purpose, and any key details.
+    validations:
+      required: true
 
-        # HTTPS-only YouTube or Vimeo URL. Accepted formats:
-        #   https://www.youtube.com/watch?v=VIDEO_ID
-        #   https://youtu.be/VIDEO_ID
-        #   https://vimeo.com/NUMERIC_ID
-        video:
+  - type: textarea
+    id: coaching_points
+    attributes:
+      label: Coaching Points
+      description: Enter one coaching point per line.
+      placeholder: |
+        - Coaching point 1
+        - Coaching point 2
+        - Coaching point 3
+    validations:
+      required: true
 
-        # must be a valid calendar date in YYYY-MM-DD format
-        drill_creation_date: YYYY-MM-DD
+  - type: textarea
+    id: video
+    attributes:
+      label: Video (Optional)
+      description: Enter a YouTube or Vimeo URL.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
 
-        # optional - use if updating existing drill - must be a valid calendar date in YYYY-MM-DD format
-        drill_updated_date: ''
+  - type: input
+    id: drill_creation_date
+    attributes:
+      label: Drill Creation Date
+      description: Must be a valid calendar date in YYYY-MM-DD format.
+      value: "2026-04-26"
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
 
-        # For each category below, remove the values that do not apply
-        tags:
-          skill_level:
-            - beginner
-            - intermediate
-            - advanced
-          # allowed values: yes or no (exactly one value required — change to "yes" if this is a team drill)
-          team_drill:
-            - no
-          age_level:
-            - all
-            - 10U_below
-            - 12U
-            - 14U
-            - 16U_and_older
-          fundamental_skill:
-            - skating
-            - positioning
-            - stance
-            - save_selection
-            - rebound_control
-            - recovery
-          skating_skill:
-            - shuffle
-            - t_push
-            - c_cut
-            - butterfly
-            - power_push
-          equipment:
-            - blaze_pods
-            - cones
-            - goal
-            - ice_marker
-            - bumpers
-            - none
+  - type: checkboxes
+    id: skill_level_tags
+    attributes:
+      label: Tags - Skill Level
+      description: Select all that apply.
+      options:
+        - label: beginner
+        - label: intermediate
+        - label: advanced
+
+  - type: dropdown
+    id: team_drill
+    attributes:
+      label: Tags - Team Drill
+      description: Select one.
+      options:
+        - "yes"
+        - "no"
+      default: 1
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: age_level_tags
+    attributes:
+      label: Tags - Age Level
+      description: Select all that apply.
+      options:
+        - label: all
+        - label: 10U_below
+        - label: 12U
+        - label: 14U
+        - label: 16U_and_older
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: fundamental_skill_tags
+    attributes:
+      label: Tags - Fundamental Skill
+      description: Select all that apply.
+      options:
+        - label: skating
+        - label: positioning
+        - label: stance
+        - label: save_selection
+        - label: rebound_control
+        - label: recovery
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: skating_skill_tags
+    attributes:
+      label: Tags - Skating Skill
+      description: Select all that apply.
+      options:
+        - label: shuffle
+        - label: t_push
+        - label: c_cut
+        - label: butterfly
+        - label: power_push
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: equipment_tags
+    attributes:
+      label: Tags - Equipment
+      description: Select all that apply.
+      options:
+        - label: blaze_pods
+        - label: cones
+        - label: goal
+        - label: ice_marker
+        - label: bumpers
+        - label: none
     validations:
       required: true
 
   - type: textarea
     id: diagram_image_or_screenshot
     attributes:
-      label: Drill Diagram
+      label: Drill Diagram(s)
       description: |
         Attach the drill diagram or a screenshot of the drill here.
       placeholder: Attach the drill diagram or a screenshot of the drill here.
-    validations:
-      required: true
 
   - type: markdown
     attributes:

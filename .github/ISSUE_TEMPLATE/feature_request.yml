@@ -3,6 +3,8 @@ description: Suggest an idea for this project
 title: "Feature Request - ISSUE-NAME-HERE"
 labels:
   - enhancement
+projects:
+  - splk3/1
 body:
   - type: textarea
     id: feature_request
