@@ -22,7 +22,7 @@ describe("GoalieDrills page", () => {
             tags: {
               skill_level: ["beginner"],
               team_drill: ["yes"],
-              age_level: ["10u"],
+              age_level: ["12U"],
               fundamental_skill: ["positioning"],
               skating_skill: ["t_push"],
               equipment: ["cones"],
