@@ -73,7 +73,6 @@ body:
     attributes:
       label: Drill Creation Date
       description: Must be a valid calendar date in YYYY-MM-DD format.
-      value: "2026-04-26"
       placeholder: YYYY-MM-DD
     validations:
       required: true
@@ -176,6 +175,8 @@ body:
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
         - Add the images to the folder, updating the `images` field as needed.
+          If the images are pasted into the text area and not attached, make sure to save the images and add them to the drill folder,
+          naming them after the drill name and updating the `images` field accordingly.
           If more than one image is included, add a suffix to the filename
           (e.g. `drill-name-1.jpg`, `drill-name-2.jpg`, etc.) and list all images in the YAML.
           Keep them in the order they are uploaded if in the text field, and alphabetical if attached.
