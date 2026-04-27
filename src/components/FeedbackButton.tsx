@@ -7,20 +7,23 @@ export default function FeedbackButton() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const dialogRef = React.useRef<HTMLDivElement>(null);
+  const previousIsOpenRef = React.useRef<boolean>(isOpen);
 
   const openFeedback = () => setIsOpen(true);
   const closeFeedback = () => setIsOpen(false);
 
-  // Focus first focusable element on open; restore focus to trigger on close
+  // Focus first focusable element on open; restore focus to trigger only after closing
   React.useEffect(() => {
     if (isOpen) {
       const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
       if (focusable && focusable.length > 0) {
         focusable[0].focus();
       }
-    } else {
+    } else if (previousIsOpenRef.current) {
       triggerRef.current?.focus();
     }
+
+    previousIsOpenRef.current = isOpen;
   }, [isOpen]);
 
   // Handle Escape and focus trap (Tab / Shift+Tab)
