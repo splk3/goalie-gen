@@ -9,25 +9,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## GitHub Copilot Instructions
-
-        - Use the content in the **Drill Information** section to create a new drill.
-        - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
-        - Use the text to create the `drill.yml` file in that folder.
-        - Add the images to the folder, updating the `images` field as needed.
-        - Submit the proposed changes as a PR.
-        - Confirm image files are actual images, and that video links are real YouTube or Vimeo links.
-        - Make sure the new drill passes build validation and that the site builds properly.
-
-  - type: markdown
-    attributes:
-      value: |
         ## Submitter Instructions
 
-        Fill out the **Drill Information** field below.
-        - Attach any diagrams/images to this issue.
-        - Ensure image filenames in `images` match attachment filenames exactly.
-        - Update tag selections in the YAML by removing values that do not apply.
+        - Fill out the drill information by answering the questions below.
+        - Attach any diagrams/images to this issue in the final **Drill Diagram** section.
+        - If you have any trouble with the drill submission process, email us at 
+          [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
   - type: textarea
     id: drill_information
@@ -103,19 +90,6 @@ body:
     validations:
       required: true
 
-  - type: checkboxes
-    id: submitter_checks
-    attributes:
-      label: Final Checks
-      description: Confirm before submitting.
-      options:
-        - label: I attached all referenced image/diagram files to this issue.
-          required: true
-        - label: I ensured `images` filenames exactly match my attachments.
-          required: true
-        - label: I updated the YAML tags to include only applicable values.
-          required: true
-
   - type: textarea
     id: diagram_image_or_screenshot
     attributes:
@@ -123,3 +97,18 @@ body:
       description: |
         Attach the drill diagram or a screenshot of the drill here.
       placeholder: Attach the drill diagram or a screenshot of the drill here.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## GitHub Copilot Instructions
+
+        - Use the content in the **Drill Information** section to create a new drill.
+        - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
+        - Use the text to create the `drill.yml` file in that folder.
+        - Add the images to the folder, updating the `images` field as needed.
+        - Submit the proposed changes as a PR.
+        - Confirm image files are actual images, and that video links are real YouTube or Vimeo links.
+        - Make sure the new drill passes build validation and that the site builds properly.
