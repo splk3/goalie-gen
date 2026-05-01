@@ -1,4 +1,10 @@
-import { getYouTubeVideoId, getVimeoVideoId, getEmbedUrl, getVideoThumbnail } from "../videoUtils";
+import {
+  getYouTubeVideoId,
+  getVimeoVideoId,
+  getEmbedUrl,
+  getVideoThumbnail,
+  getVideoThumbnailUrl,
+} from "../videoUtils";
 
 describe("getYouTubeVideoId", () => {
   it("extracts video ID from a standard YouTube watch URL", () => {
@@ -75,5 +81,56 @@ describe("getVideoThumbnail", () => {
 
   it("returns empty string for an unrecognised URL", () => {
     expect(getVideoThumbnail("https://example.com/video")).toBe("");
+  });
+});
+
+describe("getVideoThumbnailUrl", () => {
+  const originalFetch = global.fetch;
+  const originalConsoleError = console.error;
+
+  beforeEach(() => {
+    global.fetch = jest.fn();
+    console.error = jest.fn();
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    console.error = originalConsoleError;
+  });
+
+  it("returns a YouTube thumbnail immediately for a YouTube URL", async () => {
+    const url = await getVideoThumbnailUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    expect(url).toBe("https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg");
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("fetches and returns a Vimeo thumbnail for a Vimeo URL", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({ thumbnail_url: "https://i.vimeocdn.com/video/12345_640.jpg" }),
+    });
+
+    const url = await getVideoThumbnailUrl("https://vimeo.com/123456789");
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://vimeo.com/api/oembed.json?url=https://vimeo.com/123456789"
+    );
+    expect(url).toBe("https://i.vimeocdn.com/video/12345_640.jpg");
+  });
+
+  it("returns an empty string and logs error if Vimeo fetch fails", async () => {
+    const mockError = new Error("Network error");
+    (global.fetch as jest.Mock).mockRejectedValueOnce(mockError);
+
+    const url = await getVideoThumbnailUrl("https://vimeo.com/123456789");
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://vimeo.com/api/oembed.json?url=https://vimeo.com/123456789"
+    );
+    expect(console.error).toHaveBeenCalledWith("Failed to fetch Vimeo thumbnail URL:", mockError);
+    expect(url).toBe("");
+  });
+
+  it("returns an empty string for an unrecognised URL", async () => {
+    const url = await getVideoThumbnailUrl("https://example.com/video");
+    expect(url).toBe("");
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
