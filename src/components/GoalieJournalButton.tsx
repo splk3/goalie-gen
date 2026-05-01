@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { withPrefix } from "gatsby";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
+import ImageUploader from "./ImageUploader";
 
 export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false);

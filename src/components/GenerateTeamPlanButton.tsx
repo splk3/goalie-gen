@@ -2,6 +2,7 @@ import * as React from "react";
 import { jsPDF } from "jspdf";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
+import ImageUploader from "./ImageUploader";
 
 type AgeGroup = "8u" | "10u" | "12u" | "14u+";
 type SkillLevel = "beginner" | "intermediate" | "advanced";
@@ -13,7 +14,6 @@ interface GenerateTeamPlanButtonProps {
 export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTeamPlanButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [teamName, setTeamName] = React.useState<string>("");
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
   const [skillLevel, setSkillLevel] = React.useState<string>("");
@@ -26,33 +26,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        setValidationError("Please select an image file");
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-      if (file.size > maxSize) {
-        setValidationError("Image file size must be less than 5MB");
-        return;
-      }
-
-      // Clear any previous errors
+  const handleImageChange = (preview: string | null) => {
+    setImagePreview(preview);
+    if (validationError && preview) {
       setValidationError("");
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      setSelectedImage(file);
     }
   };
 
@@ -118,19 +95,38 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       doc.text("Team-Level Goaltending Development Plan", 105, 45, { align: "center" });
 
       // Add team logo if provided
-      if (selectedImage && imagePreview) {
+      if (imagePreview) {
         try {
           const imgData = imagePreview;
-          // Detect image format from the data URL or file type
-          let format = "JPEG"; // default
-          if (selectedImage.type === "image/png") {
-            format = "PNG";
-          } else if (selectedImage.type === "image/jpeg" || selectedImage.type === "image/jpg") {
-            format = "JPEG";
-          } else if (selectedImage.type === "image/webp") {
-            format = "WEBP";
+          // We always output PNG from the ImageUploader
+          const format = "PNG";
+
+          // To prevent stretching, we calculate dimensions.
+          const img = new Image();
+          img.src = imagePreview;
+
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve; // Continue even if it fails
+          });
+
+          const maxW = 80;
+          const maxH = 80;
+          let w = img.width;
+          let h = img.height;
+
+          if (w > 0 && h > 0) {
+            const ratio = Math.min(maxW / w, maxH / h);
+            w = w * ratio;
+            h = h * ratio;
+          } else {
+            w = maxW;
+            h = maxH;
           }
-          doc.addImage(imgData, format, 65, 55, 80, 80);
+
+          // Center the image horizontally
+          const x = 105 - (w / 2);
+          doc.addImage(imgData, format, x, 55, w, h);
         } catch (error) {
           console.error("Error adding image to PDF:", error);
         }
@@ -138,7 +134,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
       // Add metadata
       doc.setFontSize(12);
-      const metadataY = selectedImage ? 145 : 60;
+      const metadataY = imagePreview ? 145 : 60;
       doc.text(`Age Group: ${ageGroup}`, 20, metadataY);
       doc.text(
         `Experience Level: ${skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1)}`,
@@ -272,7 +268,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       // Close modal and reset form
       setShowModal(false);
       setTeamName("");
-      setSelectedImage(null);
       setImagePreview(null);
       setAgeGroup("");
       setSkillLevel("");
@@ -286,7 +281,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const handleCancel = React.useCallback(() => {
     setShowModal(false);
     setTeamName("");
-    setSelectedImage(null);
     setImagePreview(null);
     setAgeGroup("");
     setSkillLevel("");
@@ -369,30 +363,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </div>
 
             <div className="mb-4">
-              <label
-                htmlFor="teamImage"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Team/Club Logo (Optional)
+              <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                Image (Optional)
               </label>
-              <input
-                type="file"
-                id="teamImage"
-                accept="image/*"
-                onChange={handleImageChange}
-                disabled={!!generatedBlob}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-usa-blue file:text-white hover:file:bg-blue-900 dark:file:bg-blue-600 dark:hover:file:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-              {imagePreview && (
-                <div className="mt-4">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="max-w-full h-auto rounded-lg border-2 border-gray-300 dark:border-gray-600"
-                    style={{ maxHeight: "150px" }}
-                  />
-                </div>
-              )}
+              <ImageUploader onImageChange={handleImageChange} disabled={!!generatedBlob} />
             </div>
 
             <div className="mb-4">
