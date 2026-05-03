@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { withPrefix } from "gatsby";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
+import ImageUploader from "./ImageUploader";
 
 export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false);
@@ -14,34 +15,9 @@ export default function GoalieJournalButton() {
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
   const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
 
-  const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        setValidationError("Please select an image file");
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-      if (file.size > maxSize) {
-        setValidationError("Image file size must be less than 5MB");
-        return;
-      }
-
-      // Clear any previous errors
-      setValidationError("");
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-    }
-  };
+  const handleImageCropped = React.useCallback((_file: File | null, previewUrl: string | null) => {
+    setLogoPreview(previewUrl);
+  }, []);
 
   const getLogoAsBase64 = (): Promise<string | null> => {
     return new Promise((resolve) => {
@@ -115,7 +91,29 @@ export default function GoalieJournalButton() {
       // Add logo if available
       if (logoBase64) {
         try {
-          doc.addImage(logoBase64, "PNG", 75, 110, 60, 60);
+          const img = new Image();
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+            img.src = logoBase64;
+          });
+
+          const maxW = 60;
+          const maxH = 60;
+          let w = img.width;
+          let h = img.height;
+
+          if (w > 0 && h > 0) {
+            const ratio = Math.min(maxW / w, maxH / h);
+            w = w * ratio;
+            h = h * ratio;
+          } else {
+            w = maxW;
+            h = maxH;
+          }
+
+          const x = 105 - w / 2;
+          doc.addImage(logoBase64, "PNG", x, 110, w, h);
         } catch (e) {
           console.error("Error adding logo:", e);
         }
@@ -354,29 +352,7 @@ export default function GoalieJournalButton() {
             </div>
 
             <div className="mb-6">
-              <label
-                htmlFor="teamLogo"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Team Logo (optional)
-              </label>
-              <input
-                type="file"
-                id="teamLogo"
-                accept="image/*"
-                onChange={handleLogoChange}
-                disabled={!!generatedBlob}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-usa-blue file:text-white hover:file:bg-blue-900 dark:file:bg-blue-600 dark:hover:file:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-              {logoPreview && (
-                <div className="mt-4 flex justify-center">
-                  <img
-                    src={logoPreview}
-                    alt="Logo Preview"
-                    className="max-w-[150px] max-h-[150px] h-auto rounded-lg border-2 border-gray-300 dark:border-gray-600"
-                  />
-                </div>
-              )}
+              <ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
               {!logoPreview && (
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   If no logo is provided, the Goalie Gen logo will be used
