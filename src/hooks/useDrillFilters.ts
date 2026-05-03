@@ -29,7 +29,7 @@ const formattingCache: Record<string, string> = Object.create(null);
 /**
  * Shared internal function to format strings (snake_case to Title Case) with memoization
  */
-const formatString = (str: string): string => {
+export const formatString = (str: string): string => {
   if (Object.hasOwn(formattingCache, str)) {
     return formattingCache[str];
   }
