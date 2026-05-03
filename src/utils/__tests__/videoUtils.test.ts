@@ -85,17 +85,13 @@ describe("getVideoThumbnail", () => {
 });
 
 describe("getVideoThumbnailUrl", () => {
-  const originalFetch = global.fetch;
-  const originalConsoleError = console.error;
-
   beforeEach(() => {
     global.fetch = jest.fn();
-    console.error = jest.fn();
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    global.fetch = originalFetch;
-    console.error = originalConsoleError;
+    jest.restoreAllMocks();
   });
 
   it("returns a YouTube thumbnail immediately for a YouTube URL", async () => {
