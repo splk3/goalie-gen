@@ -26,11 +26,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
-  const handleImageChange = (preview: string | null) => {
-    setImagePreview(preview);
-    if (validationError && preview) {
-      setValidationError("");
-    }
+  const handleImageChange = (_file: File | null, previewUrl: string | null) => {
+    setImagePreview(previewUrl);
   };
 
   const validateInputs = (): boolean => {
@@ -103,11 +100,11 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
           // To prevent stretching, we calculate dimensions.
           const img = new Image();
-          img.src = imagePreview;
 
           await new Promise((resolve) => {
             img.onload = resolve;
             img.onerror = resolve; // Continue even if it fails
+            img.src = imagePreview;
           });
 
           const maxW = 80;
@@ -125,7 +122,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           }
 
           // Center the image horizontally
-          const x = 105 - (w / 2);
+          const x = 105 - w / 2;
           doc.addImage(imgData, format, x, 55, w, h);
         } catch (error) {
           console.error("Error adding image to PDF:", error);
@@ -363,10 +360,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
-                Image (Optional)
-              </label>
-              <ImageUploader onImageChange={handleImageChange} disabled={!!generatedBlob} />
+              <ImageUploader onImageCropped={handleImageChange} disabled={!!generatedBlob} />
             </div>
 
             <div className="mb-4">

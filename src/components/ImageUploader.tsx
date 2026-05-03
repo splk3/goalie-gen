@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
+import ReactCrop, {
+  Crop,
+  PixelCrop,
+  centerCrop,
+  convertToPixelCrop,
+  makeAspectCrop,
+} from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
 interface ImageUploaderProps {
@@ -60,34 +66,29 @@ export default function ImageUploader({ onImageCropped, disabled = false }: Imag
 
     let c: Crop;
     if (ratio > 2) {
-      c = centerCrop(
-        makeAspectCrop({ width: 100, unit: "%" }, 2, width, height),
-        width,
-        height
+      c = centerCrop(makeAspectCrop({ width: 100, unit: "%" }, 2, width, height), width, height);
+      setAspectWarning(
+        "Image is very wide. The recommended maximum ratio is 2:1. Please adjust the crop area."
       );
-      setAspectWarning("Image is very wide. The recommended maximum ratio is 2:1. Please adjust the crop area.");
     } else if (ratio < 0.5) {
-      c = centerCrop(
-        makeAspectCrop({ height: 100, unit: "%" }, 0.5, width, height),
-        width,
-        height
+      c = centerCrop(makeAspectCrop({ height: 100, unit: "%" }, 0.5, width, height), width, height);
+      setAspectWarning(
+        "Image is very tall. The recommended maximum ratio is 1:2. Please adjust the crop area."
       );
-      setAspectWarning("Image is very tall. The recommended maximum ratio is 1:2. Please adjust the crop area.");
     } else {
       c = {
         unit: "%",
         width: 100,
         height: 100,
         x: 0,
-        y: 0
+        y: 0,
       };
       setAspectWarning("");
     }
 
     setCrop(c);
-    // Important: we need to trigger completedCrop so it immediately gives us the crop coordinates for rendering and drawing!
-    // ReactCrop itself fires onComplete on user interaction, but we must set initial crop state:
-    setCompletedCrop(c as PixelCrop);
+    // Convert percent crop to pixel coordinates using actual rendered dimensions
+    setCompletedCrop(convertToPixelCrop(c, width, height));
   };
 
   const generateCroppedImage = useCallback(() => {
@@ -117,25 +118,14 @@ export default function ImageUploader({ onImageCropped, disabled = false }: Imag
     const cropWidth = completedCrop.width * scaleX;
     const cropHeight = completedCrop.height * scaleY;
 
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.drawImage(
-      image,
-      cropX,
-      cropY,
-      cropWidth,
-      cropHeight,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+    ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
 
     const base64Image = canvas.toDataURL("image/png");
     canvas.toBlob((blob) => {
       if (!blob) return;
-      const file = new File([blob], fileName.replace(/\.[^/.]+$/, "") + "_cropped.png", { type: "image/png" });
+      const file = new File([blob], fileName.replace(/\.[^/.]+$/, "") + "_cropped.png", {
+        type: "image/png",
+      });
       onImageCropped(file, base64Image);
     }, "image/png");
   }, [completedCrop, fileName, onImageCropped]);
@@ -150,11 +140,15 @@ export default function ImageUploader({ onImageCropped, disabled = false }: Imag
 
   return (
     <div className="mb-6">
-      <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+      <label
+        htmlFor="image-upload-input"
+        className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+      >
         Image (Optional)
       </label>
       <input
         type="file"
+        id="image-upload-input"
         accept="image/*"
         onChange={handleImageChange}
         disabled={disabled}

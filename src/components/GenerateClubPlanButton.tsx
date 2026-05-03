@@ -20,7 +20,6 @@ export default function GenerateClubPlanButton() {
     setImagePreview(previewUrl);
   }, []);
 
-
   const generateDocument = async () => {
     // Clear any previous errors
     setValidationError("");
@@ -61,6 +60,7 @@ export default function GenerateClubPlanButton() {
           const img = new Image();
           await new Promise((resolve) => {
             img.onload = resolve;
+            img.onerror = resolve; // Resolve on error so generation never hangs
             img.src = imagePreview;
           });
 
@@ -448,7 +448,7 @@ export default function GenerateClubPlanButton() {
               />
             </div>
 
-<ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
+            <ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
 
             {validationError && (
               <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
