@@ -166,4 +166,25 @@ describe("useDrillFilters", () => {
       ])
     );
   });
+
+  it("caches formatted strings to avoid repeated string manipulation", () => {
+    const { result } = renderHook(() => useDrillFilters([]));
+    const splitSpy = jest.spyOn(String.prototype, "split");
+
+    // Use a value guaranteed not to be pre-cached by any other test
+    const uniqueInput = "test_memoization_unique";
+
+    splitSpy.mockClear();
+    result.current.formatTagName(uniqueInput);
+    const callsAfterFirst = splitSpy.mock.calls.length;
+
+    splitSpy.mockClear();
+    result.current.formatTagName(uniqueInput);
+    const callsAfterSecond = splitSpy.mock.calls.length;
+
+    splitSpy.mockRestore();
+
+    expect(callsAfterFirst).toBeGreaterThan(0); // first call computed the result
+    expect(callsAfterSecond).toBe(0); // second call used the cache
+  });
 });

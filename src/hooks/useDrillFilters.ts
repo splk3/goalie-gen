@@ -27,22 +27,6 @@ export interface FilterState {
 const formattingCache: Record<string, string> = Object.create(null);
 
 /**
- * Clears the shared formatting cache.
- * Exported to allow tests to isolate and verify the cache behavior.
- */
-export const clearFormattingCache = (): void => {
-  Object.keys(formattingCache).forEach((key) => {
-    delete formattingCache[key];
-  });
-};
-
-/**
- * Returns the number of cached formatting entries.
- * Exported to allow tests to assert that memoization is preserved.
- */
-export const getFormattingCacheSize = (): number => Object.keys(formattingCache).length;
-
-/**
  * Formats a string from snake_case to Title Case with memoization.
  * This is a private module-level helper; use formatTagName/formatTagValue from the hook return value.
  */
