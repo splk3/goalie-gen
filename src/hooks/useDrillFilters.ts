@@ -36,6 +36,7 @@ export const formatString = (str: string): string => {
 
   const formatted = str
     .split("_")
+    .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
