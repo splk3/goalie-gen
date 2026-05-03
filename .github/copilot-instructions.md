@@ -30,13 +30,14 @@ The following files and directories are part of the repository:
     - index.tsx, goalie-drills.tsx, team-drills.tsx
     - goalie-resources.tsx, goalie-evals.tsx, coach-resources.tsx, club-resources.tsx
     - 404.tsx
+    - `__tests__/` - Unit tests for pages
   - `src/templates/`: Dynamic page templates (TypeScript .tsx files)
     - drill.tsx - Template for individual drill pages
   - `src/components/`: Reusable React components (TypeScript .tsx files)
     - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
     - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
     - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
-    - ExternalLinkButton.tsx, NavigationButton.tsx, PageLayout.tsx, TermsPopup.tsx
+    - ExternalLinkButton.tsx, FeedbackButton.tsx, NavigationButton.tsx, PageLayout.tsx, TermsPopup.tsx
     - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
     - `__tests__/` - Unit tests for components
   - `src/styles/`: Global CSS styles
