@@ -65,6 +65,7 @@ The site uses USA national colors:
 │   │   ├── DownloadDrillPdfButton.tsx
 │   │   ├── DownloadMaterialButton.tsx
 │   │   ├── ExternalLinkButton.tsx
+│   │   ├── FeedbackButton.tsx
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
@@ -85,7 +86,8 @@ The site uses USA national colors:
 │   │   ├── goalie-evals.tsx
 │   │   ├── goalie-resources.tsx
 │   │   ├── index.tsx
-│   │   └── team-drills.tsx
+│   │   ├── team-drills.tsx
+│   │   └── __tests__/     # Unit tests for pages
 │   ├── templates/        # Dynamic page templates
 │   │   └── drill.tsx     # Template for individual drill pages
 │   ├── styles/           # Global CSS styles
