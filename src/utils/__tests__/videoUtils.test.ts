@@ -85,12 +85,15 @@ describe("getVideoThumbnail", () => {
 });
 
 describe("getVideoThumbnailUrl", () => {
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
-    global.fetch = jest.fn();
+    global.fetch = jest.fn() as jest.MockedFunction<typeof fetch>;
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
+    global.fetch = originalFetch;
     jest.restoreAllMocks();
   });
 
@@ -101,9 +104,9 @@ describe("getVideoThumbnailUrl", () => {
   });
 
   it("fetches and returns a Vimeo thumbnail for a Vimeo URL", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
       json: async () => ({ thumbnail_url: "https://i.vimeocdn.com/video/12345_640.jpg" }),
-    });
+    } as Response);
 
     const url = await getVideoThumbnailUrl("https://vimeo.com/123456789");
     expect(global.fetch).toHaveBeenCalledWith(
@@ -114,13 +117,22 @@ describe("getVideoThumbnailUrl", () => {
 
   it("returns an empty string and logs error if Vimeo fetch fails", async () => {
     const mockError = new Error("Network error");
-    (global.fetch as jest.Mock).mockRejectedValueOnce(mockError);
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(mockError);
 
     const url = await getVideoThumbnailUrl("https://vimeo.com/123456789");
     expect(global.fetch).toHaveBeenCalledWith(
       "https://vimeo.com/api/oembed.json?url=https://vimeo.com/123456789"
     );
     expect(console.error).toHaveBeenCalledWith("Failed to fetch Vimeo thumbnail URL:", mockError);
+    expect(url).toBe("");
+  });
+
+  it("returns an empty string when Vimeo API returns no thumbnail_url", async () => {
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+      json: async () => ({}),
+    } as Response);
+
+    const url = await getVideoThumbnailUrl("https://vimeo.com/123456789");
     expect(url).toBe("");
   });
 
