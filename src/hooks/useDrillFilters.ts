@@ -22,6 +22,29 @@ export interface FilterState {
   equipment: string[];
 }
 
+// Shared cache for formatted tag names and values to prevent repeated string manipulation.
+// Using Object.create(null) to avoid prototype pollution risks.
+const formattingCache: Record<string, string> = Object.create(null);
+
+/**
+ * Formats a string from snake_case to Title Case with memoization.
+ * This is a private module-level helper; use formatTagName/formatTagValue from the hook return value.
+ */
+const formatString = (str: string): string => {
+  if (Object.prototype.hasOwnProperty.call(formattingCache, str)) {
+    return formattingCache[str];
+  }
+
+  const formatted = str
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  formattingCache[str] = formatted;
+  return formatted;
+};
+
 /**
  * Custom hook for managing drill filtering functionality
  * Extracts shared logic between goalie-drills page and INeedADrillButton component
@@ -114,18 +137,12 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
 
   // Format tag name for display
   const formatTagName = React.useCallback((tag: string) => {
-    return tag
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    return formatString(tag);
   }, []);
 
   // Format tag value for display
   const formatTagValue = React.useCallback((value: string) => {
-    return value
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    return formatString(value);
   }, []);
 
   // Get all active filters
