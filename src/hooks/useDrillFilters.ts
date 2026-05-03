@@ -43,9 +43,10 @@ export const clearFormattingCache = (): void => {
 export const getFormattingCacheSize = (): number => Object.keys(formattingCache).length;
 
 /**
- * Shared internal function to format strings (snake_case to Title Case) with memoization
+ * Formats a string from snake_case to Title Case with memoization.
+ * This is a private module-level helper; use formatTagName/formatTagValue from the hook return value.
  */
-export const formatString = (str: string): string => {
+const formatString = (str: string): string => {
   if (Object.prototype.hasOwnProperty.call(formattingCache, str)) {
     return formattingCache[str];
   }
