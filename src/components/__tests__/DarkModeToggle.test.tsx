@@ -5,30 +5,17 @@ import { renderToString } from "react-dom/server";
 import DarkModeToggle from "../DarkModeToggle";
 
 describe("DarkModeToggle", () => {
-  let localStorageMock: { [key: string]: string };
+  let getItemSpy: jest.SpyInstance;
+  let setItemSpy: jest.SpyInstance;
 
   beforeEach(() => {
     // Reset DOM
     document.documentElement.className = "";
 
-    // Mock localStorage
-    localStorageMock = {};
-    const mockStorage = {
-      getItem: jest.fn((key) => localStorageMock[key] || null),
-      setItem: jest.fn((key, value) => {
-        localStorageMock[key] = value.toString();
-      }),
-      removeItem: jest.fn((key) => {
-        delete localStorageMock[key];
-      }),
-      clear: jest.fn(() => {
-        localStorageMock = {};
-      }),
-    };
-    Object.defineProperty(window, "localStorage", {
-      value: mockStorage,
-      writable: true,
-    });
+    // Spy on Storage.prototype to avoid overwriting window.localStorage globally,
+    // which would leak mock state into other test files.
+    getItemSpy = jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+    setItemSpy = jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -41,7 +28,7 @@ describe("DarkModeToggle", () => {
   });
 
   it("loads dark mode if it is saved in localStorage", async () => {
-    localStorageMock["theme"] = "dark";
+    getItemSpy.mockReturnValue("dark");
 
     render(<DarkModeToggle />);
 
@@ -54,7 +41,7 @@ describe("DarkModeToggle", () => {
   });
 
   it("loads light mode if it is saved in localStorage", async () => {
-    localStorageMock["theme"] = "light";
+    getItemSpy.mockReturnValue("light");
 
     render(<DarkModeToggle />);
 
@@ -80,7 +67,7 @@ describe("DarkModeToggle", () => {
     // Check new state
     expect(await screen.findByRole("button", { name: "Switch to light mode" })).toBeInTheDocument();
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith("theme", "dark");
+    expect(setItemSpy).toHaveBeenLastCalledWith("theme", "dark");
 
     // Click to toggle back to light mode
     await user.click(await screen.findByRole("button", { name: "Switch to light mode" }));
@@ -88,6 +75,6 @@ describe("DarkModeToggle", () => {
     // Check new state
     expect(await screen.findByRole("button", { name: "Switch to dark mode" })).toBeInTheDocument();
     expect(document.documentElement.classList.contains("dark")).toBe(false);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith("theme", "light");
+    expect(setItemSpy).toHaveBeenLastCalledWith("theme", "light");
   });
 });
