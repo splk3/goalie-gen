@@ -142,18 +142,29 @@ export default function GoalieJournalButton() {
     // Practice/Game Log pages
     const entryBlocks = parseMarkdown(practiceEntryMd);
     const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
-    const entryLabels = entryBlocks.filter((b) => b.type === "paragraph").map((b) => b.text);
+    const entryLabels = entryBlocks
+      .filter((b) => b.type === "paragraph" || b.type === "bullet")
+      .map((b) => b.text);
 
-    // Compute entry box height from the actual number of prompts so the layout
-    // stays correct when practice-entry.md is edited to add or remove prompts.
-    const lineSpacing = 13; // mm between prompt rows
+    // Compute entry box height accounting for label text wrapping so long
+    // prompts don't collide with the underline or the next field.
+    const labelMaxWidth = 165; // mm available for label text at x=20
+    const labelLineHeight = 5; // mm per wrapped text line
+    const labelRowGap = 8; // mm from last text line to underline + to next prompt start
     const entryHeaderHeight = 23; // mm from box top to first prompt (entry label + date row)
     const entryBorderPadding = 2; // mm for the box border
     const entryMinHeight = 50; // mm minimum so the box is always readable
-    const entryHeight = Math.max(
-      entryMinHeight,
-      entryHeaderHeight + Math.max(0, entryLabels.length - 1) * lineSpacing + lineSpacing + entryBorderPadding
+
+    // Set font size before splitTextToSize so measurements are accurate
+    doc.setFontSize(9);
+    const labelWrapped = entryLabels.map(
+      (label) => doc.splitTextToSize(label, labelMaxWidth) as string[]
     );
+    const computedEntryHeight =
+      entryHeaderHeight +
+      labelWrapped.reduce((sum, lines) => sum + lines.length * labelLineHeight + labelRowGap, 0) +
+      entryBorderPadding;
+    const entryHeight = Math.max(entryMinHeight, computedEntryHeight);
     const journalPageHeight = doc.internal.pageSize.height;
     const availablePerPage = journalPageHeight - 40; // top header + bottom margin
     const entriesPerPage = Math.max(1, Math.floor(availablePerPage / entryHeight));
@@ -184,10 +195,14 @@ export default function GoalieJournalButton() {
         doc.text("\u25A1 Practice  \u25A1 Game", 80, startY + 15);
         doc.text("Opponent: _______________", 135, startY + 15);
 
-        entryLabels.forEach((label, idx) => {
-          const labelY = startY + 23 + idx * lineSpacing;
-          doc.text(label, 20, labelY);
-          doc.line(20, labelY + 6, 190, labelY + 6);
+        let promptY = startY + entryHeaderHeight;
+        labelWrapped.forEach((lines) => {
+          lines.forEach((line, lineIdx) => {
+            doc.text(line, 20, promptY + lineIdx * labelLineHeight);
+          });
+          const underlineY = promptY + lines.length * labelLineHeight + 1;
+          doc.line(20, underlineY, 190, underlineY);
+          promptY += lines.length * labelLineHeight + labelRowGap;
         });
       }
     }
@@ -195,10 +210,10 @@ export default function GoalieJournalButton() {
     // End of Season Review page
     doc.addPage();
     const eosBlocks = parseMarkdown(endOfSeasonMd);
-    const eosTitle =
-      eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
+    const eosTitle = eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
+    // All non-heading blocks (paragraphs and bullets) become review prompts
     const eosPrompts = eosBlocks
-      .filter((b) => b.type === "paragraph")
+      .filter((b) => b.type === "paragraph" || b.type === "bullet")
       .map((b) => b.text);
 
     doc.setFontSize(20);
@@ -216,11 +231,20 @@ export default function GoalieJournalButton() {
         doc.addPage();
         eosY = 20;
       }
-      doc.text(prompt, 20, eosY);
-      for (let i = 0; i < 3; i++) {
-        doc.line(20, eosY + 10 + i * 15, 190, eosY + 10 + i * 15);
+      const promptLines = doc.splitTextToSize(prompt, 170) as string[];
+      promptLines.forEach((line, lineIdx) => {
+        doc.text(line, 20, eosY + lineIdx * 6);
+      });
+      const eosAnswerStart = eosY + promptLines.length * 6 + 2;
+      for (let i = 0; i < eosAnswerLines; i++) {
+        doc.line(
+          20,
+          eosAnswerStart + i * eosAnswerLineSpacing,
+          190,
+          eosAnswerStart + i * eosAnswerLineSpacing
+        );
       }
-      eosY += eosBlockHeight;
+      eosY += eosBlockHeight + (promptLines.length - 1) * 6;
     });
 
     const sanitizedName =
@@ -342,10 +366,7 @@ export default function GoalieJournalButton() {
     for (let i = 1; i <= 8; i++) {
       documentChildren.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: `${i}. ` }),
-            new TextRun({ text: BLANK_LINE }),
-          ],
+          children: [new TextRun({ text: `${i}. ` }), new TextRun({ text: BLANK_LINE })],
           spacing: { after: 200 },
         })
       );
@@ -353,9 +374,10 @@ export default function GoalieJournalButton() {
 
     // Practice & Game Log section — use markdown paragraphs as the write-in prompts
     const entryBlocks = parseMarkdown(practiceEntryMd);
-    const entryTitle =
-      entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
-    const entryPrompts = entryBlocks.filter((b) => b.type === "paragraph").map((b) => b.text);
+    const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
+    const entryPrompts = entryBlocks
+      .filter((b) => b.type === "paragraph" || b.type === "bullet")
+      .map((b) => b.text);
 
     documentChildren.push(
       new Paragraph({
@@ -400,10 +422,9 @@ export default function GoalieJournalButton() {
 
     // End of Season Review section
     const eosBlocks = parseMarkdown(endOfSeasonMd);
-    const eosTitle =
-      eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
+    const eosTitle = eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
     const eosPrompts = eosBlocks
-      .filter((b) => b.type === "paragraph")
+      .filter((b) => b.type === "paragraph" || b.type === "bullet")
       .map((b) => b.text);
 
     documentChildren.push(
@@ -586,7 +607,7 @@ export default function GoalieJournalButton() {
                 id="goalieName"
                 value={goalieName}
                 onChange={(e) => setGoalieName(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Enter goalie name"
               />
@@ -604,14 +625,17 @@ export default function GoalieJournalButton() {
                 id="journal-team-name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Enter team name"
               />
             </div>
 
             <div className="mb-4">
-              <ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
+              <ImageUploader
+                onImageCropped={handleImageCropped}
+                disabled={!!generatedBlob || isGenerating}
+              />
               {!logoPreview && (
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   If no logo is provided, the Goalie Gen logo will be used

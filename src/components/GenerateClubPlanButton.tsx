@@ -327,13 +327,16 @@ export default function GenerateClubPlanButton() {
                 id="club-team-name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Enter your team name"
               />
             </div>
 
-            <ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
+            <ImageUploader
+              onImageCropped={handleImageCropped}
+              disabled={!!generatedBlob || isGenerating}
+            />
 
             <FormatSelector
               format={outputFormat}

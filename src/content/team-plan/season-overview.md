@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 ## Season Overview
 
 This team-level development plan provides structured goaltending drills and practice guidance

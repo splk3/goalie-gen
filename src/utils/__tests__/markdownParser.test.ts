@@ -88,4 +88,22 @@ describe("parseMarkdown", () => {
     const blocks = parseMarkdown("\n\nSome text\n\n");
     expect(blocks).toEqual([{ type: "paragraph", text: "Some text" }]);
   });
+
+  it("skips complete single-line HTML comment lines (e.g. markdownlint-disable directives)", () => {
+    const md = "<!-- markdownlint-disable MD041 -->\n## Section\n\nParagraph";
+    const blocks = parseMarkdown(md);
+    expect(blocks).toEqual([
+      { type: "heading", level: 2, text: "Section" },
+      { type: "paragraph", text: "Paragraph" },
+    ]);
+  });
+
+  it("does not skip lines that start with <!-- but are not complete comments", () => {
+    const md = "<!-- multi-line start\nsome content -->\n\n- Bullet";
+    const blocks = parseMarkdown(md);
+    // The opening line is not a complete comment so it becomes a paragraph
+    // (the closing line "some content -->" also becomes part of a paragraph)
+    const bulletBlock = blocks.find((b) => b.type === "bullet");
+    expect(bulletBlock).toEqual({ type: "bullet", text: "Bullet" });
+  });
 });

@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 ## Practice Template
 
 Focus: [Placeholder - specific skill focus]

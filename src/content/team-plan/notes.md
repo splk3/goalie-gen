@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 ## Additional Resources and Notes
 
 ### Progress Tracking
