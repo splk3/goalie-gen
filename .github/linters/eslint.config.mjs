@@ -1,4 +1,3 @@
-import { defineConfig, globalIgnores } from "eslint/config";
 import n from "eslint-plugin-n";
 import prettier from "eslint-plugin-prettier";
 import globals from "globals";
@@ -19,8 +18,8 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default defineConfig([
-  globalIgnores(["!**/.*", "**/node_modules/.*"]),
+export default [
+  { ignores: ["!**/.*", "**/node_modules/.*"] },
   {
     extends: compat.extends("eslint:recommended"),
 
@@ -122,4 +121,4 @@ export default defineConfig([
     },
   },
   ...pluginVue.configs["flat/recommended"],
-]);
+];

@@ -90,9 +90,7 @@ describe("blocksToDocxParagraphs", () => {
     const [para] = blocksToDocxParagraphs(blocks);
     expect(para).toBeInstanceOf(Paragraph);
     // The number of TextRun children should match parseRunData output
-    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(
-      parseRunData(text).length
-    );
+    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(parseRunData(text).length);
   });
 
   it("plain paragraph block produces exactly one child run", () => {
