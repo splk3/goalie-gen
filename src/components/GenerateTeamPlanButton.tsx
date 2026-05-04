@@ -1,7 +1,6 @@
 import * as React from "react";
 import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } from "docx";
 import { jsPDF } from "jspdf";
-import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
@@ -241,34 +240,45 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     );
     doc.text(`Number of Practices: ${practicesNum}`, 20, metadataY + 20);
 
-    const overviewBlocks = parseMarkdown(seasonOverviewMd);
-    let overviewY = metadataY + 40;
-    for (const block of overviewBlocks) {
+    const pdfPageHeight = doc.internal.pageSize.height - 15;
+    let pdfY = metadataY + 40;
+
+    const addPageIfNeeded = (neededHeight: number) => {
+      if (pdfY + neededHeight > pdfPageHeight) {
+        doc.addPage();
+        pdfY = 20;
+      }
+    };
+
+    for (const block of parseMarkdown(seasonOverviewMd)) {
       if (block.type === "heading") {
+        addPageIfNeeded(10);
         doc.setFontSize(16);
-        doc.text(block.text, 20, overviewY);
-        overviewY += 10;
+        doc.text(block.text, 20, pdfY);
+        pdfY += 10;
       } else if (block.type === "paragraph") {
         doc.setFontSize(11);
         const lines = doc.splitTextToSize(block.text, 170) as string[];
+        addPageIfNeeded(lines.length * 7);
         lines.forEach((line) => {
-          doc.text(line, 20, overviewY);
-          overviewY += 7;
+          doc.text(line, 20, pdfY);
+          pdfY += 7;
         });
       }
     }
 
-    const goalsBlocks = parseMarkdown(keyDevelopmentGoalsMd);
-    let goalsY = overviewY + 8;
-    for (const block of goalsBlocks) {
+    pdfY += 8;
+    for (const block of parseMarkdown(keyDevelopmentGoalsMd)) {
       if (block.type === "heading") {
+        addPageIfNeeded(8);
         doc.setFontSize(14);
-        doc.text(block.text, 20, goalsY);
-        goalsY += 8;
+        doc.text(block.text, 20, pdfY);
+        pdfY += 8;
       } else if (block.type === "bullet") {
+        addPageIfNeeded(7);
         doc.setFontSize(10);
-        doc.text(`- ${block.text}`, 25, goalsY);
-        goalsY += 7;
+        doc.text(`- ${block.text}`, 25, pdfY);
+        pdfY += 7;
       }
     }
 
@@ -295,6 +305,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         if (block.type === "paragraph") {
           const lines = doc.splitTextToSize(block.text, 165) as string[];
           lines.forEach((line) => {
+            if (currentY > pageHeight - 15) {
+              doc.addPage();
+              currentY = 20;
+            }
             doc.text(line, 25, currentY);
             currentY += 6;
           });
@@ -304,10 +318,14 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     }
 
     doc.addPage();
-    const notesBlocks = parseMarkdown(notesMd);
     let notesY = 20;
-    for (const block of notesBlocks) {
+    const notesPageHeight = doc.internal.pageSize.height - 15;
+    for (const block of parseMarkdown(notesMd)) {
       if (block.type === "heading") {
+        if (notesY + 10 > notesPageHeight) {
+          doc.addPage();
+          notesY = 20;
+        }
         const fontSize = block.level === 1 ? 16 : 12;
         doc.setFontSize(fontSize);
         doc.text(block.text, 20, notesY);
@@ -315,6 +333,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       } else if (block.type === "paragraph") {
         doc.setFontSize(10);
         const lines = doc.splitTextToSize(block.text, 170) as string[];
+        if (notesY + lines.length * 7 > notesPageHeight) {
+          doc.addPage();
+          notesY = 20;
+        }
         lines.forEach((line) => {
           doc.text(line, 25, notesY);
           notesY += 7;

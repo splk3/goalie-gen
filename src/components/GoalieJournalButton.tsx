@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AlignmentType, Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
+import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } from "docx";
 import { jsPDF } from "jspdf";
 import { withPrefix } from "gatsby";
 import { saveAs } from "file-saver";
@@ -63,6 +63,16 @@ export default function GoalieJournalButton() {
     });
   };
 
+  const dataUrlToArrayBuffer = (dataUrl: string): ArrayBuffer => {
+    const base64 = dataUrl.split(",")[1] ?? dataUrl;
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+  };
+
   const generatePdf = async (): Promise<void> => {
     const doc = new jsPDF();
     const currentYear = new Date().getFullYear();
@@ -73,13 +83,18 @@ export default function GoalieJournalButton() {
     // Cover page
     const coverBlocks = parseMarkdown(coverMd);
     const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
+    const coverSubtitle = coverBlocks.find((b) => b.type === "paragraph")?.text ?? "";
 
     doc.setFontSize(28);
     doc.text(coverTitle, 105, 40, { align: "center" });
     doc.setFontSize(18);
-    doc.text(goalieName, 105, 60, { align: "center" });
-    doc.text(teamName, 105, 75, { align: "center" });
-    doc.text(`Season ${season}`, 105, 90, { align: "center" });
+    doc.text(goalieName, 105, 58, { align: "center" });
+    doc.text(teamName, 105, 72, { align: "center" });
+    doc.text(`Season ${season}`, 105, 86, { align: "center" });
+    if (coverSubtitle) {
+      doc.setFontSize(10);
+      doc.text(coverSubtitle, 105, 97, { align: "center" });
+    }
 
     if (logoBase64) {
       try {
@@ -127,6 +142,7 @@ export default function GoalieJournalButton() {
     // Practice/Game Log pages
     const entryBlocks = parseMarkdown(practiceEntryMd);
     const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
+    const entryLabels = entryBlocks.filter((b) => b.type === "paragraph").map((b) => b.text);
 
     for (let page = 0; page < 6; page++) {
       doc.addPage();
@@ -153,14 +169,12 @@ export default function GoalieJournalButton() {
         doc.text("\u25A1 Practice  \u25A1 Game", 80, startY + 15);
         doc.text("Opponent: _______________", 135, startY + 15);
 
-        doc.text("Goals for today:", 20, startY + 23);
-        doc.line(20, startY + 29, 190, startY + 29);
-
-        doc.text("Skills/Drills:", 20, startY + 36);
-        doc.line(20, startY + 42, 190, startY + 42);
-
-        doc.text("Self-Evaluation:", 20, startY + 49);
-        doc.line(20, startY + 55, 190, startY + 55);
+        const lineSpacing = 13;
+        entryLabels.forEach((label, idx) => {
+          const labelY = startY + 23 + idx * lineSpacing;
+          doc.text(label, 20, labelY);
+          doc.line(20, labelY + 6, 190, labelY + 6);
+        });
       }
     }
 
@@ -203,9 +217,10 @@ export default function GoalieJournalButton() {
 
     const documentChildren: Paragraph[] = [];
 
-    // Cover page heading
+    // Cover: heading, optional logo, name/team/season/subtitle
     const coverBlocks = parseMarkdown(coverMd);
     const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
+    const coverSubtitle = coverBlocks.find((b) => b.type === "paragraph")?.text ?? "";
 
     documentChildren.push(
       new Paragraph({
@@ -213,7 +228,45 @@ export default function GoalieJournalButton() {
         heading: HeadingLevel.HEADING_1,
         alignment: AlignmentType.CENTER,
         spacing: { after: 300 },
-      }),
+      })
+    );
+
+    // Embed logo in DOCX cover if available
+    const logoBase64 = await getLogoAsBase64();
+    if (logoBase64) {
+      try {
+        const logoBuffer = dataUrlToArrayBuffer(logoBase64);
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = logoBase64;
+        });
+        const maxW = 150;
+        const maxH = 150;
+        let lw = img.width > 0 ? img.width : maxW;
+        let lh = img.height > 0 ? img.height : maxH;
+        const ratio = Math.min(maxW / lw, maxH / lh);
+        lw = Math.round(lw * ratio);
+        lh = Math.round(lh * ratio);
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              new ImageRun({
+                data: logoBuffer,
+                transformation: { width: lw, height: lh },
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 300 },
+          })
+        );
+      } catch (e) {
+        console.error("Failed to embed logo in DOCX:", e);
+      }
+    }
+
+    documentChildren.push(
       new Paragraph({
         children: [new TextRun({ text: goalieName, bold: true, size: 36 })],
         alignment: AlignmentType.CENTER,
@@ -227,9 +280,19 @@ export default function GoalieJournalButton() {
       new Paragraph({
         children: [new TextRun({ text: `Season ${season}`, size: 28 })],
         alignment: AlignmentType.CENTER,
-        spacing: { after: 600 },
+        spacing: { after: coverSubtitle ? 200 : 600 },
       })
     );
+
+    if (coverSubtitle) {
+      documentChildren.push(
+        new Paragraph({
+          children: [new TextRun({ text: coverSubtitle, italics: true })],
+          alignment: AlignmentType.CENTER,
+          spacing: { after: 600 },
+        })
+      );
+    }
 
     // Season Goals section
     const goalsBlocks = parseMarkdown(seasonGoalsMd);
@@ -265,13 +328,11 @@ export default function GoalieJournalButton() {
       );
     }
 
-    // Practice & Game Log section
+    // Practice & Game Log section — use markdown paragraphs as the write-in prompts
     const entryBlocks = parseMarkdown(practiceEntryMd);
     const entryTitle =
       entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
-    const entryPrompts = entryBlocks
-      .filter((b) => b.type === "paragraph")
-      .map((b) => b.text);
+    const entryPrompts = entryBlocks.filter((b) => b.type === "paragraph").map((b) => b.text);
 
     documentChildren.push(
       new Paragraph({
@@ -301,7 +362,7 @@ export default function GoalieJournalButton() {
       entryPrompts.forEach((prompt) => {
         documentChildren.push(
           new Paragraph({
-            children: [new TextRun({ text: `${prompt}` })],
+            children: [new TextRun({ text: prompt })],
             spacing: { after: 50 },
           }),
           new Paragraph({

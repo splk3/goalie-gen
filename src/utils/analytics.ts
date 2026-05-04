@@ -22,6 +22,7 @@ type EventType =
 // Specific interfaces for each event type's parameters
 interface GeneratePlanParams {
   type: "individual" | "team" | "club";
+  format?: string;
   team_name?: string;
   team_name_provided?: boolean;
   age_group?: string;
@@ -30,15 +31,18 @@ interface GeneratePlanParams {
 }
 
 interface GenerateJournalParams {
+  format?: string;
   team_name?: string;
 }
 
 interface DownloadPlanParams {
   type: "team" | "club";
+  format?: string;
   team_name?: string;
 }
 
 interface DownloadJournalParams {
+  format?: string;
   team_name?: string;
 }
 

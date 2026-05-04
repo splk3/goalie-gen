@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } from "docx";
+import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph } from "docx";
 import { jsPDF } from "jspdf";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
