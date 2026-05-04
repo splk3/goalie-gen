@@ -305,14 +305,14 @@ export default function GenerateClubPlanButton() {
 
             <div className="mb-4">
               <label
-                htmlFor="club-teamName"
+                htmlFor="club-team-name"
                 className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
               >
                 Team Name
               </label>
               <input
                 type="text"
-                id="club-teamName"
+                id="club-team-name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 disabled={!!generatedBlob}

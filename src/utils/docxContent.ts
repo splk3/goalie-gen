@@ -29,7 +29,7 @@ export function blocksToDocxParagraphs(blocks: MarkdownBlock[]): Paragraph[] {
             children: [
               new TextRun({
                 text: block.text,
-                italics: block.text.startsWith("["),
+                italics: block.text.startsWith("[") && block.text.endsWith("]"),
               }),
             ],
             spacing: { after: 300 },

@@ -508,14 +508,14 @@ export default function GoalieJournalButton() {
 
             <div className="mb-4">
               <label
-                htmlFor="journal-teamName"
+                htmlFor="journal-team-name"
                 className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
               >
                 Team Name
               </label>
               <input
                 type="text"
-                id="journal-teamName"
+                id="journal-team-name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 disabled={!!generatedBlob}
