@@ -1,15 +1,26 @@
 import * as React from "react";
+import { AlignmentType, Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import { jsPDF } from "jspdf";
 import { withPrefix } from "gatsby";
+import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
+import FormatSelector from "./FormatSelector";
+import { parseMarkdown } from "../utils/markdownParser";
+import coverMd from "../content/goalie-journal/cover.md";
+import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
+import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
+import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
+
+const BLANK_LINE = "_______________________________________________";
 
 export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [goalieName, setGoalieName] = React.useState<string>("");
   const [teamName, setTeamName] = React.useState<string>("");
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
+  const [outputFormat, setOutputFormat] = React.useState<"pdf" | "docx">("pdf");
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
@@ -22,12 +33,10 @@ export default function GoalieJournalButton() {
   const getLogoAsBase64 = (): Promise<string | null> => {
     return new Promise((resolve) => {
       if (logoPreview) {
-        // Reuse the already loaded logo preview data URL
         resolve(logoPreview);
         return;
       }
 
-      // Use default Goalie Gen logo
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -50,13 +59,312 @@ export default function GoalieJournalButton() {
         );
         resolve(null);
       };
-      // Use the alt light logo as default with proper path prefix
       img.src = withPrefix("/images/logos/logo-alt-light.png");
     });
   };
 
+  const generatePdf = async (): Promise<void> => {
+    const doc = new jsPDF();
+    const currentYear = new Date().getFullYear();
+    const season = `${currentYear}-${currentYear + 1}`;
+
+    const logoBase64 = await getLogoAsBase64();
+
+    // Cover page
+    const coverBlocks = parseMarkdown(coverMd);
+    const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
+
+    doc.setFontSize(28);
+    doc.text(coverTitle, 105, 40, { align: "center" });
+    doc.setFontSize(18);
+    doc.text(goalieName, 105, 60, { align: "center" });
+    doc.text(teamName, 105, 75, { align: "center" });
+    doc.text(`Season ${season}`, 105, 90, { align: "center" });
+
+    if (logoBase64) {
+      try {
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = logoBase64;
+        });
+
+        const maxW = 60;
+        const maxH = 60;
+        let w = img.width > 0 ? img.width : maxW;
+        let h = img.height > 0 ? img.height : maxH;
+        const ratio = Math.min(maxW / w, maxH / h);
+        w = w * ratio;
+        h = h * ratio;
+
+        doc.addImage(logoBase64, "PNG", 105 - w / 2, 110, w, h);
+      } catch (e) {
+        console.error("Error adding logo:", e);
+      }
+    }
+
+    // Season Goals page
+    doc.addPage();
+    const goalsBlocks = parseMarkdown(seasonGoalsMd);
+    const goalsTitle = goalsBlocks.find((b) => b.type === "heading")?.text ?? "Season Goals";
+    const goalsPrompt = goalsBlocks.find((b) => b.type === "paragraph")?.text ?? "";
+
+    doc.setFontSize(20);
+    doc.text(goalsTitle, 105, 20, { align: "center" });
+    doc.setFontSize(12);
+    if (goalsPrompt) {
+      doc.text(goalsPrompt, 20, 40);
+    }
+
+    for (let i = 0; i < 8; i++) {
+      const y = 55 + i * 25;
+      doc.text(`${i + 1}.`, 20, y);
+      doc.line(30, y, 190, y);
+      doc.line(30, y + 10, 190, y + 10);
+    }
+
+    // Practice/Game Log pages
+    const entryBlocks = parseMarkdown(practiceEntryMd);
+    const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
+
+    for (let page = 0; page < 6; page++) {
+      doc.addPage();
+      doc.setFontSize(16);
+      doc.text(`${entryTitle} - Page ${page + 1}`, 105, 15, { align: "center" });
+
+      const entriesPerPage = 4;
+      const entryHeight = 65;
+
+      for (let entry = 0; entry < entriesPerPage; entry++) {
+        const startY = 25 + entry * entryHeight;
+        const entryNum = page * entriesPerPage + entry + 1;
+
+        doc.setLineWidth(0.5);
+        doc.rect(15, startY, 180, entryHeight - 2);
+
+        doc.setFontSize(11);
+        doc.setFont(undefined, "bold");
+        doc.text(`Entry ${entryNum}`, 20, startY + 7);
+        doc.setFont(undefined, "normal");
+
+        doc.setFontSize(9);
+        doc.text("Date: _______________", 20, startY + 15);
+        doc.text("\u25A1 Practice  \u25A1 Game", 80, startY + 15);
+        doc.text("Opponent: _______________", 135, startY + 15);
+
+        doc.text("Goals for today:", 20, startY + 23);
+        doc.line(20, startY + 29, 190, startY + 29);
+
+        doc.text("Skills/Drills:", 20, startY + 36);
+        doc.line(20, startY + 42, 190, startY + 42);
+
+        doc.text("Self-Evaluation:", 20, startY + 49);
+        doc.line(20, startY + 55, 190, startY + 55);
+      }
+    }
+
+    // End of Season Review page
+    doc.addPage();
+    const eosBlocks = parseMarkdown(endOfSeasonMd);
+    const eosTitle =
+      eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
+    const eosPrompts = eosBlocks
+      .filter((b) => b.type === "paragraph")
+      .map((b) => b.text);
+
+    doc.setFontSize(20);
+    doc.text(eosTitle, 105, 20, { align: "center" });
+
+    doc.setFontSize(12);
+    let eosY = 40;
+    eosPrompts.forEach((prompt) => {
+      doc.text(prompt, 20, eosY);
+      for (let i = 0; i < 3; i++) {
+        doc.line(20, eosY + 10 + i * 15, 190, eosY + 10 + i * 15);
+      }
+      eosY += 60;
+    });
+
+    const sanitizedName =
+      goalieName
+        .replace(/[<>:"/\\|?*]+/g, "_")
+        .replace(/^\.+|\.+$/g, "")
+        .replace(/\s+/g, "_")
+        .trim() || "Goalie";
+    const blob = doc.output("blob");
+    setGeneratedBlob(blob);
+    setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${season}.pdf`);
+  };
+
+  const generateDocx = async (): Promise<void> => {
+    const currentYear = new Date().getFullYear();
+    const season = `${currentYear}-${currentYear + 1}`;
+
+    const documentChildren: Paragraph[] = [];
+
+    // Cover page heading
+    const coverBlocks = parseMarkdown(coverMd);
+    const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
+
+    documentChildren.push(
+      new Paragraph({
+        text: coverTitle,
+        heading: HeadingLevel.HEADING_1,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 300 },
+      }),
+      new Paragraph({
+        children: [new TextRun({ text: goalieName, bold: true, size: 36 })],
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        children: [new TextRun({ text: teamName, size: 28 })],
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        children: [new TextRun({ text: `Season ${season}`, size: 28 })],
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 600 },
+      })
+    );
+
+    // Season Goals section
+    const goalsBlocks = parseMarkdown(seasonGoalsMd);
+    const goalsTitle = goalsBlocks.find((b) => b.type === "heading")?.text ?? "Season Goals";
+    const goalsPrompt = goalsBlocks.find((b) => b.type === "paragraph")?.text ?? "";
+
+    documentChildren.push(
+      new Paragraph({
+        text: goalsTitle,
+        heading: HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 },
+      })
+    );
+
+    if (goalsPrompt) {
+      documentChildren.push(
+        new Paragraph({
+          children: [new TextRun({ text: goalsPrompt })],
+          spacing: { after: 200 },
+        })
+      );
+    }
+
+    for (let i = 1; i <= 8; i++) {
+      documentChildren.push(
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${i}. ` }),
+            new TextRun({ text: BLANK_LINE }),
+          ],
+          spacing: { after: 200 },
+        })
+      );
+    }
+
+    // Practice & Game Log section
+    const entryBlocks = parseMarkdown(practiceEntryMd);
+    const entryTitle =
+      entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
+    const entryPrompts = entryBlocks
+      .filter((b) => b.type === "paragraph")
+      .map((b) => b.text);
+
+    documentChildren.push(
+      new Paragraph({
+        text: entryTitle,
+        heading: HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 },
+      })
+    );
+
+    for (let i = 1; i <= 24; i++) {
+      documentChildren.push(
+        new Paragraph({
+          children: [new TextRun({ text: `Entry ${i}`, bold: true })],
+          spacing: { before: 300, after: 100 },
+        }),
+        new Paragraph({
+          children: [
+            new TextRun({ text: "Date: " }),
+            new TextRun({ text: BLANK_LINE }),
+            new TextRun({ text: "   \u25A1 Practice  \u25A1 Game   Opponent: " }),
+            new TextRun({ text: BLANK_LINE }),
+          ],
+          spacing: { after: 100 },
+        })
+      );
+
+      entryPrompts.forEach((prompt) => {
+        documentChildren.push(
+          new Paragraph({
+            children: [new TextRun({ text: `${prompt}` })],
+            spacing: { after: 50 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: BLANK_LINE })],
+            spacing: { after: 100 },
+          })
+        );
+      });
+    }
+
+    // End of Season Review section
+    const eosBlocks = parseMarkdown(endOfSeasonMd);
+    const eosTitle =
+      eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
+    const eosPrompts = eosBlocks
+      .filter((b) => b.type === "paragraph")
+      .map((b) => b.text);
+
+    documentChildren.push(
+      new Paragraph({
+        text: eosTitle,
+        heading: HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 },
+      })
+    );
+
+    eosPrompts.forEach((prompt) => {
+      documentChildren.push(
+        new Paragraph({
+          children: [new TextRun({ text: prompt })],
+          spacing: { after: 100 },
+        }),
+        new Paragraph({
+          children: [new TextRun({ text: BLANK_LINE })],
+          spacing: { after: 100 },
+        }),
+        new Paragraph({
+          children: [new TextRun({ text: BLANK_LINE })],
+          spacing: { after: 100 },
+        }),
+        new Paragraph({
+          children: [new TextRun({ text: BLANK_LINE })],
+          spacing: { after: 300 },
+        })
+      );
+    });
+
+    const doc = new Document({
+      sections: [{ properties: {}, children: documentChildren }],
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const sanitizedName =
+      goalieName
+        .replace(/[<>:"/\\|?*]+/g, "_")
+        .replace(/^\.+|\.+$/g, "")
+        .replace(/\s+/g, "_")
+        .trim() || "Goalie";
+    setGeneratedBlob(blob);
+    setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${season}.docx`);
+  };
+
   const generateJournal = async () => {
-    // Clear any previous errors
     setValidationError("");
 
     if (!goalieName.trim()) {
@@ -72,152 +380,14 @@ export default function GoalieJournalButton() {
     setIsGenerating(true);
 
     try {
-      const doc = new jsPDF();
-      const currentYear = new Date().getFullYear();
-      const season = `${currentYear}-${currentYear + 1}`;
-
-      // Get logo
-      const logoBase64 = await getLogoAsBase64();
-
-      // PAGE 1: Title/Cover Page
-      doc.setFontSize(28);
-      doc.text("Goalie Journal", 105, 40, { align: "center" });
-
-      doc.setFontSize(18);
-      doc.text(goalieName, 105, 60, { align: "center" });
-      doc.text(teamName, 105, 75, { align: "center" });
-      doc.text(`Season ${season}`, 105, 90, { align: "center" });
-
-      // Add logo if available
-      if (logoBase64) {
-        try {
-          const img = new Image();
-          await new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve;
-            img.src = logoBase64;
-          });
-
-          const maxW = 60;
-          const maxH = 60;
-          let w = img.width;
-          let h = img.height;
-
-          if (w > 0 && h > 0) {
-            const ratio = Math.min(maxW / w, maxH / h);
-            w = w * ratio;
-            h = h * ratio;
-          } else {
-            w = maxW;
-            h = maxH;
-          }
-
-          const x = 105 - w / 2;
-          doc.addImage(logoBase64, "PNG", x, 110, w, h);
-        } catch (e) {
-          console.error("Error adding logo:", e);
-        }
+      if (outputFormat === "pdf") {
+        await generatePdf();
+      } else {
+        await generateDocx();
       }
 
-      // PAGE 2: Season Goals
-      doc.addPage();
-      doc.setFontSize(20);
-      doc.text("Season Goals", 105, 20, { align: "center" });
-
-      doc.setFontSize(12);
-      doc.text("My goals for this season:", 20, 40);
-
-      for (let i = 0; i < 8; i++) {
-        const y = 55 + i * 25;
-        doc.text(`${i + 1}.`, 20, y);
-        doc.line(30, y, 190, y);
-        doc.line(30, y + 10, 190, y + 10);
-      }
-
-      // PAGES 3-8: Practice/Game Entry Pages (6 pages, 4 entries per page)
-      for (let page = 0; page < 6; page++) {
-        doc.addPage();
-        doc.setFontSize(16);
-        doc.text(`Practice & Game Log - Page ${page + 1}`, 105, 15, { align: "center" });
-
-        const entriesPerPage = 4;
-        const entryHeight = 65;
-
-        for (let entry = 0; entry < entriesPerPage; entry++) {
-          const startY = 25 + entry * entryHeight;
-          const entryNum = page * entriesPerPage + entry + 1;
-
-          // Entry box
-          doc.setLineWidth(0.5);
-          doc.rect(15, startY, 180, entryHeight - 2);
-
-          doc.setFontSize(11);
-          doc.setFont(undefined, "bold");
-          doc.text(`Entry ${entryNum}`, 20, startY + 7);
-          doc.setFont(undefined, "normal");
-
-          // Date and opponent
-          doc.setFontSize(9);
-          doc.text("Date: _______________", 20, startY + 15);
-          doc.text("□ Practice  □ Game", 80, startY + 15);
-          doc.text("Opponent: _______________", 135, startY + 15);
-
-          // Goals for practice/game
-          doc.text("Goals for today:", 20, startY + 23);
-          doc.line(20, startY + 29, 190, startY + 29);
-
-          // Skills/Drills worked on
-          doc.text("Skills/Drills:", 20, startY + 36);
-          doc.line(20, startY + 42, 190, startY + 42);
-
-          // Self-evaluation
-          doc.text("Self-Evaluation:", 20, startY + 49);
-          doc.line(20, startY + 55, 190, startY + 55);
-        }
-      }
-
-      // PAGE 9: End of Season Review
-      doc.addPage();
-      doc.setFontSize(20);
-      doc.text("End of Season Review", 105, 20, { align: "center" });
-
-      doc.setFontSize(12);
-      doc.text("What did I accomplish this season?", 20, 40);
-      for (let i = 0; i < 4; i++) {
-        doc.line(20, 50 + i * 15, 190, 50 + i * 15);
-      }
-
-      doc.text("What did I learn?", 20, 115);
-      for (let i = 0; i < 3; i++) {
-        doc.line(20, 125 + i * 15, 190, 125 + i * 15);
-      }
-
-      doc.text("Areas to improve:", 20, 175);
-      for (let i = 0; i < 3; i++) {
-        doc.line(20, 185 + i * 15, 190, 185 + i * 15);
-      }
-
-      doc.text("Goals for offseason/next season:", 20, 235);
-      for (let i = 0; i < 3; i++) {
-        doc.line(20, 245 + i * 15, 190, 245 + i * 15);
-      }
-
-      // Generate PDF blob
-      const sanitizedName =
-        goalieName
-          .replace(/[<>:"/\\|?*]+/g, "_") // Replace invalid characters
-          .replace(/^\.+|\.+$/g, "") // Remove leading/trailing periods
-          .replace(/\s+/g, "_") // Replace spaces with underscores
-          .trim() || "Goalie"; // Fallback if empty after sanitization
-      const fileName = `${sanitizedName}_Goalie_Journal_${season}.pdf`;
-      const blob = doc.output("blob");
-
-      // Store the blob and filename for download
-      setGeneratedBlob(blob);
-      setGeneratedFileName(fileName);
-
-      // Track event
       trackEvent("generate_journal", {
+        format: outputFormat,
         team_name: teamName,
       });
     } catch (error) {
@@ -230,26 +400,29 @@ export default function GoalieJournalButton() {
 
   const handleDownload = () => {
     if (generatedBlob && generatedFileName) {
-      // Create download link
-      const url = URL.createObjectURL(generatedBlob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = generatedFileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      if (outputFormat === "pdf") {
+        const url = URL.createObjectURL(generatedBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = generatedFileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } else {
+        saveAs(generatedBlob, generatedFileName);
+      }
 
-      // Track download event
       trackEvent("download_journal", {
+        format: outputFormat,
         team_name: teamName,
       });
 
-      // Close modal and reset form
       setShowModal(false);
       setGoalieName("");
       setTeamName("");
       setLogoPreview(null);
+      setOutputFormat("pdf");
       setValidationError("");
       setGeneratedBlob(null);
       setGeneratedFileName("");
@@ -261,12 +434,12 @@ export default function GoalieJournalButton() {
     setGoalieName("");
     setTeamName("");
     setLogoPreview(null);
+    setOutputFormat("pdf");
     setValidationError("");
     setGeneratedBlob(null);
     setGeneratedFileName("");
   }, []);
 
-  // Close modal when Escape key is pressed
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && showModal && !isGenerating && !generatedBlob) {
@@ -335,14 +508,14 @@ export default function GoalieJournalButton() {
 
             <div className="mb-4">
               <label
-                htmlFor="teamName"
+                htmlFor="journal-teamName"
                 className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
               >
                 Team Name
               </label>
               <input
                 type="text"
-                id="teamName"
+                id="journal-teamName"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 disabled={!!generatedBlob}
@@ -351,7 +524,7 @@ export default function GoalieJournalButton() {
               />
             </div>
 
-            <div className="mb-6">
+            <div className="mb-4">
               <ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
               {!logoPreview && (
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -359,6 +532,13 @@ export default function GoalieJournalButton() {
                 </p>
               )}
             </div>
+
+            <FormatSelector
+              format={outputFormat}
+              onChange={setOutputFormat}
+              name="journal-output-format"
+              disabled={!!generatedBlob}
+            />
 
             {validationError && (
               <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">

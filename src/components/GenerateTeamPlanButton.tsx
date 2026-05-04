@@ -1,8 +1,17 @@
 import * as React from "react";
+import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } from "docx";
 import { jsPDF } from "jspdf";
+import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
+import FormatSelector from "./FormatSelector";
+import { parseMarkdown } from "../utils/markdownParser";
+import { blocksToDocxParagraphs } from "../utils/docxContent";
+import seasonOverviewMd from "../content/team-plan/season-overview.md";
+import keyDevelopmentGoalsMd from "../content/team-plan/key-development-goals.md";
+import practiceTemplateMd from "../content/team-plan/practice-template.md";
+import notesMd from "../content/team-plan/notes.md";
 
 type AgeGroup = "8u" | "10u" | "12u" | "14u+";
 type SkillLevel = "beginner" | "intermediate" | "advanced";
@@ -14,10 +23,12 @@ interface GenerateTeamPlanButtonProps {
 export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTeamPlanButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [teamName, setTeamName] = React.useState<string>("");
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
   const [skillLevel, setSkillLevel] = React.useState<string>("");
   const [numberOfPractices, setNumberOfPractices] = React.useState<string>("");
+  const [outputFormat, setOutputFormat] = React.useState<"docx" | "pdf">("docx");
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
@@ -26,12 +37,12 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
-  const handleImageChange = (_file: File | null, previewUrl: string | null) => {
+  const handleImageChange = (file: File | null, previewUrl: string | null) => {
+    setSelectedImage(file);
     setImagePreview(previewUrl);
   };
 
   const validateInputs = (): boolean => {
-    // Clear any previous errors
     setValidationError("");
 
     if (!teamName.trim()) {
@@ -54,7 +65,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       return false;
     }
 
-    // Check if input contains decimal point or is not a valid integer
     if (numberOfPractices.includes(".") || numberOfPractices.includes(",")) {
       setValidationError("Number of practices must be a whole number between 0 and 50");
       return false;
@@ -74,7 +84,250 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     return true;
   };
 
-  const generatePDF = async () => {
+  const generateDocx = async (): Promise<void> => {
+    const practicesNum = parseInt(numberOfPractices, 10);
+
+    let arrayBuffer: ArrayBuffer | null = null;
+    if (selectedImage) {
+      arrayBuffer = await selectedImage.arrayBuffer();
+    }
+
+    const documentChildren: Paragraph[] = [
+      new Paragraph({
+        text: teamName,
+        heading: HeadingLevel.HEADING_1,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        text: "Team-Level Goaltending Development Plan",
+        heading: HeadingLevel.HEADING_2,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 400 },
+      }),
+    ];
+
+    if (arrayBuffer && imagePreview) {
+      let imgWidth = 400;
+      let imgHeight = 400;
+
+      try {
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = imagePreview;
+        });
+
+        const ratio = img.width / img.height;
+        if (ratio > 1) {
+          imgWidth = 400;
+          imgHeight = 400 / ratio;
+        } else {
+          imgHeight = 400;
+          imgWidth = 400 * ratio;
+        }
+      } catch (e) {
+        console.error("Failed to parse image dimensions", e);
+      }
+
+      documentChildren.push(
+        new Paragraph({
+          children: [
+            new ImageRun({
+              data: arrayBuffer,
+              transformation: { width: imgWidth, height: imgHeight },
+            }),
+          ],
+          alignment: AlignmentType.CENTER,
+          spacing: { after: 400 },
+        })
+      );
+    }
+
+    documentChildren.push(
+      new Paragraph({
+        children: [new TextRun({ text: `Age Group: ${ageGroup}` })],
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `Experience Level: ${skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1)}`,
+          }),
+        ],
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        children: [new TextRun({ text: `Number of Practices: ${practicesNum}` })],
+        spacing: { after: 400 },
+      })
+    );
+
+    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(seasonOverviewMd)));
+    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(keyDevelopmentGoalsMd)));
+
+    documentChildren.push(
+      new Paragraph({
+        text: "Practice Plans",
+        heading: HeadingLevel.HEADING_1,
+        spacing: { before: 400, after: 200 },
+      })
+    );
+
+    const templateBlocks = parseMarkdown(practiceTemplateMd).filter((b) => b.type !== "heading");
+    for (let i = 1; i <= practicesNum; i++) {
+      documentChildren.push(
+        new Paragraph({
+          text: `Practice ${i}`,
+          heading: HeadingLevel.HEADING_2,
+          spacing: { before: 300, after: 200 },
+        })
+      );
+      documentChildren.push(...blocksToDocxParagraphs(templateBlocks));
+    }
+
+    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(notesMd)));
+
+    const doc = new Document({
+      sections: [{ properties: {}, children: documentChildren }],
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const safeName = teamName.replace(/[<>:"/\\|?*]/g, "_");
+    setGeneratedBlob(blob);
+    setGeneratedFileName(`${safeName}_Team_Development_Plan.docx`);
+  };
+
+  const generatePdf = async (): Promise<void> => {
+    const doc = new jsPDF();
+    const practicesNum = parseInt(numberOfPractices, 10);
+
+    doc.setFontSize(24);
+    doc.text(`${teamName}`, 105, 30, { align: "center" });
+    doc.setFontSize(18);
+    doc.text("Team-Level Goaltending Development Plan", 105, 45, { align: "center" });
+
+    if (imagePreview) {
+      try {
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = imagePreview;
+        });
+
+        const maxW = 80;
+        const maxH = 80;
+        let w = img.width > 0 ? img.width : maxW;
+        let h = img.height > 0 ? img.height : maxH;
+        const ratio = Math.min(maxW / w, maxH / h);
+        w = w * ratio;
+        h = h * ratio;
+
+        doc.addImage(imagePreview, "PNG", 105 - w / 2, 55, w, h);
+      } catch (error) {
+        console.error("Error adding image to PDF:", error);
+      }
+    }
+
+    doc.setFontSize(12);
+    const metadataY = imagePreview ? 145 : 60;
+    doc.text(`Age Group: ${ageGroup}`, 20, metadataY);
+    doc.text(
+      `Experience Level: ${skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1)}`,
+      20,
+      metadataY + 10
+    );
+    doc.text(`Number of Practices: ${practicesNum}`, 20, metadataY + 20);
+
+    const overviewBlocks = parseMarkdown(seasonOverviewMd);
+    let overviewY = metadataY + 40;
+    for (const block of overviewBlocks) {
+      if (block.type === "heading") {
+        doc.setFontSize(16);
+        doc.text(block.text, 20, overviewY);
+        overviewY += 10;
+      } else if (block.type === "paragraph") {
+        doc.setFontSize(11);
+        const lines = doc.splitTextToSize(block.text, 170) as string[];
+        lines.forEach((line) => {
+          doc.text(line, 20, overviewY);
+          overviewY += 7;
+        });
+      }
+    }
+
+    const goalsBlocks = parseMarkdown(keyDevelopmentGoalsMd);
+    let goalsY = overviewY + 8;
+    for (const block of goalsBlocks) {
+      if (block.type === "heading") {
+        doc.setFontSize(14);
+        doc.text(block.text, 20, goalsY);
+        goalsY += 8;
+      } else if (block.type === "bullet") {
+        doc.setFontSize(10);
+        doc.text(`- ${block.text}`, 25, goalsY);
+        goalsY += 7;
+      }
+    }
+
+    doc.addPage();
+    doc.setFontSize(18);
+    doc.text("Practice Plans", 105, 20, { align: "center" });
+
+    let currentY = 35;
+    const pageHeight = doc.internal.pageSize.height;
+    const templateBlocks = parseMarkdown(practiceTemplateMd).filter((b) => b.type !== "heading");
+
+    for (let i = 1; i <= practicesNum; i++) {
+      if (currentY > pageHeight - 60) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      doc.setFontSize(14);
+      doc.text(`Practice ${i}`, 20, currentY);
+      doc.setFontSize(10);
+      currentY += 8;
+
+      for (const block of templateBlocks) {
+        if (block.type === "paragraph") {
+          const lines = doc.splitTextToSize(block.text, 165) as string[];
+          lines.forEach((line) => {
+            doc.text(line, 25, currentY);
+            currentY += 6;
+          });
+        }
+      }
+      currentY += 6;
+    }
+
+    doc.addPage();
+    const notesBlocks = parseMarkdown(notesMd);
+    let notesY = 20;
+    for (const block of notesBlocks) {
+      if (block.type === "heading") {
+        const fontSize = block.level === 1 ? 16 : 12;
+        doc.setFontSize(fontSize);
+        doc.text(block.text, 20, notesY);
+        notesY += 10;
+      } else if (block.type === "paragraph") {
+        doc.setFontSize(10);
+        const lines = doc.splitTextToSize(block.text, 170) as string[];
+        lines.forEach((line) => {
+          doc.text(line, 25, notesY);
+          notesY += 7;
+        });
+      }
+    }
+
+    const safeName = teamName.replace(/[<>:"/\\|?*]/g, "_");
+    setGeneratedBlob(doc.output("blob"));
+    setGeneratedFileName(`${safeName}_Team_Development_Plan.pdf`);
+  };
+
+  const handleGenerate = async () => {
     if (!validateInputs()) {
       return;
     }
@@ -82,163 +335,23 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setIsGenerating(true);
 
     try {
-      const doc = new jsPDF();
-      const practicesNum = parseInt(numberOfPractices, 10);
-
-      // Add title page
-      doc.setFontSize(24);
-      doc.text(`${teamName}`, 105, 30, { align: "center" });
-      doc.setFontSize(18);
-      doc.text("Team-Level Goaltending Development Plan", 105, 45, { align: "center" });
-
-      // Add team logo if provided
-      if (imagePreview) {
-        try {
-          const imgData = imagePreview;
-          // We always output PNG from the ImageUploader
-          const format = "PNG";
-
-          // To prevent stretching, we calculate dimensions.
-          const img = new Image();
-
-          await new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve; // Continue even if it fails
-            img.src = imagePreview;
-          });
-
-          const maxW = 80;
-          const maxH = 80;
-          let w = img.width;
-          let h = img.height;
-
-          if (w > 0 && h > 0) {
-            const ratio = Math.min(maxW / w, maxH / h);
-            w = w * ratio;
-            h = h * ratio;
-          } else {
-            w = maxW;
-            h = maxH;
-          }
-
-          // Center the image horizontally
-          const x = 105 - w / 2;
-          doc.addImage(imgData, format, x, 55, w, h);
-        } catch (error) {
-          console.error("Error adding image to PDF:", error);
-        }
+      if (outputFormat === "docx") {
+        await generateDocx();
+      } else {
+        await generatePdf();
       }
 
-      // Add metadata
-      doc.setFontSize(12);
-      const metadataY = imagePreview ? 145 : 60;
-      doc.text(`Age Group: ${ageGroup}`, 20, metadataY);
-      doc.text(
-        `Experience Level: ${skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1)}`,
-        20,
-        metadataY + 10
-      );
-      doc.text(`Number of Practices: ${practicesNum}`, 20, metadataY + 20);
-
-      // Add season overview
-      doc.setFontSize(16);
-      doc.text("Season Overview", 20, metadataY + 40);
-      doc.setFontSize(11);
-      doc.text(
-        "This team-level development plan provides structured goaltending drills",
-        20,
-        metadataY + 50
-      );
-      doc.text(
-        "and practice guidance throughout the season. Each practice includes",
-        20,
-        metadataY + 58
-      );
-      doc.text(
-        "age-appropriate exercises designed to develop fundamental goaltending skills.",
-        20,
-        metadataY + 66
-      );
-
-      // Add development goals section
-      doc.setFontSize(14);
-      doc.text("Key Development Goals", 20, metadataY + 82);
-      doc.setFontSize(10);
-      const goals = [
-        "- Improve positioning and angle management",
-        "- Develop butterfly technique and recovery",
-        "- Enhance glove and blocker skills",
-        "- Build confidence in game situations",
-        "- Foster communication with teammates",
-      ];
-      let goalY = metadataY + 90;
-      goals.forEach((goal) => {
-        doc.text(goal, 25, goalY);
-        goalY += 7;
-      });
-
-      // Add new page for practice plans
-      doc.addPage();
-      doc.setFontSize(18);
-      doc.text("Practice Plans", 105, 20, { align: "center" });
-
-      // Generate practice plan sections
-      let currentY = 35;
-      const pageHeight = doc.internal.pageSize.height;
-
-      for (let i = 1; i <= practicesNum; i++) {
-        // Check if we need a new page
-        if (currentY > pageHeight - 60) {
-          doc.addPage();
-          currentY = 20;
-        }
-
-        doc.setFontSize(14);
-        doc.text(`Practice ${i}`, 20, currentY);
-        doc.setFontSize(10);
-        currentY += 8;
-
-        doc.text("Focus: [Placeholder - specific skill focus]", 25, currentY);
-        currentY += 6;
-        doc.text("Drill 1: [Placeholder - drill name and description]", 25, currentY);
-        currentY += 6;
-        doc.text("Drill 2: [Placeholder - drill name and description]", 25, currentY);
-        currentY += 6;
-        doc.text("Drill 3: [Placeholder - drill name and description]", 25, currentY);
-        currentY += 6;
-        doc.text("Coaching Points: [Placeholder - key teaching points]", 25, currentY);
-        currentY += 12;
-      }
-
-      // Add final page with notes
-      doc.addPage();
-      doc.setFontSize(16);
-      doc.text("Additional Resources and Notes", 20, 20);
-      doc.setFontSize(11);
-      doc.text("Progress Tracking:", 20, 35);
-      doc.setFontSize(10);
-      doc.text("Monitor goaltender development throughout the season. Regular feedback", 25, 43);
-      doc.text("and positive reinforcement are crucial for youth player development.", 25, 50);
-
-      // Generate PDF blob
-      const fileName = `${teamName.replace(/[<>:"/\\|?*]/g, "_")}_Team_Development_Plan.pdf`;
-      const blob = doc.output("blob");
-
-      // Store the blob and filename for download
-      setGeneratedBlob(blob);
-      setGeneratedFileName(fileName);
-
-      // Track event
       trackEvent("generate_plan", {
         type: "team",
+        format: outputFormat,
         team_name: teamName,
         age_group: ageGroup,
         skill_level: skillLevel,
-        practices_count: practicesNum,
+        practices_count: parseInt(numberOfPractices, 10),
       });
     } catch (error) {
-      console.error("Error generating PDF:", error);
-      setValidationError("There was an error generating the PDF. Please try again.");
+      console.error("Error generating document:", error);
+      setValidationError("There was an error generating the document. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -246,7 +359,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
   const handleDownload = () => {
     if (generatedBlob && generatedFileName) {
-      // Create download link
       const url = URL.createObjectURL(generatedBlob);
       const link = document.createElement("a");
       link.href = url;
@@ -256,19 +368,20 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      // Track download event
       trackEvent("download_plan", {
         type: "team",
+        format: outputFormat,
         team_name: teamName,
       });
 
-      // Close modal and reset form
       setShowModal(false);
       setTeamName("");
+      setSelectedImage(null);
       setImagePreview(null);
       setAgeGroup("");
       setSkillLevel("");
       setNumberOfPractices("");
+      setOutputFormat("docx");
       setValidationError("");
       setGeneratedBlob(null);
       setGeneratedFileName("");
@@ -278,16 +391,17 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const handleCancel = React.useCallback(() => {
     setShowModal(false);
     setTeamName("");
+    setSelectedImage(null);
     setImagePreview(null);
     setAgeGroup("");
     setSkillLevel("");
     setNumberOfPractices("");
+    setOutputFormat("docx");
     setValidationError("");
     setGeneratedBlob(null);
     setGeneratedFileName("");
   }, []);
 
-  // Close modal when Escape key is pressed
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && showModal && !isGenerating && !generatedBlob) {
@@ -343,14 +457,14 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
             <div className="mb-4">
               <label
-                htmlFor="teamName"
+                htmlFor="team-teamName"
                 className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
               >
                 Team Name
               </label>
               <input
                 type="text"
-                id="teamName"
+                id="team-teamName"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 disabled={!!generatedBlob}
@@ -409,7 +523,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               </select>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-4">
               <label
                 htmlFor="numberOfPractices"
                 className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
@@ -429,6 +543,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               />
             </div>
 
+            <FormatSelector
+              format={outputFormat}
+              onChange={setOutputFormat}
+              name="team-output-format"
+              disabled={!!generatedBlob}
+            />
+
             {validationError && (
               <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
                 {validationError}
@@ -437,7 +558,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
             {generatedBlob && !validationError && (
               <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm">
-                PDF generated successfully! Click Download to save it.
+                Document generated successfully! Click Download to save it.
               </div>
             )}
 
@@ -445,7 +566,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               {!generatedBlob ? (
                 <>
                   <button
-                    onClick={generatePDF}
+                    onClick={handleGenerate}
                     disabled={isGenerating}
                     className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
                       isGenerating ? "opacity-50 cursor-not-allowed" : ""
