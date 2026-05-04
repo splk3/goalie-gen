@@ -311,6 +311,19 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   return true;
 }
 
+export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({ actions }) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [
+        {
+          test: /\.md$/,
+          type: "asset/source",
+        },
+      ],
+    },
+  });
+};
+
 export const onPreBootstrap: GatsbyNode["onPreBootstrap"] = () => {
   const drillsSource = path.resolve(__dirname, "drills");
   const drillsDestination = path.resolve(__dirname, "static/drills");
