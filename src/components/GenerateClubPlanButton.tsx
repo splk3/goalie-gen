@@ -116,13 +116,15 @@ export default function GenerateClubPlanButton() {
     const pageWidth = doc.internal.pageSize.width;
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
+    const nameFontSize = 24;
+    const nameLineHeight = nameFontSize * 0.4; // approx pt → mm line spacing
 
-    doc.setFontSize(24);
+    doc.setFontSize(nameFontSize);
     const nameLines = doc.splitTextToSize(teamName, contentWidth) as string[];
     let nameY = 30;
     nameLines.forEach((line) => {
       doc.text(line, 105, nameY, { align: "center" });
-      nameY += 10;
+      nameY += nameLineHeight;
     });
     doc.setFontSize(18);
     doc.text("Goaltending Development Plan", 105, nameY + 5, { align: "center" });

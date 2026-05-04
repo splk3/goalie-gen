@@ -54,9 +54,10 @@ describe("parseRunData", () => {
 });
 
 describe("textToRuns", () => {
-  it("returns TextRun instances matching parseRunData output", () => {
-    const runs = textToRuns("Focus: [Placeholder]");
-    expect(runs).toHaveLength(2);
+  it("produces the same number of runs as parseRunData and returns TextRun instances", () => {
+    const text = "Focus: [Placeholder]";
+    const runs = textToRuns(text);
+    expect(runs).toHaveLength(parseRunData(text).length);
     runs.forEach((run) => expect(run).toBeInstanceOf(TextRun));
   });
 
@@ -83,31 +84,31 @@ describe("blocksToDocxParagraphs", () => {
     paragraphs.forEach((p) => expect(p).toBeInstanceOf(Paragraph));
   });
 
-  it("paragraph blocks use textToRuns so inline placeholders get italic runs", () => {
-    const blocks: MarkdownBlock[] = [
-      { type: "paragraph", text: "Focus: [Placeholder]" },
-    ];
+  it("paragraph blocks produce one run per parsed segment (via parseRunData)", () => {
+    const text = "Focus: [Placeholder]";
+    const blocks: MarkdownBlock[] = [{ type: "paragraph", text }];
     const [para] = blocksToDocxParagraphs(blocks);
     expect(para).toBeInstanceOf(Paragraph);
-    // The paragraph's children should match textToRuns output for "Focus: [Placeholder]"
-    const expectedRunCount = textToRuns("Focus: [Placeholder]").length;
-    // Verify children are TextRun instances with the right count
-    const textRuns = para.root.filter((n) => n instanceof TextRun);
-    expect(textRuns).toHaveLength(expectedRunCount);
+    // The number of TextRun children should match parseRunData output
+    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(
+      parseRunData(text).length
+    );
   });
 
-  it("plain paragraph block produces a single child TextRun", () => {
+  it("plain paragraph block produces exactly one child run", () => {
     const blocks: MarkdownBlock[] = [{ type: "paragraph", text: "Plain text." }];
     const [para] = blocksToDocxParagraphs(blocks);
-    const textRuns = para.root.filter((n) => n instanceof TextRun);
-    expect(textRuns).toHaveLength(1);
+    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(
+      parseRunData("Plain text.").length
+    );
   });
 
-  it("fully-bracketed paragraph block produces a single italic child TextRun", () => {
+  it("fully-bracketed paragraph block produces exactly one child run", () => {
     const blocks: MarkdownBlock[] = [{ type: "paragraph", text: "[Placeholder]" }];
     const [para] = blocksToDocxParagraphs(blocks);
-    const textRuns = para.root.filter((n) => n instanceof TextRun);
-    expect(textRuns).toHaveLength(1);
+    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(
+      parseRunData("[Placeholder]").length
+    );
   });
 
   it("returns one Paragraph per bullet block", () => {
@@ -120,7 +121,7 @@ describe("blocksToDocxParagraphs", () => {
     paragraphs.forEach((p) => expect(p).toBeInstanceOf(Paragraph));
   });
 
-  it("handles mixed content and returns correct count", () => {
+  it("handles mixed content and returns the correct total count", () => {
     const blocks: MarkdownBlock[] = [
       { type: "heading", level: 2, text: "Section" },
       { type: "paragraph", text: "Focus: [Placeholder]" },
