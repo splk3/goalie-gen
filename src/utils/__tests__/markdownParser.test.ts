@@ -37,6 +37,32 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("appends an indented continuation line to the previous bullet", () => {
+    const blocks = parseMarkdown("- First line\n  continuation here");
+    expect(blocks).toEqual([{ type: "bullet", text: "First line continuation here" }]);
+  });
+
+  it("appends multiple indented continuation lines to the same bullet", () => {
+    const blocks = parseMarkdown("- Start\n  middle\n  end");
+    expect(blocks).toEqual([{ type: "bullet", text: "Start middle end" }]);
+  });
+
+  it("does not treat a normal paragraph after a blank line as a bullet continuation", () => {
+    const blocks = parseMarkdown("- Bullet\n\nParagraph");
+    expect(blocks).toEqual([
+      { type: "bullet", text: "Bullet" },
+      { type: "paragraph", text: "Paragraph" },
+    ]);
+  });
+
+  it("does not treat an unindented line after a bullet as a continuation", () => {
+    const blocks = parseMarkdown("- Bullet\nNot continuation");
+    expect(blocks).toEqual([
+      { type: "bullet", text: "Bullet" },
+      { type: "paragraph", text: "Not continuation" },
+    ]);
+  });
+
   it("parses mixed content", () => {
     const md = "## My Section\n\nSome paragraph text.\n\n- Bullet A\n- Bullet B";
     const blocks = parseMarkdown(md);

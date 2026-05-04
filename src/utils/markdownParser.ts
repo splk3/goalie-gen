@@ -36,6 +36,13 @@ export function parseMarkdown(markdown: string): MarkdownBlock[] {
       continue;
     }
 
+    // Indented continuation of the previous bullet (e.g. wrapped list items)
+    const lastBlock = blocks[blocks.length - 1];
+    if (lastBlock?.type === "bullet" && line.match(/^[ \t]+\S/)) {
+      lastBlock.text += " " + line.trim();
+      continue;
+    }
+
     if (line.trim() === "") {
       flushParagraph();
       continue;

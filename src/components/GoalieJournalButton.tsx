@@ -144,17 +144,26 @@ export default function GoalieJournalButton() {
     const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
     const entryLabels = entryBlocks.filter((b) => b.type === "paragraph").map((b) => b.text);
 
-    for (let page = 0; page < 6; page++) {
+    // Compute entry box height from the actual number of prompts so the layout
+    // stays correct when practice-entry.md is edited to add or remove prompts.
+    const lineSpacing = 13;
+    const entryHeight = Math.max(50, 37 + Math.max(0, entryLabels.length - 1) * lineSpacing + 2);
+    const journalPageHeight = doc.internal.pageSize.height;
+    const availablePerPage = journalPageHeight - 40; // top header + bottom margin
+    const entriesPerPage = Math.max(1, Math.floor(availablePerPage / entryHeight));
+    const totalEntries = 24;
+    const numLogPages = Math.ceil(totalEntries / entriesPerPage);
+
+    for (let page = 0; page < numLogPages; page++) {
       doc.addPage();
       doc.setFontSize(16);
       doc.text(`${entryTitle} - Page ${page + 1}`, 105, 15, { align: "center" });
 
-      const entriesPerPage = 4;
-      const entryHeight = 65;
-
-      for (let entry = 0; entry < entriesPerPage; entry++) {
-        const startY = 25 + entry * entryHeight;
-        const entryNum = page * entriesPerPage + entry + 1;
+      const firstEntry = page * entriesPerPage;
+      const lastEntry = Math.min(firstEntry + entriesPerPage, totalEntries);
+      for (let entry = firstEntry; entry < lastEntry; entry++) {
+        const startY = 25 + (entry - firstEntry) * entryHeight;
+        const entryNum = entry + 1;
 
         doc.setLineWidth(0.5);
         doc.rect(15, startY, 180, entryHeight - 2);
@@ -169,7 +178,6 @@ export default function GoalieJournalButton() {
         doc.text("\u25A1 Practice  \u25A1 Game", 80, startY + 15);
         doc.text("Opponent: _______________", 135, startY + 15);
 
-        const lineSpacing = 13;
         entryLabels.forEach((label, idx) => {
           const labelY = startY + 23 + idx * lineSpacing;
           doc.text(label, 20, labelY);
@@ -190,14 +198,20 @@ export default function GoalieJournalButton() {
     doc.setFontSize(20);
     doc.text(eosTitle, 105, 20, { align: "center" });
 
+    const eosPageHeight = doc.internal.pageSize.height - 15;
+    const eosBlockHeight = 60; // prompt text + 3 answer lines
     doc.setFontSize(12);
     let eosY = 40;
     eosPrompts.forEach((prompt) => {
+      if (eosY + eosBlockHeight > eosPageHeight) {
+        doc.addPage();
+        eosY = 20;
+      }
       doc.text(prompt, 20, eosY);
       for (let i = 0; i < 3; i++) {
         doc.line(20, eosY + 10 + i * 15, 190, eosY + 10 + i * 15);
       }
-      eosY += 60;
+      eosY += eosBlockHeight;
     });
 
     const sanitizedName =

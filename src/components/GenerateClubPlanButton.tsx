@@ -126,8 +126,11 @@ export default function GenerateClubPlanButton() {
       doc.text(line, 105, nameY, { align: "center" });
       nameY += nameLineHeight;
     });
-    doc.setFontSize(18);
+    const subtitleFontSize = 18;
+    const subtitleLineHeight = subtitleFontSize * 0.4;
+    doc.setFontSize(subtitleFontSize);
     doc.text("Goaltending Development Plan", 105, nameY + 5, { align: "center" });
+    const imageStartY = nameY + 5 + subtitleLineHeight + 5;
 
     if (imagePreview) {
       try {
@@ -146,7 +149,7 @@ export default function GenerateClubPlanButton() {
         w = w * ratio;
         h = h * ratio;
 
-        doc.addImage(imagePreview, "PNG", 105 - w / 2, 55, w, h);
+        doc.addImage(imagePreview, "PNG", 105 - w / 2, imageStartY, w, h);
       } catch (error) {
         console.error("Error adding image to PDF:", error);
       }

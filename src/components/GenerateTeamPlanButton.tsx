@@ -312,6 +312,25 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             doc.text(line, 25, currentY);
             currentY += 6;
           });
+        } else if (block.type === "heading") {
+          if (currentY > pageHeight - 15) {
+            doc.addPage();
+            currentY = 20;
+          }
+          doc.setFontSize(12);
+          doc.text(block.text, 25, currentY);
+          doc.setFontSize(10);
+          currentY += 7;
+        } else if (block.type === "bullet") {
+          const lines = doc.splitTextToSize(`\u2022 ${block.text}`, 160) as string[];
+          lines.forEach((line) => {
+            if (currentY > pageHeight - 15) {
+              doc.addPage();
+              currentY = 20;
+            }
+            doc.text(line, 25, currentY);
+            currentY += 6;
+          });
         }
       }
       currentY += 6;
