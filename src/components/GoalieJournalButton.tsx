@@ -348,6 +348,8 @@ export default function GoalieJournalButton() {
           children: [new TextRun({ text: `Entry ${i}`, bold: true })],
           spacing: { before: 300, after: 100 },
         }),
+        // The date/type/opponent row is structural layout for each entry,
+        // rendered separately from the editable markdown prompts.
         new Paragraph({
           children: [
             new TextRun({ text: "Date: " }),
@@ -598,7 +600,7 @@ export default function GoalieJournalButton() {
               format={outputFormat}
               onChange={setOutputFormat}
               name="journal-output-format"
-              disabled={!!generatedBlob}
+              disabled={!!generatedBlob || isGenerating}
             />
 
             {validationError && (

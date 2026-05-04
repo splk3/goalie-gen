@@ -118,9 +118,14 @@ export default function GenerateClubPlanButton() {
     const contentWidth = pageWidth - margin * 2;
 
     doc.setFontSize(24);
-    doc.text(teamName, 105, 30, { align: "center" });
+    const nameLines = doc.splitTextToSize(teamName, contentWidth) as string[];
+    let nameY = 30;
+    nameLines.forEach((line) => {
+      doc.text(line, 105, nameY, { align: "center" });
+      nameY += 10;
+    });
     doc.setFontSize(18);
-    doc.text("Goaltending Development Plan", 105, 45, { align: "center" });
+    doc.text("Goaltending Development Plan", 105, nameY + 5, { align: "center" });
 
     if (imagePreview) {
       try {
@@ -327,7 +332,7 @@ export default function GenerateClubPlanButton() {
               format={outputFormat}
               onChange={setOutputFormat}
               name="club-output-format"
-              disabled={!!generatedBlob}
+              disabled={!!generatedBlob || isGenerating}
             />
 
             {validationError && (

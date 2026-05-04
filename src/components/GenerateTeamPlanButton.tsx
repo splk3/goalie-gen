@@ -569,7 +569,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               format={outputFormat}
               onChange={setOutputFormat}
               name="team-output-format"
-              disabled={!!generatedBlob}
+              disabled={!!generatedBlob || isGenerating}
             />
 
             {validationError && (
