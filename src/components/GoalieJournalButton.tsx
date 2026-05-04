@@ -146,8 +146,14 @@ export default function GoalieJournalButton() {
 
     // Compute entry box height from the actual number of prompts so the layout
     // stays correct when practice-entry.md is edited to add or remove prompts.
-    const lineSpacing = 13;
-    const entryHeight = Math.max(50, 37 + Math.max(0, entryLabels.length - 1) * lineSpacing + 2);
+    const lineSpacing = 13; // mm between prompt rows
+    const entryHeaderHeight = 23; // mm from box top to first prompt (entry label + date row)
+    const entryBorderPadding = 2; // mm for the box border
+    const entryMinHeight = 50; // mm minimum so the box is always readable
+    const entryHeight = Math.max(
+      entryMinHeight,
+      entryHeaderHeight + Math.max(0, entryLabels.length - 1) * lineSpacing + lineSpacing + entryBorderPadding
+    );
     const journalPageHeight = doc.internal.pageSize.height;
     const availablePerPage = journalPageHeight - 40; // top header + bottom margin
     const entriesPerPage = Math.max(1, Math.floor(availablePerPage / entryHeight));
@@ -199,7 +205,10 @@ export default function GoalieJournalButton() {
     doc.text(eosTitle, 105, 20, { align: "center" });
 
     const eosPageHeight = doc.internal.pageSize.height - 15;
-    const eosBlockHeight = 60; // prompt text + 3 answer lines
+    // Each EOS prompt block = prompt text line + 3 answer lines with spacing
+    const eosAnswerLines = 3;
+    const eosAnswerLineSpacing = 15; // mm between answer lines
+    const eosBlockHeight = 10 + eosAnswerLines * eosAnswerLineSpacing; // text(10) + 3×15
     doc.setFontSize(12);
     let eosY = 40;
     eosPrompts.forEach((prompt) => {

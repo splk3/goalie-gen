@@ -117,7 +117,9 @@ export default function GenerateClubPlanButton() {
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
     const nameFontSize = 24;
-    const nameLineHeight = nameFontSize * 0.4; // approx pt → mm line spacing
+    // jsPDF uses pt for font sizes but mm for coordinates; ~0.4 converts pt to mm line spacing
+    const ptToMmLineSpacing = 0.4;
+    const nameLineHeight = nameFontSize * ptToMmLineSpacing;
 
     doc.setFontSize(nameFontSize);
     const nameLines = doc.splitTextToSize(teamName, contentWidth) as string[];
@@ -127,7 +129,7 @@ export default function GenerateClubPlanButton() {
       nameY += nameLineHeight;
     });
     const subtitleFontSize = 18;
-    const subtitleLineHeight = subtitleFontSize * 0.4;
+    const subtitleLineHeight = subtitleFontSize * ptToMmLineSpacing;
     doc.setFontSize(subtitleFontSize);
     doc.text("Goaltending Development Plan", 105, nameY + 5, { align: "center" });
     const imageStartY = nameY + 5 + subtitleLineHeight + 5;
