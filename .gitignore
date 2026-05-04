@@ -73,3 +73,6 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+
+## don't need local super-linter.log
+super-linter.log
