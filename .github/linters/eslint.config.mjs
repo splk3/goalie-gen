@@ -20,9 +20,9 @@ const compat = new FlatCompat({
 
 export default [
   { ignores: ["!**/.*", "**/node_modules/.*"] },
+  // eslint:recommended for all files
+  ...compat.extends("eslint:recommended"),
   {
-    extends: compat.extends("eslint:recommended"),
-
     plugins: {
       n,
       prettier,
@@ -48,9 +48,13 @@ export default [
     ...config,
     files: ["**/*.json5"],
   })),
+  // JS/JSX: react/recommended
+  ...compat.extends("plugin:react/recommended").map((config) => ({
+    ...config,
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
+  })),
   {
     files: ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
-    extends: compat.extends("plugin:react/recommended"),
 
     languageOptions: {
       ecmaVersion: "latest",
@@ -64,15 +68,20 @@ export default [
       },
     },
   },
-  {
-    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
-
-    extends: compat.extends(
+  // TS/TSX: typescript-eslint + n + react + prettier
+  ...compat
+    .extends(
       "plugin:@typescript-eslint/recommended",
       "plugin:n/recommended",
       "plugin:react/recommended",
       "prettier"
-    ),
+    )
+    .map((config) => ({
+      ...config,
+      files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
+    })),
+  {
+    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
 
     plugins: {
       "@typescript-eslint": typescriptEslint,
