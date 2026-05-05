@@ -119,6 +119,14 @@ describe("blocksToDocxParagraphs", () => {
     paragraphs.forEach((p) => expect(p).toBeInstanceOf(Paragraph));
   });
 
+  it("bullet blocks with placeholders produce multiple child runs (italic support)", () => {
+    const text = "Drill: [placeholder drill name]";
+    const blocks: MarkdownBlock[] = [{ type: "bullet", text }];
+    const [para] = blocksToDocxParagraphs(blocks);
+    expect(para).toBeInstanceOf(Paragraph);
+    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(parseRunData(text).length);
+  });
+
   it("handles mixed content and returns the correct total count", () => {
     const blocks: MarkdownBlock[] = [
       { type: "heading", level: 2, text: "Section" },
