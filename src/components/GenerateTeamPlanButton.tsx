@@ -174,7 +174,15 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       })
     );
 
-    const templateBlocks = parseMarkdown(practiceTemplateMd).filter((b) => b.type !== "heading");
+    const allTemplateBlocks = parseMarkdown(practiceTemplateMd);
+    // Skip only the first heading (section title) so the "Practice N" label
+    // above each practice isn't duplicated, but any sub-headings in the
+    // template (e.g. "### Warm-Up") are still rendered in each practice.
+    const firstHeadingIdx = allTemplateBlocks.findIndex((b) => b.type === "heading");
+    const templateBlocks =
+      firstHeadingIdx >= 0
+        ? allTemplateBlocks.filter((_, i) => i !== firstHeadingIdx)
+        : allTemplateBlocks;
     for (let i = 1; i <= practicesNum; i++) {
       documentChildren.push(
         new Paragraph({
@@ -275,10 +283,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         doc.text(block.text, 20, pdfY);
         pdfY += 8;
       } else if (block.type === "bullet") {
-        addPageIfNeeded(7);
+        const bulletLines = doc.splitTextToSize(`- ${block.text}`, 165) as string[];
+        addPageIfNeeded(bulletLines.length * 7);
         doc.setFontSize(10);
-        doc.text(`- ${block.text}`, 25, pdfY);
-        pdfY += 7;
+        bulletLines.forEach((bLine) => {
+          doc.text(bLine, 25, pdfY);
+          pdfY += 7;
+        });
       }
     }
 
@@ -288,7 +299,14 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
     let currentY = 35;
     const pageHeight = doc.internal.pageSize.height;
-    const templateBlocks = parseMarkdown(practiceTemplateMd).filter((b) => b.type !== "heading");
+    const allPdfTemplateBlocks = parseMarkdown(practiceTemplateMd);
+    // Skip only the first heading (section title) so each practice's own
+    // "Practice N" label isn't duplicated, but sub-headings are preserved.
+    const firstPdfHeadingIdx = allPdfTemplateBlocks.findIndex((b) => b.type === "heading");
+    const pdfTemplateBlocks =
+      firstPdfHeadingIdx >= 0
+        ? allPdfTemplateBlocks.filter((_, i) => i !== firstPdfHeadingIdx)
+        : allPdfTemplateBlocks;
 
     for (let i = 1; i <= practicesNum; i++) {
       if (currentY > pageHeight - 60) {
@@ -301,9 +319,28 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       doc.setFontSize(10);
       currentY += 8;
 
-      for (const block of templateBlocks) {
+      for (const block of pdfTemplateBlocks) {
         if (block.type === "paragraph") {
           const lines = doc.splitTextToSize(block.text, 165) as string[];
+          lines.forEach((line) => {
+            if (currentY > pageHeight - 15) {
+              doc.addPage();
+              currentY = 20;
+            }
+            doc.text(line, 25, currentY);
+            currentY += 6;
+          });
+        } else if (block.type === "heading") {
+          if (currentY > pageHeight - 15) {
+            doc.addPage();
+            currentY = 20;
+          }
+          doc.setFontSize(12);
+          doc.text(block.text, 25, currentY);
+          doc.setFontSize(10);
+          currentY += 7;
+        } else if (block.type === "bullet") {
+          const lines = doc.splitTextToSize(`\u2022 ${block.text}`, 160) as string[];
           lines.forEach((line) => {
             if (currentY > pageHeight - 15) {
               doc.addPage();
@@ -489,14 +526,17 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                 id="team-name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Enter your team name"
               />
             </div>
 
             <div className="mb-4">
-              <ImageUploader onImageCropped={handleImageChange} disabled={!!generatedBlob} />
+              <ImageUploader
+                onImageCropped={handleImageChange}
+                disabled={!!generatedBlob || isGenerating}
+              />
             </div>
 
             <div className="mb-4">
@@ -510,7 +550,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                 id="ageGroup"
                 value={ageGroup}
                 onChange={(e) => setAgeGroup(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select age group</option>
@@ -533,7 +573,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                 id="skillLevel"
                 value={skillLevel}
                 onChange={(e) => setSkillLevel(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select skill level</option>
@@ -559,7 +599,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                 onChange={(e) => setNumberOfPractices(e.target.value)}
                 min="0"
                 max="50"
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Enter number (0-50)"
               />
@@ -569,7 +609,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               format={outputFormat}
               onChange={setOutputFormat}
               name="team-output-format"
-              disabled={!!generatedBlob}
+              disabled={!!generatedBlob || isGenerating}
             />
 
             {validationError && (

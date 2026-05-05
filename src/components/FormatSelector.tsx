@@ -19,8 +19,10 @@ export default function FormatSelector({
   const labelClass = `flex items-center gap-2 ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`;
 
   return (
-    <div className="mb-4">
-      <p className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">Output Format</p>
+    <fieldset className="mb-4">
+      <legend className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+        Output Format
+      </legend>
       <div className="flex gap-6">
         <label className={labelClass}>
           <input
@@ -47,6 +49,6 @@ export default function FormatSelector({
           <span className="text-gray-700 dark:text-gray-300">PDF (.pdf)</span>
         </label>
       </div>
-    </div>
+    </fieldset>
   );
 }

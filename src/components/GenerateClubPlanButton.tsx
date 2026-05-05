@@ -116,11 +116,23 @@ export default function GenerateClubPlanButton() {
     const pageWidth = doc.internal.pageSize.width;
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
+    const nameFontSize = 24;
+    // jsPDF uses pt for font sizes but mm for coordinates; ~0.4 converts pt to mm line spacing
+    const ptToMmLineSpacing = 0.4;
+    const nameLineHeight = nameFontSize * ptToMmLineSpacing;
 
-    doc.setFontSize(24);
-    doc.text(teamName, 105, 30, { align: "center" });
-    doc.setFontSize(18);
-    doc.text("Goaltending Development Plan", 105, 45, { align: "center" });
+    doc.setFontSize(nameFontSize);
+    const nameLines = doc.splitTextToSize(teamName, contentWidth) as string[];
+    let nameY = 30;
+    nameLines.forEach((line) => {
+      doc.text(line, 105, nameY, { align: "center" });
+      nameY += nameLineHeight;
+    });
+    const subtitleFontSize = 18;
+    const subtitleLineHeight = subtitleFontSize * ptToMmLineSpacing;
+    doc.setFontSize(subtitleFontSize);
+    doc.text("Goaltending Development Plan", 105, nameY + 5, { align: "center" });
+    const imageStartY = nameY + 5 + subtitleLineHeight + 5;
 
     if (imagePreview) {
       try {
@@ -139,7 +151,7 @@ export default function GenerateClubPlanButton() {
         w = w * ratio;
         h = h * ratio;
 
-        doc.addImage(imagePreview, "PNG", 105 - w / 2, 55, w, h);
+        doc.addImage(imagePreview, "PNG", 105 - w / 2, imageStartY, w, h);
       } catch (error) {
         console.error("Error adding image to PDF:", error);
       }
@@ -315,19 +327,22 @@ export default function GenerateClubPlanButton() {
                 id="club-team-name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                disabled={!!generatedBlob}
+                disabled={!!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Enter your team name"
               />
             </div>
 
-            <ImageUploader onImageCropped={handleImageCropped} disabled={!!generatedBlob} />
+            <ImageUploader
+              onImageCropped={handleImageCropped}
+              disabled={!!generatedBlob || isGenerating}
+            />
 
             <FormatSelector
               format={outputFormat}
               onChange={setOutputFormat}
               name="club-output-format"
-              disabled={!!generatedBlob}
+              disabled={!!generatedBlob || isGenerating}
             />
 
             {validationError && (

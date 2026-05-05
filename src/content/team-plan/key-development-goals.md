@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 ## Key Development Goals
 
 - Improve positioning and angle management

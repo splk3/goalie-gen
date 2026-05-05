@@ -37,6 +37,32 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("appends an indented continuation line to the previous bullet", () => {
+    const blocks = parseMarkdown("- First line\n  continuation here");
+    expect(blocks).toEqual([{ type: "bullet", text: "First line continuation here" }]);
+  });
+
+  it("appends multiple indented continuation lines to the same bullet", () => {
+    const blocks = parseMarkdown("- Start\n  middle\n  end");
+    expect(blocks).toEqual([{ type: "bullet", text: "Start middle end" }]);
+  });
+
+  it("does not treat a normal paragraph after a blank line as a bullet continuation", () => {
+    const blocks = parseMarkdown("- Bullet\n\nParagraph");
+    expect(blocks).toEqual([
+      { type: "bullet", text: "Bullet" },
+      { type: "paragraph", text: "Paragraph" },
+    ]);
+  });
+
+  it("does not treat an unindented line after a bullet as a continuation", () => {
+    const blocks = parseMarkdown("- Bullet\nNot continuation");
+    expect(blocks).toEqual([
+      { type: "bullet", text: "Bullet" },
+      { type: "paragraph", text: "Not continuation" },
+    ]);
+  });
+
   it("parses mixed content", () => {
     const md = "## My Section\n\nSome paragraph text.\n\n- Bullet A\n- Bullet B";
     const blocks = parseMarkdown(md);
@@ -61,5 +87,23 @@ describe("parseMarkdown", () => {
   it("ignores leading and trailing blank lines", () => {
     const blocks = parseMarkdown("\n\nSome text\n\n");
     expect(blocks).toEqual([{ type: "paragraph", text: "Some text" }]);
+  });
+
+  it("skips complete single-line HTML comment lines (e.g. markdownlint-disable directives)", () => {
+    const md = "<!-- markdownlint-disable MD041 -->\n## Section\n\nParagraph";
+    const blocks = parseMarkdown(md);
+    expect(blocks).toEqual([
+      { type: "heading", level: 2, text: "Section" },
+      { type: "paragraph", text: "Paragraph" },
+    ]);
+  });
+
+  it("does not skip lines that start with <!-- but are not complete comments", () => {
+    const md = "<!-- multi-line start\nsome content -->\n\n- Bullet";
+    const blocks = parseMarkdown(md);
+    // The opening line is not a complete comment so it becomes a paragraph
+    // (the closing line "some content -->" also becomes part of a paragraph)
+    const bulletBlock = blocks.find((b) => b.type === "bullet");
+    expect(bulletBlock).toEqual({ type: "bullet", text: "Bullet" });
   });
 });

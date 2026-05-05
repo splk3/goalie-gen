@@ -21,6 +21,13 @@ export function parseMarkdown(markdown: string): MarkdownBlock[] {
   };
 
   for (const line of lines) {
+    // Skip complete single-line HTML comment lines (e.g. markdownlint inline-disable
+    // directives like <!-- markdownlint-disable MD041 -->). Multi-line HTML comments
+    // are not tracked since content fragments only use single-line disable directives.
+    if (line.trim().startsWith("<!--") && line.trim().endsWith("-->")) {
+      continue;
+    }
+
     const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
     if (headingMatch) {
       flushParagraph();
@@ -33,6 +40,13 @@ export function parseMarkdown(markdown: string): MarkdownBlock[] {
     if (bulletMatch) {
       flushParagraph();
       blocks.push({ type: "bullet", text: bulletMatch[1].trim() });
+      continue;
+    }
+
+    // Indented continuation of the previous bullet (e.g. wrapped list items)
+    const lastBlock = blocks[blocks.length - 1];
+    if (lastBlock?.type === "bullet" && line.match(/^[ \t]+\S/)) {
+      lastBlock.text += " " + line.trim();
       continue;
     }
 

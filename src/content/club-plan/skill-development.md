@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 ## Skill Development Areas
 
 [Detail the specific skills to focus on, such as:]
