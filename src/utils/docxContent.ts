@@ -53,9 +53,9 @@ export function textToRuns(text: string): TextRun[] {
 
 /**
  * Converts an array of parsed markdown blocks into docx Paragraph objects.
- * For paragraph blocks, italic style is applied to placeholder text wrapped in
- * square brackets, including inline occurrences such as "Focus: [Placeholder]".
- * Bullet blocks render their text as-is without placeholder styling.
+ * For both paragraph and bullet blocks, italic style is applied to placeholder
+ * text wrapped in square brackets, including inline occurrences such as
+ * "Focus: [Placeholder]".
  */
 export function blocksToDocxParagraphs(blocks: MarkdownBlock[]): Paragraph[] {
   return blocks.flatMap((block) => {
@@ -85,7 +85,7 @@ export function blocksToDocxParagraphs(blocks: MarkdownBlock[]): Paragraph[] {
       case "bullet":
         return [
           new Paragraph({
-            text: block.text,
+            children: textToRuns(block.text),
             bullet: { level: 0 },
             spacing: { after: 100 },
           }),
