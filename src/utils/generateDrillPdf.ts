@@ -230,18 +230,20 @@ export const generateDrillPdf = async (
 
   if (imageInfos.length > 0) {
     const maxImageWidth = rightColumnWidth;
+    // Distribute the full right-column height equally across all images so they all
+    // fit on page 1. Gaps between images are accounted for before dividing.
+    const totalGaps = (imageInfos.length - 1) * 4;
+    const availableHeight = contentBottomLimit - contentStartY - totalGaps;
+    const maxImageHeight = availableHeight / imageInfos.length;
 
     imageInfos.forEach((imageInfo) => {
       const aspectRatio = imageInfo.width / imageInfo.height;
       let imgWidth = maxImageWidth;
       let imgHeight = imgWidth / aspectRatio;
 
-      // Cap height only if the image would overflow the content area (footer safe zone).
-      // This allows portrait-oriented diagrams to be as tall as their natural aspect ratio,
-      // as long as they don't exceed the available column height.
-      const maxAvailableHeight = contentBottomLimit - rightY - 4;
-      if (imgHeight > maxAvailableHeight) {
-        imgHeight = maxAvailableHeight;
+      // Shrink to fit the allocated height slice if needed
+      if (imgHeight > maxImageHeight) {
+        imgHeight = maxImageHeight;
         imgWidth = imgHeight * aspectRatio;
       }
 
