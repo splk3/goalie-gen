@@ -14,6 +14,7 @@ interface DrillPageContext {
   drillData: {
     name: string;
     description: string;
+    drill_steps?: string[];
     coaching_focus_points: string[];
     shooter_focus_points?: string[];
     drill_progressions?: string[];
@@ -178,6 +179,13 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
                 {normalizedDescription}
               </p>
+              {drillData.drill_steps && drillData.drill_steps.length > 0 && (
+                <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.drill_steps.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              )}
             </div>
 
             <div className="mb-6 print:mb-3">

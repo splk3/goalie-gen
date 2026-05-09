@@ -88,4 +88,27 @@ describe("estimateDrillPdfPages", () => {
 
     expect(softWrappedEstimate).toBe(spaceWrappedEstimate);
   });
+
+  it("accounts for optional drill steps when estimating page count", () => {
+    const baseData = {
+      name: "Drill Steps Estimate",
+      description: "Short description",
+      coaching_focus_points: Array.from({ length: 50 }, () => "quick"),
+      shooter_focus_points: Array.from({ length: 10 }, () => "quick"),
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    const withoutSteps = estimateDrillPdfPages(baseData);
+    const withSteps = estimateDrillPdfPages({
+      ...baseData,
+      drill_steps: Array.from({ length: 30 }, (_, index) => `Drill step ${index + 1}`),
+    });
+
+    expect(withoutSteps).toBe(2);
+    expect(withSteps).toBeGreaterThan(withoutSteps);
+  });
 });

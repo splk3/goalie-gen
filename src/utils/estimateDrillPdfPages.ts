@@ -36,6 +36,10 @@ function estimateBulletHeight(text: string): number {
   return estimateLines(`• ${text}`) * LINE_HEIGHT + 1;
 }
 
+function estimateNumberedHeight(text: string, index: number): number {
+  return estimateLines(`${index + 1}. ${text}`) * LINE_HEIGHT + 1;
+}
+
 /**
  * Estimates how many PDF pages a drill will need when rendered by generateDrillPdf.
  *
@@ -56,7 +60,18 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
 
   // Description
   leftColHeight += HEADING_HEIGHT;
-  leftColHeight += estimateLines(normalizedDescription) * LINE_HEIGHT + SECTION_GAP;
+  leftColHeight += estimateLines(normalizedDescription) * LINE_HEIGHT;
+
+  // Drill steps (optional, no heading)
+  if (drillData.drill_steps && drillData.drill_steps.length > 0) {
+    leftColHeight += SECTION_GAP;
+    for (const [index, step] of drillData.drill_steps.entries()) {
+      leftColHeight += estimateNumberedHeight(step, index);
+    }
+    leftColHeight += 2;
+  }
+
+  leftColHeight += SECTION_GAP;
 
   // Coaching focus points
   leftColHeight += HEADING_HEIGHT;

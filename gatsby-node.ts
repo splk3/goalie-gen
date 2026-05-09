@@ -89,6 +89,19 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`);
   }
 
+  if (typeof d.drill_steps !== "undefined" && !Array.isArray(d.drill_steps)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must be an array of strings`);
+  }
+  if (Array.isArray(d.drill_steps)) {
+    for (const step of d.drill_steps) {
+      if (typeof step !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`
+        );
+      }
+    }
+  }
+
   if (!Array.isArray(d.coaching_focus_points)) {
     throw new Error(
       `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
@@ -473,6 +486,7 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         slug: folder,
         name: drillData.name,
         description: drillData.description,
+        drill_steps: drillData.drill_steps,
         coaching_focus_points: drillData.coaching_focus_points,
         shooter_focus_points: drillData.shooter_focus_points,
         drill_progressions: drillData.drill_progressions,
