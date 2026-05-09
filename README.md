@@ -379,7 +379,8 @@ GitHub Pages and Cloudflare Pages, and must not require web workers.
 #### `src/components/INeedADrillButton.tsx`
 
 - **Current performance risks**
-  - Executes a full drill GraphQL query and filter setup in the button component path.
+  - Queries all drills (using minimal fields) and initializes filter state in the button component
+    path.
   - Modal/filter UI work is initialized before user intent (before opening modal).
 - **Likely user impact**
   - Extra homepage work and slower interactivity on low-end devices.
@@ -475,7 +476,8 @@ GitHub Pages and Cloudflare Pages, and must not require web workers.
 #### Related utility: `src/utils/videoUtils.ts`
 
 - **Current performance risks**
-  - Vimeo thumbnail fetch is uncached and can re-request the same URL.
+  - If future call sites start using `getVideoThumbnailUrl()` for Vimeo thumbnails, the fetch path
+    is currently uncached and can re-request the same URL.
   - Repeated URL parsing for the same inputs across component rerenders.
 - **Likely user impact**
   - Extra network calls and slight UI delays for repeated video rendering paths.
