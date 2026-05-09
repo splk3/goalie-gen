@@ -25,7 +25,7 @@ const HEADER_AND_TAGS_HEIGHT = 65;
 const SKILLS_SECTION_HEIGHT = 30;
 
 function estimateLines(text: string): number {
-  return Math.max(1, Math.ceil(text.length / CHARS_PER_LINE));
+  return text.split("\\n").reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / CHARS_PER_LINE)), 0);
 }
 
 function estimateBulletHeight(text: string): number {
