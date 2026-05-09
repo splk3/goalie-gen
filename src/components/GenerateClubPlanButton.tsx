@@ -1,6 +1,5 @@
 import * as React from "react";
-import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph } from "docx";
-import { jsPDF } from "jspdf";
+import type { Paragraph } from "docx";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
@@ -8,6 +7,7 @@ import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
 import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
+import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
 import introductionMd from "../content/club-plan/introduction.md";
 import seasonGoalsMd from "../content/club-plan/season-goals.md";
 import trainingScheduleMd from "../content/club-plan/training-schedule.md";
@@ -45,6 +45,9 @@ export default function GenerateClubPlanButton() {
   }, []);
 
   const generateDocx = async (): Promise<void> => {
+    const { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph } =
+      await loadDocxModule();
+
     let arrayBuffer: ArrayBuffer | null = null;
     if (selectedImage) {
       arrayBuffer = await selectedImage.arrayBuffer();
@@ -112,6 +115,7 @@ export default function GenerateClubPlanButton() {
   };
 
   const generatePdf = async (): Promise<void> => {
+    const { jsPDF } = await loadJsPdfModule();
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     const margin = 20;
