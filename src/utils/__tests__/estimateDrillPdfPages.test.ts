@@ -44,27 +44,20 @@ describe("estimateDrillPdfPages", () => {
     }
   });
 
-  it("reports drills estimated to need more than one page", () => {
-    const multiPageDrills: string[] = [];
+  it("uses larger follow-on page capacity after first-page overflow", () => {
+    const shortPoint = "quick";
+    const drillData = {
+      name: "Estimator Capacity Regression",
+      description: "Short description",
+      coaching_focus_points: Array.from({ length: 50 }, () => shortPoint),
+      shooter_focus_points: Array.from({ length: 10 }, () => shortPoint),
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
 
-    for (const { folder, drillData } of drills) {
-      const pages = estimateDrillPdfPages(drillData);
-      if (pages > 1) {
-        multiPageDrills.push(
-          `${folder} ("${drillData.name}") — estimated ${pages} page(s)`
-        );
-      }
-    }
-
-    if (multiPageDrills.length > 0) {
-      console.warn(
-        "\n⚠️  Drills estimated to need more than 1 PDF page (consider shortening content):\n" +
-          multiPageDrills.map((d) => `   • ${d}`).join("\n") +
-          "\n"
-      );
-    }
-
-    // This assertion always passes — the test exists to surface the warning, not to fail.
-    expect(multiPageDrills).toBeDefined();
+    expect(estimateDrillPdfPages(drillData)).toBe(2);
   });
 });

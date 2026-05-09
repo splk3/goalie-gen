@@ -46,7 +46,8 @@ function estimateBulletHeight(text: string): number {
  */
 export function estimateDrillPdfPages(drillData: DrillData): number {
   const contentStartY = MARGIN + HEADER_AND_TAGS_HEIGHT;
-  const availableHeightPerPage = CONTENT_BOTTOM_LIMIT - contentStartY;
+  const availableFirstPage = CONTENT_BOTTOM_LIMIT - contentStartY;
+  const availableOtherPages = CONTENT_BOTTOM_LIMIT - (MARGIN + 5);
 
   // Estimate left column height
   let leftColHeight = 0;
@@ -85,5 +86,9 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
 
   const totalNeeded = leftColHeight + postColumnHeight;
 
-  return Math.max(1, Math.ceil(totalNeeded / availableHeightPerPage));
+  if (totalNeeded <= availableFirstPage) {
+    return 1;
+  }
+
+  return 1 + Math.ceil((totalNeeded - availableFirstPage) / availableOtherPages);
 }
