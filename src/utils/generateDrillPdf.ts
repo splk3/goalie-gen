@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
+import { normalizeDrillDescription } from "./normalizeDrillDescription";
 
 export type { DrillData };
 
@@ -267,7 +268,8 @@ export const generateDrillPdf = async (
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
   doc.setFont(undefined, "normal");
-  const descriptionLines = doc.splitTextToSize(drillData.description, leftColumnWidth);
+  const normalizedDescription = normalizeDrillDescription(drillData.description);
+  const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
   leftY = ensureSpace(leftY, descriptionLines.length * 4);
   doc.text(descriptionLines, margin, leftY);
   leftY += descriptionLines.length * 4 + 3;

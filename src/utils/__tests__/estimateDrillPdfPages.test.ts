@@ -60,4 +60,32 @@ describe("estimateDrillPdfPages", () => {
 
     expect(estimateDrillPdfPages(drillData)).toBe(2);
   });
+
+  it("treats single newlines in descriptions the same as soft-wrapped spaces", () => {
+    const commonDrillData = {
+      name: "Description Normalization Regression",
+      coaching_focus_points: ["quick rep"],
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as Omit<DrillData, "description">;
+
+    const softWrappedDescription =
+      "This drill has a soft wrap in yaml source\nthat should not change estimated line usage.";
+    const spaceWrappedDescription =
+      "This drill has a soft wrap in yaml source that should not change estimated line usage.";
+
+    const softWrappedEstimate = estimateDrillPdfPages({
+      ...commonDrillData,
+      description: softWrappedDescription,
+    });
+    const spaceWrappedEstimate = estimateDrillPdfPages({
+      ...commonDrillData,
+      description: spaceWrappedDescription,
+    });
+
+    expect(softWrappedEstimate).toBe(spaceWrappedEstimate);
+  });
 });
