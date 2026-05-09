@@ -6,6 +6,7 @@ import DarkModeToggle from "../components/DarkModeToggle";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { generateDrillPdf } from "../utils/generateDrillPdf";
+import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 
 interface DrillPageContext {
@@ -70,6 +71,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
+  const normalizedDescription = normalizeDrillDescription(drillData.description);
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -174,7 +176,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 Description
               </h2>
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
-                {drillData.description}
+                {normalizedDescription}
               </p>
             </div>
 
