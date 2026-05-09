@@ -6,11 +6,17 @@ description: |-
   Find light and then power push to the proper angle,
   maintaining depth and posture.
 
-coaching_points:
+coaching_focus_points:
   - Head turn on finding next light, then hands/hips follow.
   - Watch stick, glove, and blocker position until end of drill.
   - Adjust Lights Out Timeout and duration based on player.
   - Alternate equipment - use cones instead of Blaze Pods
+
+# shooter_focus_points:
+#   - Shooter focus point 1
+
+# drill_progressions: |
+#   Add drill progression notes here.
 
 images:
   - test-drill-image.png

@@ -46,16 +46,36 @@ body:
       required: true
 
   - type: textarea
-    id: coaching_points
+    id: coaching_focus_points
     attributes:
-      label: Coaching Points
-      description: Enter one coaching point per line.
+      label: Coaching Focus Points
+      description: Enter one coaching focus point per line.
       placeholder: |
-        - Coaching point 1
-        - Coaching point 2
-        - Coaching point 3
+        - Coaching focus point 1
+        - Coaching focus point 2
+        - Coaching focus point 3
     validations:
       required: true
+
+  - type: textarea
+    id: shooter_focus_points
+    attributes:
+      label: Shooter Focus Points (Optional)
+      description: Enter one shooter focus point per line. Leave blank if not applicable.
+      placeholder: |
+        - Shooter focus point 1
+        - Shooter focus point 2
+
+  - type: textarea
+    id: drill_progressions
+    attributes:
+      label: Drill Progressions (Optional)
+      description: >-
+        List or describe drill progressions or alterations coaches can use as needed.
+        Leave blank if not applicable.
+      placeholder: |
+        1. Drill progression or alteration 1
+        2. Drill progression or alteration 2
 
   - type: textarea
     id: video
@@ -175,6 +195,11 @@ body:
         - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
+        - The `coaching_focus_points` field is required. Map the "Coaching Focus Points" form field to it.
+        - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
+          Otherwise, leave it out entirely (do not include a commented-out placeholder).
+        - If "Drill Progressions" was provided, add the `drill_progressions` field as a multiline string.
+          Otherwise, leave it out entirely.
         - Add the images to the folder, updating the `images` field as needed.
           If the images are pasted into the text area and not attached, make sure to save the images and add them to the drill folder,
           naming them after the drill name and updating the `images` field accordingly.

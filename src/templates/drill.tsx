@@ -13,7 +13,9 @@ interface DrillPageContext {
   drillData: {
     name: string;
     description: string;
-    coaching_points: string[];
+    coaching_focus_points: string[];
+    shooter_focus_points?: string[];
+    drill_progressions?: string[];
     images: string[];
     video?: string;
     drill_creation_date: string;
@@ -163,9 +165,9 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Description, Coaching Points, and Images */}
+        {/* Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions, and Images */}
         <div className="grid md:grid-cols-2 gap-8 mb-8 print:grid-cols-2 print:gap-4 print:mb-4">
-          {/* Left Column: Description and Coaching Points */}
+          {/* Left Column: Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
           <div>
             <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
@@ -176,16 +178,42 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
               </p>
             </div>
 
-            <div>
+            <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                Coaching Points
+                Coaching Focus Points
               </h2>
               <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                {(drillData.coaching_points || []).map((point, index) => (
+                {(drillData.coaching_focus_points || []).map((point, index) => (
                   <li key={index}>{point}</li>
                 ))}
               </ul>
             </div>
+
+            {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (
+              <div className="mb-6 print:mb-3">
+                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+                  Shooter Focus Points
+                </h2>
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.shooter_focus_points.map((point, index) => (
+                    <li key={index}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+                  Drill Progressions
+                </h2>
+                <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.drill_progressions.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Images */}

@@ -88,8 +88,37 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`);
   }
 
-  if (!Array.isArray(d.coaching_points)) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'coaching_points' (array)`);
+  if (!Array.isArray(d.coaching_focus_points)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
+    );
+  }
+
+  if (
+    typeof d.shooter_focus_points !== "undefined" &&
+    !Array.isArray(d.shooter_focus_points)
+  ) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be an array of strings`
+    );
+  }
+  if (Array.isArray(d.shooter_focus_points)) {
+    for (const point of d.shooter_focus_points) {
+      if (typeof point !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'shooter_focus_points' must contain only strings`
+        );
+      }
+    }
+  }
+
+  if (
+    typeof d.drill_progressions !== "undefined" &&
+    !Array.isArray(d.drill_progressions)
+  ) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array`
+    );
   }
 
   if (!Array.isArray(d.images)) {
@@ -426,7 +455,9 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         slug: folder,
         name: drillData.name,
         description: drillData.description,
-        coaching_points: drillData.coaching_points,
+        coaching_focus_points: drillData.coaching_focus_points,
+        shooter_focus_points: drillData.shooter_focus_points,
+        drill_progressions: drillData.drill_progressions,
         images: drillData.images,
         video: drillData.video,
         drill_creation_date: drillData.drill_creation_date,

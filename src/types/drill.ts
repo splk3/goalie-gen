@@ -1,7 +1,9 @@
 export interface DrillData {
   name: string;
   description: string;
-  coaching_points: string[];
+  coaching_focus_points: string[];
+  shooter_focus_points?: string[];
+  drill_progressions?: string[];
   images: string[];
   video?: string;
   drill_creation_date: string;

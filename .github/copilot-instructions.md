@@ -284,7 +284,7 @@ This project uses a YAML-based drill system with dynamic page generation:
 2. **Required drill.yml Fields**:
    - `name` (string): Drill name
    - `description` (string): Drill description
-   - `coaching_points` (array): List of coaching tips
+   - `coaching_focus_points` (array): List of coaching focus points
    - `images` (array): Array of image filenames
    - `tags` (object): Categorization tags
    - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
@@ -292,6 +292,8 @@ This project uses a YAML-based drill system with dynamic page generation:
 3. **Optional drill.yml Fields**:
    - `video` (string): YouTube or Vimeo URL for the drill
    - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
+   - `shooter_focus_points` (array): List of shooter-specific focus points
+   - `drill_progressions` (array): Numbered list of drill progressions or alterations
 
 4. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API

@@ -186,7 +186,7 @@ export const generateDrillPdf = async (
     }
   }
 
-  // Left column: Description and Coaching Points
+  // Left column: Description and Coaching Focus Points
   const contentStartY = currentY;
   let leftY = contentStartY;
 
@@ -204,22 +204,61 @@ export const generateDrillPdf = async (
   doc.text(descriptionLines, margin, leftY);
   leftY += descriptionLines.length * 4 + 5;
 
-  // Coaching Points
+  // Coaching Focus Points
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
-  doc.text("Coaching Points", margin, leftY);
+  doc.text("Coaching Focus Points", margin, leftY);
   leftY += 6;
 
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
   doc.setFont(undefined, "normal");
 
-  if (drillData.coaching_points && drillData.coaching_points.length > 0) {
-    drillData.coaching_points.forEach((point) => {
+  if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
+    drillData.coaching_focus_points.forEach((point) => {
       const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5);
       doc.text(pointLines, margin + 3, leftY);
       leftY += pointLines.length * 4 + 1;
+    });
+  }
+
+  // Shooter Focus Points (optional)
+  if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
+    leftY += 3;
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("Shooter Focus Points", margin, leftY);
+    leftY += 6;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+
+    drillData.shooter_focus_points.forEach((point) => {
+      const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5);
+      doc.text(pointLines, margin + 3, leftY);
+      leftY += pointLines.length * 4 + 1;
+    });
+  }
+
+  // Drill Progressions (optional)
+  if (drillData.drill_progressions && drillData.drill_progressions.length > 0) {
+    leftY += 3;
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("Drill Progressions", margin, leftY);
+    leftY += 6;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+    drillData.drill_progressions.forEach((step, index) => {
+      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
+      doc.text(stepLines, margin + 3, leftY);
+      leftY += stepLines.length * 4 + 1;
     });
   }
 
