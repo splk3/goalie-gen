@@ -118,8 +118,17 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     !Array.isArray(d.drill_progressions)
   ) {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array`
+      "[" + drillFolder + "] drill.yml field 'drill_progressions' must be an array"
     );
+  }
+  if (Array.isArray(d.drill_progressions)) {
+    for (const step of d.drill_progressions) {
+      if (typeof step !== "string") {
+        throw new Error(
+          "[" + drillFolder + "] drill.yml field 'drill_progressions' must contain only strings"
+        );
+      }
+    }
   }
 
   if (!Array.isArray(d.images)) {
