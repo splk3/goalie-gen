@@ -319,6 +319,196 @@ Dependabot is configured via `.github/dependabot.yml` to automatically check for
 - `.env.production`: Production environment configuration (e.g., `GATSBY_SITE_URL=https://goaliegen.com`)
 - `.env.example`: Template for environment variables
 
+## ⚡ Performance Audit (Client-Side Static Architecture)
+
+This audit is scoped to a client-side-only Gatsby static site that must remain compatible with
+GitHub Pages and Cloudflare Pages, and must not require web workers.
+
+### File-by-file findings
+
+#### `src/utils/generateDrillPdf.ts`
+
+- **Current performance risks**
+  - Re-encodes static logos and drill images to base64 data URLs on each PDF generation.
+  - Loads drill images sequentially in a loop, increasing wait time for multi-image drills.
+  - Large in-memory image + canvas objects can increase transient memory pressure.
+- **Likely user impact**
+  - Slower "Print Drill"/"Download PDF" response, especially on mobile devices or slower CPUs.
+- **Impact type**
+  - Runtime, bundle execution time, memory.
+- **Low-risk client-only fixes**
+  - Add in-memory image cache (keyed by image path) for reused logos and drill images.
+  - Load drill images with `Promise.all` so decode work happens in parallel.
+  - Release canvas/image references as soon as possible after conversion.
+- **Priority**
+  - **P0 (highest)**.
+
+#### `src/components/GoalieJournalButton.tsx`
+
+- **Current performance risks**
+  - `docx` and `jspdf` are imported eagerly; heavy libraries are added to initial client bundle.
+  - Markdown sections are parsed repeatedly on each generation instead of reusing parsed output.
+- **Likely user impact**
+  - Slower initial page load even if users never open the generator modal.
+  - Longer generation time for repeated exports.
+- **Impact type**
+  - Bundle size, runtime.
+- **Low-risk client-only fixes**
+  - Dynamically import `docx`/`jspdf` inside generation handlers.
+  - Parse static markdown once (module-level or memoized cache) and reuse parsed blocks.
+- **Priority**
+  - **P0**.
+
+#### `src/components/GenerateTeamPlanButton.tsx`
+
+- **Current performance risks**
+  - Same eager `docx` and `jspdf` imports as above.
+  - Repeated parsing of static markdown templates during each generation.
+  - Repeated image decode work for preview image dimensions.
+- **Likely user impact**
+  - Higher initial JS payload and slower plan generation.
+- **Impact type**
+  - Bundle size, runtime.
+- **Low-risk client-only fixes**
+  - Use dynamic imports for `docx`/`jspdf`.
+  - Cache parsed markdown blocks for static section content.
+  - Reuse decoded image dimensions where possible.
+- **Priority**
+  - **P0**.
+
+#### `src/components/INeedADrillButton.tsx`
+
+- **Current performance risks**
+  - Executes a full drill GraphQL query and filter setup in the button component path.
+  - Modal/filter UI work is initialized before user intent (before opening modal).
+- **Likely user impact**
+  - Extra homepage work and slower interactivity on low-end devices.
+- **Impact type**
+  - Runtime, memory.
+- **Low-risk client-only fixes**
+  - Defer expensive filter/modal computations until modal opens.
+  - Keep query fields minimal (currently mostly minimal; preserve this).
+  - Memoize random selection helper/callback paths used by modal controls.
+- **Priority**
+  - **P1**.
+
+#### `src/pages/goalie-drills.tsx`
+
+- **Current performance risks**
+  - Parses `Date` values repeatedly inside sort comparator (`O(n log n)` parse work).
+  - Renders grid images without explicit lazy loading.
+  - Reimplements filter logic that already exists in `useDrillFilters`, increasing computation
+    duplication and maintenance complexity.
+- **Likely user impact**
+  - Slower filtering/sorting with larger drill inventories and unnecessary image network/decode
+    work when scrolling.
+- **Impact type**
+  - Runtime, memory, network.
+- **Low-risk client-only fixes**
+  - Precompute numeric timestamps once per drill before sorting.
+  - Add `loading="lazy"` and `decoding="async"` for card images.
+  - Consolidate filter logic with `useDrillFilters` to avoid duplicate compute paths.
+- **Priority**
+  - **P0**.
+
+#### `src/templates/drill.tsx`
+
+- **Current performance risks**
+  - Imports PDF generator eagerly in page bundle.
+  - Drill images and embedded video iframe load eagerly.
+- **Likely user impact**
+  - Slower drill-page first render and higher initial network/CPU usage.
+- **Impact type**
+  - Bundle size, runtime, network.
+- **Low-risk client-only fixes**
+  - Dynamically import PDF generator on print/download action.
+  - Add lazy loading for drill images and iframe (`loading="lazy"` where supported).
+  - Keep video thumbnail fallback lightweight for print layout.
+- **Priority**
+  - **P0**.
+
+#### `gatsby-node.ts`
+
+- **Current performance risks**
+  - Reads and parses all drill YAML twice per build (`createPages` + `sourceNodes`).
+  - Uses recursive synchronous copy/delete for `drills -> static/drills`, which scales poorly.
+- **Likely user impact**
+  - Slower CI and local build times as drill inventory grows.
+- **Impact type**
+  - Build time, memory.
+- **Low-risk client-only fixes**
+  - Cache parsed drill data once and reuse across Gatsby APIs.
+  - Replace custom recursive filesystem loops with `fs.rmSync`/`fs.cpSync` equivalents.
+- **Priority**
+  - **P1**.
+
+#### `gatsby-config.ts`
+
+- **Current performance risks**
+  - No acute bottleneck in current config; manifest setup is straightforward.
+  - Site metadata recomputation is negligible.
+- **Likely user impact**
+  - Minimal.
+- **Impact type**
+  - Build time (very low), bundle metadata (very low).
+- **Low-risk client-only fixes**
+  - No urgent change required.
+  - Optional: add bundle-analysis workflow/script for periodic visibility.
+- **Priority**
+  - **P3 (monitor only)**.
+
+#### `package.json`
+
+- **Current performance risks**
+  - Heavy client-side libraries (`docx`, `jspdf`) are in active dependencies and currently loaded
+    eagerly by generator components.
+- **Likely user impact**
+  - Larger JS payload for users not using export features.
+- **Impact type**
+  - Bundle size, runtime parse/execute.
+- **Low-risk client-only fixes**
+  - Keep dependencies, but enforce lazy-loading usage patterns in components.
+  - Optional: add `build:analyze` script (`gatsby build --profile`) for regression tracking.
+- **Priority**
+  - **P1**.
+
+#### Related utility: `src/utils/videoUtils.ts`
+
+- **Current performance risks**
+  - Vimeo thumbnail fetch is uncached and can re-request the same URL.
+  - Repeated URL parsing for the same inputs across component rerenders.
+- **Likely user impact**
+  - Extra network calls and slight UI delays for repeated video rendering paths.
+- **Impact type**
+  - Runtime, network.
+- **Low-risk client-only fixes**
+  - Add in-memory thumbnail URL cache by input URL.
+  - Memoize derived embed/thumbnail values at call sites when reused.
+- **Priority**
+  - **P2**.
+
+### Implementation plan (phased; each phase should be created as a sub-issue under the parent issue)
+
+- **Phase 1 (Sub-issue): Client bundle and on-demand loading**
+  - Lazy-load `jspdf`/`docx` paths in plan/journal/drill export entry points.
+  - Ensure heavy generation logic is only initialized on user interaction.
+  - Add guardrail checks so static hosting compatibility remains unchanged.
+
+- **Phase 2 (Sub-issue): Drill browsing runtime optimization**
+  - Optimize `goalie-drills.tsx` sorting/filtering hot paths.
+  - Add lazy image loading for drill cards and drill template media.
+  - Reduce repeated computations for filter and tag formatting paths.
+
+- **Phase 3 (Sub-issue): PDF/media generation efficiency**
+  - Add image/base64 caching in `generateDrillPdf.ts`.
+  - Parallelize drill image loading and tighten memory lifecycle for canvas/image objects.
+  - Cache markdown-derived section blocks for repeated document generation.
+
+- **Phase 4 (Sub-issue): Build pipeline scaling**
+  - Reuse parsed drill dataset between `createPages` and `sourceNodes`.
+  - Simplify filesystem copy/cleanup logic in `gatsby-node.ts`.
+  - Add optional performance telemetry script/check for build trend visibility.
+
 ## 🤝 Contributing
 
 This is a Gatsby/React project with TypeScript. When contributing:
