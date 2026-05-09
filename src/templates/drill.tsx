@@ -93,7 +93,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             alt="USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
-            loading="lazy"
+            loading="eager"
             decoding="async"
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
@@ -102,7 +102,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             alt="51 in 30 USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
-            loading="lazy"
+            loading="eager"
             decoding="async"
           />
         </div>

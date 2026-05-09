@@ -6,7 +6,10 @@ let jsPdfModulePromise: Promise<JsPdfModule> | null = null;
 
 export const loadDocxModule = async (): Promise<DocxModule> => {
   if (!docxModulePromise) {
-    docxModulePromise = import("docx");
+    docxModulePromise = import("docx").catch((error) => {
+      docxModulePromise = null;
+      throw error;
+    });
   }
 
   return docxModulePromise;
@@ -14,7 +17,10 @@ export const loadDocxModule = async (): Promise<DocxModule> => {
 
 export const loadJsPdfModule = async (): Promise<JsPdfModule> => {
   if (!jsPdfModulePromise) {
-    jsPdfModulePromise = import("jspdf");
+    jsPdfModulePromise = import("jspdf").catch((error) => {
+      jsPdfModulePromise = null;
+      throw error;
+    });
   }
 
   return jsPdfModulePromise;
