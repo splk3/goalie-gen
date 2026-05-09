@@ -1,6 +1,4 @@
 import * as React from "react";
-import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } from "docx";
-import { jsPDF } from "jspdf";
 import { withPrefix } from "gatsby";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
@@ -8,6 +6,8 @@ import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
 import { parseMarkdown } from "../utils/markdownParser";
+import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
+import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
 import coverMd from "../content/goalie-journal/cover.md";
 import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
@@ -59,7 +59,7 @@ export default function GoalieJournalButton() {
         );
         resolve(null);
       };
-      img.src = withPrefix("/images/logos/logo-alt-light.png");
+      img.src = withPrefix(buildCacheBustedAssetPath("/images/logos/logo-alt-light.png"));
     });
   };
 
@@ -74,6 +74,7 @@ export default function GoalieJournalButton() {
   };
 
   const generatePdf = async (): Promise<void> => {
+    const { jsPDF } = await loadJsPdfModule();
     const doc = new jsPDF();
     const currentYear = new Date().getFullYear();
     const season = `${currentYear}-${currentYear + 1}`;
@@ -259,10 +260,12 @@ export default function GoalieJournalButton() {
   };
 
   const generateDocx = async (): Promise<void> => {
+    const { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } =
+      await loadDocxModule();
     const currentYear = new Date().getFullYear();
     const season = `${currentYear}-${currentYear + 1}`;
 
-    const documentChildren: Paragraph[] = [];
+    const documentChildren = [];
 
     // Cover: heading, optional logo, name/team/season/subtitle
     const coverBlocks = parseMarkdown(coverMd);
@@ -515,7 +518,7 @@ export default function GoalieJournalButton() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
       } else {
         saveAs(generatedBlob, generatedFileName);
       }

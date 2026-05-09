@@ -3,6 +3,7 @@ import { Link, graphql } from "gatsby";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import Pagination from "../components/Pagination";
+import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 interface DrillNode {
   slug: string;
@@ -503,9 +504,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           >
             <div className="aspect-video bg-gray-200 dark:bg-gray-700">
               <img
-                src={`/drills/${drill.slug}/${drill.image}`}
+                src={buildCacheBustedAssetPath(`/drills/${drill.slug}/${drill.image}`)}
                 alt=""
                 className="w-full h-full object-contain"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div className="p-6">

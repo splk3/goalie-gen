@@ -1,12 +1,12 @@
 import * as React from "react";
-import { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } from "docx";
-import { jsPDF } from "jspdf";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
 import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
+import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
+import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import seasonOverviewMd from "../content/team-plan/season-overview.md";
 import keyDevelopmentGoalsMd from "../content/team-plan/key-development-goals.md";
 import practiceTemplateMd from "../content/team-plan/practice-template.md";
@@ -84,6 +84,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   };
 
   const generateDocx = async (): Promise<void> => {
+    const { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } =
+      await loadDocxModule();
     const practicesNum = parseInt(numberOfPractices, 10);
 
     let arrayBuffer: ArrayBuffer | null = null;
@@ -91,7 +93,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       arrayBuffer = await selectedImage.arrayBuffer();
     }
 
-    const documentChildren: Paragraph[] = [
+    const documentChildren = [
       new Paragraph({
         text: teamName,
         heading: HeadingLevel.HEADING_1,
@@ -207,6 +209,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   };
 
   const generatePdf = async (): Promise<void> => {
+    const { jsPDF } = await loadJsPdfModule();
     const doc = new jsPDF();
     const practicesNum = parseInt(numberOfPractices, 10);
 
@@ -425,7 +428,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
 
       trackEvent("download_plan", {
         type: "team",

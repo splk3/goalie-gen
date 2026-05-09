@@ -1,8 +1,22 @@
-import { jsPDF } from "jspdf";
+import type { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
 import { normalizeDrillDescription } from "./normalizeDrillDescription";
+import {
+  buildCacheBustedAssetPath,
+  DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
+  DRILL_EXPORT_PDF_CACHE_TTL_MS,
+} from "./staticAsset";
 
 export type { DrillData };
+
+interface CachedImageEntry {
+  expiresAt: number;
+  promise: Promise<{ dataURL: string; width: number; height: number }>;
+}
+
+const imageDataCache = new Map<string, CachedImageEntry>();
+const drillPdfBlobCache = new Map<string, { expiresAt: number; blob: Blob }>();
+const MAX_IMAGE_CACHE_ENTRIES = 32;
 
 const formatTag = (tag: string): string => {
   return tag
@@ -14,7 +28,16 @@ const formatTag = (tag: string): string => {
 export const loadImageAsDataURL = (
   imagePath: string
 ): Promise<{ dataURL: string; width: number; height: number }> => {
-  return new Promise((resolve, reject) => {
+  const now = Date.now();
+  const cached = imageDataCache.get(imagePath);
+  if (cached && cached.expiresAt > now) {
+    return cached.promise;
+  }
+  if (cached) {
+    imageDataCache.delete(imagePath);
+  }
+
+  const promise = new Promise<{ dataURL: string; width: number; height: number }>((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
 
@@ -45,12 +68,31 @@ export const loadImageAsDataURL = (
 
     img.src = imagePath;
   });
+
+  imageDataCache.set(imagePath, {
+    expiresAt: now + DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
+    promise,
+  });
+
+  promise.catch(() => {
+    imageDataCache.delete(imagePath);
+  });
+
+  if (imageDataCache.size > MAX_IMAGE_CACHE_ENTRIES) {
+    const oldestKey = imageDataCache.keys().next().value;
+    if (oldestKey) {
+      imageDataCache.delete(oldestKey);
+    }
+  }
+
+  return promise;
 };
 
 export const generateDrillPdf = async (
   drillData: DrillData,
   drillFolder: string
 ): Promise<jsPDF> => {
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
@@ -68,7 +110,9 @@ export const generateDrillPdf = async (
   // Pre-load the gold logo so it can be drawn on every page
   let goldLogoInfo: { dataURL: string; width: number; height: number } | null = null;
   try {
-    goldLogoInfo = await loadImageAsDataURL("/images/usahockey/usahockey-gold-certification.png");
+    goldLogoInfo = await loadImageAsDataURL(
+      buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
+    );
   } catch (error) {
     console.error("Error loading gold certification logo:", error);
   }
@@ -113,8 +157,12 @@ export const generateDrillPdf = async (
 
   // Header with USA Hockey logos and title
   try {
-    const leftLogoInfo = await loadImageAsDataURL("/images/usahockey/usahockey-goaltending.jpg");
-    const rightLogoInfo = await loadImageAsDataURL("/images/usahockey/51-in-30.jpg");
+    const leftLogoInfo = await loadImageAsDataURL(
+      buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")
+    );
+    const rightLogoInfo = await loadImageAsDataURL(
+      buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")
+    );
 
     const logoHeight = 16;
     const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
@@ -217,7 +265,7 @@ export const generateDrillPdf = async (
     for (let i = 0; i < drillData.images.length; i++) {
       try {
         const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`;
-        const imageInfo = await loadImageAsDataURL(imagePath);
+        const imageInfo = await loadImageAsDataURL(buildCacheBustedAssetPath(imagePath));
         imageInfos.push(imageInfo);
       } catch (error) {
         console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, error);
@@ -422,4 +470,29 @@ export const generateDrillPdf = async (
   drawPageFooter();
 
   return doc;
+};
+
+export const generateDrillPdfBlob = async (drillData: DrillData, drillFolder: string): Promise<Blob> => {
+  const cacheKey = [
+    drillFolder,
+    drillData.drill_updated_date || "",
+    drillData.drill_creation_date || "",
+    drillData.name,
+  ].join("|");
+  const now = Date.now();
+  const cached = drillPdfBlobCache.get(cacheKey);
+  if (cached && cached.expiresAt > now) {
+    return cached.blob;
+  }
+  if (cached) {
+    drillPdfBlobCache.delete(cacheKey);
+  }
+
+  const doc = await generateDrillPdf(drillData, drillFolder);
+  const blob = doc.output("blob");
+  drillPdfBlobCache.set(cacheKey, {
+    blob,
+    expiresAt: now + DRILL_EXPORT_PDF_CACHE_TTL_MS,
+  });
+  return blob;
 };
