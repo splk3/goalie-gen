@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { Paragraph } from "docx";
 import { withPrefix } from "gatsby";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
@@ -265,7 +266,7 @@ export default function GoalieJournalButton() {
     const currentYear = new Date().getFullYear();
     const season = `${currentYear}-${currentYear + 1}`;
 
-    const documentChildren = [];
+    const documentChildren: Paragraph[] = [];
 
     // Cover: heading, optional logo, name/team/season/subtitle
     const coverBlocks = parseMarkdown(coverMd);

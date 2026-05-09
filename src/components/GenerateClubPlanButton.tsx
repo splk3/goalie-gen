@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { Paragraph } from "docx";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
@@ -52,7 +53,7 @@ export default function GenerateClubPlanButton() {
       arrayBuffer = await selectedImage.arrayBuffer();
     }
 
-    const documentChildren = [
+    const documentChildren: Paragraph[] = [
       new Paragraph({
         text: `${teamName} - Goaltending Development Plan`,
         heading: HeadingLevel.HEADING_1,

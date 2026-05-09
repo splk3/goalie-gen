@@ -17,6 +17,15 @@ interface CachedImageEntry {
 const imageDataCache = new Map<string, CachedImageEntry>();
 const drillPdfBlobCache = new Map<string, { expiresAt: number; blob: Blob }>();
 const MAX_IMAGE_CACHE_ENTRIES = 32;
+const MAX_PDF_CACHE_ENTRIES = 12;
+
+const pruneExpiredPdfCacheEntries = (now: number): void => {
+  for (const [cacheKey, entry] of drillPdfBlobCache.entries()) {
+    if (entry.expiresAt <= now) {
+      drillPdfBlobCache.delete(cacheKey);
+    }
+  }
+};
 
 const formatTag = (tag: string): string => {
   return tag
@@ -37,37 +46,39 @@ export const loadImageAsDataURL = (
     imageDataCache.delete(imagePath);
   }
 
-  const promise = new Promise<{ dataURL: string; width: number; height: number }>((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
+  const promise = new Promise<{ dataURL: string; width: number; height: number }>(
+    (resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
 
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        reject(new Error("Failed to get canvas context"));
-        return;
-      }
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Failed to get canvas context"));
+          return;
+        }
 
-      ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0);
 
-      try {
-        const dataURL = canvas.toDataURL("image/png");
-        resolve({ dataURL, width: img.width, height: img.height });
-      } catch (error) {
-        reject(error);
-      }
-    };
+        try {
+          const dataURL = canvas.toDataURL("image/png");
+          resolve({ dataURL, width: img.width, height: img.height });
+        } catch (error) {
+          reject(error);
+        }
+      };
 
-    img.onerror = () => {
-      reject(new Error(`Failed to load image: ${imagePath}`));
-    };
+      img.onerror = () => {
+        reject(new Error(`Failed to load image: ${imagePath}`));
+      };
 
-    img.src = imagePath;
-  });
+      img.src = imagePath;
+    }
+  );
 
   imageDataCache.set(imagePath, {
     expiresAt: now + DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
@@ -472,7 +483,10 @@ export const generateDrillPdf = async (
   return doc;
 };
 
-export const generateDrillPdfBlob = async (drillData: DrillData, drillFolder: string): Promise<Blob> => {
+export const generateDrillPdfBlob = async (
+  drillData: DrillData,
+  drillFolder: string
+): Promise<Blob> => {
   const cacheKey = [
     drillFolder,
     drillData.drill_updated_date || "",
@@ -480,6 +494,7 @@ export const generateDrillPdfBlob = async (drillData: DrillData, drillFolder: st
     drillData.name,
   ].join("|");
   const now = Date.now();
+  pruneExpiredPdfCacheEntries(now);
   const cached = drillPdfBlobCache.get(cacheKey);
   if (cached && cached.expiresAt > now) {
     return cached.blob;
@@ -494,5 +509,13 @@ export const generateDrillPdfBlob = async (drillData: DrillData, drillFolder: st
     blob,
     expiresAt: now + DRILL_EXPORT_PDF_CACHE_TTL_MS,
   });
+
+  if (drillPdfBlobCache.size > MAX_PDF_CACHE_ENTRIES) {
+    const oldestKey = drillPdfBlobCache.keys().next().value;
+    if (oldestKey) {
+      drillPdfBlobCache.delete(oldestKey);
+    }
+  }
+
   return blob;
 };

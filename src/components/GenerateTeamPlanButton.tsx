@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { Paragraph } from "docx";
 import Logo from "./Logo";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
@@ -93,7 +94,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       arrayBuffer = await selectedImage.arrayBuffer();
     }
 
-    const documentChildren = [
+    const documentChildren: Paragraph[] = [
       new Paragraph({
         text: teamName,
         heading: HeadingLevel.HEADING_1,

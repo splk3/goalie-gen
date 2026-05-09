@@ -6,7 +6,7 @@ describe("staticAsset", () => {
     process.env = { ...originalEnv };
   });
 
-  afterAll(() => {
+  afterEach(() => {
     process.env = originalEnv;
   });
 
