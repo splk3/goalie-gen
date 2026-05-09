@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
+import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
 
 // Helper function to recursively copy directory
 function copyDirectorySync(src: string, dest: string) {
@@ -418,6 +419,13 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
   }
 
   for (const { folder, drillData } of drills) {
+    const estimatedPages = estimateDrillPdfPages(drillData);
+    if (estimatedPages > 1) {
+      console.warn(
+        `⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") is estimated to need ${estimatedPages} page(s). Consider shortening its content to fit on a single page.`
+      );
+    }
+
     createPage({
       path: `/drills/${folder}`,
       component: path.resolve("./src/templates/drill.tsx"),
