@@ -6,15 +6,10 @@ description: |-
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
 
-  1. drill step 1
-
-  2. drill step 2
-
-  3. drill step 3
-
-# drill_steps:
-#   - Add drill step 1 here.
-#   - Add drill step 2 here.
+drill_steps:
+  - drill step 1 here. with some desciption and other content that provides more information about the drill step and what it involves.
+  - drill step 2 here. with some desciption and other content
+  - drill step 3 here. with some desciption and other content
 
 coaching_focus_points:
   - Coaching point 1 that required a good amount of text to fully describe and explain the coaching point in detail.
