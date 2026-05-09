@@ -6,10 +6,21 @@ description: |-
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
 
-coaching_points:
+coaching_focus_points:
   - Coaching point 1
   - Coaching point 2
   - Coaching point 3
+
+shooter_focus_points:
+  - Shooter focus point 1
+  - Shooter focus point 2
+  - Shooter focus point 3
+  - Shooter focus point 4
+
+drill_progressions:
+  - Add first progression step here.  same as before but with some fancier things to work on, like d, e, and f.
+  - Add second progression step here.  with some other stuff that's important to remember
+  - third is the most complicated.  add a 2nd and 3rd shooter, and have the shooters do some different things to keep the goalie on their toes.
 
 images:
   - test-drill-image-1.png

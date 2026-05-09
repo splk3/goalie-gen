@@ -6,10 +6,17 @@ description: |-
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
 
-coaching_points:
+coaching_focus_points:
   - Coaching point 1
   - Coaching point 2
   - Coaching point 3
+
+# shooter_focus_points:
+#   - Shooter focus point 1
+
+# drill_progressions:
+#   - Add first progression step here.
+#   - Add second progression step here.
 
 images:
   - test-drill-image.png

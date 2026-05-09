@@ -20,6 +20,13 @@ export default function DownloadDrillPdfButton({
     try {
       const doc = await generateDrillPdf(drillData, drillFolder);
 
+      const pageCount = doc.getNumberOfPages();
+      if (pageCount > 1) {
+        console.warn(
+          `PDF for "${drillData.name}" required ${pageCount} pages. Consider shortening its content to fit on a single page.`
+        );
+      }
+
       const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, "_")}.pdf`;
       const blob = doc.output("blob");
 

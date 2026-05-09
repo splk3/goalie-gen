@@ -2,7 +2,7 @@
   "name": "goalie-gen",
   "private": true,
   "description": "Goalie Gen - Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=24"
