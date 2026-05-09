@@ -1,4 +1,5 @@
 import type { DrillData } from "../types/drill";
+import { normalizeDrillDescription } from "./normalizeDrillDescription";
 
 // Approximate characters per line in the wider left column at fontSize 9
 // (helvetica, ~97 mm wide — 29% wider than before, so ~29% more chars per line)
@@ -48,13 +49,14 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
   const contentStartY = MARGIN + HEADER_AND_TAGS_HEIGHT;
   const availableFirstPage = CONTENT_BOTTOM_LIMIT - contentStartY;
   const availableOtherPages = CONTENT_BOTTOM_LIMIT - (MARGIN + 5);
+  const normalizedDescription = normalizeDrillDescription(drillData.description);
 
   // Estimate left column height
   let leftColHeight = 0;
 
   // Description
   leftColHeight += HEADING_HEIGHT;
-  leftColHeight += estimateLines(drillData.description) * LINE_HEIGHT + SECTION_GAP;
+  leftColHeight += estimateLines(normalizedDescription) * LINE_HEIGHT + SECTION_GAP;
 
   // Coaching focus points
   leftColHeight += HEADING_HEIGHT;
