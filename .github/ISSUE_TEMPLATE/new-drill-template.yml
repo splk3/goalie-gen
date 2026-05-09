@@ -198,7 +198,7 @@ body:
         - The `coaching_focus_points` field is required. Map the "Coaching Focus Points" form field to it.
         - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
-        - If "Drill Progressions" was provided, add the `drill_progressions` field as a multiline string.
+        - If "Drill Progressions" was provided, add the `drill_progressions` field as an array of strings.
           Otherwise, leave it out entirely.
         - Add the images to the folder, updating the `images` field as needed.
           If the images are pasted into the text area and not attached, make sure to save the images and add them to the drill folder,

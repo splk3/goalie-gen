@@ -11,11 +11,14 @@ coaching_focus_points:
   - Coaching point 2
   - Coaching point 3
 
-# shooter_focus_points:
-#   - Shooter focus point 1
+shooter_focus_points:
+  - Shooter focus point 1
+  - Shooter focus point 2
+  - Shooter focus point 3 this one is longer and takes more text to describe, but it's still important to include as a shooter focus point.
 
-# drill_progressions: |
-#   Add drill progression notes here.
+# drill_progressions:
+#   - Add first progression step here.
+#   - Add second progression step here.
 
 images:
   - test-drill-image.png
@@ -24,7 +27,7 @@ video: https://vimeo.com/830266352?fl=pl&fe=sh
 
 drill_creation_date: 2024-01-15
 
-drill_updated_date: 2026-01-14
+drill_updated_date: 2026-05-09
 
 tags:
   skill_level:

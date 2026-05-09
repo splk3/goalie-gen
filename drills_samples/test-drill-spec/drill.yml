@@ -16,8 +16,9 @@ coaching_focus_points:
 #   - Shooter focus point 1
 
 # optional - use if updating existing drill
-# drill_progressions: |
-#   Add drill progression notes here.
+# drill_progressions:
+#   - Add first progression step here.
+#   - Add second progression step here.
 
 # must be a list
 images:
