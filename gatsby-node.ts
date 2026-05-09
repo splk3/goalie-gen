@@ -102,10 +102,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (
-    typeof d.shooter_focus_points !== "undefined" &&
-    !Array.isArray(d.shooter_focus_points)
-  ) {
+  if (typeof d.shooter_focus_points !== "undefined" && !Array.isArray(d.shooter_focus_points)) {
     throw new Error(
       `[${drillFolder}] drill.yml field 'shooter_focus_points' must be an array of strings`
     );
@@ -120,10 +117,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (
-    typeof d.drill_progressions !== "undefined" &&
-    !Array.isArray(d.drill_progressions)
-  ) {
+  if (typeof d.drill_progressions !== "undefined" && !Array.isArray(d.drill_progressions)) {
     throw new Error(
       `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of strings`
     );

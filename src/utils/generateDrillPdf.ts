@@ -67,9 +67,7 @@ export const generateDrillPdf = async (
   // Pre-load the gold logo so it can be drawn on every page
   let goldLogoInfo: { dataURL: string; width: number; height: number } | null = null;
   try {
-    goldLogoInfo = await loadImageAsDataURL(
-      "/images/usahockey/usahockey-gold-certification.png"
-    );
+    goldLogoInfo = await loadImageAsDataURL("/images/usahockey/usahockey-gold-certification.png");
   } catch (error) {
     console.error("Error loading gold certification logo:", error);
   }
