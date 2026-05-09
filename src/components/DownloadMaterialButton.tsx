@@ -1,6 +1,7 @@
 import * as React from "react";
 import { withPrefix } from "gatsby";
 import { trackEvent } from "../utils/analytics";
+import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 interface DownloadMaterialButtonProps {
   title: string;
@@ -17,7 +18,7 @@ export default function DownloadMaterialButton({
 
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = withPrefix(`/${folder}/${fileName}`);
+    link.href = withPrefix(buildCacheBustedAssetPath(`/${folder}/${fileName}`));
     link.download = fileName;
     link.setAttribute("aria-label", `Download ${title}`);
     document.body.appendChild(link);

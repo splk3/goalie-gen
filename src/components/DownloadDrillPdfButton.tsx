@@ -1,7 +1,7 @@
 import * as React from "react";
-import { generateDrillPdf } from "../utils/generateDrillPdf";
 import type { DrillData } from "../types/drill";
 import { trackEvent } from "../utils/analytics";
+import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
 interface DownloadDrillPdfButtonProps {
   drillData: DrillData;
@@ -18,17 +18,10 @@ export default function DownloadDrillPdfButton({
     setIsGenerating(true);
 
     try {
-      const doc = await generateDrillPdf(drillData, drillFolder);
-
-      const pageCount = doc.getNumberOfPages();
-      if (pageCount > 1) {
-        console.warn(
-          `PDF for "${drillData.name}" required ${pageCount} pages. Consider shortening its content to fit on a single page.`
-        );
-      }
+      const { generateDrillPdfBlob } = await import("../utils/generateDrillPdf");
 
       const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, "_")}.pdf`;
-      const blob = doc.output("blob");
+      const blob = await generateDrillPdfBlob(drillData, drillFolder);
 
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -37,7 +30,7 @@ export default function DownloadDrillPdfButton({
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
 
       trackEvent("download_drill", {
         drill_name: drillData.name,

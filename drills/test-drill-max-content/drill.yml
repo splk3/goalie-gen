@@ -5,25 +5,27 @@ description: |-
   A brief description of the drill.  This can be multiple lines and should provide
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
-  More description of the drill.  This can be multiple lines and should provide
-  an overview of what the drill is about, its purpose, and any key details that
-  would help someone understand what the drill entails.
+
+  1. drill step 1
+
+  2. drill step 2
+
+  3. drill step 3
 
 coaching_focus_points:
   - Coaching point 1 that required a good amount of text to fully describe and explain the coaching point in detail.
-  - Coaching point 2 that also requires a good amount of text to fully describe and explain the coaching point in detail, but it's still important to include as a coaching point for this drill.
-  - Coaching point 3 sorry for all the text, but this coaching point is also important to include and takes a good amount of text to fully describe and explain the coaching point in detail.
+  - Coaching point 2 that also requires a good amount of text to fully describe and explain the coaching point in detail
+  - Coaching point 3 this coaching point is also important to include and takes a good amount of text to fully describe and explain the coaching point in detail.
 
 shooter_focus_points:
   - Shooter focus point 1 that requires a good amount of text to fully describe and explain the shooter focus point in detail.
-  - Shooter focus point 2 that also requires a good amount of text to fully describe and explain the shooter focus point in detail, but it's still important to include as a shooter focus point for this drill.
+  - Shooter focus point 2 that also requires a good amount of text to fully describe and explain the shooter focus point in detail
   - Shooter focus point 3 this one is longer and takes more text to describe, but it's still important to include as a shooter focus point.
 
 drill_progressions:
-  - This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail.  This progression step is important to include as it adds an additional layer of complexity and challenge to the drill, allowing players to further develop their skills and understanding of the concepts being taught.
-  - Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail, but it's still important to include as a progression step for this drill.
-  - Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail, but it's still important to include as a progression step for this drill
-  - Add fourth progression step here that also requires a good amount of text to fully describe and explain the progression step in detail, but it's still important to include as a progression step for this drill.
+  - This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
+  - Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+  - Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
 
 images:
   - test-drill-image-1.png

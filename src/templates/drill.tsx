@@ -5,9 +5,9 @@ import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
-import { generateDrillPdf } from "../utils/generateDrillPdf";
 import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
+import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
 interface DrillPageContext {
   slug: string;
@@ -52,6 +52,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const handlePrint = async () => {
     setIsPrinting(true);
     try {
+      const { generateDrillPdf } = await import("../utils/generateDrillPdf");
       const doc = await generateDrillPdf(drillData, drillFolder);
       doc.autoPrint();
       const blob = doc.output("blob");
@@ -59,7 +60,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       window.open(url, "_blank");
       // Revoke the object URL after the window has had time to load,
       // or after a delay even if the window could not be opened
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
     } catch (error) {
       console.error("Error generating print PDF:", error);
       // Fallback to native browser print
@@ -88,17 +89,21 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       <div className="hidden print:block print:mb-6">
         <div className="flex justify-between items-center border-b-4 border-usa-red pb-4">
           <img
-            src="/images/usahockey/usahockey-goaltending.jpg"
+            src={buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")}
             alt="USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
+            loading="eager"
+            decoding="async"
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img
-            src="/images/usahockey/51-in-30.jpg"
+            src={buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")}
             alt="51 in 30 USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
+            loading="eager"
+            decoding="async"
           />
         </div>
       </div>
@@ -226,9 +231,11 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
               >
                 <img
-                  src={`/drills/${drillFolder}/${image}`}
+                  src={buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)}
                   alt={`Drill diagram ${index + 1}`}
                   className={imageClasses}
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             ))}
@@ -262,6 +269,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                       src={videoThumbnail}
                       alt="Video thumbnail"
                       className="w-32 h-24 object-cover rounded"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   <span className="text-usa-blue font-semibold print:text-sm break-all">
@@ -320,10 +329,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         <div className="hidden print:block print:mt-3 print:pt-2 print:border-t-2 print:border-gray-400 break-before-avoid">
           <div className="flex items-center gap-3">
             <img
-              src="/images/usahockey/usahockey-gold-certification.png"
+              src={buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")}
               alt="USA Hockey Goaltending Gold Level Coach Certification"
               className="object-contain"
               style={{ maxHeight: "0.5in", width: "auto", height: "auto" }}
+              loading="lazy"
+              decoding="async"
             />
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA
