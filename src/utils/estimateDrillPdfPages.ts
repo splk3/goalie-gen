@@ -3,6 +3,7 @@ import type { DrillData } from "../types/drill";
 // Approximate characters per line in the wider left column at fontSize 9
 // (helvetica, ~97 mm wide — 29% wider than before, so ~29% more chars per line)
 const CHARS_PER_LINE = 65;
+const VIDEO_CHARS_PER_LINE = 110;
 
 // Heights in mm for common layout elements
 const HEADING_HEIGHT = 9; // section heading + smaller gap (was 10)
@@ -24,8 +25,10 @@ const HEADER_AND_TAGS_HEIGHT = 65;
 // Fixed estimate for the Skills Focus section (separator + heading + skills list)
 const SKILLS_SECTION_HEIGHT = 30;
 
-function estimateLines(text: string): number {
-  return text.split("\\n").reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / CHARS_PER_LINE)), 0);
+function estimateLines(text: string, charsPerLine = CHARS_PER_LINE): number {
+  return text
+    .split("\n")
+    .reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / charsPerLine)), 0);
 }
 
 function estimateBulletHeight(text: string): number {
@@ -75,7 +78,9 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
   }
 
   // Sections below the two-column layout. Video is now URL-only (no thumbnail).
-  const videoSectionHeight = drillData.video ? 16 : 0;
+  const videoSectionHeight = drillData.video
+    ? 9 + estimateLines(drillData.video, VIDEO_CHARS_PER_LINE) * LINE_HEIGHT
+    : 0;
   const postColumnHeight = SEPARATOR_AND_GAP + SKILLS_SECTION_HEIGHT + videoSectionHeight;
 
   const totalNeeded = leftColHeight + postColumnHeight;

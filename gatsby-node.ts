@@ -94,6 +94,13 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
       `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
     );
   }
+  for (const point of d.coaching_focus_points) {
+    if (typeof point !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'coaching_focus_points' must contain only strings`
+      );
+    }
+  }
 
   if (
     typeof d.shooter_focus_points !== "undefined" &&
@@ -118,14 +125,14 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     !Array.isArray(d.drill_progressions)
   ) {
     throw new Error(
-      "[" + drillFolder + "] drill.yml field 'drill_progressions' must be an array"
+      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of strings`
     );
   }
   if (Array.isArray(d.drill_progressions)) {
     for (const step of d.drill_progressions) {
       if (typeof step !== "string") {
         throw new Error(
-          "[" + drillFolder + "] drill.yml field 'drill_progressions' must contain only strings"
+          `[${drillFolder}] drill.yml field 'drill_progressions' must contain only strings`
         );
       }
     }

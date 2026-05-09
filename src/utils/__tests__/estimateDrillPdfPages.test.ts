@@ -13,7 +13,7 @@ interface DrillEntry {
 
 function loadAllDrills(): DrillEntry[] {
   if (!fs.existsSync(DRILLS_DIR)) {
-    return [];
+    throw new Error(`Drills directory not found: ${DRILLS_DIR}`);
   }
 
   const folders = fs
@@ -25,7 +25,7 @@ function loadAllDrills(): DrillEntry[] {
       const ymlPath = path.join(DRILLS_DIR, folder, "drill.yml");
       if (!fs.existsSync(ymlPath)) return null;
       const content = fs.readFileSync(ymlPath, "utf8");
-      const drillData = yaml.load(content) as DrillData;
+      const drillData = yaml.load(content, { schema: yaml.FAILSAFE_SCHEMA }) as DrillData;
       return { folder, drillData };
     })
     .filter((entry): entry is DrillEntry => entry !== null);
@@ -33,6 +33,10 @@ function loadAllDrills(): DrillEntry[] {
 
 describe("estimateDrillPdfPages", () => {
   const drills = loadAllDrills();
+
+  it("loads at least one drill from the drills directory", () => {
+    expect(drills.length).toBeGreaterThan(0);
+  });
 
   it("returns a page count of at least 1 for every drill", () => {
     for (const { drillData } of drills) {

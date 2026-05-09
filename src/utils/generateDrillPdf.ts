@@ -397,7 +397,8 @@ export const generateDrillPdf = async (
   // Video section — URL only, no thumbnail image
   if (drillData.video) {
     sectionY = Math.max(skillsLeftY, skillsRightY) + 4;
-    sectionY = ensureSpace(sectionY, 16); // separator + heading + URL line
+    const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
+    sectionY = ensureSpace(sectionY, 9 + videoLines.length * 4);
 
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
@@ -413,8 +414,8 @@ export const generateDrillPdf = async (
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(8);
     doc.setFont(undefined, "normal");
-    const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
     doc.text(videoLines, margin, sectionY);
+    sectionY += videoLines.length * 4;
   }
 
   // Draw the footer on the last (current) page
