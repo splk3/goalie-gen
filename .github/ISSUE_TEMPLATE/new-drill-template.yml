@@ -51,8 +51,8 @@ body:
       label: Drill Steps (Optional)
       description: Enter one drill step per line. Leave blank if not applicable.
       placeholder: |
-        1. Drill step 1
-        2. Drill step 2
+        Drill step 1
+        Drill step 2
 
   - type: textarea
     id: coaching_focus_points

@@ -290,7 +290,7 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
 
 3. **Optional drill.yml Fields**:
-   - `drill_steps` (array): Numbered drill steps shown under the description
+   - `drill_steps` (array): Drill step strings shown as a numbered list under the description
    - `video` (string): YouTube or Vimeo URL for the drill
    - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
    - `shooter_focus_points` (array): List of shooter-specific focus points

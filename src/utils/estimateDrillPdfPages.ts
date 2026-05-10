@@ -63,7 +63,8 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
   leftColHeight += estimateLines(normalizedDescription) * LINE_HEIGHT;
 
   // Drill steps (optional, no heading)
-  if (drillData.drill_steps && drillData.drill_steps.length > 0) {
+  const hasDrillSteps = Boolean(drillData.drill_steps && drillData.drill_steps.length > 0);
+  if (hasDrillSteps) {
     leftColHeight += SECTION_GAP;
     for (const [index, step] of drillData.drill_steps.entries()) {
       leftColHeight += estimateNumberedHeight(step, index);
@@ -71,7 +72,9 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
     leftColHeight += 2;
   }
 
-  leftColHeight += SECTION_GAP;
+  if (!hasDrillSteps) {
+    leftColHeight += SECTION_GAP;
+  }
 
   // Coaching focus points
   leftColHeight += HEADING_HEIGHT;
