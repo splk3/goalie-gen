@@ -95,9 +95,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   if (Array.isArray(d.drill_steps)) {
     for (const step of d.drill_steps) {
       if (typeof step !== "string") {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`
-        );
+        throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
       }
     }
   }

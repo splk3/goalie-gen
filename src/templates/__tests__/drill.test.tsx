@@ -10,10 +10,34 @@ jest.mock("../../utils/videoUtils", () => ({
   getVideoThumbnail: jest.fn(() => ""),
 }));
 jest.mock("../../components/SEO", () => () => null);
-jest.mock("../../components/Logo", () => () => <div>Logo</div>);
-jest.mock("../../components/DarkModeToggle", () => () => <button>Dark Mode</button>);
-jest.mock("../../components/DownloadDrillPdfButton", () => () => <button>Download PDF</button>);
-jest.mock("../../components/UsaHockeyGoldBanner", () => () => <div>Gold Banner</div>);
+jest.mock(
+  "../../components/Logo",
+  () =>
+    function MockLogo() {
+      return <div>Logo</div>;
+    }
+);
+jest.mock(
+  "../../components/DarkModeToggle",
+  () =>
+    function MockDarkModeToggle() {
+      return <button>Dark Mode</button>;
+    }
+);
+jest.mock(
+  "../../components/DownloadDrillPdfButton",
+  () =>
+    function MockDownloadDrillPdfButton() {
+      return <button>Download PDF</button>;
+    }
+);
+jest.mock(
+  "../../components/UsaHockeyGoldBanner",
+  () =>
+    function MockUsaHockeyGoldBanner() {
+      return <div>Gold Banner</div>;
+    }
+);
 
 const basePageContext = {
   slug: "test-drill",
