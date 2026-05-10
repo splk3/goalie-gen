@@ -46,6 +46,15 @@ body:
       required: true
 
   - type: textarea
+    id: drill_steps
+    attributes:
+      label: Drill Steps (Optional)
+      description: Enter one drill step per line. Leave blank if not applicable.
+      placeholder: |
+        Drill step 1
+        Drill step 2
+
+  - type: textarea
     id: coaching_focus_points
     attributes:
       label: Coaching Focus Points
@@ -196,6 +205,9 @@ body:
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
         - The `coaching_focus_points` field is required. Map the "Coaching Focus Points" form field to it.
+        - If "Drill Steps" was provided, add the `drill_steps` field as an array of strings
+          directly below `description` in the YAML.
+          Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Drill Progressions" was provided, add the `drill_progressions` field as an array of strings.
