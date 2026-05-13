@@ -191,7 +191,6 @@ export const generateDrillPdf = async (
 
     // Render the drill name as the header title, centered between the logos
     const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
-    const titleLineHeightMm = 7; // mm per line for fontSize 16
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(16);
     doc.setFont(undefined, "bold");
@@ -200,12 +199,16 @@ export const generateDrillPdf = async (
     const titleCenterX =
       margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
     const titleLines = doc.splitTextToSize(drillData.name, titleAvailableWidth);
-    const titleTotalHeight = titleLines.length * titleLineHeightMm;
+    // Use jsPDF's own text metrics to avoid hardcoded line-height values
+    const titleDimensions = doc.getTextDimensions(drillData.name, { maxWidth: titleAvailableWidth });
+    const titleTotalHeight = titleDimensions.h;
+    // Per-character height (baseline offset) derived from jsPDF font metrics
+    const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
     // Expand header area only if multi-line title exceeds the logo height
     const effectiveHeaderHeight = Math.max(logoHeight, titleTotalHeight);
-    // Vertically center the text block within the effective header height
+    // Vertically center the text block; doc.text positions text at the first baseline
     const titleFirstLineY =
-      currentY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleLineHeightMm;
+      currentY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
     doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
 
     currentY += effectiveHeaderHeight + 4;
@@ -216,13 +219,15 @@ export const generateDrillPdf = async (
     currentY += 8;
   } catch (error) {
     console.error("Error loading header images:", error);
-    const titleLineHeightMm = 7; // mm per line for fontSize 16
+    // No logos: render the drill name centered across the full page
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(16);
     doc.setFont(undefined, "bold");
-    const fallbackTitleLines = doc.splitTextToSize(drillData.name, pageWidth - 2 * margin);
+    const fallbackTitleWidth = pageWidth - 2 * margin;
+    const fallbackTitleLines = doc.splitTextToSize(drillData.name, fallbackTitleWidth);
+    const fallbackDimensions = doc.getTextDimensions(drillData.name, { maxWidth: fallbackTitleWidth });
     doc.text(fallbackTitleLines, pageWidth / 2, currentY, { align: "center" });
-    currentY += fallbackTitleLines.length * titleLineHeightMm + 4;
+    currentY += fallbackDimensions.h + 4;
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
     doc.setLineWidth(2);
     doc.line(margin, currentY, pageWidth - margin, currentY);

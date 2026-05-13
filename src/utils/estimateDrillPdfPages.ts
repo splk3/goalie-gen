@@ -20,10 +20,31 @@ const FOOTER_LOGO_Y = PAGE_HEIGHT - MARGIN - GOLD_LOGO_HEIGHT;
 const FOOTER_SEPARATOR_Y = FOOTER_LOGO_Y - 4;
 const CONTENT_BOTTOM_LIMIT = FOOTER_SEPARATOR_Y - 8;
 
-// Approximate height consumed by the page header (logos + drill name title) and tags.
-// The drill name is now rendered in the header area instead of as a separate block,
-// so the total is smaller than before.
-const HEADER_AND_TAGS_HEIGHT = 52;
+// Title header constants (fontSize 16, Helvetica bold)
+// LOGO_HEIGHT_MM: minimum header area height set by the logo images.
+// TITLE_LINE_HEIGHT_MM: conservative per-line height (actual ~6.49 mm, rounded up for safety).
+// TITLE_CHARS_PER_LINE: approximate characters that fit across the title area at fontSize 16.
+//   Derived from body text calibration: 65 chars / 97 mm at fontSize 9, scaled to fontSize 16
+//   across the ~107 mm gap between the logos (~107 mm * 9/16 / (97/65) ≈ 40 chars/line).
+const LOGO_HEIGHT_MM = 16;
+const TITLE_LINE_HEIGHT_MM = 7;
+const TITLE_CHARS_PER_LINE = 40;
+
+// Fixed overhead consumed by everything EXCEPT the title area:
+//   initial Y offset + gap after logos + red separator gap + tags rows.
+// HEADER_AND_TAGS_BASE = LOGO_HEIGHT_MM (16) contributes the minimum title area height,
+// so the overhead is the former fixed constant (52) minus that minimum (16) = 36.
+const HEADER_AND_TAGS_BASE = 36;
+
+/**
+ * Estimates the height in mm of the PDF title header area for the given drill name.
+ * The name is rendered at fontSize 16 between the USA Hockey logos.  When the name
+ * wraps beyond the logo height the header expands; otherwise the logo height wins.
+ */
+function estimateTitleHeaderHeight(drillName: string): number {
+  const estimatedLines = Math.max(1, Math.ceil(drillName.length / TITLE_CHARS_PER_LINE));
+  return Math.max(LOGO_HEIGHT_MM, estimatedLines * TITLE_LINE_HEIGHT_MM);
+}
 
 // Fixed estimate for the Skills Focus section (separator + heading + skills list)
 const SKILLS_SECTION_HEIGHT = 30;
@@ -52,7 +73,8 @@ function estimateNumberedHeight(text: string, index: number): number {
  * Returns 1 when content is estimated to fit on a single page, 2+ otherwise.
  */
 export function estimateDrillPdfPages(drillData: DrillData): number {
-  const contentStartY = MARGIN + HEADER_AND_TAGS_HEIGHT;
+  const titleHeaderHeight = estimateTitleHeaderHeight(drillData.name);
+  const contentStartY = MARGIN + titleHeaderHeight + HEADER_AND_TAGS_BASE;
   const availableFirstPage = CONTENT_BOTTOM_LIMIT - contentStartY;
   const availableOtherPages = CONTENT_BOTTOM_LIMIT - (MARGIN + 5);
   const normalizedDescription = normalizeDrillDescription(drillData.description);
