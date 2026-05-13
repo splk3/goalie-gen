@@ -3,6 +3,7 @@ import type { Paragraph } from "docx";
 import { withPrefix } from "gatsby";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
+import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
@@ -18,6 +19,7 @@ const BLANK_LINE = "_______________________________________________";
 
 export default function GoalieJournalButton() {
   const [showModal, setShowModal] = React.useState<boolean>(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [goalieName, setGoalieName] = React.useState<string>("");
   const [teamName, setTeamName] = React.useState<string>("");
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
@@ -567,145 +569,138 @@ export default function GoalieJournalButton() {
   return (
     <>
       <button
+        ref={triggerRef}
         onClick={() => setShowModal(true)}
         className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 shadow-lg"
       >
         Goalie Journal
       </button>
 
-      {showModal && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={() => {
-            if (!isGenerating && !generatedBlob) {
-              handleCancel();
-            }
-          }}
-        >
-          <div
-            className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="journal-modal-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
-              <h2
-                id="journal-modal-title"
-                className="text-2xl font-bold text-usa-blue dark:text-blue-400"
-              >
-                Generate Goalie Journal
-              </h2>
-            </div>
+      <Modal
+        isOpen={showModal}
+        labelledBy="journal-modal-title"
+        className="max-w-md w-full"
+        triggerRef={triggerRef}
+      >
+        {/* Scrollable content */}
+        <div className="p-8 overflow-y-auto flex-1 min-h-0">
+          <div className="flex items-center gap-4 mb-6">
+            <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
+            <h2
+              id="journal-modal-title"
+              className="text-2xl font-bold text-usa-blue dark:text-blue-400"
+            >
+              Generate Goalie Journal
+            </h2>
+          </div>
 
-            <div className="mb-4">
-              <label
-                htmlFor="goalieName"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Goalie Name
-              </label>
-              <input
-                type="text"
-                id="goalieName"
-                value={goalieName}
-                onChange={(e) => setGoalieName(e.target.value)}
-                disabled={!!generatedBlob || isGenerating}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Enter goalie name"
-              />
-            </div>
+          <div className="mb-4">
+            <label
+              htmlFor="goalieName"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Goalie Name
+            </label>
+            <input
+              type="text"
+              id="goalieName"
+              value={goalieName}
+              onChange={(e) => setGoalieName(e.target.value)}
+              disabled={!!generatedBlob || isGenerating}
+              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter goalie name"
+            />
+          </div>
 
-            <div className="mb-4">
-              <label
-                htmlFor="journal-team-name"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Team Name
-              </label>
-              <input
-                type="text"
-                id="journal-team-name"
-                value={teamName}
-                onChange={(e) => setTeamName(e.target.value)}
-                disabled={!!generatedBlob || isGenerating}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Enter team name"
-              />
-            </div>
+          <div className="mb-4">
+            <label
+              htmlFor="journal-team-name"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Team Name
+            </label>
+            <input
+              type="text"
+              id="journal-team-name"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              disabled={!!generatedBlob || isGenerating}
+              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter team name"
+            />
+          </div>
 
-            <div className="mb-4">
-              <ImageUploader
-                onImageCropped={handleImageCropped}
-                disabled={!!generatedBlob || isGenerating}
-              />
-              {!logoPreview && (
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  If no logo is provided, the Goalie Gen logo will be used
-                </p>
-              )}
-            </div>
-
-            <FormatSelector
-              format={outputFormat}
-              onChange={setOutputFormat}
-              name="journal-output-format"
+          <div className="mb-4">
+            <ImageUploader
+              onImageCropped={handleImageCropped}
               disabled={!!generatedBlob || isGenerating}
             />
-
-            {validationError && (
-              <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
-                {validationError}
-              </div>
+            {!logoPreview && (
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                If no logo is provided, the Goalie Gen logo will be used
+              </p>
             )}
-
-            {generatedBlob && !validationError && (
-              <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm">
-                Journal generated successfully! Click Download to save it.
-              </div>
-            )}
-
-            <div className="flex gap-4">
-              {!generatedBlob ? (
-                <>
-                  <button
-                    onClick={generateJournal}
-                    disabled={isGenerating}
-                    className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                      isGenerating ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                  >
-                    {isGenerating ? "Generating..." : "Generate"}
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    disabled={isGenerating}
-                    className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={handleDownload}
-                    className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                  >
-                    Download
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                  >
-                    Close
-                  </button>
-                </>
-              )}
-            </div>
           </div>
+
+          <FormatSelector
+            format={outputFormat}
+            onChange={setOutputFormat}
+            name="journal-output-format"
+            disabled={!!generatedBlob || isGenerating}
+          />
+
+          {validationError && (
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
+              {validationError}
+            </div>
+          )}
+
+          {generatedBlob && !validationError && (
+            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm">
+              Journal generated successfully! Click Download to save it.
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Non-scrolling footer — action buttons always visible */}
+        <div className="px-8 pb-8 flex gap-4 flex-shrink-0">
+          {!generatedBlob ? (
+            <>
+              <button
+                onClick={generateJournal}
+                disabled={isGenerating}
+                className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+                  isGenerating ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {isGenerating ? "Generating..." : "Generate"}
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={isGenerating}
+                className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleDownload}
+                className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                Download
+              </button>
+              <button
+                onClick={handleCancel}
+                className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                Close
+              </button>
+            </>
+          )}
+        </div>
+      </Modal>
     </>
   );
 }

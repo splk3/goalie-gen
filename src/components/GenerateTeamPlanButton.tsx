@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { Paragraph } from "docx";
 import Logo from "./Logo";
+import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
@@ -22,6 +23,7 @@ interface GenerateTeamPlanButtonProps {
 
 export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTeamPlanButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [teamName, setTeamName] = React.useState<string>("");
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
@@ -486,190 +488,183 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   return (
     <>
       <button
+        ref={triggerRef}
         onClick={() => setShowModal(true)}
         className={`${variantClasses[variant]} text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center`}
       >
         Generate Team Development Plan
       </button>
 
-      {showModal && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={() => {
-            if (!isGenerating && !generatedBlob) {
-              handleCancel();
-            }
-          }}
-        >
-          <div
-            className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="team-plan-modal-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
-              <h2
-                id="team-plan-modal-title"
-                className="text-2xl font-bold text-usa-blue dark:text-blue-400"
-              >
-                Generate Team Plan
-              </h2>
-            </div>
+      <Modal
+        isOpen={showModal}
+        labelledBy="team-plan-modal-title"
+        className="max-w-md w-full"
+        triggerRef={triggerRef}
+      >
+        {/* Scrollable content */}
+        <div className="p-8 overflow-y-auto flex-1 min-h-0">
+          <div className="flex items-center gap-4 mb-6">
+            <Logo variant="alt" format="png" width={80} height={80} className="dark-mode-aware" />
+            <h2
+              id="team-plan-modal-title"
+              className="text-2xl font-bold text-usa-blue dark:text-blue-400"
+            >
+              Generate Team Plan
+            </h2>
+          </div>
 
-            <div className="mb-4">
-              <label
-                htmlFor="team-name"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Team Name
-              </label>
-              <input
-                type="text"
-                id="team-name"
-                value={teamName}
-                onChange={(e) => setTeamName(e.target.value)}
-                disabled={!!generatedBlob || isGenerating}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Enter your team name"
-              />
-            </div>
+          <div className="mb-4">
+            <label
+              htmlFor="team-name"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Team Name
+            </label>
+            <input
+              type="text"
+              id="team-name"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              disabled={!!generatedBlob || isGenerating}
+              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter your team name"
+            />
+          </div>
 
-            <div className="mb-4">
-              <ImageUploader
-                onImageCropped={handleImageChange}
-                disabled={!!generatedBlob || isGenerating}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="ageGroup"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Age Group
-              </label>
-              <select
-                id="ageGroup"
-                value={ageGroup}
-                onChange={(e) => setAgeGroup(e.target.value)}
-                disabled={!!generatedBlob || isGenerating}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <option value="">Select age group</option>
-                {ageGroups.map((age) => (
-                  <option key={age} value={age}>
-                    {age}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="skillLevel"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Skill Level
-              </label>
-              <select
-                id="skillLevel"
-                value={skillLevel}
-                onChange={(e) => setSkillLevel(e.target.value)}
-                disabled={!!generatedBlob || isGenerating}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <option value="">Select skill level</option>
-                {skillLevels.map((level) => (
-                  <option key={level} value={level}>
-                    {level.charAt(0).toUpperCase() + level.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="numberOfPractices"
-                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-              >
-                Number of Practices (0-50)
-              </label>
-              <input
-                type="number"
-                id="numberOfPractices"
-                value={numberOfPractices}
-                onChange={(e) => setNumberOfPractices(e.target.value)}
-                min="0"
-                max="50"
-                disabled={!!generatedBlob || isGenerating}
-                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Enter number (0-50)"
-              />
-            </div>
-
-            <FormatSelector
-              format={outputFormat}
-              onChange={setOutputFormat}
-              name="team-output-format"
+          <div className="mb-4">
+            <ImageUploader
+              onImageCropped={handleImageChange}
               disabled={!!generatedBlob || isGenerating}
             />
-
-            {validationError && (
-              <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
-                {validationError}
-              </div>
-            )}
-
-            {generatedBlob && !validationError && (
-              <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm">
-                Document generated successfully! Click Download to save it.
-              </div>
-            )}
-
-            <div className="flex gap-4">
-              {!generatedBlob ? (
-                <>
-                  <button
-                    onClick={handleGenerate}
-                    disabled={isGenerating}
-                    className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                      isGenerating ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                  >
-                    {isGenerating ? "Generating..." : "Generate"}
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    disabled={isGenerating}
-                    className={`flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                      isGenerating ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={handleDownload}
-                    className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                  >
-                    Download
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                  >
-                    Close
-                  </button>
-                </>
-              )}
-            </div>
           </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="ageGroup"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Age Group
+            </label>
+            <select
+              id="ageGroup"
+              value={ageGroup}
+              onChange={(e) => setAgeGroup(e.target.value)}
+              disabled={!!generatedBlob || isGenerating}
+              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">Select age group</option>
+              {ageGroups.map((age) => (
+                <option key={age} value={age}>
+                  {age}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="skillLevel"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Skill Level
+            </label>
+            <select
+              id="skillLevel"
+              value={skillLevel}
+              onChange={(e) => setSkillLevel(e.target.value)}
+              disabled={!!generatedBlob || isGenerating}
+              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">Select skill level</option>
+              {skillLevels.map((level) => (
+                <option key={level} value={level}>
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="numberOfPractices"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Number of Practices (0-50)
+            </label>
+            <input
+              type="number"
+              id="numberOfPractices"
+              value={numberOfPractices}
+              onChange={(e) => setNumberOfPractices(e.target.value)}
+              min="0"
+              max="50"
+              disabled={!!generatedBlob || isGenerating}
+              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter number (0-50)"
+            />
+          </div>
+
+          <FormatSelector
+            format={outputFormat}
+            onChange={setOutputFormat}
+            name="team-output-format"
+            disabled={!!generatedBlob || isGenerating}
+          />
+
+          {validationError && (
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
+              {validationError}
+            </div>
+          )}
+
+          {generatedBlob && !validationError && (
+            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm">
+              Document generated successfully! Click Download to save it.
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Non-scrolling footer — action buttons always visible */}
+        <div className="px-8 pb-8 flex gap-4 flex-shrink-0">
+          {!generatedBlob ? (
+            <>
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+                  isGenerating ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {isGenerating ? "Generating..." : "Generate"}
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={isGenerating}
+                className={`flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+                  isGenerating ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleDownload}
+                className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                Download
+              </button>
+              <button
+                onClick={handleCancel}
+                className="flex-1 bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                Close
+              </button>
+            </>
+          )}
+        </div>
+      </Modal>
     </>
   );
 }
