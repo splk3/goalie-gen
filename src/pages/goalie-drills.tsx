@@ -57,11 +57,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     () =>
       data.allDrill.nodes.map((node) => {
         const image = node.images && node.images.length > 0 ? node.images[0] : "placeholder.png";
+        const creationTimestamp = parseTimestamp(node.drill_creation_date);
         return {
           ...node,
           imageUrl: buildCacheBustedAssetPath(`/drills/${node.slug}/${image}`),
-          creationTimestamp: parseTimestamp(node.drill_creation_date),
-          updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? parseTimestamp(node.drill_creation_date),
+          creationTimestamp,
+          updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? creationTimestamp,
         };
       }),
     [data.allDrill.nodes]
