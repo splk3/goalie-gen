@@ -83,6 +83,13 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const imageClasses = hasMultipleImages
     ? "w-full h-auto object-contain max-h-[300px]"
     : "w-full h-auto object-contain";
+  const drillImageUrls = React.useMemo(
+    () =>
+      (drillData.images || []).map((image) =>
+        buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)
+      ),
+    [drillData.images, drillFolder]
+  );
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
@@ -233,13 +240,13 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
           {/* Right Column: Images */}
           <div className="space-y-4 print:space-y-2">
-            {(drillData.images || []).map((image, index) => (
+            {drillImageUrls.map((imageUrl, index) => (
               <div
                 key={index}
                 className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
               >
                 <img
-                  src={buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)}
+                  src={imageUrl}
                   alt={`Drill diagram ${index + 1}`}
                   className={imageClasses}
                   loading="lazy"
@@ -264,6 +271,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     src={embedUrl}
                     title="Video Demonstration"
                     className="absolute inset-0 w-full h-full rounded-lg"
+                    loading="lazy"
                     allowFullScreen
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                     referrerPolicy="strict-origin-when-cross-origin"
