@@ -177,14 +177,9 @@ export const generateDrillPdf = async (
 
     const logoHeight = 16;
     const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
-    doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, currentY, leftLogoWidth, logoHeight);
-
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(20);
-    doc.setFont(undefined, "bold");
-    doc.text("DRILLS", pageWidth / 2, currentY + 12, { align: "center" });
-
     const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight;
+
+    doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, currentY, leftLogoWidth, logoHeight);
     doc.addImage(
       rightLogoInfo.dataURL,
       "JPEG",
@@ -194,7 +189,31 @@ export const generateDrillPdf = async (
       logoHeight
     );
 
-    currentY += logoHeight + 4;
+    // Render the drill name as the header title, centered between the logos
+    const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(16);
+    doc.setFont(undefined, "bold");
+    const titleAvailableWidth =
+      pageWidth - 2 * margin - leftLogoWidth - rightLogoWidth - 2 * titleHorizontalPaddingMm;
+    const titleCenterX =
+      margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
+    const titleLines = doc.splitTextToSize(drillData.name, titleAvailableWidth);
+    // Use jsPDF's own text metrics to avoid hardcoded line-height values
+    const titleDimensions = doc.getTextDimensions(drillData.name, {
+      maxWidth: titleAvailableWidth,
+    });
+    const titleTotalHeight = titleDimensions.h;
+    // Per-character height (baseline offset) derived from jsPDF font metrics
+    const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
+    // Expand header area only if multi-line title exceeds the logo height
+    const effectiveHeaderHeight = Math.max(logoHeight, titleTotalHeight);
+    // Vertically center the text block; doc.text positions text at the first baseline
+    const titleFirstLineY =
+      currentY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
+    doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
+
+    currentY += effectiveHeaderHeight + 4;
 
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
     doc.setLineWidth(2);
@@ -202,24 +221,22 @@ export const generateDrillPdf = async (
     currentY += 8;
   } catch (error) {
     console.error("Error loading header images:", error);
+    // No logos: render the drill name centered across the full page
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(20);
+    doc.setFontSize(16);
     doc.setFont(undefined, "bold");
-    doc.text("DRILLS", pageWidth / 2, currentY, { align: "center" });
-    currentY += 10;
+    const fallbackTitleWidth = pageWidth - 2 * margin;
+    const fallbackTitleLines = doc.splitTextToSize(drillData.name, fallbackTitleWidth);
+    const fallbackDimensions = doc.getTextDimensions(drillData.name, {
+      maxWidth: fallbackTitleWidth,
+    });
+    doc.text(fallbackTitleLines, pageWidth / 2, currentY, { align: "center" });
+    currentY += fallbackDimensions.h + 4;
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
     doc.setLineWidth(2);
     doc.line(margin, currentY, pageWidth - margin, currentY);
     currentY += 8;
   }
-
-  // Drill name
-  doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-  doc.setFontSize(14);
-  doc.setFont(undefined, "bold");
-  const drillNameLines = doc.splitTextToSize(drillData.name, pageWidth - 2 * margin);
-  doc.text(drillNameLines, margin, currentY);
-  currentY += drillNameLines.length * 6 + 4;
 
   // Tags section - bold labels, normal values, equipment on separate line
   doc.setFontSize(9);

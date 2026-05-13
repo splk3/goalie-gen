@@ -111,4 +111,30 @@ describe("estimateDrillPdfPages", () => {
     expect(withoutSteps).toBe(2);
     expect(withSteps).toBeGreaterThan(withoutSteps);
   });
+
+  it("accounts for a long drill name that expands the header when estimating page count", () => {
+    // 22 short coaching points produces content just under the short-name first-page limit
+    // but just over the long-name first-page limit (the expanded header reduces available
+    // space by ~5 mm, which is enough to push this drill to a second page).
+    const baseDrillData = {
+      name: "Short Name",
+      description: "Short",
+      coaching_focus_points: Array.from({ length: 22 }, () => "quick"),
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    // Name > 80 chars wraps to 3 lines in the header title area (TITLE_CHARS_PER_LINE = 40),
+    // reducing available first-page space by ~5 mm compared to a short, single-line name.
+    const longNameDrillData: DrillData = {
+      ...baseDrillData,
+      name: "A Very Long Drill Name That Must Wrap to Three Lines in the PDF Header Title Area",
+    };
+
+    expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
+    expect(estimateDrillPdfPages(longNameDrillData)).toBe(2);
+  });
 });
