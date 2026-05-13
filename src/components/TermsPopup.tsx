@@ -33,16 +33,12 @@ export default function TermsPopup() {
       </button>
 
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto"
-          onClick={closeTerms}
-        >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div
             className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-3xl w-full shadow-2xl my-8"
             role="dialog"
             aria-modal="true"
             aria-labelledby="terms-heading"
-            onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-6">
               <h2

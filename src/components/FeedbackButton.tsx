@@ -79,17 +79,13 @@ export default function FeedbackButton() {
       </button>
 
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={closeFeedback}
-        >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div
             ref={dialogRef}
             className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="feedback-heading"
-            onClick={(event) => event.stopPropagation()}
           >
             <h2
               id="feedback-heading"
