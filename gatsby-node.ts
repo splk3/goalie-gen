@@ -64,6 +64,8 @@ const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
+const ALLOWED_TEAM_CONCEPTS = ["power_play", "penalty_kill", "net_front_traffic", "dump_in"];
+
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
 // Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
 // YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID — v= must be the first query parameter
@@ -275,6 +277,26 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
       throw new Error(
         `[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
       );
+    }
+  }
+
+  if (typeof tags.team_concepts !== "undefined" && !Array.isArray(tags.team_concepts)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'tags.team_concepts' must be an array of strings`
+    );
+  }
+  if (Array.isArray(tags.team_concepts)) {
+    for (const concept of tags.team_concepts) {
+      if (typeof concept !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.team_concepts' must contain only strings`
+        );
+      }
+      if (!ALLOWED_TEAM_CONCEPTS.includes(concept)) {
+        throw new Error(
+          `[${drillFolder}] invalid team_concept '${concept}'. Allowed values: ${ALLOWED_TEAM_CONCEPTS.join(", ")}`
+        );
+      }
     }
   }
 

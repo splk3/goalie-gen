@@ -55,3 +55,6 @@ tags:
     - power_push
   equipment:
     - none
+  team_concepts:
+    - power_play
+    - net_front_traffic

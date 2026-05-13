@@ -201,6 +201,12 @@ The `tags` field is required, but each sub-field is optional. Some sub-fields ha
   - `yes`
   - `no`
 
+- `team_concepts`: Optional. Only used when `team_drill` is `yes`. Allowed values are:
+  - `power_play`
+  - `penalty_kill`
+  - `net_front_traffic`
+  - `dump_in`
+
 For media fields, `images` should be an array of image filenames, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (with `v` as the first query parameter) or `https://youtu.be/VIDEO_ID`

@@ -433,9 +433,18 @@ export const generateDrillPdf = async (
   sectionY += 5;
 
   const skillsLeftX = margin;
-  const skillsRightX = pageWidth / 2;
+  const skillsRightX = margin + colWidth;
   let skillsLeftY = sectionY;
   let skillsRightY = sectionY;
+
+  const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
+  const hasTeamConcepts =
+    isTeamDrill && drillData.tags.team_concepts && drillData.tags.team_concepts.length > 0;
+
+  // Use 3-column layout when team concepts are present; otherwise 2-column
+  const colWidth = (pageWidth - 2 * margin) / (hasTeamConcepts ? 3 : 2);
+  const skillsThirdX = margin + 2 * colWidth;
+  let skillsThirdY = sectionY;
 
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
@@ -464,9 +473,21 @@ export const generateDrillPdf = async (
     });
   }
 
+  if (hasTeamConcepts) {
+    doc.setFont(undefined, "bold");
+    doc.text("Team Concepts:", skillsThirdX, skillsThirdY);
+    doc.setFont(undefined, "normal");
+    skillsThirdY += 4;
+
+    drillData.tags.team_concepts.forEach((concept) => {
+      doc.text(`• ${formatTag(concept)}`, skillsThirdX + 3, skillsThirdY);
+      skillsThirdY += 4;
+    });
+  }
+
   // Video section — URL only, no thumbnail image
   if (drillData.video) {
-    sectionY = Math.max(skillsLeftY, skillsRightY) + 4;
+    sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 4;
     const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
     sectionY = ensureSpace(sectionY, 9 + videoLines.length * 4);
 
