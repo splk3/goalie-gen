@@ -9,6 +9,12 @@ import {
 
 export type { DrillData };
 
+/**
+ * Progress callback invoked at each stage of PDF generation.
+ * @param message - Human-readable stage description shown to the user.
+ */
+export type DrillPdfProgressCallback = (message: string) => void;
+
 interface CachedImageEntry {
   expiresAt: number;
   promise: Promise<{ dataURL: string; width: number; height: number }>;
@@ -18,6 +24,13 @@ const imageDataCache = new Map<string, CachedImageEntry>();
 const drillPdfBlobCache = new Map<string, { expiresAt: number; blob: Blob }>();
 const MAX_IMAGE_CACHE_ENTRIES = 32;
 const MAX_PDF_CACHE_ENTRIES = 12;
+
+/**
+ * Maximum pixel dimension (width or height) for canvas-encoded images.
+ * Images larger than this are downscaled before conversion to keep peak
+ * memory usage predictable across all browsers.
+ */
+const MAX_CANVAS_DIMENSION = 2048;
 
 const pruneExpiredPdfCacheEntries = (now: number): void => {
   for (const [cacheKey, entry] of drillPdfBlobCache.entries()) {
@@ -52,9 +65,18 @@ export const loadImageAsDataURL = (
       img.crossOrigin = "anonymous";
 
       img.onload = () => {
+        // Downscale oversized images to keep peak canvas memory predictable.
+        const scale = Math.min(
+          1,
+          MAX_CANVAS_DIMENSION / img.width,
+          MAX_CANVAS_DIMENSION / img.height
+        );
+        const canvasWidth = Math.round(img.width * scale);
+        const canvasHeight = Math.round(img.height * scale);
+
         const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
 
         const ctx = canvas.getContext("2d");
         if (!ctx) {
@@ -62,13 +84,35 @@ export const loadImageAsDataURL = (
           return;
         }
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
 
         try {
           const dataURL = canvas.toDataURL("image/png");
-          resolve({ dataURL, width: img.width, height: img.height });
+          resolve({ dataURL, width: canvasWidth, height: canvasHeight });
         } catch (error) {
-          reject(error);
+          // Translate quota/memory-pressure errors into a clear OOM message.
+          // DOMException `SecurityError` (tainted canvas / CORS) is intentionally
+          // excluded so it propagates with its original message instead of the
+          // misleading "try a smaller image" copy.
+          const isOomDomException =
+            error instanceof DOMException &&
+            (error.name === "QuotaExceededError" ||
+              error.message.toLowerCase().includes("memory") ||
+              error.message.toLowerCase().includes("quota"));
+          const isOomError =
+            !(error instanceof DOMException) &&
+            error instanceof Error &&
+            (error.message.toLowerCase().includes("memory") ||
+              error.message.toLowerCase().includes("quota"));
+          if (isOomDomException || isOomError) {
+            reject(
+              new Error(
+                `Image too large to process (out of memory): ${imagePath}. Try a smaller image.`
+              )
+            );
+          } else {
+            reject(error);
+          }
         }
       };
 
@@ -101,7 +145,8 @@ export const loadImageAsDataURL = (
 
 export const generateDrillPdf = async (
   drillData: DrillData,
-  drillFolder: string
+  drillFolder: string,
+  onProgress?: DrillPdfProgressCallback
 ): Promise<jsPDF> => {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
@@ -118,14 +163,20 @@ export const generateDrillPdf = async (
   // Content must not exceed this Y value on any page
   const contentBottomLimit = footerSeparatorY - 8;
 
-  // Pre-load the gold logo so it can be drawn on every page
-  let goldLogoInfo: { dataURL: string; width: number; height: number } | null = null;
-  try {
-    goldLogoInfo = await loadImageAsDataURL(
+  // Pre-load all static header/footer images in parallel so none of the
+  // three network round-trips blocks the others.
+  onProgress?.("Loading images...");
+  const [goldLogoResult, leftLogoResult, rightLogoResult] = await Promise.allSettled([
+    loadImageAsDataURL(
       buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
-    );
-  } catch (error) {
-    console.error("Error loading gold certification logo:", error);
+    ),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
+  ]);
+
+  const goldLogoInfo = goldLogoResult.status === "fulfilled" ? goldLogoResult.value : null;
+  if (goldLogoResult.status === "rejected") {
+    console.error("Error loading gold certification logo:", goldLogoResult.reason);
   }
 
   const goldText =
@@ -166,14 +217,10 @@ export const generateDrillPdf = async (
 
   let currentY = 15;
 
-  // Header with USA Hockey logos and title
-  try {
-    const leftLogoInfo = await loadImageAsDataURL(
-      buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")
-    );
-    const rightLogoInfo = await loadImageAsDataURL(
-      buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")
-    );
+  // Header with USA Hockey logos and title — use the already-loaded results.
+  if (leftLogoResult.status === "fulfilled" && rightLogoResult.status === "fulfilled") {
+    const leftLogoInfo = leftLogoResult.value;
+    const rightLogoInfo = rightLogoResult.value;
 
     const logoHeight = 16;
     const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
@@ -219,8 +266,12 @@ export const generateDrillPdf = async (
     doc.setLineWidth(2);
     doc.line(margin, currentY, pageWidth - margin, currentY);
     currentY += 8;
-  } catch (error) {
-    console.error("Error loading header images:", error);
+  } else {
+    if (leftLogoResult.status === "rejected") {
+      console.error("Error loading header images:", leftLogoResult.reason);
+    } else if (rightLogoResult.status === "rejected") {
+      console.error("Error loading header images:", rightLogoResult.reason);
+    }
     // No logos: render the drill name centered across the full page
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(16);
@@ -287,19 +338,27 @@ export const generateDrillPdf = async (
   const contentStartY = currentY;
 
   // --- RIGHT COLUMN: Images (rendered first so they always land on page 1) ---
+  // Load all drill images in parallel so network round-trips overlap.
   const imageInfos: Array<{ dataURL: string; width: number; height: number }> = [];
 
   if (drillData.images && drillData.images.length > 0) {
-    for (let i = 0; i < drillData.images.length; i++) {
-      try {
-        const imagePath = `/drills/${drillFolder}/${drillData.images[i]}`;
-        const imageInfo = await loadImageAsDataURL(buildCacheBustedAssetPath(imagePath));
-        imageInfos.push(imageInfo);
-      } catch (error) {
-        console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, error);
+    const drillImageResults = await Promise.allSettled(
+      drillData.images.map((imageName) => {
+        const imagePath = `/drills/${drillFolder}/${imageName}`;
+        return loadImageAsDataURL(buildCacheBustedAssetPath(imagePath));
+      })
+    );
+
+    drillImageResults.forEach((result, i) => {
+      if (result.status === "fulfilled") {
+        imageInfos.push(result.value);
+      } else {
+        console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, result.reason);
       }
-    }
+    });
   }
+
+  onProgress?.("Generating PDF...");
 
   let rightY = contentStartY;
 
@@ -530,12 +589,15 @@ export const generateDrillPdf = async (
   // Draw the footer on the last (current) page
   drawPageFooter();
 
+  onProgress?.("Finalizing...");
+
   return doc;
 };
 
 export const generateDrillPdfBlob = async (
   drillData: DrillData,
-  drillFolder: string
+  drillFolder: string,
+  onProgress?: DrillPdfProgressCallback
 ): Promise<Blob> => {
   const cacheKey = [
     drillFolder,
@@ -553,7 +615,7 @@ export const generateDrillPdfBlob = async (
     drillPdfBlobCache.delete(cacheKey);
   }
 
-  const doc = await generateDrillPdf(drillData, drillFolder);
+  const doc = await generateDrillPdf(drillData, drillFolder, onProgress);
   const blob = doc.output("blob");
   drillPdfBlobCache.set(cacheKey, {
     blob,
