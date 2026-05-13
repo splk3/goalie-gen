@@ -6,7 +6,12 @@ description: |-
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
 
-coaching_points:
+# optional - ordered drill execution steps shown directly under description
+# drill_steps:
+#   - Drill step 1
+#   - Drill step 2
+
+coaching_focus_points:
   - Coaching point 1
   - Coaching point 2
   - Coaching point 3

@@ -333,6 +333,17 @@ export const generateDrillPdf = async (
   doc.text(descriptionLines, margin, leftY);
   leftY += descriptionLines.length * 4 + 3;
 
+  // Drill Steps (optional, no heading)
+  if (drillData.drill_steps && drillData.drill_steps.length > 0) {
+    for (const [index, step] of drillData.drill_steps.entries()) {
+      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
+      leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
+      doc.text(stepLines, margin + 3, leftY);
+      leftY += stepLines.length * 4 + 1;
+    }
+    leftY += 2;
+  }
+
   // Coaching Focus Points
   leftY = ensureSpace(leftY, 12); // heading + at least one bullet
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
