@@ -29,6 +29,7 @@ interface DrillPageContext {
       fundamental_skill?: string[];
       skating_skill?: string[];
       equipment?: string[];
+      team_concepts?: string[];
     };
   };
   drillFolder: string;
@@ -313,32 +314,57 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4 print:text-lg print:mb-2 print:text-usa-blue">
             Skills Focus
           </h2>
-          <div className="grid md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-3">
-            {drillData.tags.fundamental_skill && drillData.tags.fundamental_skill.length > 0 && (
-              <div>
-                <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
-                  Fundamental Skills:
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
-                  {drillData.tags.fundamental_skill.map((skill, index) => (
-                    <li key={index}>{formatTag(skill)}</li>
-                  ))}
-                </ul>
+          {(() => {
+            const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
+            const hasTeamConcepts =
+              isTeamDrill &&
+              drillData.tags.team_concepts &&
+              drillData.tags.team_concepts.length > 0;
+            const gridClass = hasTeamConcepts
+              ? "grid md:grid-cols-3 gap-6 print:grid-cols-3 print:gap-3"
+              : "grid md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-3";
+            return (
+              <div className={gridClass}>
+                {drillData.tags.fundamental_skill &&
+                  drillData.tags.fundamental_skill.length > 0 && (
+                    <div>
+                      <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                        Fundamental Skills:
+                      </h3>
+                      <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                        {drillData.tags.fundamental_skill.map((skill, index) => (
+                          <li key={index}>{formatTag(skill)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                {drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0 && (
+                  <div>
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                      Skating Skills:
+                    </h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                      {drillData.tags.skating_skill.map((skill, index) => (
+                        <li key={index}>{formatTag(skill)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {hasTeamConcepts && (
+                  <div>
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                      Team Concepts:
+                    </h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                      {drillData.tags.team_concepts.map((concept, index) => (
+                        <li key={index}>{formatTag(concept)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-            {drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0 && (
-              <div>
-                <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
-                  Skating Skills:
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
-                  {drillData.tags.skating_skill.map((skill, index) => (
-                    <li key={index}>{formatTag(skill)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+            );
+          })()}
         </div>
 
         {/* Gold Certification Footer - Only visible when printing */}
