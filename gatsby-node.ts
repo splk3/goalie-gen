@@ -280,22 +280,27 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (typeof tags.team_concepts !== "undefined" && !Array.isArray(tags.team_concepts)) {
-    throw new Error(
-      `[${drillFolder}] drill.yml field 'tags.team_concepts' must be an array of strings`
-    );
-  }
-  if (Array.isArray(tags.team_concepts)) {
-    for (const concept of tags.team_concepts) {
-      if (typeof concept !== "string") {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'tags.team_concepts' must contain only strings`
-        );
-      }
-      if (!ALLOWED_TEAM_CONCEPTS.includes(concept)) {
-        throw new Error(
-          `[${drillFolder}] invalid team_concept '${concept}'. Allowed values: ${ALLOWED_TEAM_CONCEPTS.join(", ")}`
-        );
+  const isTeamDrill =
+    Array.isArray(tags.team_drill) && tags.team_drill.length === 1 && tags.team_drill[0] === "yes";
+
+  if (isTeamDrill) {
+    if (typeof tags.team_concepts !== "undefined" && !Array.isArray(tags.team_concepts)) {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'tags.team_concepts' must be an array of strings`
+      );
+    }
+    if (Array.isArray(tags.team_concepts)) {
+      for (const concept of tags.team_concepts) {
+        if (typeof concept !== "string") {
+          throw new Error(
+            `[${drillFolder}] drill.yml field 'tags.team_concepts' must contain only strings`
+          );
+        }
+        if (!ALLOWED_TEAM_CONCEPTS.includes(concept)) {
+          throw new Error(
+            `[${drillFolder}] invalid team_concept '${concept}'. Allowed values: ${ALLOWED_TEAM_CONCEPTS.join(", ")}`
+          );
+        }
       }
     }
   }
