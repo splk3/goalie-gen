@@ -200,7 +200,9 @@ export const generateDrillPdf = async (
       margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
     const titleLines = doc.splitTextToSize(drillData.name, titleAvailableWidth);
     // Use jsPDF's own text metrics to avoid hardcoded line-height values
-    const titleDimensions = doc.getTextDimensions(drillData.name, { maxWidth: titleAvailableWidth });
+    const titleDimensions = doc.getTextDimensions(drillData.name, {
+      maxWidth: titleAvailableWidth,
+    });
     const titleTotalHeight = titleDimensions.h;
     // Per-character height (baseline offset) derived from jsPDF font metrics
     const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
@@ -225,7 +227,9 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     const fallbackTitleWidth = pageWidth - 2 * margin;
     const fallbackTitleLines = doc.splitTextToSize(drillData.name, fallbackTitleWidth);
-    const fallbackDimensions = doc.getTextDimensions(drillData.name, { maxWidth: fallbackTitleWidth });
+    const fallbackDimensions = doc.getTextDimensions(drillData.name, {
+      maxWidth: fallbackTitleWidth,
+    });
     doc.text(fallbackTitleLines, pageWidth / 2, currentY, { align: "center" });
     currentY += fallbackDimensions.h + 4;
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
