@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
+import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
 
 // Helper function to recursively copy directory
 function copyDirectorySync(src: string, dest: string) {
@@ -88,8 +89,58 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`);
   }
 
-  if (!Array.isArray(d.coaching_points)) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'coaching_points' (array)`);
+  if (typeof d.drill_steps !== "undefined" && !Array.isArray(d.drill_steps)) {
+    throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must be an array of strings`);
+  }
+  if (Array.isArray(d.drill_steps)) {
+    for (const step of d.drill_steps) {
+      if (typeof step !== "string") {
+        throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
+      }
+    }
+  }
+
+  if (!Array.isArray(d.coaching_focus_points)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
+    );
+  }
+  for (const point of d.coaching_focus_points) {
+    if (typeof point !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'coaching_focus_points' must contain only strings`
+      );
+    }
+  }
+
+  if (typeof d.shooter_focus_points !== "undefined" && !Array.isArray(d.shooter_focus_points)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be an array of strings`
+    );
+  }
+  if (Array.isArray(d.shooter_focus_points)) {
+    for (const point of d.shooter_focus_points) {
+      if (typeof point !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'shooter_focus_points' must contain only strings`
+        );
+      }
+    }
+  }
+
+  if (typeof d.drill_progressions !== "undefined" && !Array.isArray(d.drill_progressions)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of strings`
+    );
+  }
+  if (Array.isArray(d.drill_progressions)) {
+    for (const step of d.drill_progressions) {
+      if (typeof step !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions' must contain only strings`
+        );
+      }
+    }
   }
 
   if (!Array.isArray(d.images)) {
@@ -389,6 +440,13 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
   }
 
   for (const { folder, drillData } of drills) {
+    const estimatedPages = estimateDrillPdfPages(drillData);
+    if (estimatedPages > 1) {
+      console.warn(
+        `⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") is estimated to need ${estimatedPages} page(s). Consider shortening its content to fit on a single page.`
+      );
+    }
+
     createPage({
       path: `/drills/${folder}`,
       component: path.resolve("./src/templates/drill.tsx"),
@@ -426,7 +484,10 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         slug: folder,
         name: drillData.name,
         description: drillData.description,
-        coaching_points: drillData.coaching_points,
+        drill_steps: drillData.drill_steps,
+        coaching_focus_points: drillData.coaching_focus_points,
+        shooter_focus_points: drillData.shooter_focus_points,
+        drill_progressions: drillData.drill_progressions,
         images: drillData.images,
         video: drillData.video,
         drill_creation_date: drillData.drill_creation_date,

@@ -1,0 +1,114 @@
+import * as fs from "fs";
+import * as path from "path";
+import * as yaml from "js-yaml";
+import type { DrillData } from "../../types/drill";
+import { estimateDrillPdfPages } from "../estimateDrillPdfPages";
+
+const DRILLS_DIR = path.resolve(__dirname, "../../../drills");
+
+interface DrillEntry {
+  folder: string;
+  drillData: DrillData;
+}
+
+function loadAllDrills(): DrillEntry[] {
+  if (!fs.existsSync(DRILLS_DIR)) {
+    throw new Error(`Drills directory not found: ${DRILLS_DIR}`);
+  }
+
+  const folders = fs
+    .readdirSync(DRILLS_DIR)
+    .filter((item) => fs.statSync(path.join(DRILLS_DIR, item)).isDirectory());
+
+  return folders
+    .map((folder) => {
+      const ymlPath = path.join(DRILLS_DIR, folder, "drill.yml");
+      if (!fs.existsSync(ymlPath)) return null;
+      const content = fs.readFileSync(ymlPath, "utf8");
+      const drillData = yaml.load(content, { schema: yaml.FAILSAFE_SCHEMA }) as DrillData;
+      return { folder, drillData };
+    })
+    .filter((entry): entry is DrillEntry => entry !== null);
+}
+
+describe("estimateDrillPdfPages", () => {
+  const drills = loadAllDrills();
+
+  it("loads at least one drill from the drills directory", () => {
+    expect(drills.length).toBeGreaterThan(0);
+  });
+
+  it("returns a page count of at least 1 for every drill", () => {
+    for (const { drillData } of drills) {
+      expect(estimateDrillPdfPages(drillData)).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it("uses larger follow-on page capacity after first-page overflow", () => {
+    const shortPoint = "quick";
+    const drillData = {
+      name: "Estimator Capacity Regression",
+      description: "Short description",
+      coaching_focus_points: Array.from({ length: 50 }, () => shortPoint),
+      shooter_focus_points: Array.from({ length: 10 }, () => shortPoint),
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    expect(estimateDrillPdfPages(drillData)).toBe(2);
+  });
+
+  it("treats single newlines in descriptions the same as soft-wrapped spaces", () => {
+    const commonDrillData = {
+      name: "Description Normalization Regression",
+      coaching_focus_points: ["quick rep"],
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as Omit<DrillData, "description">;
+
+    const softWrappedDescription =
+      "This drill has a soft wrap in yaml source\nthat should not change estimated line usage.";
+    const spaceWrappedDescription =
+      "This drill has a soft wrap in yaml source that should not change estimated line usage.";
+
+    const softWrappedEstimate = estimateDrillPdfPages({
+      ...commonDrillData,
+      description: softWrappedDescription,
+    });
+    const spaceWrappedEstimate = estimateDrillPdfPages({
+      ...commonDrillData,
+      description: spaceWrappedDescription,
+    });
+
+    expect(softWrappedEstimate).toBe(spaceWrappedEstimate);
+  });
+
+  it("accounts for optional drill steps when estimating page count", () => {
+    const baseData = {
+      name: "Drill Steps Estimate",
+      description: "Short description",
+      coaching_focus_points: Array.from({ length: 50 }, () => "quick"),
+      shooter_focus_points: Array.from({ length: 10 }, () => "quick"),
+      images: [],
+      tags: {
+        team_drill: ["no"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    const withoutSteps = estimateDrillPdfPages(baseData);
+    const withSteps = estimateDrillPdfPages({
+      ...baseData,
+      drill_steps: Array.from({ length: 30 }, (_, index) => `Drill step ${index + 1}`),
+    });
+
+    expect(withoutSteps).toBe(2);
+    expect(withSteps).toBeGreaterThan(withoutSteps);
+  });
+});

@@ -5,15 +5,19 @@ import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
-import { generateDrillPdf } from "../utils/generateDrillPdf";
+import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
+import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
 interface DrillPageContext {
   slug: string;
   drillData: {
     name: string;
     description: string;
-    coaching_points: string[];
+    drill_steps?: string[];
+    coaching_focus_points: string[];
+    shooter_focus_points?: string[];
+    drill_progressions?: string[];
     images: string[];
     video?: string;
     drill_creation_date: string;
@@ -49,6 +53,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const handlePrint = async () => {
     setIsPrinting(true);
     try {
+      const { generateDrillPdf } = await import("../utils/generateDrillPdf");
       const doc = await generateDrillPdf(drillData, drillFolder);
       doc.autoPrint();
       const blob = doc.output("blob");
@@ -56,7 +61,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       window.open(url, "_blank");
       // Revoke the object URL after the window has had time to load,
       // or after a delay even if the window could not be opened
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
     } catch (error) {
       console.error("Error generating print PDF:", error);
       // Fallback to native browser print
@@ -68,6 +73,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
+  const normalizedDescription = normalizeDrillDescription(drillData.description);
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -84,17 +90,21 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       <div className="hidden print:block print:mb-6">
         <div className="flex justify-between items-center border-b-4 border-usa-red pb-4">
           <img
-            src="/images/usahockey/usahockey-goaltending.jpg"
+            src={buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")}
             alt="USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
+            loading="eager"
+            decoding="async"
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img
-            src="/images/usahockey/51-in-30.jpg"
+            src={buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")}
             alt="51 in 30 USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
+            loading="eager"
+            decoding="async"
           />
         </div>
       </div>
@@ -163,29 +173,62 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Description, Coaching Points, and Images */}
+        {/* Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions, and Images */}
         <div className="grid md:grid-cols-2 gap-8 mb-8 print:grid-cols-2 print:gap-4 print:mb-4">
-          {/* Left Column: Description and Coaching Points */}
+          {/* Left Column: Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
           <div>
             <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
                 Description
               </h2>
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
-                {drillData.description}
+                {normalizedDescription}
               </p>
+              {drillData.drill_steps && drillData.drill_steps.length > 0 && (
+                <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.drill_steps.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              )}
             </div>
 
-            <div>
+            <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                Coaching Points
+                Coaching Focus Points
               </h2>
               <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                {(drillData.coaching_points || []).map((point, index) => (
+                {(drillData.coaching_focus_points || []).map((point, index) => (
                   <li key={index}>{point}</li>
                 ))}
               </ul>
             </div>
+
+            {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (
+              <div className="mb-6 print:mb-3">
+                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+                  Shooter Focus Points
+                </h2>
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.shooter_focus_points.map((point, index) => (
+                    <li key={index}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+                  Drill Progressions
+                </h2>
+                <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.drill_progressions.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Images */}
@@ -196,9 +239,11 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
               >
                 <img
-                  src={`/drills/${drillFolder}/${image}`}
+                  src={buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)}
                   alt={`Drill diagram ${index + 1}`}
                   className={imageClasses}
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             ))}
@@ -232,6 +277,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                       src={videoThumbnail}
                       alt="Video thumbnail"
                       className="w-32 h-24 object-cover rounded"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   <span className="text-usa-blue font-semibold print:text-sm break-all">
@@ -290,10 +337,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         <div className="hidden print:block print:mt-3 print:pt-2 print:border-t-2 print:border-gray-400 break-before-avoid">
           <div className="flex items-center gap-3">
             <img
-              src="/images/usahockey/usahockey-gold-certification.png"
+              src={buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")}
               alt="USA Hockey Goaltending Gold Level Coach Certification"
               className="object-contain"
               style={{ maxHeight: "0.5in", width: "auto", height: "auto" }}
+              loading="lazy"
+              decoding="async"
             />
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA
