@@ -5,44 +5,9 @@ import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
 import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
 
-// Helper function to recursively copy directory
-function copyDirectorySync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyDirectorySync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
-
-// Helper function to recursively delete directory
-function deleteDirectorySync(dir: string) {
-  if (fs.existsSync(dir)) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-
-      if (entry.isDirectory()) {
-        deleteDirectorySync(fullPath);
-      } else {
-        fs.unlinkSync(fullPath);
-      }
-    }
-
-    fs.rmdirSync(dir);
-  }
-}
+// Module-level cache: drills are loaded once per build process and reused
+// across createPages and sourceNodes to avoid redundant disk reads.
+let _drillsCache: Array<{ folder: string; drillData: DrillData }> | null = null;
 
 // Allowed tag values for validation
 const ALLOWED_FUNDAMENTAL_SKILLS = [
@@ -403,19 +368,22 @@ export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({ act
 };
 
 export const onPreBootstrap: GatsbyNode["onPreBootstrap"] = () => {
+  console.log("── [onPreBootstrap] Syncing drill assets to static/drills ──");
   const drillsSource = path.resolve(__dirname, "drills");
   const drillsDestination = path.resolve(__dirname, "static/drills");
 
-  // Clean the destination directory to remove stale files
+  // Remove stale destination so the copy is always clean
   if (fs.existsSync(drillsDestination)) {
-    console.log("🧹 Cleaning static/drills directory...");
-    deleteDirectorySync(drillsDestination);
+    console.log("  🧹 Removing stale static/drills directory...");
+    fs.rmSync(drillsDestination, { recursive: true, force: true });
   }
 
-  // Copy drills folder to static
+  // Copy the entire drills folder into static/ using the native Node.js API
   if (fs.existsSync(drillsSource)) {
-    copyDirectorySync(drillsSource, drillsDestination);
-    console.log("✓ Copied drill files to static/drills");
+    fs.cpSync(drillsSource, drillsDestination, { recursive: true });
+    console.log("  ✓ Drill assets copied to static/drills");
+  } else {
+    console.warn("  ⚠️  drills/ source directory not found — no assets copied");
   }
 };
 
@@ -448,21 +416,38 @@ function loadDrillsFromDirectory(
   return drills;
 }
 
+/**
+ * Returns the drill list for the given directory, loading from disk only once per
+ * build process.  The cache is intentionally module-scoped so that createPages and
+ * sourceNodes — which both need the same data — share a single read pass.
+ */
+function getOrLoadDrills(drillsDir: string): Array<{ folder: string; drillData: DrillData }> {
+  if (_drillsCache === null) {
+    _drillsCache = loadDrillsFromDirectory(drillsDir);
+    console.log(`  ✓ Loaded ${_drillsCache.length} drill(s) from ${drillsDir}`);
+  }
+  return _drillsCache;
+}
+
 export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
+  console.log("── [createPages] Generating drill pages ──");
   const { createPage } = actions;
 
   const drillsDir = path.resolve(__dirname, "drills");
 
   if (!fs.existsSync(drillsDir)) {
-    console.warn("Warning: drills directory does not exist. No drill pages will be generated.");
+    console.warn("  ⚠️  drills/ directory does not exist — no drill pages will be generated.");
     return;
   }
 
   let drills: Array<{ folder: string; drillData: DrillData }>;
   try {
-    drills = loadDrillsFromDirectory(drillsDir);
+    drills = getOrLoadDrills(drillsDir);
   } catch (error) {
-    console.error(`Error loading drills:`, error instanceof Error ? error.message : String(error));
+    console.error(
+      `  ✗ Error loading drills:`,
+      error instanceof Error ? error.message : String(error)
+    );
     throw error;
   }
 
@@ -470,7 +455,7 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
     const estimatedPages = estimateDrillPdfPages(drillData);
     if (estimatedPages > 1) {
       console.warn(
-        `⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") is estimated to need ${estimatedPages} page(s). Consider shortening its content to fit on a single page.`
+        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") is estimated to need ${estimatedPages} page(s). Consider shortening its content to fit on a single page.`
       );
     }
 
@@ -484,6 +469,7 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
       },
     });
   }
+  console.log(`  ✓ Created ${drills.length} drill page(s)`);
 };
 
 export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
@@ -491,15 +477,16 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
   createNodeId,
   createContentDigest,
 }) => {
+  console.log("── [sourceNodes] Adding drill nodes to GraphQL ──");
   const { createNode } = actions;
 
   const drillsDir = path.resolve(__dirname, "drills");
   let drills: Array<{ folder: string; drillData: DrillData }>;
   try {
-    drills = loadDrillsFromDirectory(drillsDir);
+    drills = getOrLoadDrills(drillsDir);
   } catch (error) {
     console.error(
-      `Error loading drills for GraphQL:`,
+      `  ✗ Error loading drills for GraphQL:`,
       error instanceof Error ? error.message : String(error)
     );
     throw error;
@@ -534,9 +521,10 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
       });
     } catch (error) {
       console.error(
-        `Error processing drill '${folder}' for GraphQL:`,
+        `  ✗ Error processing drill '${folder}' for GraphQL:`,
         error instanceof Error ? error.message : String(error)
       );
     }
   }
+  console.log(`  ✓ Sourced ${drills.length} drill node(s) into GraphQL`);
 };
