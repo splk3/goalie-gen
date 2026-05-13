@@ -52,7 +52,7 @@ export default function DownloadDrillPdfButton({
           error.message.toLowerCase().includes("out of memory"));
       alert(
         isOom
-          ? "Unable to generate PDF: one or more images is too large. Try reducing image sizes and try again."
+          ? "Unable to generate PDF: one or more images are too large. Try reducing image sizes and try again."
           : "Failed to generate PDF. Please ensure your browser supports PDF generation and try again."
       );
     } finally {

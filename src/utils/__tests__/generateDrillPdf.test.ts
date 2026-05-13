@@ -203,12 +203,12 @@ describe("loadImageAsDataURL", () => {
     await expect(promise).rejects.toThrow("Failed to load image:");
   });
 
-  it("translates a DOMException from toDataURL into an out-of-memory error", async () => {
+  it("translates a QuotaExceededError DOMException from toDataURL into an out-of-memory error", async () => {
     setupMocks({
       imageWidth: 100,
       imageHeight: 100,
       toDataURL: () => {
-        throw new DOMException("Canvas size exceeded", "SecurityError");
+        throw new DOMException("Canvas area exceeds the maximum limit", "QuotaExceededError");
       },
     });
 
@@ -216,6 +216,24 @@ describe("loadImageAsDataURL", () => {
     jest.runAllTimers();
 
     await expect(promise).rejects.toThrow(/out of memory/i);
+  });
+
+  it("does NOT translate a SecurityError DOMException as an OOM error", async () => {
+    const securityError = new DOMException("The operation is insecure.", "SecurityError");
+    setupMocks({
+      imageWidth: 100,
+      imageHeight: 100,
+      toDataURL: () => {
+        throw securityError;
+      },
+    });
+
+    const promise = loadImageAsDataURL("http://example.com/cors-err.png");
+    jest.runAllTimers();
+
+    // Must not be wrapped with OOM message; the original SecurityError propagates.
+    await expect(promise).rejects.toThrow(securityError);
+    await expect(promise).rejects.not.toThrow(/out of memory/i);
   });
 
   it("translates a memory-related Error from toDataURL into an out-of-memory error", async () => {

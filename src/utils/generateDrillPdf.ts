@@ -90,13 +90,21 @@ export const loadImageAsDataURL = (
           const dataURL = canvas.toDataURL("image/png");
           resolve({ dataURL, width: canvasWidth, height: canvasHeight });
         } catch (error) {
-          // toDataURL can throw QuotaExceededError or similar on memory pressure.
-          if (
-            error instanceof DOMException ||
-            (error instanceof Error &&
-              (error.message.toLowerCase().includes("memory") ||
-                error.message.toLowerCase().includes("quota")))
-          ) {
+          // Translate quota/memory-pressure errors into a clear OOM message.
+          // DOMException `SecurityError` (tainted canvas / CORS) is intentionally
+          // excluded so it propagates with its original message instead of the
+          // misleading "try a smaller image" copy.
+          const isOomDomException =
+            error instanceof DOMException &&
+            (error.name === "QuotaExceededError" ||
+              error.message.toLowerCase().includes("memory") ||
+              error.message.toLowerCase().includes("quota"));
+          const isOomError =
+            !(error instanceof DOMException) &&
+            error instanceof Error &&
+            (error.message.toLowerCase().includes("memory") ||
+              error.message.toLowerCase().includes("quota"));
+          if (isOomDomException || isOomError) {
             reject(
               new Error(
                 `Image too large to process (out of memory): ${imagePath}. Try a smaller image.`
