@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { DrillData } from "../types/drill";
+import type { DrillPdfProgressCallback } from "../utils/generateDrillPdf";
 import { trackEvent } from "../utils/analytics";
 import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
@@ -13,15 +14,21 @@ export default function DownloadDrillPdfButton({
   drillFolder,
 }: DownloadDrillPdfButtonProps) {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
+  const [statusMessage, setStatusMessage] = React.useState<string>("");
 
   const handleDownload = async () => {
     setIsGenerating(true);
+    setStatusMessage("Loading images...");
+
+    const onProgress: DrillPdfProgressCallback = (message) => {
+      setStatusMessage(message);
+    };
 
     try {
       const { generateDrillPdfBlob } = await import("../utils/generateDrillPdf");
 
       const fileName = `${drillData.name.replace(/[<>:"/\\|?*]/g, "_")}.pdf`;
-      const blob = await generateDrillPdfBlob(drillData, drillFolder);
+      const blob = await generateDrillPdfBlob(drillData, drillFolder, onProgress);
 
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -39,11 +46,18 @@ export default function DownloadDrillPdfButton({
       });
     } catch (error) {
       console.error("Error generating PDF:", error);
+      const isOom =
+        error instanceof Error &&
+        (error.message.toLowerCase().includes("memory") ||
+          error.message.toLowerCase().includes("out of memory"));
       alert(
-        "Failed to generate PDF. Please ensure your browser supports PDF generation and try again."
+        isOom
+          ? "Unable to generate PDF: one or more images is too large. Try reducing image sizes and try again."
+          : "Failed to generate PDF. Please ensure your browser supports PDF generation and try again."
       );
     } finally {
       setIsGenerating(false);
+      setStatusMessage("");
     }
   };
 
@@ -55,7 +69,7 @@ export default function DownloadDrillPdfButton({
         isGenerating ? "opacity-50 cursor-not-allowed" : ""
       }`}
     >
-      {isGenerating ? "Generating..." : "Download Drill"}
+      {isGenerating ? statusMessage || "Generating..." : "Download Drill"}
     </button>
   );
 }
