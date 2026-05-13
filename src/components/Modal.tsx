@@ -1,7 +1,7 @@
 import * as React from "react";
 
 const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,8 +16,9 @@ interface ModalProps {
  *
  * - The visual dark backdrop is `aria-hidden="true"` (decorative only).
  * - The dialog receives `role="dialog"` and `aria-modal="true"`.
- * - Focus is moved to the first focusable element on open and restored to the
- *   trigger element on close (when `triggerRef` is provided).
+ * - On open, focus moves to the dialog container itself (`tabIndex={-1}`) so
+ *   screen readers announce the dialog title without auto-scrolling into content.
+ * - On close, focus is restored to the trigger element (when `triggerRef` is provided).
  * - Tab / Shift+Tab navigation is trapped within the dialog while it is open.
  * - The dialog uses `flex flex-col max-h-[90vh]` so consumers can place a
  *   scrollable content section (`overflow-y-auto flex-1 min-h-0`) and a
@@ -34,15 +35,13 @@ export default function Modal({
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const wasOpenRef = React.useRef<boolean>(false);
 
-  // Focus the first focusable element when the modal opens; restore focus to
-  // the trigger element when it closes.
+  // Focus the dialog container when the modal opens so screen readers announce
+  // the dialog title without auto-scrolling into the content area.
+  // Restore focus to the trigger element when it closes.
   React.useEffect(() => {
     if (isOpen) {
       wasOpenRef.current = true;
-      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
-      if (focusable && focusable.length > 0) {
-        focusable[0].focus();
-      }
+      dialogRef.current?.focus();
     } else if (wasOpenRef.current) {
       wasOpenRef.current = false;
       triggerRef?.current?.focus();
@@ -96,7 +95,8 @@ export default function Modal({
       <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
         <div
           ref={dialogRef}
-          className={`bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col max-h-[90vh] ${className}`}
+          tabIndex={-1}
+          className={`bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col max-h-[90vh] focus:outline-none ${className}`}
           role="dialog"
           aria-modal="true"
           aria-labelledby={labelledBy}
