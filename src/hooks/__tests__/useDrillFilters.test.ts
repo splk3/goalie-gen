@@ -166,4 +166,22 @@ describe("useDrillFilters", () => {
       ])
     );
   });
+
+  it("applies initial filters on first render", () => {
+    const drills = makeDrills();
+    const { result } = renderHook(() =>
+      useDrillFilters(drills, {
+        skill_level: ["advanced"],
+        team_drill: [],
+        age_level: [],
+        fundamental_skill: [],
+        skating_skill: [],
+        equipment: [],
+      })
+    );
+
+    expect(result.current.selectedFilters.skill_level).toEqual(["advanced"]);
+    expect(result.current.filteredDrills).toHaveLength(1);
+    expect(result.current.filteredDrills[0].tags.skill_level).toContain("advanced");
+  });
 });
