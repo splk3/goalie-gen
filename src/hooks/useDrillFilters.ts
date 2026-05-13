@@ -59,11 +59,13 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
 
   const activeFilterEntries = React.useMemo(
     () =>
-      FILTER_CATEGORIES.filter((category) => selectedFilters[category].length > 0).map((category) => ({
-        category,
-        values: selectedFilters[category],
-        valueSet: new Set(selectedFilters[category]),
-      })),
+      FILTER_CATEGORIES.filter((category) => selectedFilters[category].length > 0).map(
+        (category) => ({
+          category,
+          values: selectedFilters[category],
+          valueSet: new Set(selectedFilters[category]),
+        })
+      ),
     [selectedFilters]
   );
 

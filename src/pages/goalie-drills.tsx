@@ -76,7 +76,9 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     Object.keys(parsedFilters).forEach((category) => {
       const paramValue = initialSearchParams.get(category);
       if (paramValue) {
-        parsedFilters[category as keyof FilterState] = paramValue.split(",").filter((v) => v.trim());
+        parsedFilters[category as keyof FilterState] = paramValue
+          .split(",")
+          .filter((v) => v.trim());
       }
     });
 
