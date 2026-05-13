@@ -20,8 +20,10 @@ const FOOTER_LOGO_Y = PAGE_HEIGHT - MARGIN - GOLD_LOGO_HEIGHT;
 const FOOTER_SEPARATOR_Y = FOOTER_LOGO_Y - 4;
 const CONTENT_BOTTOM_LIMIT = FOOTER_SEPARATOR_Y - 8;
 
-// Approximate height consumed by the page header, drill name, and tags
-const HEADER_AND_TAGS_HEIGHT = 65;
+// Approximate height consumed by the page header (logos + drill name title) and tags.
+// The drill name is now rendered in the header area instead of as a separate block,
+// so the total is smaller than before.
+const HEADER_AND_TAGS_HEIGHT = 52;
 
 // Fixed estimate for the Skills Focus section (separator + heading + skills list)
 const SKILLS_SECTION_HEIGHT = 30;
