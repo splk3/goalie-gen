@@ -432,17 +432,18 @@ export const generateDrillPdf = async (
   doc.text("Skills Focus", margin, sectionY);
   sectionY += 5;
 
-  const skillsLeftX = margin;
-  const skillsRightX = margin + colWidth;
-  let skillsLeftY = sectionY;
-  let skillsRightY = sectionY;
-
   const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
   const hasTeamConcepts =
     isTeamDrill && drillData.tags.team_concepts && drillData.tags.team_concepts.length > 0;
 
   // Use 3-column layout when team concepts are present; otherwise 2-column
   const colWidth = (pageWidth - 2 * margin) / (hasTeamConcepts ? 3 : 2);
+
+  const skillsLeftX = margin;
+  const skillsRightX = margin + colWidth;
+  let skillsLeftY = sectionY;
+  let skillsRightY = sectionY;
+
   const skillsThirdX = margin + 2 * colWidth;
   let skillsThirdY = sectionY;
 
