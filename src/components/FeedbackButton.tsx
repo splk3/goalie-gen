@@ -36,7 +36,8 @@ export default function FeedbackButton() {
         className="max-w-lg w-full"
         triggerRef={triggerRef}
       >
-        <div className="p-6">
+        {/* Scrollable content */}
+        <div className="p-6 overflow-y-auto flex-1 min-h-0">
           <h2
             id="feedback-heading"
             className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4"
@@ -70,10 +71,13 @@ export default function FeedbackButton() {
               Add a New Drill
             </a>
           </div>
+        </div>
 
+        {/* Non-scrolling footer — close button always visible */}
+        <div className="px-6 pb-6 flex-shrink-0">
           <button
             onClick={closeFeedback}
-            className="mt-5 w-full text-center text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
+            className="w-full text-center text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
           >
             Close
           </button>
