@@ -1,7 +1,10 @@
 export interface DrillData {
   name: string;
   description: string;
-  coaching_points: string[];
+  drill_steps?: string[];
+  coaching_focus_points: string[];
+  shooter_focus_points?: string[];
+  drill_progressions?: string[];
   images: string[];
   video?: string;
   drill_creation_date: string;
@@ -13,5 +16,6 @@ export interface DrillData {
     fundamental_skill?: string[];
     skating_skill?: string[];
     equipment?: string[];
+    team_concepts?: string[];
   };
 }

@@ -5,15 +5,19 @@ import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
-import { generateDrillPdf } from "../utils/generateDrillPdf";
+import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
+import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
 interface DrillPageContext {
   slug: string;
   drillData: {
     name: string;
     description: string;
-    coaching_points: string[];
+    drill_steps?: string[];
+    coaching_focus_points: string[];
+    shooter_focus_points?: string[];
+    drill_progressions?: string[];
     images: string[];
     video?: string;
     drill_creation_date: string;
@@ -25,6 +29,7 @@ interface DrillPageContext {
       fundamental_skill?: string[];
       skating_skill?: string[];
       equipment?: string[];
+      team_concepts?: string[];
     };
   };
   drillFolder: string;
@@ -49,6 +54,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const handlePrint = async () => {
     setIsPrinting(true);
     try {
+      const { generateDrillPdf } = await import("../utils/generateDrillPdf");
       const doc = await generateDrillPdf(drillData, drillFolder);
       doc.autoPrint();
       const blob = doc.output("blob");
@@ -56,7 +62,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       window.open(url, "_blank");
       // Revoke the object URL after the window has had time to load,
       // or after a delay even if the window could not be opened
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
     } catch (error) {
       console.error("Error generating print PDF:", error);
       // Fallback to native browser print
@@ -68,6 +74,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
+  const normalizedDescription = normalizeDrillDescription(drillData.description);
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -77,6 +84,13 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const imageClasses = hasMultipleImages
     ? "w-full h-auto object-contain max-h-[300px]"
     : "w-full h-auto object-contain";
+  const drillImageUrls = React.useMemo(
+    () =>
+      (drillData.images || []).map((image) =>
+        buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)
+      ),
+    [drillData.images, drillFolder]
+  );
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
@@ -84,17 +98,21 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       <div className="hidden print:block print:mb-6">
         <div className="flex justify-between items-center border-b-4 border-usa-red pb-4">
           <img
-            src="/images/usahockey/usahockey-goaltending.jpg"
+            src={buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")}
             alt="USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
+            loading="eager"
+            decoding="async"
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img
-            src="/images/usahockey/51-in-30.jpg"
+            src={buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")}
             alt="51 in 30 USA Hockey Goaltending"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
+            loading="eager"
+            decoding="async"
           />
         </div>
       </div>
@@ -163,42 +181,77 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Description, Coaching Points, and Images */}
+        {/* Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions, and Images */}
         <div className="grid md:grid-cols-2 gap-8 mb-8 print:grid-cols-2 print:gap-4 print:mb-4">
-          {/* Left Column: Description and Coaching Points */}
+          {/* Left Column: Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
           <div>
             <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
                 Description
               </h2>
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
-                {drillData.description}
+                {normalizedDescription}
               </p>
+              {drillData.drill_steps && drillData.drill_steps.length > 0 && (
+                <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.drill_steps.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              )}
             </div>
 
-            <div>
+            <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                Coaching Points
+                Coaching Focus Points
               </h2>
               <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                {(drillData.coaching_points || []).map((point, index) => (
+                {(drillData.coaching_focus_points || []).map((point, index) => (
                   <li key={index}>{point}</li>
                 ))}
               </ul>
             </div>
+
+            {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (
+              <div className="mb-6 print:mb-3">
+                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+                  Shooter Focus Points
+                </h2>
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.shooter_focus_points.map((point, index) => (
+                    <li key={index}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+                  Drill Progressions
+                </h2>
+                <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                  {drillData.drill_progressions.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Images */}
           <div className="space-y-4 print:space-y-2">
-            {(drillData.images || []).map((image, index) => (
+            {drillImageUrls.map((imageUrl, index) => (
               <div
                 key={index}
                 className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
               >
                 <img
-                  src={`/drills/${drillFolder}/${image}`}
+                  src={imageUrl}
                   alt={`Drill diagram ${index + 1}`}
                   className={imageClasses}
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             ))}
@@ -219,6 +272,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     src={embedUrl}
                     title="Video Demonstration"
                     className="absolute inset-0 w-full h-full rounded-lg"
+                    loading="lazy"
                     allowFullScreen
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                     referrerPolicy="strict-origin-when-cross-origin"
@@ -232,6 +286,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                       src={videoThumbnail}
                       alt="Video thumbnail"
                       className="w-32 h-24 object-cover rounded"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   <span className="text-usa-blue font-semibold print:text-sm break-all">
@@ -258,42 +314,69 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4 print:text-lg print:mb-2 print:text-usa-blue">
             Skills Focus
           </h2>
-          <div className="grid md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-3">
-            {drillData.tags.fundamental_skill && drillData.tags.fundamental_skill.length > 0 && (
-              <div>
-                <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
-                  Fundamental Skills:
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
-                  {drillData.tags.fundamental_skill.map((skill, index) => (
-                    <li key={index}>{formatTag(skill)}</li>
-                  ))}
-                </ul>
+          {(() => {
+            const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
+            const hasTeamConcepts =
+              isTeamDrill &&
+              drillData.tags.team_concepts &&
+              drillData.tags.team_concepts.length > 0;
+            const gridClass = hasTeamConcepts
+              ? "grid md:grid-cols-3 gap-6 print:grid-cols-3 print:gap-3"
+              : "grid md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-3";
+            return (
+              <div className={gridClass}>
+                {drillData.tags.fundamental_skill &&
+                  drillData.tags.fundamental_skill.length > 0 && (
+                    <div>
+                      <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                        Fundamental Skills:
+                      </h3>
+                      <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                        {drillData.tags.fundamental_skill.map((skill, index) => (
+                          <li key={index}>{formatTag(skill)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                {drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0 && (
+                  <div>
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                      Skating Skills:
+                    </h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                      {drillData.tags.skating_skill.map((skill, index) => (
+                        <li key={index}>{formatTag(skill)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {hasTeamConcepts && (
+                  <div>
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                      Team Concepts:
+                    </h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                      {drillData.tags.team_concepts.map((concept, index) => (
+                        <li key={index}>{formatTag(concept)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-            {drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0 && (
-              <div>
-                <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
-                  Skating Skills:
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
-                  {drillData.tags.skating_skill.map((skill, index) => (
-                    <li key={index}>{formatTag(skill)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+            );
+          })()}
         </div>
 
         {/* Gold Certification Footer - Only visible when printing */}
         <div className="hidden print:block print:mt-3 print:pt-2 print:border-t-2 print:border-gray-400 break-before-avoid">
           <div className="flex items-center gap-3">
             <img
-              src="/images/usahockey/usahockey-gold-certification.png"
+              src={buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")}
               alt="USA Hockey Goaltending Gold Level Coach Certification"
               className="object-contain"
               style={{ maxHeight: "0.5in", width: "auto", height: "auto" }}
+              loading="lazy"
+              decoding="async"
             />
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA

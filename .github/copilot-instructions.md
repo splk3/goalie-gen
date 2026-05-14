@@ -114,7 +114,7 @@ The following are created during development/build and excluded via `.gitignore`
 ### Working with Gatsby
 
 1. **Local Development**:
-   - Requires **Node.js 24** (`engines: ">=24"` in `package.json`; use `.nvmrc` with `nvm use`)
+   - Requires **Node.js 24** (`engines: "24.x"` in `package.json`; use `.nvmrc` with `nvm use`)
    - Use `npm install` to install dependencies
    - Use `npm run develop` or `npm start` to run the development server
    - Server runs at `http://localhost:8000`
@@ -284,14 +284,17 @@ This project uses a YAML-based drill system with dynamic page generation:
 2. **Required drill.yml Fields**:
    - `name` (string): Drill name
    - `description` (string): Drill description
-   - `coaching_points` (array): List of coaching tips
+   - `coaching_focus_points` (array): List of coaching focus points
    - `images` (array): Array of image filenames
    - `tags` (object): Categorization tags
    - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
 
 3. **Optional drill.yml Fields**:
+   - `drill_steps` (array): Drill step strings shown as a numbered list under the description
    - `video` (string): YouTube or Vimeo URL for the drill
    - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
+   - `shooter_focus_points` (array): List of shooter-specific focus points
+   - `drill_progressions` (array): Numbered list of drill progressions or alterations
 
 4. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API

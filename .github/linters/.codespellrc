@@ -1,3 +1,3 @@
 [codespell]
-ignore-words-list = currentY,dateA,FitH
+ignore-words-list = currentY,dateA,FitH,afterAll
 skip = *.pdf,*/package-lock.json,*/go.sum,*.log,.git
