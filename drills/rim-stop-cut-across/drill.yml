@@ -1,0 +1,65 @@
+---
+name: Rim Stop Cut Across
+
+description: |-
+  This drill helps goalies develop stick skills behind the net and practice getting back into transition quickly.
+
+drill_steps:
+  - Shooter rims the puck to either side.
+  - Goalie reads the rim, exits the crease, and stops the puck behind the net or along the wall.
+  - Shooter skates to either wall at the blue line to present a target.
+  - Goalie makes a controlled pass to the shooter.
+  - Shooter skates down the wall, enters the zone between the dot and circle, then cuts across the middle.
+  - Shooter releases a shot back to the original side (against the grain).
+  - Goalie recovers to the crease, tracks the shooter's cut, and sets for the shot.
+
+coaching_focus_points:
+  - Set early before the rim arrives; read the shooter's body language.
+  - Efficient crease exit — take the shortest route to the rim with controlled edges.
+  - Square shoulders to the boards when stopping the rim to absorb and settle the puck.
+  - Hands out in front to smother or corral the rim cleanly and prevent pop outs.
+  - Scan before passing — shoulder check for forecheck pressure and shooter location.
+  - Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.
+  - Recover with urgency — head leads, stay tall, regain middle ice before the cut across shot.
+  - Track the change of angle as the shooter cuts across; maintain edge control.
+  - Set feet before the release — keep lead knee on puck; avoid sliding into the shot.
+
+shooter_focus_points:
+  - Hard, purposeful rim — simulate a game speed dump in.
+  - Explode to the wall to present a clean passing target.
+  - Stick available early — show a clear target for the goalie.
+  - Skate the wall with pace — don't drift or slow down.
+  - Cut across with intent — force the goalie to move laterally.
+  - Shoot against the grain back to the original side.
+  - Change release point (pull and drag, push release, delay) to challenge the goalie.
+
+drill_progressions:
+  - "Progression 1 — Variable Rim Locations: Shooter varies rim height, speed, and angle while the goalie adjusts footwork and stick angle."
+  - "Progression 2 — Shooter Delay Options: Shooter may cut immediately, delay at the wall, or take a quick shot from the wall."
+  - "Progression 3 — Coach Pressure: Coach applies light forecheck pressure after the rim, and the goalie shoulder checks, protects the puck, and makes a decision."
+  - "Progression 4 — Second Shooter Option: Add a second shooter in the slot so the primary shooter can pass or shoot."
+  - "Progression 5 — Net Front Screen: Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
+
+images:
+  - rim-stop-cut-across.png
+
+drill_creation_date: 2026-05-13
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill:
+    - no
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+  equipment: []
