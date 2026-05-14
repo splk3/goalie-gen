@@ -71,27 +71,15 @@ describe("Pagination", () => {
     expect(onPageChangeMock).toHaveBeenCalledWith(3);
   });
 
-  it(
-    "disables the previous button and does not call onPageChange if currentPage is less than 1",
-    async () => {
-      const user = userEvent.setup();
-      render(<Pagination currentPage={0} totalPages={5} onPageChange={onPageChangeMock} />);
-      const prevButton = screen.getByRole("button", { name: /previous page/i });
-      expect(prevButton).toBeDisabled();
-      await user.click(prevButton);
-      expect(onPageChangeMock).not.toHaveBeenCalled();
-    }
-  );
+  it("normalizes currentPage values less than 1 to page 1", () => {
+    render(<Pagination currentPage={0} totalPages={5} onPageChange={onPageChangeMock} />);
+    expect(screen.getByText("Page 1 of 5")).toBeInTheDocument();
+    expect(onPageChangeMock).toHaveBeenCalledWith(1);
+  });
 
-  it(
-    "disables the next button and does not call onPageChange if currentPage exceeds totalPages",
-    async () => {
-      const user = userEvent.setup();
-      render(<Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />);
-      const nextButton = screen.getByRole("button", { name: /next page/i });
-      expect(nextButton).toBeDisabled();
-      await user.click(nextButton);
-      expect(onPageChangeMock).not.toHaveBeenCalled();
-    }
-  );
+  it("normalizes currentPage values greater than totalPages to the last page", () => {
+    render(<Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />);
+    expect(screen.getByText("Page 5 of 5")).toBeInTheDocument();
+    expect(onPageChangeMock).toHaveBeenCalledWith(5);
+  });
 });
