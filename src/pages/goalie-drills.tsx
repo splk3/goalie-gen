@@ -250,7 +250,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
             >
-              Submit a New Drill
+              Share a Drill Idea
             </a>
           </div>
         </div>
