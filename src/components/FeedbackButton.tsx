@@ -27,7 +27,7 @@ export default function FeedbackButton() {
         onClick={openFeedback}
         className="inline-flex items-center justify-center rounded-md border border-white/40 bg-transparent px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-usa-blue dark:border-gray-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white dark:focus-visible:ring-offset-gray-800"
       >
-        Give Feedback
+        Contact Us
       </button>
 
       <Modal
@@ -42,7 +42,7 @@ export default function FeedbackButton() {
             id="feedback-heading"
             className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4"
           >
-            Give Feedback
+            Contact Goalie Gen
           </h2>
 
           <div className="space-y-3">
@@ -52,7 +52,7 @@ export default function FeedbackButton() {
               rel="noopener noreferrer"
               className="block w-full text-center bg-usa-red hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
-              Report a Bug or Issue
+              Report a Site Issue
             </a>
             <a
               href="https://github.com/splk3/goalie-gen/issues/new?template=feature_request.yml"
@@ -60,7 +60,7 @@ export default function FeedbackButton() {
               rel="noopener noreferrer"
               className="block w-full text-center bg-usa-blue hover:bg-blue-900 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
-              Request a New Feature
+              Request an Improvement
             </a>
             <a
               href="https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
@@ -68,7 +68,7 @@ export default function FeedbackButton() {
               rel="noopener noreferrer"
               className="block w-full text-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
-              Add a New Drill
+              Share a Drill Idea
             </a>
           </div>
         </div>

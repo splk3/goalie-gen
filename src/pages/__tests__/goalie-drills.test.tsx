@@ -9,7 +9,7 @@ jest.mock("../../components/PageLayout", () => {
 });
 
 describe("GoalieDrills page", () => {
-  it("renders a Submit a New Drill link that opens in a new tab", () => {
+  it("renders a Share a Drill Idea link that opens in a new tab", () => {
     const data = {
       allDrill: {
         nodes: [
@@ -34,7 +34,7 @@ describe("GoalieDrills page", () => {
 
     render(<GoalieDrills data={data} />);
 
-    const submitLink = screen.getByRole("link", { name: "Submit a New Drill" });
+    const submitLink = screen.getByRole("link", { name: "Share a Drill Idea" });
     expect(submitLink).toBeInTheDocument();
     expect(submitLink).toHaveAttribute(
       "href",
