@@ -27,22 +27,22 @@ export default function FeedbackButton() {
         onClick={openFeedback}
         className="inline-flex items-center justify-center rounded-md border border-white/40 bg-transparent px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-usa-blue dark:border-gray-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white dark:focus-visible:ring-offset-gray-800"
       >
-        Give Feedback
+        Share Ideas
       </button>
 
       <Modal
         isOpen={isOpen}
-        labelledBy="feedback-heading"
+        labelledBy="suggestions-heading"
         className="max-w-lg w-full"
         triggerRef={triggerRef}
       >
         {/* Scrollable content */}
         <div className="p-6 overflow-y-auto flex-1 min-h-0">
           <h2
-            id="feedback-heading"
+            id="suggestions-heading"
             className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4"
           >
-            Give Feedback
+            Share Ideas
           </h2>
 
           <div className="space-y-3">
