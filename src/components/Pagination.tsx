@@ -9,16 +9,32 @@ interface PaginationProps {
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const normalizedCurrentPage =
     totalPages > 0 ? Math.min(Math.max(currentPage, 1), totalPages) : currentPage;
+  const normalizationKeyRef = React.useRef<string | null>(null);
+  const onPageChangeRef = React.useRef(onPageChange);
+
+  React.useEffect(() => {
+    onPageChangeRef.current = onPageChange;
+  }, [onPageChange]);
 
   React.useEffect(() => {
     if (totalPages <= 0) {
+      normalizationKeyRef.current = null;
       return;
     }
 
-    if (currentPage !== normalizedCurrentPage) {
-      onPageChange(normalizedCurrentPage);
+    if (currentPage === normalizedCurrentPage) {
+      normalizationKeyRef.current = null;
+      return;
     }
-  }, [currentPage, normalizedCurrentPage, onPageChange, totalPages]);
+
+    const normalizationKey = `${currentPage}:${normalizedCurrentPage}:${totalPages}`;
+    if (normalizationKeyRef.current === normalizationKey) {
+      return;
+    }
+
+    normalizationKeyRef.current = normalizationKey;
+    onPageChangeRef.current(normalizedCurrentPage);
+  }, [currentPage, normalizedCurrentPage, totalPages]);
 
   if (totalPages <= 1) {
     return null;

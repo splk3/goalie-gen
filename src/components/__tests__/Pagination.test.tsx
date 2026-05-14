@@ -74,12 +74,34 @@ describe("Pagination", () => {
   it("normalizes currentPage values less than 1 to page 1", () => {
     render(<Pagination currentPage={0} totalPages={5} onPageChange={onPageChangeMock} />);
     expect(screen.getByText("Page 1 of 5")).toBeInTheDocument();
+    expect(onPageChangeMock).toHaveBeenCalledTimes(1);
     expect(onPageChangeMock).toHaveBeenCalledWith(1);
   });
 
   it("normalizes currentPage values greater than totalPages to the last page", () => {
     render(<Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />);
     expect(screen.getByText("Page 5 of 5")).toBeInTheDocument();
+    expect(onPageChangeMock).toHaveBeenCalledTimes(1);
     expect(onPageChangeMock).toHaveBeenCalledWith(5);
+  });
+
+  it("does not call normalization more than once for the same out-of-range page value", () => {
+    const { rerender } = render(
+      <Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />
+    );
+    expect(onPageChangeMock).toHaveBeenCalledTimes(1);
+
+    rerender(<Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />);
+    expect(onPageChangeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not normalize again after the currentPage is updated to a valid page", () => {
+    const { rerender } = render(
+      <Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />
+    );
+    expect(onPageChangeMock).toHaveBeenCalledTimes(1);
+
+    rerender(<Pagination currentPage={5} totalPages={5} onPageChange={onPageChangeMock} />);
+    expect(onPageChangeMock).toHaveBeenCalledTimes(1);
   });
 });
