@@ -71,21 +71,27 @@ describe("Pagination", () => {
     expect(onPageChangeMock).toHaveBeenCalledWith(3);
   });
 
-  it("disables the previous button and does not call onPageChange if currentPage is less than 1", async () => {
-    const user = userEvent.setup();
-    render(<Pagination currentPage={0} totalPages={5} onPageChange={onPageChangeMock} />);
-    const prevButton = screen.getByRole("button", { name: /previous page/i });
-    expect(prevButton).toBeDisabled();
-    await user.click(prevButton);
-    expect(onPageChangeMock).not.toHaveBeenCalled();
-  });
+  it(
+    "disables the previous button and does not call onPageChange if currentPage is less than 1",
+    async () => {
+      const user = userEvent.setup();
+      render(<Pagination currentPage={0} totalPages={5} onPageChange={onPageChangeMock} />);
+      const prevButton = screen.getByRole("button", { name: /previous page/i });
+      expect(prevButton).toBeDisabled();
+      await user.click(prevButton);
+      expect(onPageChangeMock).not.toHaveBeenCalled();
+    }
+  );
 
-  it("disables the next button and does not call onPageChange if currentPage exceeds totalPages", async () => {
-    const user = userEvent.setup();
-    render(<Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />);
-    const nextButton = screen.getByRole("button", { name: /next page/i });
-    expect(nextButton).toBeDisabled();
-    await user.click(nextButton);
-    expect(onPageChangeMock).not.toHaveBeenCalled();
-  });
+  it(
+    "disables the next button and does not call onPageChange if currentPage exceeds totalPages",
+    async () => {
+      const user = userEvent.setup();
+      render(<Pagination currentPage={6} totalPages={5} onPageChange={onPageChangeMock} />);
+      const nextButton = screen.getByRole("button", { name: /next page/i });
+      expect(nextButton).toBeDisabled();
+      await user.click(nextButton);
+      expect(onPageChangeMock).not.toHaveBeenCalled();
+    }
+  );
 });
