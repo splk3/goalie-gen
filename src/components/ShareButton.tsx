@@ -36,6 +36,13 @@ export default function ShareButton({
   iconClassName,
 }: ShareButtonProps) {
   const [copied, setCopied] = React.useState(false);
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleShare = async () => {
     if (typeof window === "undefined") return;
@@ -52,7 +59,7 @@ export default function ShareButton({
       try {
         await navigator.clipboard.writeText(url);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        timeoutRef.current = setTimeout(() => setCopied(false), 2000);
       } catch {
         // Clipboard API unavailable — no action
       }
