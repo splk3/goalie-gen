@@ -328,12 +328,12 @@ export const generateDrillPdf = async (
 
   currentY += 2;
 
-  // Column layout: wider left column for more text, narrower right column for images.
-  // An 8 mm inter-column gap replaces the old full-margin gap, giving the left column
-  // ~29% more width. The right column's right edge aligns with the page's right margin.
+  // Column layout: equal left/right columns for desc+steps vs image.
+  // An 8 mm inter-column gap separates them; each column is ~81 mm wide.
+  // The right column's right edge aligns with the page's right margin.
   const interColumnGap = 8;
-  const rightColumnWidth = 65;
-  const leftColumnWidth = pageWidth - 2 * margin - interColumnGap - rightColumnWidth; // ~97 mm
+  const leftColumnWidth = (pageWidth - 2 * margin - interColumnGap) / 2; // ~81 mm
+  const rightColumnWidth = leftColumnWidth;
   const rightColumnX = margin + leftColumnWidth + interColumnGap;
   const contentStartY = currentY;
 
@@ -374,7 +374,7 @@ export const generateDrillPdf = async (
     rightY += imgHeight + 4;
   }
 
-  // --- LEFT COLUMN: Text sections (may overflow to additional pages) ---
+  // --- LEFT COLUMN: Drill Information (description + steps) only ---
   // Images have already been placed on page 1; ensureSpace page breaks apply only to text here.
   let leftY = contentStartY;
 
@@ -406,72 +406,7 @@ export const generateDrillPdf = async (
   }
   leftY += 2;
 
-  // Coaching Focus Points
-  leftY = ensureSpace(leftY, 12); // heading + at least one bullet
-  doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-  doc.setFontSize(12);
-  doc.setFont(undefined, "bold");
-  doc.text("Coaching Focus Points", margin, leftY);
-  leftY += 5;
-
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(9);
-  doc.setFont(undefined, "normal");
-
-  if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
-    for (const point of drillData.coaching_focus_points) {
-      const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, pointLines.length * 4 + 1);
-      doc.text(pointLines, margin + 3, leftY);
-      leftY += pointLines.length * 4 + 1;
-    }
-  }
-
-  // Shooter Focus Points (optional)
-  if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
-    leftY += 2;
-    leftY = ensureSpace(leftY, 12); // heading + at least one bullet
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(12);
-    doc.setFont(undefined, "bold");
-    doc.text("Shooter Focus Points", margin, leftY);
-    leftY += 5;
-
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(9);
-    doc.setFont(undefined, "normal");
-
-    for (const point of drillData.shooter_focus_points) {
-      const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, pointLines.length * 4 + 1);
-      doc.text(pointLines, margin + 3, leftY);
-      leftY += pointLines.length * 4 + 1;
-    }
-  }
-
-  // Drill Progressions (optional)
-  if (drillData.drill_progressions && drillData.drill_progressions.length > 0) {
-    leftY += 2;
-    leftY = ensureSpace(leftY, 12); // heading + at least one step
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(12);
-    doc.setFont(undefined, "bold");
-    doc.text("Drill Progressions", margin, leftY);
-    leftY += 5;
-
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(9);
-    doc.setFont(undefined, "normal");
-
-    for (const [index, step] of drillData.drill_progressions.entries()) {
-      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
-      doc.text(stepLines, margin + 3, leftY);
-      leftY += stepLines.length * 4 + 1;
-    }
-  }
-
-  // Determine starting Y for the sections below the two-column layout.
+  // Determine starting Y for the full-width sections below the two-column layout.
   // If the left column overflowed to a new page, we are already on that page.
   let sectionY: number;
   if (currentPageNum > 1) {
@@ -479,6 +414,75 @@ export const generateDrillPdf = async (
   } else {
     sectionY = Math.max(leftY, rightY) + 4;
   }
+
+  const fullWidth = pageWidth - 2 * margin;
+
+  // Coaching Focus Points (full width)
+  sectionY = ensureSpace(sectionY, 12); // heading + at least one bullet
+  doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+  doc.setFontSize(12);
+  doc.setFont(undefined, "bold");
+  doc.text("Coaching Focus Points", margin, sectionY);
+  sectionY += 5;
+
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(9);
+  doc.setFont(undefined, "normal");
+
+  if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
+    for (const point of drillData.coaching_focus_points) {
+      const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, pointLines.length * 4 + 1);
+      doc.text(pointLines, margin + 3, sectionY);
+      sectionY += pointLines.length * 4 + 1;
+    }
+  }
+
+  // Shooter Focus Points (optional, full width)
+  if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
+    sectionY += 2;
+    sectionY = ensureSpace(sectionY, 12); // heading + at least one bullet
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("Shooter Focus Points", margin, sectionY);
+    sectionY += 5;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+
+    for (const point of drillData.shooter_focus_points) {
+      const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, pointLines.length * 4 + 1);
+      doc.text(pointLines, margin + 3, sectionY);
+      sectionY += pointLines.length * 4 + 1;
+    }
+  }
+
+  // Drill Progressions (optional, full width)
+  if (drillData.drill_progressions && drillData.drill_progressions.length > 0) {
+    sectionY += 2;
+    sectionY = ensureSpace(sectionY, 12); // heading + at least one step
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("Drill Progressions", margin, sectionY);
+    sectionY += 5;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+
+    for (const [index, step] of drillData.drill_progressions.entries()) {
+      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, stepLines.length * 4 + 1);
+      doc.text(stepLines, margin + 3, sectionY);
+      sectionY += stepLines.length * 4 + 1;
+    }
+  }
+
+  sectionY += 4;
 
   // Border line before Skills Focus
   sectionY = ensureSpace(sectionY, 50); // separator + heading + skills content
