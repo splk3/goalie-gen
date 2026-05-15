@@ -5,13 +5,24 @@ import PageLayout from "../components/PageLayout";
 import ExternalLinkButton from "../components/ExternalLinkButton";
 import DownloadMaterialButton from "../components/DownloadMaterialButton";
 import GoalieJournalButton from "../components/GoalieJournalButton";
+import ShareButton from "../components/ShareButton";
 
 export default function CoachResources() {
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-        <h1 className="text-4xl font-bold mb-4">Coach Resources</h1>
-        <p className="text-lg">Essential tools and resources for coaching youth hockey goalies.</p>
+        <div className="flex flex-col md:flex-row items-start gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-4">Coach Resources</h1>
+            <p className="text-lg">Essential tools and resources for coaching youth hockey goalies.</p>
+          </div>
+          <div className="flex-shrink-0">
+            <ShareButton
+              label="Share"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="max-w-3xl mx-auto space-y-8">

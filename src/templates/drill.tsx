@@ -4,6 +4,7 @@ import Seo from "../components/SEO";
 import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
+import ShareButton from "../components/ShareButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
@@ -141,17 +142,24 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       </header>
 
       <main className="container mx-auto px-4 py-8 print:py-0 print:px-0">
-        {/* Drill Name + Back to Drills button on same row */}
+        {/* Drill Name + Share + Back to Drills button on same row */}
         <div className="flex items-start justify-between mb-6 print:mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
             {drillData.name}
           </h1>
-          <Link
-            to={drillsBackUrl}
-            className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors print:hidden flex-shrink-0 ml-4"
-          >
-            ← Back to Drills
-          </Link>
+          <div className="flex items-center gap-2 flex-shrink-0 ml-4 print:hidden">
+            <ShareButton
+              label="Share"
+              title={drillData.name}
+              className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+            />
+            <Link
+              to={drillsBackUrl}
+              className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              ← Back to Drills
+            </Link>
+          </div>
         </div>
 
         {/* Last Updated Date */}
@@ -399,7 +407,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
 
         {/* Print and Back Buttons - Hidden in print */}
-        <div className="mt-8 flex gap-4 print:hidden">
+        <div className="mt-8 flex flex-wrap gap-4 print:hidden">
           <button
             onClick={handlePrint}
             disabled={isPrinting}
@@ -410,6 +418,11 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             {isPrinting ? "Generating..." : "Print Drill"}
           </button>
           <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
+          <ShareButton
+            label="Share Drill"
+            title={drillData.name}
+            className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+          />
           <Link
             to="/goalie-drills"
             className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"

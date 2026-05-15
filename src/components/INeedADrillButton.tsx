@@ -125,7 +125,7 @@ export default function INeedADrillButton() {
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="bg-white hover:bg-gray-100 dark:bg-gray-100 dark:hover:bg-gray-200 text-usa-blue font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
+        className="inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-200 px-6 py-3 text-lg font-semibold text-usa-blue transition-colors"
       >
         I Need a Drill!
       </button>

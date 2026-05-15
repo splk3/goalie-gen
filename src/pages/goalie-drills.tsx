@@ -5,6 +5,7 @@ import PageLayout from "../components/PageLayout";
 import Pagination from "../components/Pagination";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
+import ShareButton from "../components/ShareButton";
 
 interface DrillNode {
   slug: string;
@@ -243,7 +244,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               Develop your goalies during goalie-focused time or involve the whole team!
             </p>
           </div>
-          <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
+          <div className="flex-shrink-0 w-full md:w-auto flex flex-wrap justify-center md:justify-end gap-3">
+            <ShareButton
+              label="Share"
+              title="Goalie Drills — Goalie Gen"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
             <a
               href="https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
               target="_blank"

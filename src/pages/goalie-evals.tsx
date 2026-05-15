@@ -3,15 +3,26 @@ import { Link } from "gatsby";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import DownloadMaterialButton from "../components/DownloadMaterialButton";
+import ShareButton from "../components/ShareButton";
 
 export default function GoalieEvals() {
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-        <h1 className="text-4xl font-bold mb-4">Goalie Evaluations</h1>
-        <p className="text-lg">
-          Evaluation forms and tools to help coaches assess and develop goaltenders.
-        </p>
+        <div className="flex flex-col md:flex-row items-start gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-4">Goalie Evaluations</h1>
+            <p className="text-lg">
+              Evaluation forms and tools to help coaches assess and develop goaltenders.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <ShareButton
+              label="Share"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="max-w-3xl mx-auto space-y-8">

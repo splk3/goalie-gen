@@ -10,6 +10,7 @@ import NavigationButton from "../components/NavigationButton";
 import TermsPopup from "../components/TermsPopup";
 import FeedbackButton from "../components/FeedbackButton";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
+import ShareButton from "../components/ShareButton";
 
 export default function Home() {
   const data = useStaticQuery(graphql`
@@ -45,8 +46,13 @@ export default function Home() {
               <h2 className="text-3xl font-bold mb-4">Welcome</h2>
               <UsaHockeyGoldBanner />
             </div>
-            <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
+            <div className="flex-shrink-0 w-full md:w-auto flex flex-col justify-center md:justify-end items-center md:items-end gap-3">
               <INeedADrillButton />
+              <ShareButton
+                label="Share Goalie Gen"
+                title="Goalie Gen — Goaltending Development Plans"
+                className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100"
+              />
             </div>
           </div>
         </div>

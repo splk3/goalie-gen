@@ -115,4 +115,10 @@ describe("DrillTemplate", () => {
     expect(links.length).toBeGreaterThanOrEqual(1);
     expect(links[0]).toHaveAttribute("href", "/goalie-drills");
   });
+
+  it("renders Share buttons on the drill page", () => {
+    render(<DrillTemplate pageContext={basePageContext} />);
+    const shareButtons = screen.getAllByRole("button", { name: /share/i });
+    expect(shareButtons.length).toBeGreaterThanOrEqual(2);
+  });
 });
