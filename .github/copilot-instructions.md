@@ -481,6 +481,26 @@ If your changes require server-side functionality, you MUST use:
 - Confirm static compatibility with `npm run serve`
 - Check that linting passes (super-linter will run on push)
 
+## Working with Copilot Chat and CLI
+
+When assisting via **Copilot Chat or Copilot CLI** (interactive/conversational
+mode), Copilot should **not commit or push changes** unless the user explicitly
+requests it or the agreed plan includes a commit step.
+
+The expected workflow is:
+
+1. Make the requested code changes
+2. Validate them (run tests, build, lint as appropriate)
+3. **Stop — do not commit** — let the user review the diff and commit themselves
+
+This applies to all Chat and CLI interactions, including when working through
+a multi-step plan. Only commit when the user says something like "commit the
+changes", "go ahead and commit", or when a specific plan step says to commit.
+
+> **Note:** This rule does **not** apply to Copilot Coding Agent (autonomous
+> PR mode). When operating as a Coding Agent, Copilot should commit changes and
+> submit pull requests as part of its normal workflow.
+
 ## Working with Copilot Coding Agent
 
 ### Suitable Tasks for Copilot
@@ -557,6 +577,8 @@ Before Copilot submits a PR for review, it MUST:
 
 - **Never commit** build artifacts (`public/`, `.cache/`)
 - **Never commit** `node_modules/` directory
+- **In Chat/CLI mode, do not commit unless asked** — make changes, validate, then let
+  the user review and commit; Coding Agent mode is exempt (it commits and opens PRs)
 - **Always use TypeScript** - new files should use .ts or .tsx extensions
 - **Do not modify generated agent lockfiles** unless explicitly asked for lockfile maintenance:
   - `.github/aw/actions-lock.json`
