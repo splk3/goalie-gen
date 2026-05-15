@@ -201,7 +201,7 @@ body:
   - type: textarea
     id: diagram_image_or_screenshot
     attributes:
-      label: Drill Diagram(s)
+      label: Drill Diagram
       description: |
         Attach the drill diagram or a screenshot of the drill here.
       placeholder: Attach the drill diagram or a screenshot of the drill here.
@@ -246,10 +246,9 @@ body:
         - If "Tags - Game Situations" checkboxes are checked,
           add the `game_situations` field under `tags` as an array of the selected values.
           If no game situations are selected, omit `game_situations` entirely.
-        - Add the drill image to the folder and set the `drill_image` field to the image filename.
-          If the image is pasted into the text area and not attached, make sure to save the image and add it to the drill folder,
-          naming it after the drill name and updating the `drill_image` field accordingly
-          (e.g. `drill-name.jpg`).
+        - Save the drill image to the drill folder, naming it after the drill folder name with the original file extension
+          (e.g. `rim-stop-cut-across.png`). If the uploaded or pasted file has a different name, rename it to match the drill
+          folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
         - Confirm the image file is an actual image, and that video links are real YouTube or Vimeo links.
         - Make sure the new drill passes build validation and that the site builds properly.
         - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description. Link the PR in this issue.
