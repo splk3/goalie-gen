@@ -29,7 +29,7 @@ interface DrillPageContext {
       fundamental_skill?: string[];
       skating_skill?: string[];
       equipment?: string[];
-      team_concepts?: string[];
+      game_situations?: string[];
     };
   };
   drillFolder: string;
@@ -309,12 +309,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             Skills Focus
           </h2>
           {(() => {
-            const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
-            const hasTeamConcepts =
-              isTeamDrill &&
-              drillData.tags.team_concepts &&
-              drillData.tags.team_concepts.length > 0;
-            const gridClass = hasTeamConcepts
+            const hasGameSituations =
+              drillData.tags.game_situations !== undefined &&
+              drillData.tags.game_situations.length > 0;
+            const gridClass = hasGameSituations
               ? "grid md:grid-cols-3 gap-6 print:grid-cols-3 print:gap-3"
               : "grid md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-3";
             return (
@@ -344,14 +342,14 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     </ul>
                   </div>
                 )}
-                {hasTeamConcepts && (
+                {hasGameSituations && (
                   <div>
                     <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
-                      Team Concepts:
+                      Game Situations:
                     </h3>
                     <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
-                      {drillData.tags.team_concepts.map((concept, index) => (
-                        <li key={index}>{formatTag(concept)}</li>
+                      {drillData.tags.game_situations!.map((situation, index) => (
+                        <li key={index}>{formatTag(situation)}</li>
                       ))}
                     </ul>
                   </div>

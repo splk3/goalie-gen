@@ -494,12 +494,11 @@ export const generateDrillPdf = async (
   doc.text("Skills Focus", margin, sectionY);
   sectionY += 5;
 
-  const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
-  const hasTeamConcepts =
-    isTeamDrill && drillData.tags.team_concepts && drillData.tags.team_concepts.length > 0;
+  const hasGameSituations =
+    drillData.tags.game_situations !== undefined && drillData.tags.game_situations.length > 0;
 
-  // Use 3-column layout when team concepts are present; otherwise 2-column
-  const colWidth = (pageWidth - 2 * margin) / (hasTeamConcepts ? 3 : 2);
+  // Use 3-column layout when game situations are present; otherwise 2-column
+  const colWidth = (pageWidth - 2 * margin) / (hasGameSituations ? 3 : 2);
 
   const skillsLeftX = margin;
   const skillsRightX = margin + colWidth;
@@ -536,14 +535,14 @@ export const generateDrillPdf = async (
     });
   }
 
-  if (hasTeamConcepts) {
+  if (hasGameSituations) {
     doc.setFont(undefined, "bold");
-    doc.text("Team Concepts:", skillsThirdX, skillsThirdY);
+    doc.text("Game Situations:", skillsThirdX, skillsThirdY);
     doc.setFont(undefined, "normal");
     skillsThirdY += 4;
 
-    drillData.tags.team_concepts.forEach((concept) => {
-      doc.text(`• ${formatTag(concept)}`, skillsThirdX + 3, skillsThirdY);
+    drillData.tags.game_situations!.forEach((situation) => {
+      doc.text(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
       skillsThirdY += 4;
     });
   }

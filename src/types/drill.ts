@@ -16,6 +16,6 @@ export interface DrillData {
     fundamental_skill?: string[];
     skating_skill?: string[];
     equipment?: string[];
-    team_concepts?: string[];
+    game_situations?: string[];
   };
 }

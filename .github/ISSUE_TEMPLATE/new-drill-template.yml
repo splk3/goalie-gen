@@ -129,17 +129,6 @@ body:
       required: true
 
   - type: checkboxes
-    id: team_concepts_tags
-    attributes:
-      label: Tags - Team Concepts (Optional, only used when Team Drill is yes)
-      description: Select all that apply. Ignored if Team Drill is not yes.
-      options:
-        - label: power_play
-        - label: penalty_kill
-        - label: net_front_traffic
-        - label: dump_in
-
-  - type: checkboxes
     id: age_level_tags
     attributes:
       label: Tags - Age Level
@@ -181,6 +170,17 @@ body:
         - label: power_push
     validations:
       required: true
+
+  - type: checkboxes
+    id: game_situations_tags
+    attributes:
+      label: Tags - Game Situations (Optional)
+      description: Select all that apply.
+      options:
+        - label: power_play
+        - label: penalty_kill
+        - label: net_front_traffic
+        - label: dump_in
 
   - type: checkboxes
     id: equipment_tags
@@ -242,9 +242,9 @@ body:
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Drill Progressions" was provided, add the `drill_progressions` field as an array of strings.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
-        - If "Team Drill" is "yes" and any "Tags - Team Concepts" checkboxes are checked,
-          add the `team_concepts` field under `tags` as an array of the selected values.
-          If "Team Drill" is "no" or no team concepts are selected, omit `team_concepts` entirely.
+        - If "Tags - Game Situations" checkboxes are checked,
+          add the `game_situations` field under `tags` as an array of the selected values.
+          If no game situations are selected, omit `game_situations` entirely.
         - Add the drill image to the folder and set the `drill_image` field to the image filename.
           If the image is pasted into the text area and not attached, make sure to save the image and add it to the drill folder,
           naming it after the drill name and updating the `drill_image` field accordingly

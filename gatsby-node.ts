@@ -29,7 +29,7 @@ const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
-const ALLOWED_TEAM_CONCEPTS = ["power_play", "penalty_kill", "net_front_traffic", "dump_in"];
+const ALLOWED_GAME_SITUATIONS = ["power_play", "penalty_kill", "net_front_traffic", "dump_in"];
 
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
 // Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
@@ -243,30 +243,25 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  const isTeamDrill =
-    Array.isArray(tags.team_drill) && tags.team_drill.length === 1 && tags.team_drill[0] === "yes";
-
-  if (isTeamDrill) {
-    if (typeof tags.team_concepts !== "undefined" && !Array.isArray(tags.team_concepts)) {
+  if (typeof tags.game_situations !== "undefined" && !Array.isArray(tags.game_situations)) {
       throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.team_concepts' must be an array of strings`
+        `[${drillFolder}] drill.yml field 'tags.game_situations' must be an array of strings`
       );
     }
-    if (Array.isArray(tags.team_concepts)) {
-      for (const concept of tags.team_concepts) {
+    if (Array.isArray(tags.game_situations)) {
+      for (const concept of tags.game_situations) {
         if (typeof concept !== "string") {
           throw new Error(
-            `[${drillFolder}] drill.yml field 'tags.team_concepts' must contain only strings`
+            `[${drillFolder}] drill.yml field 'tags.game_situations' must contain only strings`
           );
         }
-        if (!ALLOWED_TEAM_CONCEPTS.includes(concept)) {
+        if (!ALLOWED_GAME_SITUATIONS.includes(concept)) {
           throw new Error(
-            `[${drillFolder}] invalid team_concept '${concept}'. Allowed values: ${ALLOWED_TEAM_CONCEPTS.join(", ")}`
+            `[${drillFolder}] invalid game_situation '${concept}'. Allowed values: ${ALLOWED_GAME_SITUATIONS.join(", ")}`
           );
         }
       }
     }
-  }
 
   // Validate video URL if present — must be a valid YouTube or Vimeo link
   if (d.video !== undefined && d.video !== null) {

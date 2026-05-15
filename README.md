@@ -201,7 +201,7 @@ The `tags` field is required, but each sub-field is optional. Some sub-fields ha
   - `yes`
   - `no`
 
-- `team_concepts`: Optional. Only used when `team_drill` is `yes`. Allowed values are:
+- `game_situations`: Optional. Allowed values are:
   - `power_play`
   - `penalty_kill`
   - `net_front_traffic`
