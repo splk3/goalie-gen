@@ -6,6 +6,7 @@ import FeedbackButton from "./FeedbackButton";
 interface UsaHockeyGoldBannerProps {
   showCopyright?: boolean;
   showTerms?: boolean;
+  textClassName?: string;
 }
 
 /**
@@ -16,6 +17,7 @@ interface UsaHockeyGoldBannerProps {
 export default function UsaHockeyGoldBanner({
   showCopyright = false,
   showTerms = false,
+  textClassName = "text-lg",
 }: UsaHockeyGoldBannerProps) {
   const data = useStaticQuery(graphql`
     query {
@@ -39,7 +41,7 @@ export default function UsaHockeyGoldBanner({
           />
         </div>
         <div className="flex-1">
-          <p className="text-lg">
+          <p className={textClassName}>
             This website was developed as part of the{" "}
             <a
               href="https://lms.usahockeylearningcenter.com/pages/36/goalie-development"

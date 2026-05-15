@@ -164,20 +164,26 @@ export const generateDrillPdf = async (
   const contentBottomLimit = footerSeparatorY - 8;
 
   // Pre-load all static header/footer images in parallel so none of the
-  // three network round-trips blocks the others.
+  // network round-trips blocks the others.
   onProgress?.("Loading images...");
-  const [goldLogoResult, leftLogoResult, rightLogoResult] = await Promise.allSettled([
-    loadImageAsDataURL(
-      buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
-    ),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
-  ]);
+  const [goldLogoResult, leftLogoResult, rightLogoResult, ggLogoResult] =
+    await Promise.allSettled([
+      loadImageAsDataURL(
+        buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
+      ),
+      loadImageAsDataURL(
+        buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")
+      ),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+    ]);
 
   const goldLogoInfo = goldLogoResult.status === "fulfilled" ? goldLogoResult.value : null;
   if (goldLogoResult.status === "rejected") {
     console.error("Error loading gold certification logo:", goldLogoResult.reason);
   }
+
+  const ggLogoInfo = ggLogoResult.status === "fulfilled" ? ggLogoResult.value : null;
 
   const goldText =
     "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com";
@@ -186,6 +192,13 @@ export const generateDrillPdf = async (
   const drawPageFooter = () => {
     if (!goldLogoInfo) return;
     const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight;
+
+    // GG logo (right side) — sized to the same height as the gold cert logo
+    const ggLogoWidth = ggLogoInfo
+      ? (ggLogoInfo.width / ggLogoInfo.height) * goldLogoHeight
+      : 0;
+    const ggLogoX = pageWidth - margin - ggLogoWidth;
+
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
     doc.line(margin, footerSeparatorY, pageWidth - margin, footerSeparatorY);
@@ -193,11 +206,24 @@ export const generateDrillPdf = async (
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(7);
     doc.setFont(undefined, "normal");
+
+    // Gold text spans between the two logos
+    const textRightEdge = ggLogoInfo ? ggLogoX - 4 : pageWidth - margin;
     const goldTextLines = doc.splitTextToSize(
       goldText,
-      pageWidth - margin - goldLogoWidth - margin - 4
+      textRightEdge - margin - goldLogoWidth - 4
     );
     doc.text(goldTextLines, margin + goldLogoWidth + 4, footerLogoY + 5);
+
+    // GG logo with white circular background
+    if (ggLogoInfo) {
+      const cx = ggLogoX + ggLogoWidth / 2;
+      const cy = footerLogoY + goldLogoHeight / 2;
+      const r = Math.max(ggLogoWidth, goldLogoHeight) / 2 + 1;
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx, cy, r, "F");
+      doc.addImage(ggLogoInfo.dataURL, "PNG", ggLogoX, footerLogoY, ggLogoWidth, goldLogoHeight);
+    }
   };
 
   // Track which page we are on so callers can detect multi-page output

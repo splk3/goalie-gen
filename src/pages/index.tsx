@@ -3,6 +3,7 @@ import { useStaticQuery, graphql } from "gatsby";
 import Seo from "../components/SEO";
 import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
+import HamburgerMenu from "../components/HamburgerMenu";
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton";
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton";
 import INeedADrillButton from "../components/INeedADrillButton";
@@ -28,7 +29,10 @@ export default function Home() {
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
+            <div className="flex items-center gap-3">
+              <HamburgerMenu />
+              <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
+            </div>
             <div className="hidden md:block flex-1 mx-4">
               <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
                 Where every coach is a goalie coach!
@@ -41,12 +45,22 @@ export default function Home() {
 
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold mb-4">Welcome</h2>
-              <UsaHockeyGoldBanner />
+          <h2 className="text-2xl font-bold mb-4">Welcome</h2>
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            <div className="flex-1 min-w-0">
+              <UsaHockeyGoldBanner textClassName="text-base" />
             </div>
-            <div className="flex-shrink-0 w-full md:w-auto flex flex-col justify-center md:justify-end items-center md:items-end gap-3">
+            <div className="flex-shrink-0 self-center">
+              <div className="relative w-[120px] h-[120px] flex items-center justify-center">
+                <span className="absolute w-[120px] h-[120px] rounded-full bg-white" />
+                <img
+                  src="/images/logos/logo-alt-light-whitebg.png"
+                  alt="Goalie Gen"
+                  className="relative w-[120px] h-[120px] object-contain"
+                />
+              </div>
+            </div>
+            <div className="flex-shrink-0 w-full lg:w-auto flex flex-col justify-center lg:justify-end items-center lg:items-end gap-3">
               <INeedADrillButton />
               <ShareButton
                 label="Share Goalie Gen"

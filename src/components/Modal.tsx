@@ -90,7 +90,7 @@ export default function Modal({
   return (
     <>
       {/* Visual overlay — purely decorative, hidden from assistive technology */}
-      <div aria-hidden="true" className="fixed inset-0 bg-black bg-opacity-50 z-50" />
+      <div aria-hidden="true" className="fixed inset-0 bg-black/75 z-50" />
       {/* Dialog centering container */}
       <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
         <div
