@@ -50,7 +50,7 @@ const basePageContext = {
     drill_image: "test-drill-image.png",
     drill_creation_date: "2026-01-01",
     tags: {
-      team_drill: ["no"],
+      team_drill: "no",
     },
   },
 };

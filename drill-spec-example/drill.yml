@@ -41,8 +41,7 @@ tags:
     - intermediate
     - advanced
   # allowed values: yes or no (exactly one value)
-  team_drill:
-    - yes
+  team_drill: yes
   age_level:
     - all
     - 10U_below

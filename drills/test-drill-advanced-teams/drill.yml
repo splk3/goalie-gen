@@ -37,8 +37,7 @@ drill_updated_date: 2026-01-08
 tags:
   skill_level:
     - advanced
-  team_drill:
-    - yes
+  team_drill: yes
   age_level:
     - 14U
     - 16U_and_older

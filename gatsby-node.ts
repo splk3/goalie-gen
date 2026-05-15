@@ -225,26 +225,15 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (typeof tags.team_drill !== "undefined" && !Array.isArray(tags.team_drill)) {
-    throw new Error(
-      `[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`
-    );
-  }
-  if (Array.isArray(tags.team_drill)) {
-    if (tags.team_drill.length !== 1) {
+  if (typeof tags.team_drill !== "undefined") {
+    if (typeof tags.team_drill !== "string") {
       throw new Error(
-        `[${drillFolder}] 'tags.team_drill' must contain exactly one value ('yes' or 'no')`
+        `[${drillFolder}] drill.yml field 'tags.team_drill' must be a string ('yes' or 'no')`
       );
     }
-    const tdValue = tags.team_drill[0];
-    if (typeof tdValue !== "string") {
+    if (!ALLOWED_TEAM_DRILL.includes(tags.team_drill)) {
       throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.team_drill' must contain only strings`
-      );
-    }
-    if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
-      throw new Error(
-        `[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
+        `[${drillFolder}] invalid team_drill '${tags.team_drill}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
       );
     }
   }

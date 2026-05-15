@@ -54,7 +54,7 @@ describe("estimateDrillPdfPages", () => {
       shooter_focus_points: Array.from({ length: 10 }, () => shortPoint),
       drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;
@@ -69,7 +69,7 @@ describe("estimateDrillPdfPages", () => {
       coaching_focus_points: ["quick rep"],
       drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;
@@ -100,7 +100,7 @@ describe("estimateDrillPdfPages", () => {
       shooter_focus_points: Array.from({ length: 10 }, () => "quick"),
       drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;
@@ -126,7 +126,7 @@ describe("estimateDrillPdfPages", () => {
       coaching_focus_points: Array.from({ length: 22 }, () => "quick"),
       drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;

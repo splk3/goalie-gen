@@ -164,7 +164,9 @@ All other fields are optional. Known optional fields include:
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
 
-The `tags` field is required, but each sub-field is optional. Some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`). Each of these sub-fields accepts an **array** of values from the allowed list (including an empty array):
+The `tags` field is required, but each sub-field is optional. Most sub-fields accept an **array** of
+values from an allowed list and are validated during build time (in `gatsby-node.ts`).
+The exception is `team_drill`, which is a single string value (`yes` or `no`):
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
@@ -197,7 +199,7 @@ The `tags` field is required, but each sub-field is optional. Some sub-fields ha
   - `ice_marker`
   - `none`
 
-- `team_drill`: Must be an array containing exactly one of:
+- `team_drill`: A single string value, either:
   - `yes`
   - `no`
 

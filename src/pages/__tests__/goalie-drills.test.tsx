@@ -21,7 +21,7 @@ describe("GoalieDrills page", () => {
             drill_updated_date: "2026-01-02",
             tags: {
               skill_level: ["beginner"],
-              team_drill: ["yes"],
+              team_drill: "yes",
               age_level: ["12U"],
               fundamental_skill: ["positioning"],
               skating_skill: ["t_push"],

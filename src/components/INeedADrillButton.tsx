@@ -10,7 +10,7 @@ interface DrillNode {
   name: string;
   tags: {
     skill_level?: string[];
-    team_drill?: string[];
+    team_drill?: string;
     age_level?: string[];
     fundamental_skill?: string[];
     skating_skill?: string[];
