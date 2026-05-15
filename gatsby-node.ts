@@ -110,8 +110,8 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (!Array.isArray(d.images)) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'images' (array)`);
+  if (typeof d.drill_image !== "string" || !d.drill_image) {
+    throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_image' (string)`);
   }
 
   if (!d.tags || typeof d.tags !== "object" || Array.isArray(d.tags)) {
@@ -502,7 +502,7 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         coaching_focus_points: drillData.coaching_focus_points,
         shooter_focus_points: drillData.shooter_focus_points,
         drill_progressions: drillData.drill_progressions,
-        images: drillData.images,
+        drill_image: drillData.drill_image,
         video: drillData.video,
         drill_creation_date: drillData.drill_creation_date,
         drill_updated_date: drillData.drill_updated_date,

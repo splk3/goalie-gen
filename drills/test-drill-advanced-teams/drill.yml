@@ -26,9 +26,7 @@ drill_progressions:
   - Add second progression step here.  with some other stuff that's important to remember
   - third is the most complicated.  add a 2nd and 3rd shooter, and have the shooters do some different things to keep the goalie on their toes.
 
-images:
-  - test-drill-image-1.png
-  - test-drill-image-2.png
+drill_image: test-drill-image-1.png
 
 video: https://vimeo.com/830266352?fl=pl&fe=sh
 

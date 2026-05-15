@@ -18,7 +18,7 @@ interface DrillPageContext {
     coaching_focus_points: string[];
     shooter_focus_points?: string[];
     drill_progressions?: string[];
-    images: string[];
+    drill_image: string;
     video?: string;
     drill_creation_date: string;
     drill_updated_date?: string;
@@ -79,17 +79,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
 
-  // Apply max height when there are multiple images to keep layout compact
-  const hasMultipleImages = (drillData.images || []).length >= 2;
-  const imageClasses = hasMultipleImages
-    ? "w-full h-auto object-contain max-h-[300px]"
-    : "w-full h-auto object-contain";
-  const drillImageUrls = React.useMemo(
+  const drillImageUrl = React.useMemo(
     () =>
-      (drillData.images || []).map((image) =>
-        buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)
-      ),
-    [drillData.images, drillFolder]
+      drillData.drill_image
+        ? buildCacheBustedAssetPath(`/drills/${drillFolder}/${drillData.drill_image}`)
+        : "",
+    [drillData.drill_image, drillFolder]
   );
 
   return (
@@ -239,22 +234,19 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             )}
           </div>
 
-          {/* Right Column: Images */}
-          <div className="space-y-4 print:space-y-2">
-            {drillImageUrls.map((imageUrl, index) => (
-              <div
-                key={index}
-                className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
-              >
+          {/* Right Column: Image */}
+          <div>
+            {drillImageUrl && (
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
                 <img
-                  src={imageUrl}
-                  alt={`Drill diagram ${index + 1}`}
-                  className={imageClasses}
+                  src={drillImageUrl}
+                  alt="Drill diagram"
+                  className="w-full h-auto object-contain"
                   loading="lazy"
                   decoding="async"
                 />
               </div>
-            ))}
+            )}
           </div>
         </div>
 

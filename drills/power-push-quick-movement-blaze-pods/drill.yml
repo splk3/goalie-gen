@@ -23,8 +23,7 @@ drill_progressions:
   - Add first progression step here.  there are some things that help goalies with a, b, and c.
   - Add second progression step here.  also try faster or slower light changes, and shorter or longer timeout durations.
 
-images:
-  - test-drill-image.png
+drill_image: test-drill-image.png
 
 video: https://www.youtube.com/watch?v=L4C5hPBv-LA
 

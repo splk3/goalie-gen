@@ -337,55 +337,41 @@ export const generateDrillPdf = async (
   const rightColumnX = margin + leftColumnWidth + interColumnGap;
   const contentStartY = currentY;
 
-  // --- RIGHT COLUMN: Images (rendered first so they always land on page 1) ---
-  // Load all drill images in parallel so network round-trips overlap.
-  const imageInfos: Array<{ dataURL: string; width: number; height: number }> = [];
+  // --- RIGHT COLUMN: Image (rendered first so it always lands on page 1) ---
+  let drillImageInfo: { dataURL: string; width: number; height: number } | null = null;
 
-  if (drillData.images && drillData.images.length > 0) {
-    const drillImageResults = await Promise.allSettled(
-      drillData.images.map((imageName) => {
-        const imagePath = `/drills/${drillFolder}/${imageName}`;
-        return loadImageAsDataURL(buildCacheBustedAssetPath(imagePath));
-      })
-    );
-
-    drillImageResults.forEach((result, i) => {
-      if (result.status === "fulfilled") {
-        imageInfos.push(result.value);
-      } else {
-        console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, result.reason);
-      }
-    });
+  if (drillData.drill_image) {
+    const imagePath = `/drills/${drillFolder}/${drillData.drill_image}`;
+    const result = await Promise.allSettled([
+      loadImageAsDataURL(buildCacheBustedAssetPath(imagePath)),
+    ]);
+    if (result[0].status === "fulfilled") {
+      drillImageInfo = result[0].value;
+    } else {
+      console.error(`Error loading drill image (${drillData.drill_image}):`, result[0].reason);
+    }
   }
 
   onProgress?.("Generating PDF...");
 
   let rightY = contentStartY;
 
-  if (imageInfos.length > 0) {
+  if (drillImageInfo) {
     const maxImageWidth = rightColumnWidth;
-    // Distribute the full right-column height equally across all images so they all
-    // fit on page 1. Gaps between images are accounted for before dividing.
-    const totalGaps = (imageInfos.length - 1) * 4;
-    const availableHeight = contentBottomLimit - contentStartY - totalGaps;
-    const maxImageHeight = availableHeight / imageInfos.length;
+    const maxImageHeight = contentBottomLimit - contentStartY;
+    const aspectRatio = drillImageInfo.width / drillImageInfo.height;
+    let imgWidth = maxImageWidth;
+    let imgHeight = imgWidth / aspectRatio;
 
-    imageInfos.forEach((imageInfo) => {
-      const aspectRatio = imageInfo.width / imageInfo.height;
-      let imgWidth = maxImageWidth;
-      let imgHeight = imgWidth / aspectRatio;
+    if (imgHeight > maxImageHeight) {
+      imgHeight = maxImageHeight;
+      imgWidth = imgHeight * aspectRatio;
+    }
 
-      // Shrink to fit the allocated height slice if needed
-      if (imgHeight > maxImageHeight) {
-        imgHeight = maxImageHeight;
-        imgWidth = imgHeight * aspectRatio;
-      }
-
-      // Right-align image so its right edge meets the page's right margin
-      const imgX = rightColumnX + rightColumnWidth - imgWidth;
-      doc.addImage(imageInfo.dataURL, "PNG", imgX, rightY, imgWidth, imgHeight);
-      rightY += imgHeight + 4;
-    });
+    // Right-align image so its right edge meets the page's right margin
+    const imgX = rightColumnX + rightColumnWidth - imgWidth;
+    doc.addImage(drillImageInfo.dataURL, "PNG", imgX, rightY, imgWidth, imgHeight);
+    rightY += imgHeight + 4;
   }
 
   // --- LEFT COLUMN: Text sections (may overflow to additional pages) ---

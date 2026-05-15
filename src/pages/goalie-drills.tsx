@@ -9,7 +9,7 @@ import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/use
 interface DrillNode {
   slug: string;
   name: string;
-  images: string[];
+  drill_image: string;
   drill_creation_date: string;
   drill_updated_date?: string;
   tags: {
@@ -56,7 +56,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const drills = React.useMemo<DrillCardData[]>(
     () =>
       data.allDrill.nodes.map((node) => {
-        const image = node.images && node.images.length > 0 ? node.images[0] : "placeholder.png";
+        const image = node.drill_image || "placeholder.png";
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
         return {
           ...node,
@@ -443,7 +443,7 @@ export const query = graphql`
       nodes {
         slug
         name
-        images
+        drill_image
         drill_creation_date
         drill_updated_date
         tags {

@@ -40,8 +40,7 @@ drill_progressions:
   - "Progression 4 — Second Shooter Option: Add a second shooter in the slot so the primary shooter can pass or shoot."
   - "Progression 5 — Net Front Screen: Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
 
-images:
-  - rim-stop-cut-across.png
+drill_image: rim-stop-cut-across.png
 
 drill_creation_date: 2026-05-13
 

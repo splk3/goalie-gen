@@ -208,30 +208,47 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## GitHub Copilot Instructions
+        ## GitHub Copilot Instructions - Users can ignore this section
 
         - Use the information in the fields above to create a new drill YAML file in the `drills` folder.
         - Follow the instructions below to create the new drill.
         - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
-        - The `coaching_focus_points` field is required. Map the "Coaching Focus Points" form field to it.
+        - Convert all non-ascii characters to ascii equivalents, as needed
+        - For the fiels of 'drill_steps', 'coaching_focus_points', 'shooter_focus_points', and 'drill_progressions', make sure to
+          format the YAML as an array of strings, with each item on a new line and a dash in front.
+          If the user enters multiple lines in the text area, split them into an array. If they enter a single line, make it an array with one item.
+          If they enter multiple lines but some are blank, ignore the blank lines and only include the non-blank lines in the array.
+          If they do not make each line bulleted, add the dashes and format it as an array.
+          For example, if the user entered the following in the "Drill Steps" text area:
+          ```
+          Drill starting instruction
+          Next instruction
+          Another Instruction
+          ```
+          Then the YAML should include:
+          ```
+          drill_steps:
+            - Drill starting instruction
+            - Next instruction
+            - Another Instruction
+          ```
+        - If they leave an optional field blank, omit that field entirely from the YAML (do not include a commented-out placeholder).
         - If "Drill Steps" was provided, add the `drill_steps` field as an array of strings
           directly below `description` in the YAML.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Drill Progressions" was provided, add the `drill_progressions` field as an array of strings.
-          Otherwise, leave it out entirely.
+          Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Team Drill" is "yes" and any "Tags - Team Concepts" checkboxes are checked,
           add the `team_concepts` field under `tags` as an array of the selected values.
           If "Team Drill" is "no" or no team concepts are selected, omit `team_concepts` entirely.
-        - Add the images to the folder, updating the `images` field as needed.
-          If the images are pasted into the text area and not attached, make sure to save the images and add them to the drill folder,
-          naming them after the drill name and updating the `images` field accordingly.
-          If more than one image is included, add a suffix to the filename
-          (e.g. `drill-name-1.jpg`, `drill-name-2.jpg`, etc.) and list all images in the YAML.
-          Keep them in the order they are uploaded if in the text field, and alphabetical if attached.
-        - Confirm image files are actual images, and that video links are real YouTube or Vimeo links.
+        - Add the drill image to the folder and set the `drill_image` field to the image filename.
+          If the image is pasted into the text area and not attached, make sure to save the image and add it to the drill folder,
+          naming it after the drill name and updating the `drill_image` field accordingly
+          (e.g. `drill-name.jpg`).
+        - Confirm the image file is an actual image, and that video links are real YouTube or Vimeo links.
         - Make sure the new drill passes build validation and that the site builds properly.
         - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description. Link the PR in this issue.

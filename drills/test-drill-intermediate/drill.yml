@@ -22,8 +22,7 @@ coaching_focus_points:
 #   - Add first progression step here.
 #   - Add second progression step here.
 
-images:
-  - test-drill-image.png
+drill_image: test-drill-image.png
 
 video: https://www.youtube.com/watch?v=L4C5hPBv-LA
 

@@ -26,11 +26,7 @@ drill_progressions:
   - Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
   - Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
 
-images:
-  - test-drill-image-1.png
-  - test-drill-image-2.png
-  - test-drill-image-3.png
-  - test-drill-image-4.png
+drill_image: test-drill-image-1.png
 
 video: https://vimeo.com/830266352?fl=pl&fe=sh
 

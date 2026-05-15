@@ -46,7 +46,7 @@ const basePageContext = {
     name: "Test Drill",
     description: "Description text",
     coaching_focus_points: ["Focus point 1"],
-    images: ["test-drill-image.png"],
+    drill_image: "test-drill-image.png",
     drill_creation_date: "2026-01-01",
     tags: {
       team_drill: ["no"],

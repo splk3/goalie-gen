@@ -285,7 +285,7 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `name` (string): Drill name
    - `description` (string): Drill description
    - `coaching_focus_points` (array): List of coaching focus points
-   - `images` (array): Array of image filenames
+   - `drill_image` (string): Single image filename
    - `tags` (object): Categorization tags
    - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
 

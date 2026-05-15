@@ -51,7 +51,7 @@ describe("estimateDrillPdfPages", () => {
       description: "Short description",
       coaching_focus_points: Array.from({ length: 50 }, () => shortPoint),
       shooter_focus_points: Array.from({ length: 10 }, () => shortPoint),
-      images: [],
+      drill_image: "",
       tags: {
         team_drill: ["no"],
       },
@@ -65,7 +65,7 @@ describe("estimateDrillPdfPages", () => {
     const commonDrillData = {
       name: "Description Normalization Regression",
       coaching_focus_points: ["quick rep"],
-      images: [],
+      drill_image: "",
       tags: {
         team_drill: ["no"],
       },
@@ -95,7 +95,7 @@ describe("estimateDrillPdfPages", () => {
       description: "Short description",
       coaching_focus_points: Array.from({ length: 50 }, () => "quick"),
       shooter_focus_points: Array.from({ length: 10 }, () => "quick"),
-      images: [],
+      drill_image: "",
       tags: {
         team_drill: ["no"],
       },
@@ -120,7 +120,7 @@ describe("estimateDrillPdfPages", () => {
       name: "Short Name",
       description: "Short",
       coaching_focus_points: Array.from({ length: 22 }, () => "quick"),
-      images: [],
+      drill_image: "",
       tags: {
         team_drill: ["no"],
       },

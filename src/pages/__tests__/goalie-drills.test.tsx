@@ -16,7 +16,7 @@ describe("GoalieDrills page", () => {
           {
             slug: "test-drill",
             name: "Test Drill",
-            images: ["test.png"],
+            drill_image: "test.png",
             drill_creation_date: "2026-01-01",
             drill_updated_date: "2026-01-02",
             tags: {
