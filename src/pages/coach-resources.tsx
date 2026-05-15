@@ -11,7 +11,7 @@ export default function CoachResources() {
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-        <div className="flex flex-col md:flex-row items-start gap-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="flex-1">
             <h1 className="text-4xl font-bold mb-4">Coach Resources</h1>
             <p className="text-lg">Essential tools and resources for coaching youth hockey goalies.</p>

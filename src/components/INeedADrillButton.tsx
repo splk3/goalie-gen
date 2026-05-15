@@ -18,7 +18,11 @@ interface DrillNode {
   };
 }
 
-export default function INeedADrillButton() {
+interface INeedADrillButtonProps {
+  className?: string;
+}
+
+export default function INeedADrillButton({ className }: INeedADrillButtonProps = {}) {
   const data = useStaticQuery(graphql`
     query AllDrillsForButton {
       allDrill {
@@ -125,7 +129,12 @@ export default function INeedADrillButton() {
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-200 px-6 py-3 text-lg font-semibold text-usa-blue transition-colors"
+        className={[
+          "inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-100",
+          "hover:bg-gray-100 dark:hover:bg-gray-200 px-6 py-3 text-lg font-semibold",
+          "text-usa-blue transition-colors",
+          className ?? "",
+        ].join(" ")}
       >
         I Need a Drill!
       </button>

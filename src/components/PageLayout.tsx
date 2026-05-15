@@ -18,7 +18,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
             <div className="flex items-center gap-3">
               <HamburgerMenu />
               <Link to="/">
-                <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
+                <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
               </Link>
             </div>
             <DarkModeToggle />

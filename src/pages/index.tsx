@@ -31,7 +31,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <HamburgerMenu />
-              <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
+              <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
             </div>
             <div className="hidden md:block flex-1 mx-4">
               <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
@@ -50,22 +50,12 @@ export default function Home() {
             <div className="flex-1 min-w-0">
               <UsaHockeyGoldBanner textClassName="text-base" />
             </div>
-            <div className="flex-shrink-0 self-center">
-              <div className="relative w-[120px] h-[120px] flex items-center justify-center">
-                <span className="absolute w-[120px] h-[120px] rounded-full bg-white" />
-                <img
-                  src="/images/logos/logo-alt-light-whitebg.png"
-                  alt="Goalie Gen"
-                  className="relative w-[120px] h-[120px] object-contain"
-                />
-              </div>
-            </div>
-            <div className="flex-shrink-0 w-full lg:w-auto flex flex-col justify-center lg:justify-end items-center lg:items-end gap-3">
-              <INeedADrillButton />
+            <div className="flex-shrink-0 w-full lg:w-72 flex flex-col justify-center lg:justify-end gap-3">
+              <INeedADrillButton className="w-full" />
               <ShareButton
                 label="Share Goalie Gen"
                 title="Goalie Gen — Goaltending Development Plans"
-                className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100"
+                className="inline-flex w-full items-center gap-2 justify-center rounded-md bg-white px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100"
               />
             </div>
           </div>
@@ -123,13 +113,26 @@ export default function Home() {
 
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>
-            © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
-            Kujawski
-          </p>
-          <div className="mt-2 flex items-center justify-center gap-3">
-            <TermsPopup />
-            <FeedbackButton />
+          <div className="flex items-start justify-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+              <img
+                src="/images/logos/logo-alt-light-whitebg.png"
+                alt="Goalie Gen"
+                width={56}
+                height={56}
+                className="w-14 h-14 object-contain"
+              />
+            </div>
+            <div>
+              <p>
+                © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
+                Kujawski
+              </p>
+              <div className="mt-2 flex items-center justify-center gap-3">
+                <TermsPopup />
+                <FeedbackButton />
+              </div>
+            </div>
           </div>
         </div>
       </footer>
