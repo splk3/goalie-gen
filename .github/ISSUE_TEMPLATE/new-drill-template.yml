@@ -181,6 +181,7 @@ body:
         - label: penalty_kill
         - label: net_front_traffic
         - label: dump_in
+        - label: stick_handling
 
   - type: checkboxes
     id: equipment_tags

@@ -206,6 +206,7 @@ The `tags` field is required, but each sub-field is optional. Some sub-fields ha
   - `penalty_kill`
   - `net_front_traffic`
   - `dump_in`
+  - `stick_handling`
 
 For media fields, `images` should be an array of image filenames, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 

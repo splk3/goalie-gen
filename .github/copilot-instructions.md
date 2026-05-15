@@ -295,7 +295,7 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
    - `shooter_focus_points` (array): List of shooter-specific focus points
    - `drill_progressions` (array): Numbered list of drill progressions or alterations
-   - `tags.game_situations` (array): Shows a "Game Situations" column in the Skills Focus section when 1 or more values are present. Allowed values: `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`
+   - `tags.game_situations` (array): Shows a "Game Situations" column in the Skills Focus section when 1 or more values are present. Allowed values: `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
 
 4. **Dynamic Page Generation**:
    - `gatsby-node.ts` handles drill page creation via the `createPages` API

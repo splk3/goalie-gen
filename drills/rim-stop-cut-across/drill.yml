@@ -62,3 +62,6 @@ tags:
     - shuffle
     - t_push
   equipment: []
+  game_situations:
+    - dump_in
+    - stick_handling

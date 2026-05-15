@@ -29,7 +29,13 @@ const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
-const ALLOWED_GAME_SITUATIONS = ["power_play", "penalty_kill", "net_front_traffic", "dump_in"];
+const ALLOWED_GAME_SITUATIONS = [
+  "power_play",
+  "penalty_kill",
+  "net_front_traffic",
+  "dump_in",
+  "stick_handling",
+];
 
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
 // Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
