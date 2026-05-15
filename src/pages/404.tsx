@@ -22,7 +22,7 @@ export default function NotFoundPage() {
         </p>
         <Link
           to="/"
-          className="bg-usa-blue dark:bg-blue-600 text-usa-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors"
+          className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
         >
           ← Back to Home
         </Link>

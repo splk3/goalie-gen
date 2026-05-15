@@ -50,6 +50,20 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext;
 
   const [isPrinting, setIsPrinting] = React.useState(false);
+  const [drillsBackUrl, setDrillsBackUrl] = React.useState("/goalie-drills");
+
+  React.useEffect(() => {
+    if (document.referrer) {
+      try {
+        const ref = new URL(document.referrer);
+        if (ref.pathname === "/goalie-drills") {
+          setDrillsBackUrl(ref.pathname + ref.search);
+        }
+      } catch (_e) {
+        // ignore malformed referrer
+      }
+    }
+  }, []);
 
   const handlePrint = async () => {
     setIsPrinting(true);
@@ -127,11 +141,17 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       </header>
 
       <main className="container mx-auto px-4 py-8 print:py-0 print:px-0">
-        {/* Drill Name */}
-        <div className="mb-6 print:mb-2">
+        {/* Drill Name + Back to Drills button on same row */}
+        <div className="flex items-start justify-between mb-6 print:mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
             {drillData.name}
           </h1>
+          <Link
+            to={drillsBackUrl}
+            className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors print:hidden flex-shrink-0 ml-4"
+          >
+            ← Back to Drills
+          </Link>
         </div>
 
         {/* Last Updated Date */}

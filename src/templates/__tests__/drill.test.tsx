@@ -108,4 +108,11 @@ describe("DrillTemplate", () => {
     expect(orderedLists).toHaveLength(1);
     expect(orderedLists[0].querySelectorAll("li")).toHaveLength(0);
   });
+
+  it("renders a Back to Drills link defaulting to /goalie-drills", () => {
+    render(<DrillTemplate pageContext={basePageContext} />);
+    const links = screen.getAllByRole("link", { name: /back to drills/i });
+    expect(links.length).toBeGreaterThanOrEqual(1);
+    expect(links[0]).toHaveAttribute("href", "/goalie-drills");
+  });
 });

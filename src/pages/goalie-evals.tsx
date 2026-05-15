@@ -81,7 +81,7 @@ export default function GoalieEvals() {
         <div className="mt-8 text-center">
           <Link
             to="/"
-            className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
+            className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
           >
             ← Back to Home
           </Link>
