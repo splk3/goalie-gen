@@ -45,6 +45,7 @@ const basePageContext = {
   drillData: {
     name: "Test Drill",
     description: "Description text",
+    drill_steps: [] as string[],
     coaching_focus_points: ["Focus point 1"],
     drill_image: "test-drill-image.png",
     drill_creation_date: "2026-01-01",
@@ -55,7 +56,7 @@ const basePageContext = {
 };
 
 describe("DrillTemplate", () => {
-  it("renders drill_steps as an ordered list directly below description", () => {
+  it("renders the Drill Information heading and drill_steps as an ordered list", () => {
     const { container } = render(
       <DrillTemplate
         pageContext={{
@@ -68,6 +69,7 @@ describe("DrillTemplate", () => {
       />
     );
 
+    expect(screen.getByText("Drill Information")).toBeInTheDocument();
     expect(screen.getByText("Description text")).toBeInTheDocument();
     expect(screen.getByText("Step one")).toBeInTheDocument();
     expect(screen.getByText("Step two")).toBeInTheDocument();
@@ -76,22 +78,34 @@ describe("DrillTemplate", () => {
     expect(orderedLists).toHaveLength(1);
   });
 
-  it("does not render drill_steps when missing or empty", () => {
-    const { rerender } = render(<DrillTemplate pageContext={basePageContext} />);
-    expect(screen.queryByText("Step one")).not.toBeInTheDocument();
-
-    rerender(
+  it("does not render description paragraph when description is absent", () => {
+    const { container } = render(
       <DrillTemplate
         pageContext={{
           ...basePageContext,
           drillData: {
             ...basePageContext.drillData,
-            drill_steps: [],
+            description: undefined,
+            drill_steps: ["Step one"],
           },
         }}
       />
     );
 
-    expect(screen.queryByText("Step one")).not.toBeInTheDocument();
+    expect(screen.getByText("Drill Information")).toBeInTheDocument();
+    expect(screen.queryByText("Description text")).not.toBeInTheDocument();
+    expect(screen.getByText("Step one")).toBeInTheDocument();
+    const paragraphs = container.querySelectorAll("p");
+    const descParagraph = Array.from(paragraphs).find((p) =>
+      p.textContent?.includes("Description text")
+    );
+    expect(descParagraph).toBeUndefined();
+  });
+
+  it("renders an empty ordered list when drill_steps is an empty array", () => {
+    const { container } = render(<DrillTemplate pageContext={basePageContext} />);
+    const orderedLists = container.querySelectorAll("ol");
+    expect(orderedLists).toHaveLength(1);
+    expect(orderedLists[0].querySelectorAll("li")).toHaveLength(0);
   });
 });

@@ -1,14 +1,9 @@
 ---
 name: Test Drill for Beginner Goalies
 
-description: |-
-  A brief description of the drill.  This can be multiple lines and should provide
-  an overview of what the drill is about, its purpose, and any key details that
-  would help someone understand what the drill entails.
-
-# drill_steps:
-#   - Add drill step 1 here.
-#   - Add drill step 2 here.
+drill_steps:
+  - Add drill step 1 here.
+  - Add drill step 2 here.
 
 coaching_focus_points:
   - Coaching point 1
@@ -19,10 +14,6 @@ shooter_focus_points:
   - Shooter focus point 1
   - Shooter focus point 2
   - Shooter focus point 3 this one is longer and takes more text to describe, but it's still important to include as a shooter focus point.
-
-# drill_progressions:
-#   - Add first progression step here.
-#   - Add second progression step here.
 
 drill_image: test-drill-image.png
 

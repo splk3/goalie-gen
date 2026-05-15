@@ -13,8 +13,8 @@ interface DrillPageContext {
   slug: string;
   drillData: {
     name: string;
-    description: string;
-    drill_steps?: string[];
+    description?: string;
+    drill_steps: string[];
     coaching_focus_points: string[];
     shooter_focus_points?: string[];
     drill_progressions?: string[];
@@ -74,7 +74,9 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
-  const normalizedDescription = normalizeDrillDescription(drillData.description);
+  const normalizedDescription = drillData.description
+    ? normalizeDrillDescription(drillData.description)
+    : "";
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -182,18 +184,18 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <div>
             <div className="mb-6 print:mb-3">
               <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                Description
+                Drill Information
               </h2>
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
-                {normalizedDescription}
-              </p>
-              {drillData.drill_steps && drillData.drill_steps.length > 0 && (
-                <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                  {drillData.drill_steps.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
+              {normalizedDescription && (
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
+                  {normalizedDescription}
+                </p>
               )}
+              <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+                {drillData.drill_steps.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ol>
             </div>
 
             <div className="mb-6 print:mb-3">

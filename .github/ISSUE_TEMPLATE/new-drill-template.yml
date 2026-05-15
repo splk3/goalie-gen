@@ -37,22 +37,22 @@ body:
   - type: textarea
     id: drill_description
     attributes:
-      label: Description
-      description: Provide a brief overview and purpose of the drill.
+      label: Description (Optional)
+      description: Provide a brief overview and purpose of the drill. Leave blank if the drill steps are sufficient.
       placeholder: |
         A brief description of the drill. This can be multiple lines and should provide
         an overview of what the drill is about, its purpose, and any key details.
-    validations:
-      required: true
 
   - type: textarea
     id: drill_steps
     attributes:
-      label: Drill Steps (Optional)
-      description: Enter one drill step per line. Leave blank if not applicable.
+      label: Drill Steps
+      description: Enter one drill step per line.
       placeholder: |
         Drill step 1
         Drill step 2
+    validations:
+      required: true
 
   - type: textarea
     id: coaching_focus_points
@@ -235,9 +235,9 @@ body:
             - Another Instruction
           ```
         - If they leave an optional field blank, omit that field entirely from the YAML (do not include a commented-out placeholder).
-        - If "Drill Steps" was provided, add the `drill_steps` field as an array of strings
-          directly below `description` in the YAML.
+        - If "Description" was provided, add the `description` field as a string.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
+        - Add the `drill_steps` field as an array of strings directly below `description` (if present) in the YAML.
         - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - If "Drill Progressions" was provided, add the `drill_progressions` field as an array of strings.

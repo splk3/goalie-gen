@@ -49,6 +49,7 @@ describe("estimateDrillPdfPages", () => {
     const drillData = {
       name: "Estimator Capacity Regression",
       description: "Short description",
+      drill_steps: [] as string[],
       coaching_focus_points: Array.from({ length: 50 }, () => shortPoint),
       shooter_focus_points: Array.from({ length: 10 }, () => shortPoint),
       drill_image: "",
@@ -64,13 +65,14 @@ describe("estimateDrillPdfPages", () => {
   it("treats single newlines in descriptions the same as soft-wrapped spaces", () => {
     const commonDrillData = {
       name: "Description Normalization Regression",
+      drill_steps: [] as string[],
       coaching_focus_points: ["quick rep"],
       drill_image: "",
       tags: {
         team_drill: ["no"],
       },
       drill_creation_date: "2026-01-01",
-    } as Omit<DrillData, "description">;
+    } as DrillData;
 
     const softWrappedDescription =
       "This drill has a soft wrap in yaml source\nthat should not change estimated line usage.";
@@ -89,10 +91,11 @@ describe("estimateDrillPdfPages", () => {
     expect(softWrappedEstimate).toBe(spaceWrappedEstimate);
   });
 
-  it("accounts for optional drill steps when estimating page count", () => {
+  it("accounts for drill steps when estimating page count", () => {
     const baseData = {
       name: "Drill Steps Estimate",
       description: "Short description",
+      drill_steps: [] as string[],
       coaching_focus_points: Array.from({ length: 50 }, () => "quick"),
       shooter_focus_points: Array.from({ length: 10 }, () => "quick"),
       drill_image: "",
@@ -119,6 +122,7 @@ describe("estimateDrillPdfPages", () => {
     const baseDrillData = {
       name: "Short Name",
       description: "Short",
+      drill_steps: [] as string[],
       coaching_focus_points: Array.from({ length: 22 }, () => "quick"),
       drill_image: "",
       tags: {

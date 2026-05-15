@@ -77,17 +77,22 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
   const contentStartY = MARGIN + titleHeaderHeight + HEADER_AND_TAGS_BASE;
   const availableFirstPage = CONTENT_BOTTOM_LIMIT - contentStartY;
   const availableOtherPages = CONTENT_BOTTOM_LIMIT - (MARGIN + 5);
-  const normalizedDescription = normalizeDrillDescription(drillData.description);
+  const normalizedDescription = drillData.description
+    ? normalizeDrillDescription(drillData.description)
+    : "";
 
   // Estimate left column height
   let leftColHeight = 0;
 
-  // Description
+  // Drill Information heading (always present)
   leftColHeight += HEADING_HEIGHT;
-  leftColHeight += estimateLines(normalizedDescription) * LINE_HEIGHT;
+  // Description text (optional)
+  if (normalizedDescription) {
+    leftColHeight += estimateLines(normalizedDescription) * LINE_HEIGHT;
+  }
 
-  // Drill steps (optional, no heading)
-  const hasDrillSteps = Boolean(drillData.drill_steps && drillData.drill_steps.length > 0);
+  // Drill steps (required)
+  const hasDrillSteps = drillData.drill_steps.length > 0;
   if (hasDrillSteps) {
     leftColHeight += SECTION_GAP;
     for (const [index, step] of drillData.drill_steps.entries()) {

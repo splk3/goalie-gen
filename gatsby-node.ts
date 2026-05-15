@@ -52,18 +52,16 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml missing required field 'name' (string)`);
   }
 
-  if (!d.description || typeof d.description !== "string") {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`);
+  if (typeof d.description !== "undefined" && typeof d.description !== "string") {
+    throw new Error(`[${drillFolder}] drill.yml field 'description' must be a string`);
   }
 
-  if (typeof d.drill_steps !== "undefined" && !Array.isArray(d.drill_steps)) {
-    throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must be an array of strings`);
+  if (!Array.isArray(d.drill_steps)) {
+    throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_steps' (array)`);
   }
-  if (Array.isArray(d.drill_steps)) {
-    for (const step of d.drill_steps) {
-      if (typeof step !== "string") {
-        throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
-      }
+  for (const step of d.drill_steps) {
+    if (typeof step !== "string") {
+      throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
     }
   }
 

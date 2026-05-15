@@ -378,33 +378,33 @@ export const generateDrillPdf = async (
   // Images have already been placed on page 1; ensureSpace page breaks apply only to text here.
   let leftY = contentStartY;
 
-  // Description
+  // Drill Information (description optional + required steps)
   leftY = ensureSpace(leftY, 16); // heading + at least one text line
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
-  doc.text("Description", margin, leftY);
+  doc.text("Drill Information", margin, leftY);
   leftY += 5;
 
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
   doc.setFont(undefined, "normal");
-  const normalizedDescription = normalizeDrillDescription(drillData.description);
-  const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
-  leftY = ensureSpace(leftY, descriptionLines.length * 4);
-  doc.text(descriptionLines, margin, leftY);
-  leftY += descriptionLines.length * 4 + 3;
-
-  // Drill Steps (optional, no heading)
-  if (drillData.drill_steps && drillData.drill_steps.length > 0) {
-    for (const [index, step] of drillData.drill_steps.entries()) {
-      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
-      doc.text(stepLines, margin + 3, leftY);
-      leftY += stepLines.length * 4 + 1;
-    }
-    leftY += 2;
+  if (drillData.description) {
+    const normalizedDescription = normalizeDrillDescription(drillData.description);
+    const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
+    leftY = ensureSpace(leftY, descriptionLines.length * 4);
+    doc.text(descriptionLines, margin, leftY);
+    leftY += descriptionLines.length * 4 + 3;
   }
+
+  // Drill Steps (required)
+  for (const [index, step] of drillData.drill_steps.entries()) {
+    const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
+    leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
+    doc.text(stepLines, margin + 3, leftY);
+    leftY += stepLines.length * 4 + 1;
+  }
+  leftY += 2;
 
   // Coaching Focus Points
   leftY = ensureSpace(leftY, 12); // heading + at least one bullet

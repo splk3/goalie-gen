@@ -2,22 +2,17 @@
 name: Power Push Quick Movement with Blaze Pods
 
 description: |-
-  Goalie will start in butterfly position.
-  Find light and then power push to the proper angle,
-  maintaining depth and posture.
+  Drill designed to improve power pushes while in butterfly position.
 
-# drill_steps:
-#   - Add drill step 1 here.
-#   - Add drill step 2 here.
+drill_steps:
+  - Goalie will start in butterfly position.
+  - Find light and then power push to the proper angle, maintaining depth and posture.
 
 coaching_focus_points:
   - Head turn on finding next light, then hands/hips follow.
   - Watch stick, glove, and blocker position until end of drill.
   - Adjust Lights Out Timeout and duration based on player.
   - Alternate equipment - use cones instead of Blaze Pods
-
-# shooter_focus_points:
-#   - Shooter focus point 1
 
 drill_progressions:
   - Add first progression step here.  there are some things that help goalies with a, b, and c.
