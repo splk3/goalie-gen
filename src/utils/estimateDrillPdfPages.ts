@@ -69,6 +69,16 @@ function estimateNumberedHeight(
   return estimateLines(`${index + 1}. ${text}`, charsPerLine) * LINE_HEIGHT + 1;
 }
 
+function estimateProgressionHeight(
+  progressionName: string,
+  progressionDescription: string,
+  charsPerLine = CHARS_PER_LINE_FULL
+): number {
+  const nameHeight = estimateLines(`• ${progressionName}:`, charsPerLine) * LINE_HEIGHT + 1;
+  const descriptionHeight = estimateLines(progressionDescription, charsPerLine) * LINE_HEIGHT + 1;
+  return nameHeight + descriptionHeight;
+}
+
 /**
  * Estimates how many PDF pages a drill will need when rendered by generateDrillPdf.
  *
@@ -132,11 +142,27 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
     }
   }
 
-  // Drill progressions (optional)
-  if (drillData.drill_progressions && drillData.drill_progressions.length > 0) {
+  const hasProgressionImages =
+    drillData.drill_progressions !== undefined &&
+    drillData.drill_progressions.some(
+      (progression) =>
+        progression.progression_image !== undefined &&
+        progression.progression_image.trim().length > 0
+    );
+
+  // Drill progressions (optional, only inlined when no progression images exist)
+  if (
+    drillData.drill_progressions &&
+    drillData.drill_progressions.length > 0 &&
+    !hasProgressionImages
+  ) {
     fullWidthHeight += SECTION_GAP + HEADING_HEIGHT;
-    for (const [index, step] of drillData.drill_progressions.entries()) {
-      fullWidthHeight += estimateNumberedHeight(step, index, CHARS_PER_LINE_FULL);
+    for (const progression of drillData.drill_progressions) {
+      fullWidthHeight += estimateProgressionHeight(
+        progression.progression_name,
+        progression.progression_description,
+        CHARS_PER_LINE_FULL
+      );
     }
   }
 
@@ -148,9 +174,14 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
 
   const totalNeeded = twoColHeight + fullWidthHeight + postColumnHeight;
 
-  if (totalNeeded <= availableFirstPage) {
-    return 1;
+  const basePages =
+    totalNeeded <= availableFirstPage
+      ? 1
+      : 1 + Math.ceil((totalNeeded - availableFirstPage) / availableOtherPages);
+
+  if (hasProgressionImages && drillData.drill_progressions && drillData.drill_progressions.length) {
+    return basePages + 1;
   }
 
-  return 1 + Math.ceil((totalNeeded - availableFirstPage) / availableOtherPages);
+  return basePages;
 }

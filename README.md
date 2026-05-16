@@ -179,6 +179,10 @@ All other fields are optional. Known optional fields include:
 
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
+- `drill_progressions` — array of up to 6 progression objects. Each progression object requires:
+  - `progression_name` (string)
+  - `progression_description` (string)
+  - `progression_image` (optional string filename)
 
 The `tags` field is required, but each sub-field is optional. Most sub-fields accept an **array** of
 values from an allowed list and are validated during build time (in `gatsby-node.ts`).

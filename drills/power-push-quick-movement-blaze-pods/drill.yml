@@ -15,8 +15,10 @@ coaching_focus_points:
   - Alternate equipment - use cones instead of Blaze Pods
 
 drill_progressions:
-  - Add first progression step here.  there are some things that help goalies with a, b, and c.
-  - Add second progression step here.  also try faster or slower light changes, and shorter or longer timeout durations.
+  - progression_name: Progression 1
+    progression_description: Add first progression step here.  there are some things that help goalies with a, b, and c.
+  - progression_name: Progression 2
+    progression_description: Add second progression step here.  also try faster or slower light changes, and shorter or longer timeout durations.
 
 drill_image: test-drill-image.png
 

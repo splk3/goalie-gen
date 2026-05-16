@@ -301,7 +301,7 @@ This project uses a YAML-based drill system with dynamic page generation:
    - `video` (string): YouTube or Vimeo URL for the drill
    - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
    - `shooter_focus_points` (array): List of shooter-specific focus points
-   - `drill_progressions` (array): Numbered list of drill progressions or alterations
+   - `drill_progressions` (array): Up to 6 progression objects, each with required `progression_name` and `progression_description`, plus optional `progression_image`
    - `tags.game_situations` (array): Shows a "Game Situations" column in the Skills Focus section when 1 or more values are present. Allowed values: `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
 
 4. **Dynamic Page Generation**:

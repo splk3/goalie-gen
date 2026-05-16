@@ -166,17 +166,14 @@ export const generateDrillPdf = async (
   // Pre-load all static header/footer images in parallel so none of the
   // network round-trips blocks the others.
   onProgress?.("Loading images...");
-  const [goldLogoResult, leftLogoResult, rightLogoResult, ggLogoResult] =
-    await Promise.allSettled([
-      loadImageAsDataURL(
-        buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
-      ),
-      loadImageAsDataURL(
-        buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")
-      ),
-      loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
-      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
-    ]);
+  const [goldLogoResult, leftLogoResult, rightLogoResult, ggLogoResult] = await Promise.allSettled([
+    loadImageAsDataURL(
+      buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
+    ),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+  ]);
 
   const goldLogoInfo = goldLogoResult.status === "fulfilled" ? goldLogoResult.value : null;
   if (goldLogoResult.status === "rejected") {
@@ -194,9 +191,7 @@ export const generateDrillPdf = async (
     const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight;
 
     // GG logo (right side) — sized to the same height as the gold cert logo
-    const ggLogoWidth = ggLogoInfo
-      ? (ggLogoInfo.width / ggLogoInfo.height) * goldLogoHeight
-      : 0;
+    const ggLogoWidth = ggLogoInfo ? (ggLogoInfo.width / ggLogoInfo.height) * goldLogoHeight : 0;
     const ggLogoX = pageWidth - margin - ggLogoWidth;
 
     doc.setDrawColor(150, 150, 150);
@@ -209,10 +204,7 @@ export const generateDrillPdf = async (
 
     // Gold text spans between the two logos
     const textRightEdge = ggLogoInfo ? ggLogoX - 4 : pageWidth - margin;
-    const goldTextLines = doc.splitTextToSize(
-      goldText,
-      textRightEdge - margin - goldLogoWidth - 4
-    );
+    const goldTextLines = doc.splitTextToSize(goldText, textRightEdge - margin - goldLogoWidth - 4);
     doc.text(goldTextLines, margin + goldLogoWidth + 4, footerLogoY + 5);
 
     // GG logo with white circular background
@@ -229,91 +221,90 @@ export const generateDrillPdf = async (
   // Track which page we are on so callers can detect multi-page output
   let currentPageNum = 1;
 
+  const startNewPage = (): number => {
+    drawPageFooter();
+    doc.addPage();
+    currentPageNum++;
+    return margin + 5;
+  };
+
   // If `neededHeight` mm of content won't fit below `currentY`, draw the footer on the
   // current page, add a new page, and return the Y position at the top of the new page.
   const ensureSpace = (currentY: number, neededHeight: number): number => {
     if (currentY + neededHeight > contentBottomLimit) {
-      drawPageFooter();
-      doc.addPage();
-      currentPageNum++;
-      return margin + 5;
+      return startNewPage();
     }
     return currentY;
   };
 
-  let currentY = 15;
+  const drawPageHeader = (title: string): number => {
+    let headerY = 15;
 
-  // Header with USA Hockey logos and title — use the already-loaded results.
-  if (leftLogoResult.status === "fulfilled" && rightLogoResult.status === "fulfilled") {
-    const leftLogoInfo = leftLogoResult.value;
-    const rightLogoInfo = rightLogoResult.value;
+    // Header with USA Hockey logos and title — use the already-loaded results.
+    if (leftLogoResult.status === "fulfilled" && rightLogoResult.status === "fulfilled") {
+      const leftLogoInfo = leftLogoResult.value;
+      const rightLogoInfo = rightLogoResult.value;
 
-    const logoHeight = 16;
-    const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
-    const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight;
+      const logoHeight = 16;
+      const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
+      const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight;
 
-    doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, currentY, leftLogoWidth, logoHeight);
-    doc.addImage(
-      rightLogoInfo.dataURL,
-      "JPEG",
-      pageWidth - margin - rightLogoWidth,
-      currentY,
-      rightLogoWidth,
-      logoHeight
-    );
+      doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, headerY, leftLogoWidth, logoHeight);
+      doc.addImage(
+        rightLogoInfo.dataURL,
+        "JPEG",
+        pageWidth - margin - rightLogoWidth,
+        headerY,
+        rightLogoWidth,
+        logoHeight
+      );
 
-    // Render the drill name as the header title, centered between the logos
-    const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(16);
-    doc.setFont(undefined, "bold");
-    const titleAvailableWidth =
-      pageWidth - 2 * margin - leftLogoWidth - rightLogoWidth - 2 * titleHorizontalPaddingMm;
-    const titleCenterX =
-      margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
-    const titleLines = doc.splitTextToSize(drillData.name, titleAvailableWidth);
-    // Use jsPDF's own text metrics to avoid hardcoded line-height values
-    const titleDimensions = doc.getTextDimensions(drillData.name, {
-      maxWidth: titleAvailableWidth,
-    });
-    const titleTotalHeight = titleDimensions.h;
-    // Per-character height (baseline offset) derived from jsPDF font metrics
-    const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
-    // Expand header area only if multi-line title exceeds the logo height
-    const effectiveHeaderHeight = Math.max(logoHeight, titleTotalHeight);
-    // Vertically center the text block; doc.text positions text at the first baseline
-    const titleFirstLineY =
-      currentY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
-    doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
+      const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.setFontSize(16);
+      doc.setFont(undefined, "bold");
+      const titleAvailableWidth =
+        pageWidth - 2 * margin - leftLogoWidth - rightLogoWidth - 2 * titleHorizontalPaddingMm;
+      const titleCenterX =
+        margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
+      const titleLines = doc.splitTextToSize(title, titleAvailableWidth);
+      const titleDimensions = doc.getTextDimensions(title, {
+        maxWidth: titleAvailableWidth,
+      });
+      const titleTotalHeight = titleDimensions.h;
+      const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
+      const effectiveHeaderHeight = Math.max(logoHeight, titleTotalHeight);
+      const titleFirstLineY =
+        headerY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
+      doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
 
-    currentY += effectiveHeaderHeight + 4;
-
-    doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
-    doc.setLineWidth(2);
-    doc.line(margin, currentY, pageWidth - margin, currentY);
-    currentY += 8;
-  } else {
-    if (leftLogoResult.status === "rejected") {
-      console.error("Error loading header images:", leftLogoResult.reason);
-    } else if (rightLogoResult.status === "rejected") {
-      console.error("Error loading header images:", rightLogoResult.reason);
+      headerY += effectiveHeaderHeight + 4;
+    } else {
+      if (leftLogoResult.status === "rejected") {
+        console.error("Error loading header images:", leftLogoResult.reason);
+      } else if (rightLogoResult.status === "rejected") {
+        console.error("Error loading header images:", rightLogoResult.reason);
+      }
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.setFontSize(16);
+      doc.setFont(undefined, "bold");
+      const fallbackTitleWidth = pageWidth - 2 * margin;
+      const fallbackTitleLines = doc.splitTextToSize(title, fallbackTitleWidth);
+      const fallbackDimensions = doc.getTextDimensions(title, {
+        maxWidth: fallbackTitleWidth,
+      });
+      doc.text(fallbackTitleLines, pageWidth / 2, headerY, { align: "center" });
+      headerY += fallbackDimensions.h + 4;
     }
-    // No logos: render the drill name centered across the full page
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(16);
-    doc.setFont(undefined, "bold");
-    const fallbackTitleWidth = pageWidth - 2 * margin;
-    const fallbackTitleLines = doc.splitTextToSize(drillData.name, fallbackTitleWidth);
-    const fallbackDimensions = doc.getTextDimensions(drillData.name, {
-      maxWidth: fallbackTitleWidth,
-    });
-    doc.text(fallbackTitleLines, pageWidth / 2, currentY, { align: "center" });
-    currentY += fallbackDimensions.h + 4;
+
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
     doc.setLineWidth(2);
-    doc.line(margin, currentY, pageWidth - margin, currentY);
-    currentY += 8;
-  }
+    doc.line(margin, headerY, pageWidth - margin, headerY);
+
+    return headerY + 8;
+  };
+
+  let currentY = drawPageHeader(drillData.name);
 
   // Tags section - bold labels, normal values, equipment on separate line
   doc.setFontSize(9);
@@ -376,6 +367,43 @@ export const generateDrillPdf = async (
     } else {
       console.error(`Error loading drill image (${drillData.drill_image}):`, result[0].reason);
     }
+  }
+
+  const progressions = drillData.drill_progressions || [];
+  const hasProgressionImages = progressions.some(
+    (progression) =>
+      progression.progression_image !== undefined && progression.progression_image.trim().length > 0
+  );
+  const progressionImageInfoByIndex = new Map<
+    number,
+    { dataURL: string; width: number; height: number }
+  >();
+
+  if (hasProgressionImages) {
+    const progressionImagePromises = progressions.map((progression, index) => {
+      if (!progression.progression_image || progression.progression_image.trim().length === 0) {
+        return Promise.resolve({
+          index,
+          result: null as Awaited<ReturnType<typeof loadImageAsDataURL>> | null,
+        });
+      }
+      const imagePath = `/drills/${drillFolder}/${progression.progression_image}`;
+      return loadImageAsDataURL(buildCacheBustedAssetPath(imagePath))
+        .then((result) => ({ index, result }))
+        .catch((error: unknown) => {
+          console.error(
+            `Error loading progression image (${progression.progression_image}):`,
+            error
+          );
+          return { index, result: null };
+        });
+    });
+    const progressionImageResults = await Promise.all(progressionImagePromises);
+    progressionImageResults.forEach(({ index, result }) => {
+      if (result) {
+        progressionImageInfoByIndex.set(index, result);
+      }
+    });
   }
 
   onProgress?.("Generating PDF...");
@@ -486,8 +514,9 @@ export const generateDrillPdf = async (
     }
   }
 
-  // Drill Progressions (optional, full width)
-  if (drillData.drill_progressions && drillData.drill_progressions.length > 0) {
+  // Drill Progressions (optional, full width). If any progression has an image,
+  // this section moves to a dedicated progressions page.
+  if (progressions.length > 0 && !hasProgressionImages) {
     sectionY += 2;
     sectionY = ensureSpace(sectionY, 12); // heading + at least one step
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
@@ -498,13 +527,24 @@ export const generateDrillPdf = async (
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
-    doc.setFont(undefined, "normal");
+    for (const progression of progressions) {
+      const progressionName = `• ${progression.progression_name}:`;
+      const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, nameLines.length * 4 + 1);
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      doc.setFont(undefined, "bold");
+      doc.text(nameLines, margin + 3, sectionY);
+      sectionY += nameLines.length * 4 + 1;
 
-    for (const [index, step] of drillData.drill_progressions.entries()) {
-      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, fullWidth - 5);
-      sectionY = ensureSpace(sectionY, stepLines.length * 4 + 1);
-      doc.text(stepLines, margin + 3, sectionY);
-      sectionY += stepLines.length * 4 + 1;
+      const descriptionLines = doc.splitTextToSize(
+        progression.progression_description,
+        fullWidth - 5
+      );
+      sectionY = ensureSpace(sectionY, descriptionLines.length * 4 + 1);
+      doc.setFont(undefined, "normal");
+      doc.text(descriptionLines, margin + 6, sectionY);
+      sectionY += descriptionLines.length * 4 + 1;
     }
   }
 
@@ -599,6 +639,89 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "normal");
     doc.text(videoLines, margin, sectionY);
     sectionY += videoLines.length * 4;
+  }
+
+  if (progressions.length > 0 && hasProgressionImages) {
+    startNewPage();
+    let progressionsY = drawPageHeader(`${drillData.name}\nProgressions`);
+
+    const progressionsTitleHeight = 8;
+    progressionsY = ensureSpace(progressionsY, progressionsTitleHeight);
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("Drill Progressions", margin, progressionsY);
+    progressionsY += 6;
+
+    const columnGap = 8;
+    const progressionColumnWidth = (pageWidth - 2 * margin - columnGap) / 2;
+    const leftColumnX = margin;
+    const rightColumnX = margin + progressionColumnWidth + columnGap;
+    const rowGap = 4;
+    const rowsPerColumn = 3;
+    const availableProgressionHeight = contentBottomLimit - progressionsY;
+    const progressionBoxHeight =
+      (availableProgressionHeight - rowGap * (rowsPerColumn - 1)) / rowsPerColumn;
+
+    progressions.slice(0, 6).forEach((progression, index) => {
+      const columnIndex = index >= 3 ? 1 : 0;
+      const rowIndex = index % 3;
+      const boxX = columnIndex === 0 ? leftColumnX : rightColumnX;
+      const boxY = progressionsY + rowIndex * (progressionBoxHeight + rowGap);
+      const boxWidth = progressionColumnWidth;
+      const boxHeight = progressionBoxHeight;
+      const boxPadding = 3;
+
+      doc.setDrawColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.setLineWidth(0.7);
+      doc.rect(boxX, boxY, boxWidth, boxHeight);
+
+      const contentX = boxX + boxPadding;
+      let contentY = boxY + boxPadding + 2;
+      const contentWidth = boxWidth - boxPadding * 2;
+      const contentBottom = boxY + boxHeight - boxPadding;
+
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      doc.setFont(undefined, "bold");
+      const nameLines = doc.splitTextToSize(progression.progression_name, contentWidth);
+      const clampedNameLines = nameLines.slice(0, 2);
+      doc.text(clampedNameLines, contentX, contentY);
+      contentY += clampedNameLines.length * 3.8 + 2;
+
+      const progressionImageInfo = progressionImageInfoByIndex.get(index);
+      const descriptionLines = doc.splitTextToSize(
+        progression.progression_description,
+        contentWidth
+      );
+      const descriptionHeight = descriptionLines.length * 3.3;
+
+      if (progressionImageInfo) {
+        const imageSpaceHeight = Math.max(0, contentBottom - contentY - descriptionHeight - 2);
+        if (imageSpaceHeight > 0) {
+          const imageAspectRatio = progressionImageInfo.width / progressionImageInfo.height;
+          let imgWidth = contentWidth;
+          let imgHeight = imgWidth / imageAspectRatio;
+          if (imgHeight > imageSpaceHeight) {
+            imgHeight = imageSpaceHeight;
+            imgWidth = imgHeight * imageAspectRatio;
+          }
+          const imgX = contentX + (contentWidth - imgWidth) / 2;
+          doc.addImage(progressionImageInfo.dataURL, "PNG", imgX, contentY, imgWidth, imgHeight);
+          contentY += imgHeight + 2;
+        }
+      }
+
+      if (contentY < contentBottom) {
+        doc.setFont(undefined, "normal");
+        doc.setFontSize(8.5);
+        const maxDescriptionLines = Math.max(0, Math.floor((contentBottom - contentY) / 3.3));
+        const clampedDescriptionLines = descriptionLines.slice(0, maxDescriptionLines);
+        if (clampedDescriptionLines.length > 0) {
+          doc.text(clampedDescriptionLines, contentX, contentY);
+        }
+      }
+    });
   }
 
   // Draw the footer on the last (current) page

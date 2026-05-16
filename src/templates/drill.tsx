@@ -10,6 +10,12 @@ import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
+interface DrillProgression {
+  progression_name: string;
+  progression_description: string;
+  progression_image?: string;
+}
+
 interface DrillPageContext {
   slug: string;
   drillData: {
@@ -18,7 +24,7 @@ interface DrillPageContext {
     drill_steps: string[];
     coaching_focus_points: string[];
     shooter_focus_points?: string[];
-    drill_progressions?: string[];
+    drill_progressions?: DrillProgression[];
     drill_image: string;
     video?: string;
     drill_creation_date: string;
@@ -102,6 +108,15 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         ? buildCacheBustedAssetPath(`/drills/${drillFolder}/${drillData.drill_image}`)
         : "",
     [drillData.drill_image, drillFolder]
+  );
+  const progressionImageUrls = React.useMemo(
+    () =>
+      (drillData.drill_progressions || []).map((progression) =>
+        progression.progression_image
+          ? buildCacheBustedAssetPath(`/drills/${drillFolder}/${progression.progression_image}`)
+          : ""
+      ),
+    [drillData.drill_progressions, drillFolder]
   );
 
   return (
@@ -283,11 +298,39 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
               Drill Progressions
             </h2>
-            <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-              {drillData.drill_progressions.map((step, index) => (
-                <li key={index}>{step}</li>
-              ))}
-            </ol>
+            <div className="space-y-4">
+              {drillData.drill_progressions.map((progression, index) => {
+                const progressionImageUrl = progressionImageUrls[index];
+                const hasProgressionImage = progressionImageUrl.length > 0;
+                return (
+                  <div key={`${progression.progression_name}-${index}`}>
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 print:text-base print:text-gray-900">
+                      {progression.progression_name}
+                    </h3>
+                    {hasProgressionImage ? (
+                      <div className="grid md:grid-cols-2 gap-4 mt-2 items-start print:grid-cols-2">
+                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
+                          {progression.progression_description}
+                        </p>
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
+                          <img
+                            src={progressionImageUrl}
+                            alt={`${progression.progression_name} diagram`}
+                            className="w-full h-auto object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
+                        {progression.progression_description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

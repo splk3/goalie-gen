@@ -141,4 +141,39 @@ describe("estimateDrillPdfPages", () => {
     expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
     expect(estimateDrillPdfPages(longNameDrillData)).toBe(2);
   });
+
+  it("adds a dedicated page when any progression includes an image", () => {
+    const baseDrillData = {
+      name: "Progression Image Page Estimate",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus one"],
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Description 1",
+        },
+      ],
+    } as DrillData;
+
+    const withProgressionImage: DrillData = {
+      ...baseDrillData,
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Description 1",
+          progression_image: "progression-1.png",
+        },
+      ],
+    };
+
+    expect(estimateDrillPdfPages(withProgressionImage)).toBe(
+      estimateDrillPdfPages(baseDrillData) + 1
+    );
+  });
 });

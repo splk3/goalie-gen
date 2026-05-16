@@ -34,11 +34,16 @@ shooter_focus_points:
   - Change release point (pull and drag, push release, delay) to challenge the goalie.
 
 drill_progressions:
-  - "Progression 1 — Variable Rim Locations: Shooter varies rim height, speed, and angle while the goalie adjusts footwork and stick angle."
-  - "Progression 2 — Shooter Delay Options: Shooter may cut immediately, delay at the wall, or take a quick shot from the wall."
-  - "Progression 3 — Coach Pressure: Coach applies light forecheck pressure after the rim, and the goalie shoulder checks, protects the puck, and makes a decision."
-  - "Progression 4 — Second Shooter Option: Add a second shooter in the slot so the primary shooter can pass or shoot."
-  - "Progression 5 — Net Front Screen: Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
+  - progression_name: Progression 1
+    progression_description: "Variable Rim Locations: Shooter varies rim height, speed, and angle while the goalie adjusts footwork and stick angle."
+  - progression_name: Progression 2
+    progression_description: "Shooter Delay Options: Shooter may cut immediately, delay at the wall, or take a quick shot from the wall."
+  - progression_name: Progression 3
+    progression_description: "Coach Pressure: Coach applies light forecheck pressure after the rim, and the goalie shoulder checks, protects the puck, and makes a decision."
+  - progression_name: Progression 4
+    progression_description: "Second Shooter Option: Add a second shooter in the slot so the primary shooter can pass or shoot."
+  - progression_name: Progression 5
+    progression_description: "Net Front Screen: Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
 
 drill_image: rim-stop-cut-across.png
 

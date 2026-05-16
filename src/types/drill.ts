@@ -1,10 +1,16 @@
+export interface DrillProgression {
+  progression_name: string;
+  progression_description: string;
+  progression_image?: string;
+}
+
 export interface DrillData {
   name: string;
   description?: string;
   drill_steps: string[];
   coaching_focus_points: string[];
   shooter_focus_points?: string[];
-  drill_progressions?: string[];
+  drill_progressions?: DrillProgression[];
   drill_image: string;
   video?: string;
   drill_creation_date: string;

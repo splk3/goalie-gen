@@ -121,4 +121,35 @@ describe("DrillTemplate", () => {
     const shareButtons = screen.getAllByRole("button", { name: /share/i });
     expect(shareButtons.length).toBeGreaterThanOrEqual(2);
   });
+
+  it("renders progression name, description, and optional image", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            drill_progressions: [
+              {
+                progression_name: "Progression 1",
+                progression_description: "Progression details here",
+              },
+              {
+                progression_name: "Progression 2",
+                progression_description: "Progression with image",
+                progression_image: "progression-2.png",
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    expect(screen.getByText("Drill Progressions")).toBeInTheDocument();
+    expect(screen.getByText("Progression 1")).toBeInTheDocument();
+    expect(screen.getByText("Progression details here")).toBeInTheDocument();
+    expect(screen.getByText("Progression 2")).toBeInTheDocument();
+    expect(screen.getByText("Progression with image")).toBeInTheDocument();
+    expect(screen.getByAltText("Progression 2 diagram")).toBeInTheDocument();
+  });
 });

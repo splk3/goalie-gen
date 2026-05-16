@@ -22,9 +22,12 @@ shooter_focus_points:
   - Shooter focus point 3 this one is longer and takes more text to describe, but it's still important to include as a shooter focus point.
 
 drill_progressions:
-  - This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
-  - Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
-  - Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 1
+    progression_description: This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 2
+    progression_description: Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 3
+    progression_description: Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
 
 drill_image: test-drill-image-1.png
 

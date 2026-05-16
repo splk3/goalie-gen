@@ -71,5 +71,8 @@ tags:
 
 # optional
 # drill_progressions:
-#   - Add first progression step here.
-#   - Add second progression step here.
+#   - progression_name: Progression 1
+#     progression_description: Add first progression step here.
+#   - progression_name: Progression 2
+#     progression_description: Add second progression step here.
+#     progression_image: progression-2.png

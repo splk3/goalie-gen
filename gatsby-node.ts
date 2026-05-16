@@ -101,17 +101,49 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
 
   if (typeof d.drill_progressions !== "undefined" && !Array.isArray(d.drill_progressions)) {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of strings`
+      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of objects`
     );
   }
   if (Array.isArray(d.drill_progressions)) {
-    for (const step of d.drill_progressions) {
-      if (typeof step !== "string") {
+    if (d.drill_progressions.length > 6) {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 6 progressions`
+      );
+    }
+
+    d.drill_progressions.forEach((progression, index) => {
+      if (!progression || typeof progression !== "object" || Array.isArray(progression)) {
         throw new Error(
-          `[${drillFolder}] drill.yml field 'drill_progressions' must contain only strings`
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}]' must be an object`
         );
       }
-    }
+
+      const p = progression as Record<string, unknown>;
+
+      if (typeof p.progression_name !== "string" || p.progression_name.trim().length === 0) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_name' is required and must be a non-empty string`
+        );
+      }
+
+      if (
+        typeof p.progression_description !== "string" ||
+        p.progression_description.trim().length === 0
+      ) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_description' is required and must be a non-empty string`
+        );
+      }
+
+      if (
+        typeof p.progression_image !== "undefined" &&
+        (typeof p.progression_image !== "string" || p.progression_image.trim().length === 0)
+      ) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_image' must be a non-empty string when provided`
+        );
+      }
+    });
   }
 
   if (typeof d.drill_image !== "string" || !d.drill_image) {
@@ -239,24 +271,24 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
 
   if (typeof tags.game_situations !== "undefined" && !Array.isArray(tags.game_situations)) {
-      throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.game_situations' must be an array of strings`
-      );
-    }
-    if (Array.isArray(tags.game_situations)) {
-      for (const concept of tags.game_situations) {
-        if (typeof concept !== "string") {
-          throw new Error(
-            `[${drillFolder}] drill.yml field 'tags.game_situations' must contain only strings`
-          );
-        }
-        if (!ALLOWED_GAME_SITUATIONS.includes(concept)) {
-          throw new Error(
-            `[${drillFolder}] invalid game_situation '${concept}'. Allowed values: ${ALLOWED_GAME_SITUATIONS.join(", ")}`
-          );
-        }
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'tags.game_situations' must be an array of strings`
+    );
+  }
+  if (Array.isArray(tags.game_situations)) {
+    for (const concept of tags.game_situations) {
+      if (typeof concept !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.game_situations' must contain only strings`
+        );
+      }
+      if (!ALLOWED_GAME_SITUATIONS.includes(concept)) {
+        throw new Error(
+          `[${drillFolder}] invalid game_situation '${concept}'. Allowed values: ${ALLOWED_GAME_SITUATIONS.join(", ")}`
+        );
       }
     }
+  }
 
   // Validate video URL if present — must be a valid YouTube or Vimeo link
   if (d.video !== undefined && d.video !== null) {

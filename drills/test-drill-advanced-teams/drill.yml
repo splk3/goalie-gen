@@ -22,9 +22,12 @@ shooter_focus_points:
   - Shooter focus point 4
 
 drill_progressions:
-  - Add first progression step here.  same as before but with some fancier things to work on, like d, e, and f.
-  - Add second progression step here.  with some other stuff that's important to remember
-  - third is the most complicated.  add a 2nd and 3rd shooter, and have the shooters do some different things to keep the goalie on their toes.
+  - progression_name: Progression 1
+    progression_description: Add first progression step here.  same as before but with some fancier things to work on, like d, e, and f.
+  - progression_name: Progression 2
+    progression_description: Add second progression step here.  with some other stuff that's important to remember
+  - progression_name: Progression 3
+    progression_description: third is the most complicated.  add a 2nd and 3rd shooter, and have the shooters do some different things to keep the goalie on their toes.
 
 drill_image: test-drill-image-1.png
 
