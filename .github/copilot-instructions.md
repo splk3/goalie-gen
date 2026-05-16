@@ -38,6 +38,7 @@ The following files and directories are part of the repository:
     - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
     - ExternalLinkButton.tsx, NavigationButton.tsx, PageLayout.tsx, TermsPopup.tsx
     - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
+    - FeedbackButton.tsx, FormatSelector.tsx, ImageUploader.tsx, Modal.tsx
     - `__tests__/` - Unit tests for components
   - `src/styles/`: Global CSS styles
   - `src/hooks/`: Custom React hooks (e.g., useDrillFilters.ts)
@@ -45,7 +46,13 @@ The following files and directories are part of the repository:
   - `src/types/`: TypeScript type definitions
     - drill.ts - `DrillData` interface used by gatsby-node.ts and templates
   - `src/declarations.d.ts`: Module declarations (e.g., CSS module imports)
-  - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts)
+  - `src/content/`: Markdown content files used for plan and journal generation
+    - `club-plan/` - Club development plan section content
+    - `goalie-journal/` - Goalie journal section content
+    - `team-plan/` - Team development plan section content
+  - `src/utils/`: Utility functions (analytics.ts, docxContent.ts, estimateDrillPdfPages.ts,
+    generateDrillPdf.ts, loadExportModules.ts, markdownParser.ts, normalizeDrillDescription.ts,
+    staticAsset.ts, videoUtils.ts)
     - `__tests__/` - Unit tests for utilities
 - `drills/`: Drill database (YAML-based drill definitions with images)
   - Each subdirectory contains a drill.yml and associated images

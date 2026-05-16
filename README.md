@@ -65,11 +65,15 @@ The site uses USA national colors:
 │   │   ├── DownloadDrillPdfButton.tsx
 │   │   ├── DownloadMaterialButton.tsx
 │   │   ├── ExternalLinkButton.tsx
+│   │   ├── FeedbackButton.tsx
+│   │   ├── FormatSelector.tsx
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
 │   │   ├── INeedADrillButton.tsx
+│   │   ├── ImageUploader.tsx
 │   │   ├── Logo.tsx
+│   │   ├── Modal.tsx
 │   │   ├── NavigationButton.tsx
 │   │   ├── PageLayout.tsx
 │   │   ├── Pagination.tsx
@@ -95,16 +99,28 @@ The site uses USA national colors:
 │   ├── types/            # TypeScript type definitions
 │   │   └── drill.ts      # DrillData interface
 │   ├── declarations.d.ts # Module declarations (e.g., CSS modules)
+│   ├── content/          # Markdown content for plan and journal generation
+│   │   ├── club-plan/    # Club development plan sections
+│   │   ├── goalie-journal/ # Goalie journal sections
+│   │   └── team-plan/    # Team development plan sections
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
+│       ├── docxContent.ts
+│       ├── estimateDrillPdfPages.ts
 │       ├── generateDrillPdf.ts
+│       ├── loadExportModules.ts
+│       ├── markdownParser.ts
+│       ├── normalizeDrillDescription.ts
+│       ├── staticAsset.ts
 │       ├── videoUtils.ts
 │       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
 │   ├── power-push-quick-movement-blaze-pods/
+│   ├── rim-stop-cut-across/
 │   ├── test-drill-advanced-teams/
 │   ├── test-drill-beginner/
-│   └── test-drill-intermediate/
+│   ├── test-drill-intermediate/
+│   └── test-drill-max-content/
 ├── drills_samples/       # Drill specification examples
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
@@ -153,7 +169,7 @@ Required fields in drill.yml:
 
 - `name`
 - `description`
-- `coaching_points`
+- `coaching_focus_points`
 - `images`
 - `tags`
 - `drill_creation_date`
