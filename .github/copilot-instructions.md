@@ -50,9 +50,9 @@ The following files and directories are part of the repository:
     - `club-plan/` - Club development plan section content
     - `goalie-journal/` - Goalie journal section content
     - `team-plan/` - Team development plan section content
-  - `src/utils/`: Utility functions (e.g., analytics.ts, generateDrillPdf.ts, videoUtils.ts,
-    docxContent.ts, markdownParser.ts, normalizeDrillDescription.ts, staticAsset.ts,
-    estimateDrillPdfPages.ts, loadExportModules.ts)
+  - `src/utils/`: Utility functions (analytics.ts, docxContent.ts, estimateDrillPdfPages.ts,
+    generateDrillPdf.ts, loadExportModules.ts, markdownParser.ts, normalizeDrillDescription.ts,
+    staticAsset.ts, videoUtils.ts)
     - `__tests__/` - Unit tests for utilities
 - `drills/`: Drill database (YAML-based drill definitions with images)
   - Each subdirectory contains a drill.yml and associated images
