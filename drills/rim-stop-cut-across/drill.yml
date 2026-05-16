@@ -33,21 +33,28 @@ shooter_focus_points:
   - Shoot against the grain back to the original side.
   - Change release point (pull and drag, push release, delay) to challenge the goalie.
 
-drill_progressions:
-  - progression_name: Progression 1
-    progression_description: "Variable Rim Locations: Shooter varies rim height, speed, and angle while the goalie adjusts footwork and stick angle."
-  - progression_name: Progression 2
-    progression_description: "Shooter Delay Options: Shooter may cut immediately, delay at the wall, or take a quick shot from the wall."
-  - progression_name: Progression 3
-    progression_description: "Coach Pressure: Coach applies light forecheck pressure after the rim, and the goalie shoulder checks, protects the puck, and makes a decision."
-  - progression_name: Progression 4
-    progression_description: "Second Shooter Option: Add a second shooter in the slot so the primary shooter can pass or shoot."
-  - progression_name: Progression 5
-    progression_description: "Net Front Screen: Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
-
 drill_image: rim-stop-cut-across.png
 
+drill_progressions:
+  - progression_name: Variable Rim Locations
+    progression_description: "Shooter varies rim height, speed, and angle while the goalie adjusts footwork and stick angle."
+    progression_image: variable-rim-locations.png
+  - progression_name: Shooter Delay Options
+    progression_description: "Shooter may cut immediately, delay at the wall, or take a quick shot from the wall."
+    progression_image: shooter-delay-options.png
+  - progression_name: Coach Pressure
+    progression_description: "Coach applies light forecheck pressure after the rim, and the goalie shoulder checks, protects the puck, and makes a decision."
+    progression_image: coach-pressure.png
+  - progression_name: Second Shooter Option
+    progression_description: "Add a second shooter in the slot so the primary shooter can pass or shoot."
+    progression_image: second-shooter-option.png
+  - progression_name: Net Front Screen
+    progression_description: "Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
+    progression_image: net-front-screen.png
+
 drill_creation_date: 2026-05-13
+
+drill_update_date: 2026-05-16
 
 tags:
   skill_level:

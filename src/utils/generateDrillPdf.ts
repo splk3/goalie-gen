@@ -1,6 +1,7 @@
 import type { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
 import { normalizeDrillDescription } from "./normalizeDrillDescription";
+import { shouldPlaceProgressionsOnSecondPage } from "./estimateDrillPdfPages";
 import {
   buildCacheBustedAssetPath,
   DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
@@ -370,6 +371,7 @@ export const generateDrillPdf = async (
   }
 
   const progressions = drillData.drill_progressions || [];
+  const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
   const hasProgressionImages = progressions.some(
     (progression) =>
       progression.progression_image !== undefined && progression.progression_image.trim().length > 0
@@ -441,7 +443,7 @@ export const generateDrillPdf = async (
   leftY += 5;
 
   doc.setTextColor(0, 0, 0);
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setFont(undefined, "normal");
   if (drillData.description) {
     const normalizedDescription = normalizeDrillDescription(drillData.description);
@@ -516,7 +518,12 @@ export const generateDrillPdf = async (
 
   // Drill Progressions (optional, full width). If any progression has an image,
   // this section moves to a dedicated progressions page.
-  if (progressions.length > 0 && !hasProgressionImages) {
+  if (progressions.length > 0 && (!hasProgressionImages || !shouldMoveProgressionsToSecondPage)) {
+    if (shouldMoveProgressionsToSecondPage) {
+      sectionY = startNewPage();
+      sectionY = drawPageHeader(drillData.name);
+    }
+
     sectionY += 2;
     sectionY = ensureSpace(sectionY, 12); // heading + at least one step
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
@@ -527,7 +534,7 @@ export const generateDrillPdf = async (
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
-    for (const progression of progressions) {
+    for (const [index, progression] of progressions.entries()) {
       const progressionName = `• ${progression.progression_name}:`;
       const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
       sectionY = ensureSpace(sectionY, nameLines.length * 4 + 1);
@@ -536,6 +543,24 @@ export const generateDrillPdf = async (
       doc.setFont(undefined, "bold");
       doc.text(nameLines, margin + 3, sectionY);
       sectionY += nameLines.length * 4 + 1;
+
+      const progressionImageInfo = progressionImageInfoByIndex.get(index);
+      if (progressionImageInfo) {
+        const maxImageWidth = Math.min(fullWidth - 12, 80);
+        const maxImageHeight = 34;
+        const aspectRatio = progressionImageInfo.width / progressionImageInfo.height;
+        let imgWidth = maxImageWidth;
+        let imgHeight = imgWidth / aspectRatio;
+        if (imgHeight > maxImageHeight) {
+          imgHeight = maxImageHeight;
+          imgWidth = imgHeight * aspectRatio;
+        }
+
+        sectionY = ensureSpace(sectionY, imgHeight + 3);
+        const imgX = margin + (fullWidth - imgWidth) / 2;
+        doc.addImage(progressionImageInfo.dataURL, "PNG", imgX, sectionY, imgWidth, imgHeight);
+        sectionY += imgHeight + 2;
+      }
 
       const descriptionLines = doc.splitTextToSize(
         progression.progression_description,
@@ -585,11 +610,11 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Fundamental Skills:", skillsLeftX, skillsLeftY);
     doc.setFont(undefined, "normal");
-    skillsLeftY += 4;
+    skillsLeftY += 3.5;
 
     drillData.tags.fundamental_skill.forEach((skill) => {
       doc.text(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
-      skillsLeftY += 4;
+      skillsLeftY += 3.5;
     });
   }
 
@@ -597,11 +622,11 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Skating Skills:", skillsRightX, skillsRightY);
     doc.setFont(undefined, "normal");
-    skillsRightY += 4;
+    skillsRightY += 3.5;
 
     drillData.tags.skating_skill.forEach((skill) => {
       doc.text(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY);
-      skillsRightY += 4;
+      skillsRightY += 3.5;
     });
   }
 
@@ -609,11 +634,11 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Game Situations:", skillsThirdX, skillsThirdY);
     doc.setFont(undefined, "normal");
-    skillsThirdY += 4;
+    skillsThirdY += 3.5;
 
     drillData.tags.game_situations!.forEach((situation) => {
       doc.text(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
-      skillsThirdY += 4;
+      skillsThirdY += 3.5;
     });
   }
 
@@ -641,7 +666,7 @@ export const generateDrillPdf = async (
     sectionY += videoLines.length * 4;
   }
 
-  if (progressions.length > 0 && hasProgressionImages) {
+  if (progressions.length > 0 && hasProgressionImages && shouldMoveProgressionsToSecondPage) {
     startNewPage();
     let progressionsY = drawPageHeader(`${drillData.name}\nProgressions`);
 
@@ -689,14 +714,18 @@ export const generateDrillPdf = async (
       doc.text(clampedNameLines, contentX, contentY);
       contentY += clampedNameLines.length * 3.8 + 2;
 
-      const progressionImageInfo = progressionImageInfoByIndex.get(index);
+      doc.setFont(undefined, "normal");
+      doc.setFontSize(8.5);
       const descriptionLines = doc.splitTextToSize(
         progression.progression_description,
         contentWidth
       );
-      const descriptionHeight = descriptionLines.length * 3.3;
+      const descriptionLineHeight = 3.3;
+      const descriptionHeight = descriptionLines.length * descriptionLineHeight;
+      const progressionImageInfo = progressionImageInfoByIndex.get(index);
 
       if (progressionImageInfo) {
+        // Always prioritize full description text; shrink image to whatever space remains.
         const imageSpaceHeight = Math.max(0, contentBottom - contentY - descriptionHeight - 2);
         if (imageSpaceHeight > 0) {
           const imageAspectRatio = progressionImageInfo.width / progressionImageInfo.height;
@@ -712,15 +741,8 @@ export const generateDrillPdf = async (
         }
       }
 
-      if (contentY < contentBottom) {
-        doc.setFont(undefined, "normal");
-        doc.setFontSize(8.5);
-        const maxDescriptionLines = Math.max(0, Math.floor((contentBottom - contentY) / 3.3));
-        const clampedDescriptionLines = descriptionLines.slice(0, maxDescriptionLines);
-        if (clampedDescriptionLines.length > 0) {
-          doc.text(clampedDescriptionLines, contentX, contentY);
-        }
-      }
+      // Do not truncate description lines. Image is reduced/omitted first to preserve text.
+      doc.text(descriptionLines, contentX, contentY);
     });
   }
 

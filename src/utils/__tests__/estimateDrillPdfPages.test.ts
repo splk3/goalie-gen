@@ -2,7 +2,10 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "../../types/drill";
-import { estimateDrillPdfPages } from "../estimateDrillPdfPages";
+import {
+  estimateDrillPdfPages,
+  shouldPlaceProgressionsOnSecondPage,
+} from "../estimateDrillPdfPages";
 
 const DRILLS_DIR = path.resolve(__dirname, "../../../drills");
 
@@ -115,10 +118,9 @@ describe("estimateDrillPdfPages", () => {
     expect(withSteps).toBeGreaterThan(withoutSteps);
   });
 
-  it("accounts for a long drill name that expands the header when estimating page count", () => {
-    // 22 short coaching points produces content just under the short-name first-page limit
-    // but just over the long-name first-page limit (the expanded header reduces available
-    // space by ~5 mm, which is enough to push this drill to a second page).
+  it("accounts for a long drill name header without under-estimating page count", () => {
+    // With the current compact Skills Focus sizing, this dataset now fits on one page
+    // for both short and long names, but the long-name estimate must never be lower.
     const baseDrillData = {
       name: "Short Name",
       description: "Short",
@@ -131,18 +133,19 @@ describe("estimateDrillPdfPages", () => {
       drill_creation_date: "2026-01-01",
     } as DrillData;
 
-    // Name > 80 chars wraps to 3 lines in the header title area (TITLE_CHARS_PER_LINE = 40),
-    // reducing available first-page space by ~5 mm compared to a short, single-line name.
+    // Name > 80 chars wraps to 3 lines in the header title area (TITLE_CHARS_PER_LINE = 40).
     const longNameDrillData: DrillData = {
       ...baseDrillData,
       name: "A Very Long Drill Name That Must Wrap to Three Lines in the PDF Header Title Area",
     };
 
     expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
-    expect(estimateDrillPdfPages(longNameDrillData)).toBe(2);
+    expect(estimateDrillPdfPages(longNameDrillData)).toBeGreaterThanOrEqual(
+      estimateDrillPdfPages(baseDrillData)
+    );
   });
 
-  it("adds a dedicated page when any progression includes an image", () => {
+  it("does not force a second page when progression images still fit on one page", () => {
     const baseDrillData = {
       name: "Progression Image Page Estimate",
       description: "Short",
@@ -172,8 +175,49 @@ describe("estimateDrillPdfPages", () => {
       ],
     };
 
-    expect(estimateDrillPdfPages(withProgressionImage)).toBe(
-      estimateDrillPdfPages(baseDrillData) + 1
-    );
+    expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
+    expect(estimateDrillPdfPages(withProgressionImage)).toBe(1);
+    expect(shouldPlaceProgressionsOnSecondPage(withProgressionImage)).toBe(false);
+  });
+
+  it("does not force a second page when no progressions are present", () => {
+    const noProgressionsData = {
+      name: "No Progressions",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus one"],
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(noProgressionsData)).toBe(false);
+    expect(estimateDrillPdfPages(noProgressionsData)).toBe(1);
+  });
+
+  it("places progressions on a second page when full drill content cannot fit one page", () => {
+    const overflowData = {
+      name: "Progression Overflow Estimate",
+      description: "Short",
+      drill_steps: Array.from({ length: 40 }, (_, index) => `Step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 20 }, () => "Focus detail"),
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Description 1",
+          progression_image: "progression-1.png",
+        },
+      ],
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(overflowData)).toBe(true);
+    expect(estimateDrillPdfPages(overflowData)).toBeGreaterThan(1);
   });
 });

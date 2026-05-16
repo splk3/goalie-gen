@@ -1,696 +1,97 @@
 # Copilot Instructions for Goalie Gen
 
-## Project Overview
-
-This repository hosts a **GatsbyJS-based static site** designed to help youth ice hockey teams and clubs generate customized goaltending development plans. The site is deployed to both GitHub Pages and Cloudflare Pages.
-
-**Note**: This is a Gatsby project (not Jekyll). The `.gitignore` is configured for Gatsby with entries for `public/`, `.cache/`, and `node_modules/`.
-
-## Technology Stack
-
-- **Static Site Generator**: GatsbyJS 5
-- **Hosting**:
-  - GitHub Pages with custom domain (dev.goaliegen.com)
-  - Cloudflare Pages with custom domain (goaliegen.com)
-- **Language**: TypeScript (all config files and components use .ts/.tsx)
-- **Framework**: React 19
-- **Styling**: Tailwind CSS 4 (utility-first CSS framework)
-- **Build Tool**: Gatsby with PostCSS
-- **Package Manager**: npm
-- **Document Generation**: jsPDF and docx libraries
-
-## Repository Structure
-
-### Source Files (Committed to Git)
-
-The following files and directories are part of the repository:
-
-- `src/`: Source code directory
-  - `src/pages/`: Page components (auto-routed by Gatsby) - TypeScript (.tsx)
-    - index.tsx, goalie-drills.tsx, team-drills.tsx
-    - goalie-resources.tsx, goalie-evals.tsx, coach-resources.tsx, club-resources.tsx
-    - 404.tsx
-  - `src/templates/`: Dynamic page templates (TypeScript .tsx files)
-    - drill.tsx - Template for individual drill pages
-  - `src/components/`: Reusable React components (TypeScript .tsx files)
-    - DarkModeToggle.tsx, Logo.tsx, SEO.tsx
-    - GenerateClubPlanButton.tsx, GenerateTeamPlanButton.tsx
-    - GoalieJournalButton.tsx, DownloadDrillPdfButton.tsx, DownloadMaterialButton.tsx
-    - ExternalLinkButton.tsx, NavigationButton.tsx, PageLayout.tsx, TermsPopup.tsx
-    - INeedADrillButton.tsx, Pagination.tsx, UsaHockeyGoldBanner.tsx
-    - FeedbackButton.tsx, FormatSelector.tsx, ImageUploader.tsx, Modal.tsx
-    - `__tests__/` - Unit tests for components
-  - `src/styles/`: Global CSS styles
-  - `src/hooks/`: Custom React hooks (e.g., useDrillFilters.ts)
-    - `__tests__/` - Unit tests for hooks
-  - `src/types/`: TypeScript type definitions
-    - drill.ts - `DrillData` interface used by gatsby-node.ts and templates
-  - `src/declarations.d.ts`: Module declarations (e.g., CSS module imports)
-  - `src/content/`: Markdown content files used for plan and journal generation
-    - `club-plan/` - Club development plan section content
-    - `goalie-journal/` - Goalie journal section content
-    - `team-plan/` - Team development plan section content
-  - `src/utils/`: Utility functions (analytics.ts, docxContent.ts, estimateDrillPdfPages.ts,
-    generateDrillPdf.ts, loadExportModules.ts, markdownParser.ts, normalizeDrillDescription.ts,
-    staticAsset.ts, videoUtils.ts)
-    - `__tests__/` - Unit tests for utilities
-- `drills/`: Drill database (YAML-based drill definitions with images)
-  - Each subdirectory contains a drill.yml and associated images
-  - Drills are automatically converted to pages via gatsby-node.ts
-- `drills_samples/`: Example drill specifications and templates
-- `static/`: Static assets (copied to public folder as-is)
-  - `static/CNAME`: Custom domain configuration file
-  - `static/favicons/`: Site icons and favicons
-    - android-chrome-192x192.png, android-chrome-512x512.png
-    - apple-touch-icon.png, favicon-16x16.png, favicon-32x32.png
-    - favicon.ico, site.webmanifest
-  - `static/images/`: Static images
-    - logos/ - Site logos (light/dark/alt variants)
-    - usahockey/ - USA Hockey resource images
-  - `static/pdfs/`: PDF resources
-    - coach-z-zone-map.pdf
-    - goalie-evaluation-form.pdf
-    - goalie-single-game-review.pdf
-- `gatsby-config.ts`: Gatsby configuration file (TypeScript)
-- `gatsby-browser.tsx`: Gatsby browser APIs (TypeScript)
-- `gatsby-node.ts`: Gatsby Node APIs for dynamic page generation (TypeScript)
-- `gatsby-ssr.tsx`: Gatsby SSR APIs (TypeScript)
-- `wrangler.jsonc`: Cloudflare Pages configuration
-- `tailwind.config.js`: Tailwind CSS configuration
-- `postcss.config.js`: PostCSS configuration
-- `tsconfig.json`: TypeScript configuration
-- `jest.config.js`: Jest test configuration (transforms, module mappers, test environment)
-- `jest-preprocess.js`: Babel/TypeScript transformer for Jest (babel-preset-gatsby + @babel/preset-typescript)
-- `jest.setup.js`: Jest setup file (loads @testing-library/jest-dom, mocks Gatsby)
-- `loadershim.js`: Gatsby loader mock (`global.___loader`) required for Jest
-- `__mocks__/`: Jest mocks directory
-  - `gatsby.js` - Mocks Gatsby's `Link`, `graphql`, `useStaticQuery`, and related exports
-  - `fileMock.js` - Stub for static asset imports (images, fonts, etc.)
-- `package.json`: npm dependencies and scripts
-- `.env.development`: Development environment variables (GATSBY_SITE_URL)
-- `.env.production`: Production environment variables (GATSBY_SITE_URL)
-- `.env.example`: Example environment variable template
-- `.gitignore`: Configured for Gatsby (ignores `public/`, `.cache/`, `node_modules/`)
-- `.github/CODEOWNERS`: Defines code ownership (@splk3 as default owner)
-- `.github/dependabot.yml`: Automated dependency updates configuration
-
-### Generated/Ignored Artifacts (Not Committed)
-
-The following are created during development/build and excluded via `.gitignore`:
-
-- `public/`: Generated site output (created by `npm run build`)
-- `.cache/`: Gatsby cache directory (created automatically)
-- `node_modules/`: npm dependencies (created by `npm install`)
-
-## Development Guidelines
-
-### **CRITICAL: Pre-PR Checklist**
-
-**Before submitting any PR for review, you MUST:**
-
-1. ✅ **Build Verification**: Run `npm run build` and ensure it completes successfully without errors
-2. ✅ **Functional Testing**: Test the site functionality locally using `npm run develop`
-3. ✅ **Static Compatibility**: Verify no server-side rendering (SSR) features are used
-4. ✅ **JAMstack Compliance**: Ensure all dynamic features use client-side JavaScript only
-5. ✅ **Clean Build Output**: Confirm the `public/` directory is generated correctly
-6. ✅ **Linting Compliance**: Ensure code follows all formatting rules (Prettier, ESLint, YAML) — see the [Linting and Code Style Requirements](#linting-and-code-style-requirements) section
-
-**Failure to validate builds will result in broken deployments to GitHub Pages or Cloudflare Pages.**
-**PRs that fail super-linter checks will not be ready for review.**
-
-### Working with Gatsby
-
-1. **Local Development**:
-   - Requires **Node.js 24** (`engines: "24.x"` in `package.json`; use `.nvmrc` with `nvm use`)
-   - Use `npm install` to install dependencies
-   - Use `npm run develop` or `npm start` to run the development server
-   - Server runs at `http://localhost:8000`
-   - GraphQL playground available at `http://localhost:8000/___graphql`
-   - Test changes locally before committing
-
-2. **Deployment**:
-   - Use `npm run build` to build the production site
-   - Use `npm run deploy` to deploy to GitHub Pages (dev.goaliegen.com)
-   - Cloudflare Pages automatically deploys on push to `main` branch (goaliegen.com)
-   - Site uses custom domains configured appropriately for each platform:
-     - GitHub Pages: dev.goaliegen.com (configured in `static/CNAME`)
-     - Cloudflare Pages: goaliegen.com (configured via Cloudflare dashboard and `wrangler.jsonc`)
-   - No path prefix needed with custom domain setup
-   - GitHub Actions workflow automates deployment to GitHub Pages on push to `dev` branch
-
-### Code Style
-
-- Follow React and Gatsby best practices
-- Use TypeScript for all new code (files should use .ts or .tsx extensions)
-- Use functional components with hooks
-- Use Tailwind CSS utility classes for styling
-- Use semantic HTML for accessibility
-- Write descriptive commit messages
-- Keep components small and focused
-- Leverage TypeScript type safety
-
-### Linting and Code Style Requirements
-
-**CRITICAL**: All code changes must pass the super-linter CI check before PR review. The super-linter runs automatically on every push and validates multiple languages and formats.
-
-#### Prettier Formatting (applies to TypeScript, JavaScript, JSON, YAML, CSS, Markdown)
-
-The Prettier configuration (`.github/linters/.prettierrc.json`) requires:
-
-- **Semicolons** (`semi: true`): Always use semicolons at the end of statements
-- **Quotes** (`singleQuote: false`): Use double quotes, not single quotes
-- **Trailing commas** (`trailingComma: "es5"`): Add trailing commas wherever valid in ES5 (objects, arrays, etc.) — function parameters are **not** included (that requires `"all"`)
-- **Print width** (`printWidth: 100`): Maximum line length of 100 characters
-- **Tab width** (`tabWidth: 2`): Use 2 spaces for indentation (no tabs)
-- **Prose wrap** (`proseWrap: "preserve"`): Preserve existing line breaks in markdown prose
-
-#### ESLint / TypeScript Rules
-
-The ESLint configuration (`.github/linters/eslint.config.mjs`) enforces:
-
-- **No unused variables**: Never declare variables without using them (`@typescript-eslint/no-unused-vars`)
-  - If a parameter must exist but is unused, prefix it with `_` (e.g., `_event`) or remove it entirely
-- **TypeScript recommended rules**: All `@typescript-eslint/recommended` rules apply
-- **React recommended rules**: All `plugin:react/recommended` rules apply
-- **Disabled Node.js import checks**: The `eslint-plugin-n` missing/unpublished import rules (`n/no-missing-import`, `n/no-unpublished-import`, etc.) are **intentionally disabled** for this project. The linter runs without `node_modules` present and Gatsby handles module resolution at build time, so enabling these rules would produce false positives on every import statement. Do not re-enable them.
-
-#### YAML Formatting
-
-The yamllint configuration (`.github/linters/.yamllint.yml`) requires:
-
-- **Indentation**: 2 spaces (no tabs)
-- **Line length**: Maximum 160 characters (warning only)
-- **Braces**: No or one space inside braces (e.g., `{ key: value }` or `{key: value}`)
-- **Sequences**: Indented sequences required
-- **Document start**: Not required (disabled)
-
-#### Markdown Formatting
-
-The markdownlint configuration (`.github/linters/.markdown-lint.yml`) requires:
-
-- **List indentation**: Nested unordered lists must be indented by 2 spaces (`MD007: indent: 2`)
-- **Line length**: Maximum 400 characters (very permissive)
-- **Duplicate headings**: Allowed when in different nesting levels (`MD024`)
-- **Inline HTML**: Allowed (`MD033: false`)
-- **Bare URLs**: Allowed (`MD034: false`)
-- **Heading punctuation**: Do not end headings with `.`, `,`, `;`, `:`, `!`
-
-#### Spell Checking
-
-Codespell scans for common spelling mistakes. These words are allowed:
-
-- `currentY` (PDF coordinate variable in jsPDF)
-- `dateA` (date comparison variable name)
-- `FitH` (PDF zoom mode parameter in jsPDF)
-
-(These exceptions are defined in `.github/linters/.codespellrc`.)
-
-Always use correct English spelling in code comments, variable names, and documentation.
-
-#### Terminology (textlint)
-
-Textlint enforces consistent terminology in all files. Currently the only enforced term is:
-
-- Always write `README` (all caps), never `readme` or `Readme`.
-
-(This rule is defined in `.github/linters/.textlintrc`.)
-
-#### Prose Style (Vale)
-
-Vale checks prose writing style in Markdown files (`.md`). Configuration is in `.github/linters/.vale.ini`.
-The accepted vocabulary list is at `.github/linters/vale-styles/Vale/accept.txt`. Write clear, consistent
-prose in all documentation and avoid style errors flagged by the Vale base style rules.
-
-#### Copy-Paste Detection
-
-The JSCPD linter detects code duplication with a 10% threshold. Avoid copy-pasting large blocks of code — extract shared logic into reusable functions or components instead.
-
-#### Security Scanning
-
-Trivy CI scans for vulnerabilities, misconfigurations, and secrets. The current configuration also sets `ignore-unfixed: true`, so unfixed CVEs are intentionally not treated as CI failures. When adding new npm packages or changing repository configuration:
-
-- Check if the package or change introduces known security vulnerabilities
-- Keep dependencies up to date
-- Avoid introducing exposed secrets or insecure configuration
-- Prefer packages and changes with available fixes when vulnerabilities are reported
-
-#### CSS / Stylelint
-
-Tailwind CSS at-rules are allowed (`@apply`, `@tailwind`, `@layer`, `@theme`, etc.). Standard stylelint rules apply for non-Tailwind CSS.
-
-#### GitHub Actions Security (Zizmor and Checkov)
-
-When modifying GitHub Actions workflows:
-
-- Always pin action versions to a full commit SHA (e.g., `actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683`)
-- Do not use `pull_request_target` with checkout of untrusted code
-- Avoid storing secrets in workflow outputs or artifacts
-- Use `persist-credentials: false` in checkout steps when possible
-
-#### How to Validate Linting Locally
-
-Before submitting a PR, validate your code style:
-
-```bash
-# Check Prettier formatting (TypeScript, JS, JSON, YAML, CSS, Markdown)
-npx prettier --check "src/**/*.{ts,tsx,js,css}" "*.{ts,js,json,md}" \
-  "gatsby-*.{ts,tsx}" ".github/**/*.{yml,yaml,md}" "drills/**/*.yml"
-
-# Check TypeScript types
-npx tsc --noEmit
-
-# Run unit tests
-npm test
-
-# Build verification (catches many issues)
-npm run build
-```
-
-The super-linter runs on every push. If it fails, check the GitHub Actions logs for the specific linter and error message. Common issues and fixes:
-
-- **Prettier**: Run `npx prettier --write <file>` to auto-fix formatting
-- **ESLint unused variable**: Remove the variable or prefix with `_`
-- **YAML line too long**: Break long lines into multiple lines with proper indentation
-- **Spelling error**: Fix the typo or add the word to `.github/linters/.codespellrc`
-
-### Content Guidelines
-
-- Focus on youth hockey goaltending development
-- Ensure content is age-appropriate and educationally valuable
-- Make development plans customizable and practical
-
-### Working with Drills
-
-This project uses a YAML-based drill system with dynamic page generation:
-
-1. **Drill Structure**:
-   - Each drill has its own folder in `drills/` directory
-   - Each drill folder contains a `drill.yml` file and images
-   - Drill pages are automatically generated at `/drills/{folder-name}`
-
-2. **Required drill.yml Fields**:
-   - `name` (string): Drill name
-   - `drill_steps` (array): Drill step strings shown as a numbered list in the "Drill Information" section
-   - `coaching_focus_points` (array): List of coaching focus points
-   - `drill_image` (string): Single image filename
-   - `tags` (object): Categorization tags
-   - `drill_creation_date` (string): Creation date in `YYYY-MM-DD` format
-
-3. **Optional drill.yml Fields**:
-   - `description` (string): Drill description shown above the drill steps in the "Drill Information" section
-   - `video` (string): YouTube or Vimeo URL for the drill
-   - `drill_updated_date` (string): Last updated date in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`
-   - `shooter_focus_points` (array): List of shooter-specific focus points
-   - `drill_progressions` (array): Up to 6 progression objects, each with required `progression_name` and `progression_description`, plus optional `progression_image`
-   - `tags.game_situations` (array): Shows a "Game Situations" column in the Skills Focus section when 1 or more values are present. Allowed values: `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
-
-4. **Dynamic Page Generation**:
-   - `gatsby-node.ts` handles drill page creation via the `createPages` API
-   - Each drill.yml is validated during build
-   - Drill data is also added to GraphQL via the `sourceNodes` API
-   - The `src/templates/drill.tsx` template is used for all drill pages
-   - Build will fail if drill.yml files are invalid or missing required fields
-
-5. **Adding New Drills**:
-   - Create a new folder in `drills/` with a URL-friendly name
-   - Add a `drill.yml` file with all required fields
-   - Add drill images to the same folder
-   - Run `npm run build` to generate the page and validate
-
-### Color Scheme
-
-The site uses USA national colors defined in `tailwind.config.js`:
-
-- **usa-blue**: `#00205B` - Primary blue
-- **usa-red**: `#AF272F` - Accent red
-- **usa-white**: `#FFFFFF` - Background/text
-
-## Common Tasks
-
-### Adding New Features
-
-- Create new pages in `src/pages/` (auto-routed by Gatsby) using .tsx extension
-- Add reusable components in `src/components/` using .tsx extension
-- Use React functional components with TypeScript and JSX
-- Import and use Tailwind CSS classes for styling
-- Use Gatsby's `<Link>` component for internal navigation
-- Leverage TypeScript for type safety and better IDE support
-
-### Styling Changes
-
-- Use Tailwind CSS utility classes in className attributes
-- Edit global styles in `src/styles/global.css`
-- Extend Tailwind theme in `tailwind.config.js` if needed
-- Follow mobile-first responsive design with Tailwind breakpoints
-
-### Testing and Validation
-
-**Every code change MUST be validated before PR submission:**
-
-1. **Development Testing**:
-   - Test locally with `npm run develop`
-   - Preview changes at `http://localhost:8000`
-   - Check responsive design on different screen sizes
-   - Verify all links and navigation work correctly
-
-2. **Production Build Validation** (REQUIRED):
-   - Run `npm run build` to test production build locally
-   - Verify build completes without errors or warnings
-   - Check that all assets are generated in `public/` directory
-   - Serve production build with `npm run serve`
-   - Test the production build at `http://localhost:9000`
-
-3. **Static Site Validation**:
-   - Ensure no server-side APIs or Node.js runtime dependencies
-   - Verify all dynamic features work with client-side JavaScript only
-   - Test that the site works without a backend server
-
-## CI/CD and Workflows
-
-### Automated Workflows
-
-This repository uses GitHub Actions for automation:
-
-1. **Super Linter** (`super-linter.yml`):
-   - Runs on every push to any branch
-   - Also runs weekly on Saturday at 2:00 AM UTC
-   - Also runs on manual workflow dispatch
-   - Validates code quality across multiple languages and formats
-   - Uses super-linter v8 with Biome linters disabled to avoid conflicts
-   - All code changes must pass linting before merge
-
-2. **Deploy to GitHub Pages** (`deploy.yml`):
-   - Automatically deploys on push to `dev` branch
-   - Also runs on manual workflow dispatch
-   - Builds the site with `npm run build`
-   - Uses `npm ci` for clean, reproducible dependency installation
-   - Deploys to GitHub Pages using upload-pages-artifact action
-   - Uses Node.js 24 with npm caching
-   - Uses actions/deploy-pages@v5 with proper permissions and concurrency control
-   - Deploys to custom domain configured in static/CNAME
-
-3. **Test Build** (`test-build.yml`):
-   - Tests that the site builds successfully
-   - Runs on pull requests, manual triggers, and weekly on Saturdays at 3:00 AM UTC
-   - Executes `npm ci`, runs unit tests with `npm test`, and then runs `npm run build` to verify the full validation process
-   - Uses Node.js 24 with npm caching
-   - Verifies that `public/` directory was created successfully
-   - Does not deploy the site
-
-4. **Update Docs Agent** (`update-docs-agent.lock.yml`):
-   - Runs weekly and on manual workflow dispatch
-   - Uses an AI workflow to propose documentation-only updates
-   - Safe outputs are configured to block changes under `.github/workflows/` or `.github/aw/`
-
-5. **Copilot Setup Steps** (`copilot-setup-steps.yml`):
-   - Runs on manual workflow dispatch and when the workflow file itself is changed
-   - Configures the environment for GitHub Copilot Agent
-   - Installs the `gh-aw` MCP server extension
-
-## JAMstack Architecture & Static Hosting Requirements
-
-### What is JAMstack?
-
-This site follows JAMstack (JavaScript, APIs, and Markup) architecture principles:
-
-- **JavaScript**: Client-side dynamic functionality
-- **APIs**: Third-party services and APIs (accessed from client-side)
-- **Markup**: Pre-built HTML generated at build time
-
-### Static Hosting Compatibility
-
-**CRITICAL**: This site is hosted on GitHub Pages and Cloudflare Pages, which are **static hosting services**. This means:
-
-1. ❌ **NO Server-Side Rendering (SSR)**:
-   - Do NOT use Gatsby's `getServerData()` function
-   - Do NOT use server-side Node.js APIs at runtime
-   - Do NOT use Express, Next.js SSR, or other server-side frameworks
-
-2. ❌ **NO Server-Side APIs**:
-   - Do NOT create API routes that require a Node.js server
-   - Do NOT use server-side environment variables at runtime
-   - Do NOT rely on server-side sessions or authentication
-
-3. ✅ **ALLOWED Client-Side Features**:
-   - Static Site Generation (SSG) - pages built at compile time
-   - Client-side JavaScript and React hooks
-   - Browser APIs (localStorage, fetch, etc.)
-   - Third-party API calls from the browser
-   - Client-side routing with Gatsby Link
-
-### JAMstack Best Practices for This Project
-
-1. **Pre-render Everything Possible**:
-   - Use Gatsby's build-time data fetching
-   - Generate all pages at build time
-   - Keep dynamic content minimal
-
-2. **Client-Side Dynamic Features**:
-   - Use React state and hooks for interactivity
-   - Store user data in browser localStorage
-   - Make API calls from the browser, not the server
-
-3. **Performance Optimization**:
-   - Leverage Gatsby's automatic code splitting
-   - Use lazy loading for images and components
-   - Minimize bundle sizes
-
-4. **Security**:
-   - Never expose API keys in client-side code
-   - Use serverless functions or third-party services for sensitive operations
-   - Validate and sanitize all user inputs on the client
-
-### Testing for Static Compatibility
-
-Before submitting a PR, verify your code is static-hosting compatible:
-
-```bash
-# Build the static site
-npm run build
-
-# Serve it locally (simulates static hosting)
-npm run serve
-
-# Test at http://localhost:9000
-# The site should work WITHOUT any backend server
-```
-
-If your changes require server-side functionality, you MUST use:
-
-- **Serverless Functions**: Deploy separate functions (e.g., Netlify Functions, AWS Lambda)
-- **Third-Party APIs**: Use services like Firebase, Supabase, or other cloud providers
-- **Client-Side Processing**: Move logic to the browser when possible
-
-### Testing Locally Before Committing
-
-- Always run `npm run develop` to test changes locally
-- Verify the build succeeds with `npm run build` before pushing
-- Confirm static compatibility with `npm run serve`
-- Check that linting passes (super-linter will run on push)
-
-## Working with Copilot Chat and CLI
-
-When assisting via **Copilot Chat or Copilot CLI** (interactive/conversational
-mode), Copilot should **not commit or push changes** unless the user explicitly
-requests it or the agreed plan includes a commit step.
-
-The expected workflow is:
-
-1. Make the requested code changes
-2. Validate them (run tests, build, lint as appropriate)
-3. **Stop — do not commit** — let the user review the diff and commit themselves
-
-This applies to all Chat and CLI interactions, including when working through
-a multi-step plan. Only commit when the user says something like "commit the
-changes", "go ahead and commit", or when a specific plan step says to commit.
-
-> **Note:** This rule does **not** apply to Copilot Coding Agent (autonomous
-> PR mode). When operating as a Coding Agent, Copilot should commit changes and
-> submit pull requests as part of its normal workflow.
-
-## Working with Copilot Coding Agent
-
-### Suitable Tasks for Copilot
-
-Copilot coding agent works best on:
-
-- Adding new React components or pages
-- Implementing new features with clear requirements
-- Updating styling with Tailwind CSS
-- Refactoring code for better maintainability
-- Fixing bugs with well-defined reproduction steps
-- Updating documentation
-- Improving accessibility
-
-### **MANDATORY: PR Submission Requirements**
-
-Before Copilot submits a PR for review, it MUST:
-
-1. ✅ **Verify Build Success**:
-
-   ```bash
-   npm run build
-   ```
-
-   - Build must complete without errors
-   - Verify `public/` directory is generated
-
-2. ✅ **Test Functionality**:
-
-   ```bash
-   npm run develop
-   ```
-
-   - Manually test all changed features
-   - Verify existing functionality still works
-
-3. ✅ **Validate Static Compatibility**:
-   - Ensure no SSR features are used
-   - Confirm site works as a static site
-   - Test with `npm run serve`
-
-4. ✅ **Validate Linting**:
-   - Follow all Prettier formatting rules (double quotes, semicolons, 100 char line limit, 2-space indent, trailing commas)
-   - Ensure no unused TypeScript/JavaScript variables or imports
-   - Keep YAML files within 160 character line limits with 2-space indentation
-   - Avoid spelling mistakes in comments and documentation
-   - When creating/modifying GitHub Actions workflows, pin action versions to full commit SHAs
-   - See the [Linting and Code Style Requirements](#linting-and-code-style-requirements) section for complete rules
-
-5. ✅ **Document Changes**:
-   - Provide clear PR description
-   - List all files modified
-   - Explain testing performed
-
-**PRs that fail to build or break existing functionality will be rejected.**
-**PRs that fail super-linter checks will not be ready for review.**
-
-### Iteration and Feedback
-
-- Review Copilot's pull requests thoroughly
-- Provide specific feedback in PR comments
-- Tag `@copilot` in comments to request changes
-- Copilot will iterate based on your feedback
-
-### Security Considerations
-
-- Copilot runs in an isolated environment with restricted permissions
-- Changes are only pushed to `copilot/*` branches
-- CI/CD workflows do not run until after human review
-- All changes are logged for audit and compliance
-- Never include secrets or sensitive data in code
-
-## Important Notes
-
-- **Never commit** build artifacts (`public/`, `.cache/`)
-- **Never commit** `node_modules/` directory
-- **In Chat/CLI mode, do not commit unless asked** — make changes, validate, then let
-  the user review and commit; Coding Agent mode is exempt (it commits and opens PRs)
-- **Always use TypeScript** - new files should use .ts or .tsx extensions
-- **Do not modify generated agent lockfiles** unless explicitly asked for lockfile maintenance:
-  - `.github/aw/actions-lock.json`
-  - `.github/workflows/*.lock.yml`
-  - These files are generated artifacts and must not be edited during feature work, bugfixes, refactors, or documentation updates
-- **Repository URL**: `https://github.com/splk3/goalie-gen` (ensure package.json uses correct URL)
-- Custom domain eliminates need for path prefix in gatsby-config.ts
-- Site URL is set via GATSBY_SITE_URL environment variable
-- Custom domain is configured in `static/CNAME` file
-- Gatsby automatically optimizes images and assets for performance
-- Keep the site lightweight and fast-loading for youth sports teams
-- Use Gatsby's built-in optimizations (code splitting, prefetching, etc.)
-- CODEOWNERS file designates @splk3 as the default code owner
-- Dependabot automatically checks for npm and GitHub Actions updates weekly
-
-## Common Pitfalls to Avoid
-
-### ❌ Server-Side Features (Will Break on Static Hosting)
-
-**DO NOT use:**
-
-- `getServerData()` - Requires Node.js server at runtime
-- Server-side API routes (e.g., `/api/*` endpoints)
-- Node.js modules that require server runtime (fs, path, etc.)
-- Server-side environment variables accessed at runtime
-- Database connections from server
-- Express middleware or server-side routing
-
-### ❌ Build-Time Mistakes
-
-**DO NOT:**
-
-- Commit `public/`, `.cache/`, or `node_modules/` directories
-- Use `require()` for static assets (use `import` instead)
-- Forget to test production builds before submitting PR
-- Skip the `npm run build` validation step
-- Use .js or .jsx extensions for new files (use .ts or .tsx)
-- Edit generated lock artifacts (`.github/aw/actions-lock.json` and `.github/workflows/*.lock.yml`) unless the task is explicitly to regenerate/update those lockfiles
-
-### ✅ Correct Patterns for Static Sites
-
-**DO use:**
-
-- Static Site Generation (SSG) at build time
-- Client-side React components and hooks (TypeScript/TSX)
-- Browser APIs (localStorage, sessionStorage, fetch)
-- Tailwind CSS for styling
-- Client-side form handling
-- Third-party APIs called from the browser
-- Gatsby Link for navigation
-- TypeScript for type safety
-
-### Example: Correct vs. Incorrect
-
-❌ **INCORRECT** (Server-side - will break):
-
-```typescript
-// This will NOT work on static hosting
-export async function getServerData() {
-  const data = await fetchFromDatabase();
-  return { props: { data } };
-}
-```
-
-✅ **CORRECT** (Client-side - will work):
-
-```typescript
-// This WILL work on static hosting
-import React from 'react'
-
-interface DataType {
-  // Define your data structure
-  id: string
-  name: string
-}
-
-export default function Component() {
-  const [data, setData] = React.useState<DataType | null>(null)
-
-  React.useEffect(() => {
-    fetch('https://api.example.com/data')
-      .then(res => res.json())
-      .then(setData)
-  }, [])
-
-  return <div>{data ? 'Loaded' : 'Loading...'}</div>
-}
-```
-
-## Available npm Scripts
-
-- `npm run develop` / `npm start` - Start development server
-- `npm run build` - Build production site
-- `npm run serve` - Serve production build locally
-- `npm run clean` - Clean cache and public directories
-- `npm run deploy` - Build and deploy to GitHub Pages
-- `npm test` - Run unit tests with Jest
-
-## Target Audience
-
-The primary users are:
-
-- Youth hockey coaches
-- Goaltending coaches
-- Hockey club administrators
-- Parents supporting youth goalies
-
-Design and content should be intuitive for non-technical users while providing valuable goaltending development resources.
+## Build, test, and lint commands
+
+- Use Node 24 (`.nvmrc`, `package.json#engines`): `nvm use`
+- Install dependencies: `npm install`
+- Start dev server: `npm run develop` (alias: `npm start`)
+- Production build: `npm run build`
+- Serve production build locally: `npm run serve`
+- Full unit test suite: `npm test`
+- Single test file: `npm test -- src/components/__tests__/Pagination.test.tsx`
+- Single test by name: `npm test -- -t "clamps out-of-range currentPage"`
+- Type-check: `npx tsc --noEmit`
+- Prettier check (matches repo docs): `npx prettier --check "src/**/*.{ts,tsx,js,css}" "*.{ts,js,json,md}" "gatsby-*.{ts,tsx}" ".github/**/*.{yml,yaml,md}" "drills/**/*.yml"`
+
+CI runs:
+
+- `.github/workflows/test-build.yml`: `npm ci` → `npm test` → `npm run build`
+- `.github/workflows/super-linter.yml`: super-linter with rules from `.github/linters/`
+
+## MCP servers
+
+- **Playwright MCP** is the most relevant server for this repo. Use it for browser-level checks on
+  Gatsby pages (navigation, filters, modal behavior, responsive layouts, and print/download flows)
+  before/after UI changes.
+
+## High-level architecture
+
+### 1. Build-time drill ingestion pipeline
+
+`gatsby-node.ts` is the center of the drill system:
+
+- `onPreBootstrap` copies `drills/` into `static/drills/` so drill images are directly servable
+- `loadDrillsFromDirectory` parses every `drill.yml` with `yaml.FAILSAFE_SCHEMA`
+- `validateDrillData` enforces drill schema and allowed tag values
+- `createPages` generates `/drills/{folder}` pages using `src/templates/drill.tsx`
+- `sourceNodes` creates GraphQL `Drill` nodes so pages/components can query all drills
+
+`createPages` and `sourceNodes` share a module-level drill cache (`getOrLoadDrills`) to avoid
+duplicated filesystem reads in one Gatsby build.
+
+### 2. Drill page + PDF/print flow
+
+`src/templates/drill.tsx` renders from `pageContext.drillData` (not a GraphQL page query), including:
+
+- drill information (`description` + required `drill_steps`)
+- optional shooter focus and progression sections
+- optional video embed via `videoUtils`
+- print/download controls (`DownloadDrillPdfButton`, `generateDrillPdf`)
+
+`src/utils/generateDrillPdf.ts` mirrors template content and has its own pagination/layout logic.
+`src/utils/estimateDrillPdfPages.ts` is used during build to warn when drill content likely overflows
+one page.
+
+### 3. Plan/journal document generation
+
+The document generators (`GenerateTeamPlanButton`, `GenerateClubPlanButton`, `GoalieJournalButton`)
+compose docs from markdown content in `src/content/**`.
+
+- Markdown fragments are parsed by `src/utils/markdownParser.ts`
+- DOCX paragraphs are built through `src/utils/docxContent.ts`
+- `docx` and `jspdf` are loaded lazily via `src/utils/loadExportModules.ts`
+
+### 4. Shared drill filtering model
+
+`src/hooks/useDrillFilters.ts` is the shared filter engine used by:
+
+- `src/pages/goalie-drills.tsx`
+- `src/components/INeedADrillButton.tsx`
+
+The goalie drills page also syncs filter/sort/page state to query params for shareable URLs.
+
+## Key conventions
+
+- Static-hosted architecture only (GitHub Pages + Cloudflare Pages). Do not add runtime server
+  dependencies (no Gatsby `getServerData`, no server API routes).
+- Drill YAML schema is strict and validated at build time:
+  - required: `name`, `drill_steps`, `coaching_focus_points`, `drill_image`, `tags`,
+    `drill_creation_date`
+  - `description` is optional
+  - `drill_image` is a single filename string (not an array)
+  - `drill_progressions` supports up to 6 objects with required
+    `progression_name`/`progression_description` and optional `progression_image`
+  - `tags.game_situations` is optional and supports:
+    `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
+  - video URLs must be HTTPS YouTube or Vimeo formats accepted by the validator
+- Because drill YAML uses `yaml.FAILSAFE_SCHEMA`, values containing `:` in progression text should
+  be quoted to avoid YAML parsing into non-string structures.
+- Use `buildCacheBustedAssetPath()` for static asset URLs and
+  `OBJECT_URL_REVOKE_DELAY_MS` when creating object URLs for downloads/previews.
+- Prefer reusing shared utilities/hook patterns already in use:
+  `useDrillFilters`, `loadExportModules`, `normalizeDrillDescription`, `parseMarkdown`.
+- Lint/style conventions enforced by repo config:
+  - Prettier: double quotes, semicolons, 2-space indent, trailing commas (es5)
+  - TypeScript unused args/vars should be removed or prefixed with `_`
+- Do not edit generated lock artifacts unless explicitly requested:
+  `.github/aw/actions-lock.json`, `.github/workflows/*.lock.yml`.

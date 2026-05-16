@@ -7,6 +7,7 @@ import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import ShareButton from "../components/ShareButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
+import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 
@@ -98,6 +99,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const normalizedDescription = drillData.description
     ? normalizeDrillDescription(drillData.description)
     : "";
+  const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -294,7 +296,9 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         )}
 
         {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
-          <div className="mb-6 print:mb-3">
+          <div
+            className={`mb-6 print:mb-3 ${shouldMoveProgressionsToSecondPage ? "print-break-before-page" : ""}`}
+          >
             <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
               Drill Progressions
             </h2>
@@ -402,10 +406,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 {drillData.tags.fundamental_skill &&
                   drillData.tags.fundamental_skill.length > 0 && (
                     <div>
-                      <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                      <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-xs print:text-gray-900">
                         Fundamental Skills:
                       </h3>
-                      <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                      <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-xs print:text-gray-800">
                         {drillData.tags.fundamental_skill.map((skill, index) => (
                           <li key={index}>{formatTag(skill)}</li>
                         ))}
@@ -414,10 +418,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                   )}
                 {drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-xs print:text-gray-900">
                       Skating Skills:
                     </h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-xs print:text-gray-800">
                       {drillData.tags.skating_skill.map((skill, index) => (
                         <li key={index}>{formatTag(skill)}</li>
                       ))}
@@ -426,10 +430,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 )}
                 {hasGameSituations && (
                   <div>
-                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-xs print:text-gray-900">
                       Game Situations:
                     </h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-xs print:text-gray-800">
                       {drillData.tags.game_situations!.map((situation, index) => (
                         <li key={index}>{formatTag(situation)}</li>
                       ))}

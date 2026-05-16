@@ -1,6 +1,7 @@
 import * as React from "react";
 import { render, screen } from "@testing-library/react";
 import DrillTemplate from "../drill";
+import { shouldPlaceProgressionsOnSecondPage } from "../../utils/estimateDrillPdfPages";
 
 jest.mock("../../utils/generateDrillPdf", () => ({
   generateDrillPdf: jest.fn(),
@@ -10,6 +11,9 @@ jest.mock("../../utils/videoUtils", () => ({
   getVideoThumbnail: jest.fn(() => ""),
 }));
 jest.mock("../../components/SEO", () => () => null);
+jest.mock("../../utils/estimateDrillPdfPages", () => ({
+  shouldPlaceProgressionsOnSecondPage: jest.fn(() => false),
+}));
 jest.mock(
   "../../components/Logo",
   () =>
@@ -56,6 +60,10 @@ const basePageContext = {
 };
 
 describe("DrillTemplate", () => {
+  beforeEach(() => {
+    jest.mocked(shouldPlaceProgressionsOnSecondPage).mockReturnValue(false);
+  });
+
   it("renders the Drill Information heading and drill_steps as an ordered list", () => {
     const { container } = render(
       <DrillTemplate
@@ -151,5 +159,29 @@ describe("DrillTemplate", () => {
     expect(screen.getByText("Progression 2")).toBeInTheDocument();
     expect(screen.getByText("Progression with image")).toBeInTheDocument();
     expect(screen.getByAltText("Progression 2 diagram")).toBeInTheDocument();
+  });
+
+  it("adds a print page break class to progressions when placement helper requires page two", () => {
+    jest.mocked(shouldPlaceProgressionsOnSecondPage).mockReturnValue(true);
+
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            drill_progressions: [
+              {
+                progression_name: "Progression 1",
+                progression_description: "Progression details here",
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    const progressionHeading = screen.getByText("Drill Progressions");
+    expect(progressionHeading.closest("div")).toHaveClass("print-break-before-page");
   });
 });

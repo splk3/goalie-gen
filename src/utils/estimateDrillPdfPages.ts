@@ -49,7 +49,8 @@ function estimateTitleHeaderHeight(drillName: string): number {
 }
 
 // Fixed estimate for the Skills Focus section (separator + heading + skills list)
-const SKILLS_SECTION_HEIGHT = 30;
+const SKILLS_SECTION_HEIGHT = 26;
+const INLINE_PROGRESSION_IMAGE_HEIGHT = 34;
 
 function estimateLines(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
   return text
@@ -72,29 +73,21 @@ function estimateNumberedHeight(
 function estimateProgressionHeight(
   progressionName: string,
   progressionDescription: string,
-  charsPerLine = CHARS_PER_LINE_FULL
+  charsPerLine = CHARS_PER_LINE_FULL,
+  hasInlineImage = false
 ): number {
   const nameHeight = estimateLines(`• ${progressionName}:`, charsPerLine) * LINE_HEIGHT + 1;
   const descriptionHeight = estimateLines(progressionDescription, charsPerLine) * LINE_HEIGHT + 1;
-  return nameHeight + descriptionHeight;
+  const imageHeight = hasInlineImage ? INLINE_PROGRESSION_IMAGE_HEIGHT : 0;
+  return nameHeight + descriptionHeight + imageHeight;
 }
 
-/**
- * Estimates how many PDF pages a drill will need when rendered by generateDrillPdf.
- *
- * This is a heuristic based on approximate text measurements — not pixel-perfect — but
- * it reliably identifies drills whose content exceeds what fits on one page.
- *
- * Layout model:
- *   1. Two-column phase (equal ~81 mm columns): left = Drill Information (desc + steps),
- *      right = image. Height = left column text height (image is bounded by page height).
- *   2. Full-width sections (~170 mm): Coaching Focus Points, Shooter Focus Points,
- *      Drill Progressions. Each uses a wider chars-per-line estimate.
- *   3. Post-column: Skills Focus + optional Video (full width, unchanged).
- *
- * Returns 1 when content is estimated to fit on a single page, 2+ otherwise.
- */
-export function estimateDrillPdfPages(drillData: DrillData): number {
+interface EstimateOptions {
+  forceInlineProgressions: boolean;
+  forceSecondPageForProgressions: boolean;
+}
+
+function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOptions): number {
   const titleHeaderHeight = estimateTitleHeaderHeight(drillData.name);
   const contentStartY = MARGIN + titleHeaderHeight + HEADER_AND_TAGS_BASE;
   const availableFirstPage = CONTENT_BOTTOM_LIMIT - contentStartY;
@@ -102,6 +95,8 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
   const normalizedDescription = drillData.description
     ? normalizeDrillDescription(drillData.description)
     : "";
+  const progressions = drillData.drill_progressions || [];
+  const hasProgressions = progressions.length > 0;
 
   // --- Two-column phase: Drill Information (description + steps) in left column ---
   let twoColHeight = 0;
@@ -125,63 +120,98 @@ export function estimateDrillPdfPages(drillData: DrillData): number {
     twoColHeight += SECTION_GAP;
   }
 
-  // --- Full-width sections: coaching, shooter, progressions ---
-  let fullWidthHeight = 0;
+  // --- Full-width sections before progressions: coaching + shooter ---
+  let preProgressionHeight = 0;
 
   // Coaching focus points (always present)
-  fullWidthHeight += HEADING_HEIGHT;
+  preProgressionHeight += HEADING_HEIGHT;
   for (const point of drillData.coaching_focus_points) {
-    fullWidthHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
+    preProgressionHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
   }
 
   // Shooter focus points (optional)
   if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
-    fullWidthHeight += SECTION_GAP + HEADING_HEIGHT;
+    preProgressionHeight += SECTION_GAP + HEADING_HEIGHT;
     for (const point of drillData.shooter_focus_points) {
-      fullWidthHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
+      preProgressionHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
     }
   }
 
-  const hasProgressionImages =
-    drillData.drill_progressions !== undefined &&
-    drillData.drill_progressions.some(
-      (progression) =>
-        progression.progression_image !== undefined &&
-        progression.progression_image.trim().length > 0
-    );
-
-  // Drill progressions (optional, only inlined when no progression images exist)
-  if (
-    drillData.drill_progressions &&
-    drillData.drill_progressions.length > 0 &&
-    !hasProgressionImages
-  ) {
-    fullWidthHeight += SECTION_GAP + HEADING_HEIGHT;
-    for (const progression of drillData.drill_progressions) {
-      fullWidthHeight += estimateProgressionHeight(
+  // --- Progressions section ---
+  let progressionHeight = 0;
+  if (hasProgressions) {
+    progressionHeight += SECTION_GAP + HEADING_HEIGHT;
+    for (const progression of progressions) {
+      const hasInlineImage = options.forceInlineProgressions && !!progression.progression_image;
+      progressionHeight += estimateProgressionHeight(
         progression.progression_name,
         progression.progression_description,
-        CHARS_PER_LINE_FULL
+        CHARS_PER_LINE_FULL,
+        hasInlineImage
       );
     }
   }
 
-  // --- Post-column: Skills Focus + optional Video ---
+  // --- Post-progression content: Skills Focus + optional Video ---
   const videoSectionHeight = drillData.video
     ? 9 + estimateLines(drillData.video, CHARS_PER_LINE_FULL) * LINE_HEIGHT
     : 0;
-  const postColumnHeight = SEPARATOR_AND_GAP + SKILLS_SECTION_HEIGHT + videoSectionHeight;
+  const postProgressionHeight = SEPARATOR_AND_GAP + SKILLS_SECTION_HEIGHT + videoSectionHeight;
 
-  const totalNeeded = twoColHeight + fullWidthHeight + postColumnHeight;
-
-  const basePages =
-    totalNeeded <= availableFirstPage
+  // All content in normal flow (single continuous pagination model)
+  if (!hasProgressions || !options.forceSecondPageForProgressions) {
+    const totalNeeded =
+      twoColHeight + preProgressionHeight + progressionHeight + postProgressionHeight;
+    return totalNeeded <= availableFirstPage
       ? 1
       : 1 + Math.ceil((totalNeeded - availableFirstPage) / availableOtherPages);
-
-  if (hasProgressionImages && drillData.drill_progressions && drillData.drill_progressions.length) {
-    return basePages + 1;
   }
 
-  return basePages;
+  // Forced page break right before progressions
+  const firstSegmentHeight = twoColHeight + preProgressionHeight;
+  const firstSegmentPages =
+    firstSegmentHeight <= availableFirstPage
+      ? 1
+      : 1 + Math.ceil((firstSegmentHeight - availableFirstPage) / availableOtherPages);
+  const secondSegmentHeight = progressionHeight + postProgressionHeight;
+  const secondSegmentPages = Math.max(1, Math.ceil(secondSegmentHeight / availableOtherPages));
+
+  return firstSegmentPages + secondSegmentPages;
+}
+
+export function shouldPlaceProgressionsOnSecondPage(drillData: DrillData): boolean {
+  const hasProgressions = !!drillData.drill_progressions && drillData.drill_progressions.length > 0;
+  if (!hasProgressions) {
+    return false;
+  }
+
+  return (
+    estimateDrillPdfPagesInternal(drillData, {
+      forceInlineProgressions: true,
+      forceSecondPageForProgressions: false,
+    }) > 1
+  );
+}
+
+/**
+ * Estimates how many PDF pages a drill will need when rendered by generateDrillPdf.
+ *
+ * This is a heuristic based on approximate text measurements — not pixel-perfect — but
+ * it reliably identifies drills whose content exceeds what fits on one page.
+ *
+ * Layout model:
+ *   1. Two-column phase (equal ~81 mm columns): left = Drill Information (desc + steps),
+ *      right = image. Height = left column text height (image is bounded by page height).
+ *   2. Full-width sections (~170 mm): Coaching Focus Points, Shooter Focus Points,
+ *      Drill Progressions. Each uses a wider chars-per-line estimate.
+ *   3. Post-column: Skills Focus + optional Video (full width, unchanged).
+ *
+ * Returns 1 when content is estimated to fit on a single page, 2+ otherwise.
+ */
+export function estimateDrillPdfPages(drillData: DrillData): number {
+  const placeOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
+  return estimateDrillPdfPagesInternal(drillData, {
+    forceInlineProgressions: !placeOnSecondPage,
+    forceSecondPageForProgressions: placeOnSecondPage,
+  });
 }
