@@ -99,7 +99,7 @@ The site uses USA national colors:
 │   ├── types/            # TypeScript type definitions
 │   │   └── drill.ts      # DrillData interface
 │   ├── declarations.d.ts # Module declarations (e.g., CSS modules)
-│   ├── content/          # Markdown content for plan generation
+│   ├── content/          # Markdown content for plan and journal generation
 │   │   ├── club-plan/    # Club development plan sections
 │   │   ├── goalie-journal/ # Goalie journal sections
 │   │   └── team-plan/    # Team development plan sections
