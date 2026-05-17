@@ -306,6 +306,7 @@ export const generateDrillPdf = async (
   };
 
   let currentY = drawPageHeader(drillData.name);
+  const rightColumnStartY = currentY;
 
   // Tags section - bold labels, normal values, equipment on separate line
   doc.setFontSize(9);
@@ -346,12 +347,13 @@ export const generateDrillPdf = async (
 
   currentY += 2;
 
-  // Column layout: equal left/right columns for desc+steps vs image.
-  // An 8 mm inter-column gap separates them; each column is ~81 mm wide.
-  // The right column's right edge aligns with the page's right margin.
-  const interColumnGap = 8;
-  const leftColumnWidth = (pageWidth - 2 * margin - interColumnGap) / 2; // ~81 mm
-  const rightColumnWidth = leftColumnWidth;
+  // Column layout: slightly text-prioritized split for better one-page fit.
+  // A tighter 6 mm inter-column gap plus a modest wider left column reduces
+  // line wraps in Drill Information while preserving overall visual balance.
+  const interColumnGap = 6;
+  const twoColumnContentWidth = pageWidth - 2 * margin - interColumnGap;
+  const leftColumnWidth = twoColumnContentWidth * 0.58;
+  const rightColumnWidth = twoColumnContentWidth - leftColumnWidth;
   const rightColumnX = margin + leftColumnWidth + interColumnGap;
   const contentStartY = currentY;
 
@@ -410,11 +412,11 @@ export const generateDrillPdf = async (
 
   onProgress?.("Generating PDF...");
 
-  let rightY = contentStartY;
+  let rightY = rightColumnStartY;
 
   if (drillImageInfo) {
     const maxImageWidth = rightColumnWidth;
-    const maxImageHeight = contentBottomLimit - contentStartY;
+    const maxImageHeight = contentBottomLimit - rightColumnStartY;
     const aspectRatio = drillImageInfo.width / drillImageInfo.height;
     let imgWidth = maxImageWidth;
     let imgHeight = imgWidth / aspectRatio;
@@ -430,6 +432,8 @@ export const generateDrillPdf = async (
     rightY += imgHeight + 4;
   }
 
+  const mainLineHeight = 3.2;
+
   // --- LEFT COLUMN: Drill Information (description + steps) only ---
   // Images have already been placed on page 1; ensureSpace page breaks apply only to text here.
   let leftY = contentStartY;
@@ -440,35 +444,35 @@ export const generateDrillPdf = async (
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
   doc.text("Drill Information", margin, leftY);
-  leftY += 5;
+  leftY += 3.5;
 
   doc.setTextColor(0, 0, 0);
-  doc.setFontSize(8);
+  doc.setFontSize(9);
   doc.setFont(undefined, "normal");
   if (drillData.description) {
     const normalizedDescription = normalizeDrillDescription(drillData.description);
     const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
-    leftY = ensureSpace(leftY, descriptionLines.length * 4);
+    leftY = ensureSpace(leftY, descriptionLines.length * mainLineHeight);
     doc.text(descriptionLines, margin, leftY);
-    leftY += descriptionLines.length * 4 + 3;
+    leftY += descriptionLines.length * mainLineHeight + 2.5;
   }
 
   // Drill Steps (required)
   for (const [index, step] of drillData.drill_steps.entries()) {
     const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-    leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
+    leftY = ensureSpace(leftY, stepLines.length * mainLineHeight + 1);
     doc.text(stepLines, margin + 3, leftY);
-    leftY += stepLines.length * 4 + 1;
+    leftY += stepLines.length * mainLineHeight + 1;
   }
-  leftY += 2;
+  leftY += 1.5;
 
   // Determine starting Y for the full-width sections below the two-column layout.
   // If the left column overflowed to a new page, we are already on that page.
   let sectionY: number;
   if (currentPageNum > 1) {
-    sectionY = leftY + 4;
+    sectionY = leftY + 3;
   } else {
-    sectionY = Math.max(leftY, rightY) + 4;
+    sectionY = Math.max(leftY, rightY) + 3;
   }
 
   const fullWidth = pageWidth - 2 * margin;
@@ -479,7 +483,7 @@ export const generateDrillPdf = async (
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
   doc.text("Coaching Focus Points", margin, sectionY);
-  sectionY += 5;
+  sectionY += 3.5;
 
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
@@ -488,21 +492,21 @@ export const generateDrillPdf = async (
   if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
     for (const point of drillData.coaching_focus_points) {
       const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-      sectionY = ensureSpace(sectionY, pointLines.length * 4 + 1);
+      sectionY = ensureSpace(sectionY, pointLines.length * mainLineHeight + 1);
       doc.text(pointLines, margin + 3, sectionY);
-      sectionY += pointLines.length * 4 + 1;
+      sectionY += pointLines.length * mainLineHeight + 1;
     }
   }
 
   // Shooter Focus Points (optional, full width)
   if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
-    sectionY += 2;
+    sectionY += 1.5;
     sectionY = ensureSpace(sectionY, 12); // heading + at least one bullet
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
     doc.text("Shooter Focus Points", margin, sectionY);
-    sectionY += 5;
+    sectionY += 3.5;
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
@@ -510,39 +514,33 @@ export const generateDrillPdf = async (
 
     for (const point of drillData.shooter_focus_points) {
       const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-      sectionY = ensureSpace(sectionY, pointLines.length * 4 + 1);
+      sectionY = ensureSpace(sectionY, pointLines.length * mainLineHeight + 1);
       doc.text(pointLines, margin + 3, sectionY);
-      sectionY += pointLines.length * 4 + 1;
+      sectionY += pointLines.length * mainLineHeight + 1;
     }
   }
 
-  // Drill Progressions (optional, full width). If any progression has an image,
-  // this section moves to a dedicated progressions page.
-  if (progressions.length > 0 && (!hasProgressionImages || !shouldMoveProgressionsToSecondPage)) {
-    if (shouldMoveProgressionsToSecondPage) {
-      sectionY = startNewPage();
-      sectionY = drawPageHeader(drillData.name);
-    }
-
+  // Drill Progressions (optional, full width) only when not moved to dedicated page.
+  if (progressions.length > 0 && !shouldMoveProgressionsToSecondPage) {
     sectionY += 2;
     sectionY = ensureSpace(sectionY, 12); // heading + at least one step
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
     doc.text("Drill Progressions", margin, sectionY);
-    sectionY += 5;
+    sectionY += 4;
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
     for (const [index, progression] of progressions.entries()) {
       const progressionName = `• ${progression.progression_name}:`;
       const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
-      sectionY = ensureSpace(sectionY, nameLines.length * 4 + 1);
+      sectionY = ensureSpace(sectionY, nameLines.length * mainLineHeight + 1);
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
       doc.setFont(undefined, "bold");
       doc.text(nameLines, margin + 3, sectionY);
-      sectionY += nameLines.length * 4 + 1;
+      sectionY += nameLines.length * mainLineHeight + 1;
 
       const progressionImageInfo = progressionImageInfoByIndex.get(index);
       if (progressionImageInfo) {
@@ -566,10 +564,10 @@ export const generateDrillPdf = async (
         progression.progression_description,
         fullWidth - 5
       );
-      sectionY = ensureSpace(sectionY, descriptionLines.length * 4 + 1);
+      sectionY = ensureSpace(sectionY, descriptionLines.length * mainLineHeight + 1);
       doc.setFont(undefined, "normal");
       doc.text(descriptionLines, margin + 6, sectionY);
-      sectionY += descriptionLines.length * 4 + 1;
+      sectionY += descriptionLines.length * mainLineHeight + 1;
     }
   }
 
@@ -580,14 +578,14 @@ export const generateDrillPdf = async (
   doc.setDrawColor(150, 150, 150);
   doc.setLineWidth(0.5);
   doc.line(margin, sectionY, pageWidth - margin, sectionY);
-  sectionY += 4;
+  sectionY += 3;
 
   // Skills Focus section
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
   doc.text("Skills Focus", margin, sectionY);
-  sectionY += 5;
+  sectionY += 4;
 
   const hasGameSituations =
     drillData.tags.game_situations !== undefined && drillData.tags.game_situations.length > 0;
@@ -610,11 +608,11 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Fundamental Skills:", skillsLeftX, skillsLeftY);
     doc.setFont(undefined, "normal");
-    skillsLeftY += 3.5;
+    skillsLeftY += 3;
 
     drillData.tags.fundamental_skill.forEach((skill) => {
       doc.text(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
-      skillsLeftY += 3.5;
+      skillsLeftY += 3;
     });
   }
 
@@ -622,11 +620,11 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Skating Skills:", skillsRightX, skillsRightY);
     doc.setFont(undefined, "normal");
-    skillsRightY += 3.5;
+    skillsRightY += 3;
 
     drillData.tags.skating_skill.forEach((skill) => {
       doc.text(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY);
-      skillsRightY += 3.5;
+      skillsRightY += 3;
     });
   }
 
@@ -634,41 +632,43 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Game Situations:", skillsThirdX, skillsThirdY);
     doc.setFont(undefined, "normal");
-    skillsThirdY += 3.5;
+    skillsThirdY += 3;
 
     drillData.tags.game_situations!.forEach((situation) => {
       doc.text(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
-      skillsThirdY += 3.5;
+      skillsThirdY += 3;
     });
   }
 
   // Video section — URL only, no thumbnail image
   if (drillData.video) {
-    sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 4;
+    sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
     const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
-    sectionY = ensureSpace(sectionY, 9 + videoLines.length * 4);
+    sectionY = ensureSpace(sectionY, 9 + videoLines.length * mainLineHeight);
 
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
     doc.line(margin, sectionY, pageWidth - margin, sectionY);
-    sectionY += 4;
+    sectionY += 3;
 
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
     doc.text("Video Demonstration", margin, sectionY);
-    sectionY += 5;
+    sectionY += 4;
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setFont(undefined, "normal");
     doc.text(videoLines, margin, sectionY);
-    sectionY += videoLines.length * 4;
+    sectionY += videoLines.length * mainLineHeight;
   }
 
-  if (progressions.length > 0 && hasProgressionImages && shouldMoveProgressionsToSecondPage) {
+  // Dedicated progression page is triggered by overall inline overflow, regardless
+  // of whether progression images are present.
+  if (progressions.length > 0 && shouldMoveProgressionsToSecondPage) {
     startNewPage();
-    let progressionsY = drawPageHeader(`${drillData.name}\nProgressions`);
+    let progressionsY = drawPageHeader(drillData.name);
 
     const progressionsTitleHeight = 8;
     progressionsY = ensureSpace(progressionsY, progressionsTitleHeight);
@@ -715,12 +715,12 @@ export const generateDrillPdf = async (
       contentY += clampedNameLines.length * 3.8 + 2;
 
       doc.setFont(undefined, "normal");
-      doc.setFontSize(8.5);
+      doc.setFontSize(9);
       const descriptionLines = doc.splitTextToSize(
         progression.progression_description,
         contentWidth
       );
-      const descriptionLineHeight = 3.3;
+      const descriptionLineHeight = 3.6;
       const descriptionHeight = descriptionLines.length * descriptionLineHeight;
       const progressionImageInfo = progressionImageInfoByIndex.get(index);
 

@@ -47,6 +47,13 @@ describe("estimateDrillPdfPages", () => {
     }
   });
 
+  it("keeps rim-stop-cut-across at two pages total (main + dedicated progressions)", () => {
+    const rimStop = drills.find((entry) => entry.folder === "rim-stop-cut-across");
+    expect(rimStop).toBeDefined();
+    expect(shouldPlaceProgressionsOnSecondPage(rimStop!.drillData)).toBe(true);
+    expect(estimateDrillPdfPages(rimStop!.drillData)).toBe(2);
+  });
+
   it("uses larger follow-on page capacity after first-page overflow", () => {
     const shortPoint = "quick";
     const drillData = {
@@ -219,5 +226,34 @@ describe("estimateDrillPdfPages", () => {
 
     expect(shouldPlaceProgressionsOnSecondPage(overflowData)).toBe(true);
     expect(estimateDrillPdfPages(overflowData)).toBeGreaterThan(1);
+  });
+
+  it("can place text-only progressions on a second page when inline content overflows", () => {
+    const overflowWithoutImages = {
+      name: "Text Progression Overflow",
+      description: "Short",
+      drill_steps: Array.from({ length: 36 }, (_, index) => `Step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 16 }, () => "Focus detail"),
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description:
+            "Longer progression details intended to consume enough inline space to trigger dedicated progression pagination behavior.",
+        },
+        {
+          progression_name: "Progression 2",
+          progression_description:
+            "Additional progression text to ensure the overall inline render would exceed one page before moving progressions.",
+        },
+      ],
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(overflowWithoutImages)).toBe(true);
+    expect(estimateDrillPdfPages(overflowWithoutImages)).toBeGreaterThan(1);
   });
 });

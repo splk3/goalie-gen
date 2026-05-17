@@ -313,7 +313,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                     </h3>
                     {hasProgressionImage ? (
                       <div className="grid md:grid-cols-2 gap-4 mt-2 items-start print:grid-cols-2">
-                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
+                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-[9pt] print:text-gray-900">
                           {progression.progression_description}
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
@@ -327,7 +327,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                         </div>
                       </div>
                     ) : (
-                      <p className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
+                      <p className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-[9pt] print:text-gray-900">
                         {progression.progression_description}
                       </p>
                     )}

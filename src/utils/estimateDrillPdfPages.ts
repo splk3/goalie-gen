@@ -2,17 +2,17 @@ import type { DrillData } from "../types/drill";
 import { normalizeDrillDescription } from "./normalizeDrillDescription";
 
 // Approximate characters per line at fontSize 9 (Helvetica):
-//   - Left column (~81 mm, equal 50/50 columns): ~54 chars/line
-//   - Full page width (~170 mm): ~114 chars/line
+//   - Left column (~95 mm after gap reduction + text-priority split): ~68 chars/line
+//   - Full page width (~170 mm): ~124 chars/line
 //   Derived from empirical calibration of 65 chars at 97 mm, scaled proportionally.
-const CHARS_PER_LINE_COL = 54; // left column (description + drill steps)
-const CHARS_PER_LINE_FULL = 114; // full width (coaching, shooter, progressions, video)
+const CHARS_PER_LINE_COL = 68; // left column (description + drill steps)
+const CHARS_PER_LINE_FULL = 124; // full width (coaching, shooter, progressions, video)
 
 // Heights in mm for common layout elements
-const HEADING_HEIGHT = 9; // section heading + smaller gap (was 10)
-const LINE_HEIGHT = 4; // body text / bullet line
-const SECTION_GAP = 3; // gap between sections (was 5)
-const SEPARATOR_AND_GAP = 8; // horizontal rule + spacing (was 10)
+const HEADING_HEIGHT = 7.5; // section heading + compact gap
+const LINE_HEIGHT = 3.2; // body text / bullet line
+const SECTION_GAP = 2; // gap between sections
+const SEPARATOR_AND_GAP = 7; // horizontal rule + spacing
 
 // Page layout constants (mm, A4 portrait)
 const PAGE_HEIGHT = 297;
@@ -49,7 +49,7 @@ function estimateTitleHeaderHeight(drillName: string): number {
 }
 
 // Fixed estimate for the Skills Focus section (separator + heading + skills list)
-const SKILLS_SECTION_HEIGHT = 26;
+const SKILLS_SECTION_HEIGHT = 22;
 const INLINE_PROGRESSION_IMAGE_HEIGHT = 34;
 
 function estimateLines(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
@@ -115,7 +115,7 @@ function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOp
     for (const [index, step] of drillData.drill_steps.entries()) {
       twoColHeight += estimateNumberedHeight(step, index, CHARS_PER_LINE_COL);
     }
-    twoColHeight += 2;
+    twoColHeight += 1.5;
   } else {
     twoColHeight += SECTION_GAP;
   }
@@ -154,7 +154,7 @@ function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOp
 
   // --- Post-progression content: Skills Focus + optional Video ---
   const videoSectionHeight = drillData.video
-    ? 9 + estimateLines(drillData.video, CHARS_PER_LINE_FULL) * LINE_HEIGHT
+    ? 7 + estimateLines(drillData.video, CHARS_PER_LINE_FULL) * LINE_HEIGHT
     : 0;
   const postProgressionHeight = SEPARATOR_AND_GAP + SKILLS_SECTION_HEIGHT + videoSectionHeight;
 
@@ -167,14 +167,17 @@ function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOp
       : 1 + Math.ceil((totalNeeded - availableFirstPage) / availableOtherPages);
   }
 
-  // Forced page break right before progressions
-  const firstSegmentHeight = twoColHeight + preProgressionHeight;
+  // Forced page break right before progressions.
+  // In generateDrillPdf, Skills Focus + Video render before the dedicated
+  // progression page, so they belong to the first segment estimate.
+  const firstSegmentHeight = twoColHeight + preProgressionHeight + postProgressionHeight;
   const firstSegmentPages =
     firstSegmentHeight <= availableFirstPage
       ? 1
       : 1 + Math.ceil((firstSegmentHeight - availableFirstPage) / availableOtherPages);
-  const secondSegmentHeight = progressionHeight + postProgressionHeight;
-  const secondSegmentPages = Math.max(1, Math.ceil(secondSegmentHeight / availableOtherPages));
+  // Dedicated progression page uses a fixed 2-column box layout in generateDrillPdf.
+  // With validator limits (max 6 progressions), this segment is constrained to one page.
+  const secondSegmentPages = 1;
 
   return firstSegmentPages + secondSegmentPages;
 }
