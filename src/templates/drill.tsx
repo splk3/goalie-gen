@@ -102,6 +102,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
     ? normalizeDrillDescription(drillData.description)
     : "";
   const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
+  const topActionButtonClasses =
+    "inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-bold text-white transition-colors sm:w-auto sm:px-6";
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -173,7 +175,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <ShareButton
               label="Share Drill"
               title={drillData.name}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-usa-red px-4 py-3 font-bold text-white transition-colors hover:bg-red-700 sm:w-auto sm:px-6"
+              className={`${topActionButtonClasses} bg-usa-red hover:bg-red-700`}
             />
             <BackLinkButton to={drillsBackUrl} className="w-full sm:w-auto">
               Back to Drills

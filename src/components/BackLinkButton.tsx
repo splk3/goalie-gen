@@ -26,7 +26,7 @@ export default function BackLinkButton({ to, children, className = "" }: BackLin
           clipRule="evenodd"
         />
       </svg>
-      <span className="min-w-0 break-words">{children}</span>
+      <span className="min-w-0 whitespace-normal">{children}</span>
     </Link>
   );
 }
