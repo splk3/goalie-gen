@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import Seo from "../components/SEO";
 import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
+import HamburgerMenu from "../components/HamburgerMenu";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import ShareButton from "../components/ShareButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
@@ -150,9 +151,12 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6 print:hidden">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <Link to="/">
-              <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <HamburgerMenu />
+              <Link to="/">
+                <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
+              </Link>
+            </div>
             <DarkModeToggle />
           </div>
         </div>
@@ -166,7 +170,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </h1>
           <div className="flex items-center gap-2 flex-shrink-0 ml-4 print:hidden">
             <ShareButton
-              label="Share"
+              label="Share Drill"
               title={drillData.name}
               className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
             />

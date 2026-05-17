@@ -42,6 +42,15 @@ interface DrillCardData extends DrillNode {
   updatedTimestamp: number | null;
 }
 
+const FILTER_STATE_KEYS: Array<keyof FilterState> = [
+  "skill_level",
+  "team_drill",
+  "age_level",
+  "fundamental_skill",
+  "skating_skill",
+  "equipment",
+];
+
 const parseTimestamp = (value?: string): number | null => {
   if (!value) {
     return null;
@@ -49,6 +58,63 @@ const parseTimestamp = (value?: string): number | null => {
 
   const timestamp = new Date(value).getTime();
   return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterState => {
+  const parsedFilters: FilterState = {
+    ...DEFAULT_FILTER_STATE,
+  };
+
+  FILTER_STATE_KEYS.forEach((category) => {
+    const paramValue = searchParams.get(category);
+    if (!paramValue) {
+      return;
+    }
+
+    parsedFilters[category] = paramValue
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .sort();
+  });
+
+  return parsedFilters;
+};
+
+const areFiltersEqual = (left: FilterState, right: FilterState): boolean => {
+  return FILTER_STATE_KEYS.every((category) => {
+    const leftValues = left[category];
+    const rightValues = right[category];
+    if (leftValues.length !== rightValues.length) {
+      return false;
+    }
+
+    return leftValues.every((value, index) => value === rightValues[index]);
+  });
+};
+
+const parsePageFromSearchParams = (searchParams: URLSearchParams): number => {
+  const pageParam = searchParams.get("page");
+  if (!pageParam) {
+    return 1;
+  }
+
+  const parsed = parseInt(pageParam, 10);
+  return !Number.isNaN(parsed) && parsed > 0 ? parsed : 1;
+};
+
+const parseSortFromSearchParams = (searchParams: URLSearchParams): SortOrder => {
+  const sortParam = searchParams.get("sort");
+  if (
+    sortParam === "created_newest" ||
+    sortParam === "created_oldest" ||
+    sortParam === "updated_newest" ||
+    sortParam === "updated_oldest"
+  ) {
+    return sortParam;
+  }
+
+  return "updated_newest";
 };
 
 export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
@@ -69,48 +135,22 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     [data.allDrill.nodes]
   );
 
-  const initialFilters = React.useMemo<FilterState>(() => {
-    const parsedFilters: FilterState = {
-      ...DEFAULT_FILTER_STATE,
-    };
-
-    Object.keys(parsedFilters).forEach((category) => {
-      const paramValue = initialSearchParams.get(category);
-      if (paramValue) {
-        parsedFilters[category as keyof FilterState] = paramValue
-          .split(",")
-          .filter((v) => v.trim());
-      }
-    });
-
-    return parsedFilters;
-  }, [initialSearchParams]);
-
-  const initialPage = React.useMemo(() => {
-    const pageParam = initialSearchParams.get("page");
-    if (!pageParam) {
-      return 1;
-    }
-
-    const parsed = parseInt(pageParam, 10);
-    return !Number.isNaN(parsed) && parsed > 0 ? parsed : 1;
-  }, [initialSearchParams]);
-
-  const initialSort = React.useMemo<SortOrder>(() => {
-    const sortParam = initialSearchParams.get("sort");
-    if (
-      sortParam === "created_newest" ||
-      sortParam === "created_oldest" ||
-      sortParam === "updated_newest" ||
-      sortParam === "updated_oldest"
-    ) {
-      return sortParam;
-    }
-    return "updated_newest";
-  }, [initialSearchParams]);
+  const initialFilters = React.useMemo<FilterState>(
+    () => parseFiltersFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialPage = React.useMemo(
+    () => parsePageFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialSort = React.useMemo<SortOrder>(
+    () => parseSortFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
 
   const {
     selectedFilters,
+    setSelectedFilters,
     tagCategories,
     filteredDrills,
     toggleFilter,
@@ -131,6 +171,20 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const hasMountedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(search);
+    const nextFilters = parseFiltersFromSearchParams(params);
+    const nextPage = parsePageFromSearchParams(params);
+    const nextSort = parseSortFromSearchParams(params);
+
+    setSelectedFilters((previous) =>
+      areFiltersEqual(previous, nextFilters) ? previous : nextFilters
+    );
+    setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
+    setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
+  }, [search, setSelectedFilters]);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -181,6 +235,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   }, [selectedFilters]);
 
   React.useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+
     setCurrentPage(1);
   }, [filterKey]);
 

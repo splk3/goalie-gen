@@ -29,6 +29,13 @@ jest.mock(
     }
 );
 jest.mock(
+  "../../components/HamburgerMenu",
+  () =>
+    function MockHamburgerMenu() {
+      return <button aria-label="Open navigation menu">Menu</button>;
+    }
+);
+jest.mock(
   "../../components/DownloadDrillPdfButton",
   () =>
     function MockDownloadDrillPdfButton() {
@@ -122,6 +129,11 @@ describe("DrillTemplate", () => {
     const links = screen.getAllByRole("link", { name: /back to drills/i });
     expect(links.length).toBeGreaterThanOrEqual(1);
     expect(links[0]).toHaveAttribute("href", "/goalie-drills");
+  });
+
+  it("renders the hamburger menu in the screen header", () => {
+    render(<DrillTemplate pageContext={basePageContext} />);
+    expect(screen.getByRole("button", { name: /open navigation menu/i })).toBeInTheDocument();
   });
 
   it("renders Share buttons on the drill page", () => {

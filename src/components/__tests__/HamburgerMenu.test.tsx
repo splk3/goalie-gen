@@ -17,6 +17,7 @@ describe("HamburgerMenu", () => {
     render(<HamburgerMenu />);
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
     expect(screen.getByRole("navigation")).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toHaveAttribute("aria-modal", "true");
   });
 
   it("sets aria-expanded to true when open", () => {
@@ -32,9 +33,7 @@ describe("HamburgerMenu", () => {
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
     expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Drills" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: "Team Drills with Goalie Focus" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Team Drills with Goalie Focus" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Evaluations" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Club Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Coach Resources" })).toBeInTheDocument();
@@ -55,6 +54,22 @@ describe("HamburgerMenu", () => {
     expect(screen.getByRole("navigation")).toBeInTheDocument();
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+  });
+
+  it("traps keyboard focus within the open drawer", () => {
+    render(<HamburgerMenu />);
+    fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
+
+    const closeButton = screen.getByRole("button", { name: /close navigation menu/i });
+    const lastLink = screen.getByRole("link", { name: "Goalie Resources" });
+
+    closeButton.focus();
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(lastLink).toHaveFocus();
+
+    lastLink.focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(closeButton).toHaveFocus();
   });
 
   it("closes the menu when a nav link is clicked", () => {

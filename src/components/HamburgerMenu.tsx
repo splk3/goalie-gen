@@ -1,6 +1,9 @@
 import * as React from "react";
 import { Link } from "gatsby";
 
+const FOCUSABLE_SELECTOR =
+  "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
+
 interface NavLink {
   label: string;
   to: string;
@@ -22,24 +25,70 @@ export default function HamburgerMenu() {
   const [isOpen, setIsOpen] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const drawerRef = React.useRef<HTMLDivElement>(null);
+  const wasOpenRef = React.useRef(false);
 
   const close = React.useCallback(() => setIsOpen(false), []);
 
   React.useEffect(() => {
     if (!isOpen) return;
 
+    wasOpenRef.current = true;
+    drawerRef.current?.focus();
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.preventDefault();
         close();
-        buttonRef.current?.focus();
+        return;
+      }
+
+      if (e.key !== "Tab") {
+        return;
+      }
+
+      const focusable = drawerRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (!focusable || focusable.length === 0) {
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (!drawerRef.current?.contains(document.activeElement)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+        return;
+      }
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
 
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", handleKeyDown);
+
     return () => {
+      document.body.style.overflow = originalOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, close]);
+
+  React.useEffect(() => {
+    if (isOpen || !wasOpenRef.current) {
+      return;
+    }
+
+    wasOpenRef.current = false;
+    buttonRef.current?.focus();
+  }, [isOpen]);
 
   return (
     <>
@@ -48,6 +97,7 @@ export default function HamburgerMenu() {
         type="button"
         aria-label="Open navigation menu"
         aria-expanded={isOpen}
+        aria-controls="hamburger-menu-dialog"
         onClick={() => setIsOpen((v) => !v)}
         className="flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-usa-blue"
       >
@@ -59,19 +109,22 @@ export default function HamburgerMenu() {
       {isOpen && (
         <>
           {/* Backdrop — semi-transparent, closes menu when clicked */}
-          <div
-            aria-hidden="true"
-            className="fixed inset-0 bg-black/75 z-40"
-            onClick={close}
-          />
+          <div aria-hidden="true" className="fixed inset-0 bg-black/75 z-40" onClick={close} />
 
           {/* Drawer */}
           <div
+            id="hamburger-menu-dialog"
             ref={drawerRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="hamburger-menu-title"
             className="fixed top-0 left-0 h-full w-64 bg-usa-blue dark:bg-gray-900 text-usa-white z-50 shadow-2xl flex flex-col"
           >
             <div className="flex items-center justify-between px-4 py-5 border-b border-white/20">
-              <span className="font-bold text-lg">Navigation</span>
+              <span id="hamburger-menu-title" className="font-bold text-lg">
+                Navigation
+              </span>
               <button
                 type="button"
                 aria-label="Close navigation menu"
@@ -107,7 +160,7 @@ export default function HamburgerMenu() {
                   >
                     {link.label}
                   </Link>
-                ),
+                )
               )}
             </nav>
           </div>
