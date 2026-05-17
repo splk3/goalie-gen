@@ -9,7 +9,7 @@ interface BackLinkButtonProps {
 
 export default function BackLinkButton({ to, children, className = "" }: BackLinkButtonProps) {
   const baseClasses =
-    "inline-flex max-w-full items-center justify-center gap-2 rounded-lg bg-usa-blue px-4 py-3 text-center font-bold text-white transition-colors hover:bg-blue-800 sm:w-auto sm:px-6";
+    "inline-flex w-full max-w-full items-center justify-center gap-2 rounded-lg bg-usa-blue px-4 py-3 text-center font-bold text-white transition-colors hover:bg-blue-800 sm:w-auto sm:px-6";
 
   return (
     <Link to={to} className={[baseClasses, className].filter(Boolean).join(" ")}>

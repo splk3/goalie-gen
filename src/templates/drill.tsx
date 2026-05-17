@@ -177,9 +177,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
               title={drillData.name}
               className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
             />
-            <BackLinkButton to={drillsBackUrl} className="w-full sm:w-auto">
-              Back to Drills
-            </BackLinkButton>
+            <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
           </div>
         </div>
 
@@ -457,26 +455,28 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
 
         {/* Print and Back Buttons - Hidden in print */}
-        <div className="mt-8 flex flex-wrap gap-4 print:hidden">
+        <div className="mt-8 flex flex-col gap-4 print:hidden sm:flex-row sm:flex-wrap">
           <button
             type="button"
             onClick={handlePrint}
             disabled={isPrinting}
-            className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 ${
               isPrinting ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             {isPrinting ? "Generating..." : "Print Drill"}
           </button>
-          <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
+          <DownloadDrillPdfButton
+            drillData={drillData}
+            drillFolder={drillFolder}
+            className={actionButtonClasses}
+          />
           <ShareButton
             label="Share Drill"
             title={drillData.name}
             className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
           />
-          <BackLinkButton to={drillsBackUrl} className="w-full sm:w-auto">
-            Back to Drills
-          </BackLinkButton>
+          <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
         </div>
       </main>
 
