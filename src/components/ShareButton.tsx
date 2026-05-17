@@ -67,7 +67,7 @@ export default function ShareButton({
   };
 
   return (
-    <button onClick={handleShare} className={className}>
+    <button type="button" onClick={handleShare} className={className}>
       <ShareIcon className={iconClassName ?? "w-4 h-4"} />
       {copied ? "Copied!" : label}
     </button>
