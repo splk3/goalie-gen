@@ -127,6 +127,7 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
   return (
     <>
       <button
+        type="button"
         ref={triggerRef}
         onClick={() => setShowModal(true)}
         className={[
