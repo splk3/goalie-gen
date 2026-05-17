@@ -6,6 +6,7 @@ import Pagination from "../components/Pagination";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
 import ShareButton from "../components/ShareButton";
+import BackLinkButton from "../components/BackLinkButton";
 
 interface DrillNode {
   slug: string;
@@ -489,24 +490,9 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <div className="mt-8 text-center">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              fillRule="evenodd"
-              d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
-              clipRule="evenodd"
-            />
-          </svg>
+        <BackLinkButton to="/" className="w-full max-w-xs sm:w-auto">
           Back to Home
-        </Link>
+        </BackLinkButton>
       </div>
     </PageLayout>
   );

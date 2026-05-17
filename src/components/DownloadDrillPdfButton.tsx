@@ -7,11 +7,13 @@ import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 interface DownloadDrillPdfButtonProps {
   drillData: DrillData;
   drillFolder: string;
+  className?: string;
 }
 
 export default function DownloadDrillPdfButton({
   drillData,
   drillFolder,
+  className = "",
 }: DownloadDrillPdfButtonProps) {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [statusMessage, setStatusMessage] = React.useState<string>("");
@@ -65,7 +67,7 @@ export default function DownloadDrillPdfButton({
     <button
       onClick={handleDownload}
       disabled={isGenerating}
-      className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+      className={`${className} bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
         isGenerating ? "opacity-50 cursor-not-allowed" : ""
       }`}
     >

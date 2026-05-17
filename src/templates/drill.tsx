@@ -6,6 +6,7 @@ import DarkModeToggle from "../components/DarkModeToggle";
 import HamburgerMenu from "../components/HamburgerMenu";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import ShareButton from "../components/ShareButton";
+import BackLinkButton from "../components/BackLinkButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
@@ -101,6 +102,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
     ? normalizeDrillDescription(drillData.description)
     : "";
   const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
+  const actionButtonClasses =
+    "inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-bold text-white transition-colors sm:w-auto sm:px-6";
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
@@ -164,34 +167,17 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
       <main className="container mx-auto px-4 py-8 print:py-0 print:px-0">
         {/* Drill Name + Share + Back to Drills button on same row */}
-        <div className="flex items-start justify-between mb-6 print:mb-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
+        <div className="mb-6 flex flex-col gap-4 print:mb-2 md:flex-row md:items-start md:justify-between">
+          <h1 className="min-w-0 text-3xl font-bold text-usa-blue dark:text-blue-400 print:mb-2 print:text-2xl print:text-usa-blue md:text-4xl">
             {drillData.name}
           </h1>
-          <div className="flex items-center gap-2 flex-shrink-0 ml-4 print:hidden">
+          <div className="flex w-full flex-col gap-2 print:hidden sm:flex-row sm:flex-wrap sm:justify-end md:ml-4 md:w-auto md:flex-shrink-0 md:items-center">
             <ShareButton
               label="Share Drill"
               title={drillData.name}
-              className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+              className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
             />
-            <Link
-              to={drillsBackUrl}
-              className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Back to Drills
-            </Link>
+            <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
           </div>
         </div>
 
@@ -469,41 +455,28 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
 
         {/* Print and Back Buttons - Hidden in print */}
-        <div className="mt-8 flex flex-wrap gap-4 print:hidden">
+        <div className="mt-8 flex flex-col gap-4 print:hidden sm:flex-row sm:flex-wrap">
           <button
             type="button"
             onClick={handlePrint}
             disabled={isPrinting}
-            className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 ${
               isPrinting ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             {isPrinting ? "Generating..." : "Print Drill"}
           </button>
-          <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
+          <DownloadDrillPdfButton
+            drillData={drillData}
+            drillFolder={drillFolder}
+            className={actionButtonClasses}
+          />
           <ShareButton
             label="Share Drill"
             title={drillData.name}
-            className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
           />
-          <Link
-            to="/goalie-drills"
-            className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                fillRule="evenodd"
-                d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Back to Drills
-          </Link>
+          <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
         </div>
       </main>
 

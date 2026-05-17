@@ -131,6 +131,13 @@ describe("DrillTemplate", () => {
     expect(links[0]).toHaveAttribute("href", "/goalie-drills");
   });
 
+  it("stacks the top drill actions for mobile layouts", () => {
+    render(<DrillTemplate pageContext={basePageContext} />);
+
+    const links = screen.getAllByRole("link", { name: /back to drills/i });
+    expect(links[0]).toHaveClass("w-full", "sm:w-auto");
+  });
+
   it("renders the hamburger menu in the screen header", () => {
     render(<DrillTemplate pageContext={basePageContext} />);
     expect(screen.getByRole("button", { name: /open navigation menu/i })).toBeInTheDocument();
