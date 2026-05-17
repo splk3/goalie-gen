@@ -467,6 +467,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         {/* Print and Back Buttons - Hidden in print */}
         <div className="mt-8 flex flex-wrap gap-4 print:hidden">
           <button
+            type="button"
             onClick={handlePrint}
             disabled={isPrinting}
             className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
