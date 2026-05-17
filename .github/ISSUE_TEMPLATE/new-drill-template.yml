@@ -164,7 +164,7 @@ body:
     id: game_situations_tags
     attributes:
       label: Tags - Game Situations (Optional)
-      description: Select all that apply.
+      description: Select all that apply. This tag group can be used for any drill (team or non-team).
       options:
         - label: power_play
         - label: penalty_kill

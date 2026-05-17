@@ -168,15 +168,16 @@ To add a new drill for the site, create a new folder under [drills/](drills/) na
 Required fields in drill.yml:
 
 - `name`
-- `description`
+- `drill_steps`
 - `coaching_focus_points`
-- `images`
+- `drill_image`
 - `tags`
 - `drill_creation_date`
 
 `drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
 All other fields are optional. Known optional fields include:
 
+- `description` — optional string shown above drill steps
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
 - `drill_progressions` — array of up to 6 progression objects. Each progression object requires:
@@ -230,7 +231,7 @@ The exception is `team_drill`, which is a single string value (`yes` or `no`):
   - `dump_in`
   - `stick_handling`
 
-For media fields, `images` should be an array of image filenames, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
+For media fields, `drill_image` should be a single image filename string, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (with `v` as the first query parameter) or `https://youtu.be/VIDEO_ID`
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`
