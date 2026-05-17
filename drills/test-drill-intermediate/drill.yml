@@ -18,10 +18,6 @@ coaching_focus_points:
 # shooter_focus_points:
 #   - Shooter focus point 1
 
-# drill_progressions:
-#   - Add first progression step here.
-#   - Add second progression step here.
-
 drill_image: test-drill-image.png
 
 video: https://www.youtube.com/watch?v=L4C5hPBv-LA

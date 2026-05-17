@@ -68,7 +68,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         if (ref.pathname === "/goalie-drills") {
           setDrillsBackUrl(ref.pathname + ref.search);
         }
-      } catch (_e) {
+      } catch {
         // ignore malformed referrer
       }
     }
