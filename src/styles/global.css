@@ -168,4 +168,9 @@
     max-width: 20% !important;
     width: auto !important;
   }
+
+  .print-break-before-page {
+    break-before: page;
+    page-break-before: always;
+  }
 }

@@ -22,15 +22,14 @@ shooter_focus_points:
   - Shooter focus point 3 this one is longer and takes more text to describe, but it's still important to include as a shooter focus point.
 
 drill_progressions:
-  - This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
-  - Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
-  - Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 1
+    progression_description: This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 2
+    progression_description: Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 3
+    progression_description: Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
 
-images:
-  - test-drill-image-1.png
-  - test-drill-image-2.png
-  - test-drill-image-3.png
-  - test-drill-image-4.png
+drill_image: test-drill-image-1.png
 
 video: https://vimeo.com/830266352?fl=pl&fe=sh
 
@@ -41,8 +40,7 @@ drill_updated_date: 2026-05-09
 tags:
   skill_level:
     - beginner
-  team_drill:
-    - no
+  team_drill: no
   age_level:
     - 10U_below
     - 12U

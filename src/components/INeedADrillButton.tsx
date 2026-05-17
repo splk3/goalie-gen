@@ -10,7 +10,7 @@ interface DrillNode {
   name: string;
   tags: {
     skill_level?: string[];
-    team_drill?: string[];
+    team_drill?: string;
     age_level?: string[];
     fundamental_skill?: string[];
     skating_skill?: string[];
@@ -18,7 +18,11 @@ interface DrillNode {
   };
 }
 
-export default function INeedADrillButton() {
+interface INeedADrillButtonProps {
+  className?: string;
+}
+
+export default function INeedADrillButton({ className }: INeedADrillButtonProps = {}) {
   const data = useStaticQuery(graphql`
     query AllDrillsForButton {
       allDrill {
@@ -123,9 +127,15 @@ export default function INeedADrillButton() {
   return (
     <>
       <button
+        type="button"
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="bg-white hover:bg-gray-100 dark:bg-gray-100 dark:hover:bg-gray-200 text-usa-blue font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
+        className={[
+          "inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-100",
+          "hover:bg-gray-100 dark:hover:bg-gray-200 px-6 py-3 text-lg font-semibold",
+          "text-usa-blue transition-colors",
+          className ?? "",
+        ].join(" ")}
       >
         I Need a Drill!
       </button>

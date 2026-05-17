@@ -3,15 +3,26 @@ import { Link } from "gatsby";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import ExternalLinkButton from "../components/ExternalLinkButton";
+import ShareButton from "../components/ShareButton";
 
 export default function ClubResources() {
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-        <h1 className="text-4xl font-bold mb-4">Club Resources</h1>
-        <p className="text-lg">
-          Resources and tools for managing club-wide goaltending development programs.
-        </p>
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-4">Club Resources</h1>
+            <p className="text-lg">
+              Resources and tools for managing club-wide goaltending development programs.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <ShareButton
+              label="Share"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="max-w-2xl mx-auto">
@@ -49,9 +60,21 @@ export default function ClubResources() {
         <div className="mt-8 text-center">
           <Link
             to="/"
-            className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
+            className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
           >
-            ← Back to Home
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                fillRule="evenodd"
+                d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Back to Home
           </Link>
         </div>
       </div>

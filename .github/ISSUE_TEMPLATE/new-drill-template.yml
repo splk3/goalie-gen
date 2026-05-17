@@ -37,22 +37,22 @@ body:
   - type: textarea
     id: drill_description
     attributes:
-      label: Description
-      description: Provide a brief overview and purpose of the drill.
+      label: Description (Optional)
+      description: Provide a brief overview and purpose of the drill. Leave blank if the drill steps are sufficient.
       placeholder: |
         A brief description of the drill. This can be multiple lines and should provide
         an overview of what the drill is about, its purpose, and any key details.
-    validations:
-      required: true
 
   - type: textarea
     id: drill_steps
     attributes:
-      label: Drill Steps (Optional)
-      description: Enter one drill step per line. Leave blank if not applicable.
+      label: Drill Steps
+      description: Enter one drill step per line.
       placeholder: |
         Drill step 1
         Drill step 2
+    validations:
+      required: true
 
   - type: textarea
     id: coaching_focus_points
@@ -74,17 +74,6 @@ body:
       placeholder: |
         - Shooter focus point 1
         - Shooter focus point 2
-
-  - type: textarea
-    id: drill_progressions
-    attributes:
-      label: Drill Progressions (Optional)
-      description: >-
-        List or describe drill progressions or alterations coaches can use as needed.
-        Leave blank if not applicable.
-      placeholder: |
-        1. Drill progression or alteration 1
-        2. Drill progression or alteration 2
 
   - type: textarea
     id: video
@@ -127,17 +116,6 @@ body:
       default: 1
     validations:
       required: true
-
-  - type: checkboxes
-    id: team_concepts_tags
-    attributes:
-      label: Tags - Team Concepts (Optional, only used when Team Drill is yes)
-      description: Select all that apply. Ignored if Team Drill is not yes.
-      options:
-        - label: power_play
-        - label: penalty_kill
-        - label: net_front_traffic
-        - label: dump_in
 
   - type: checkboxes
     id: age_level_tags
@@ -183,6 +161,18 @@ body:
       required: true
 
   - type: checkboxes
+    id: game_situations_tags
+    attributes:
+      label: Tags - Game Situations (Optional)
+      description: Select all that apply. This tag group can be used for any drill (team or non-team).
+      options:
+        - label: power_play
+        - label: penalty_kill
+        - label: net_front_traffic
+        - label: dump_in
+        - label: stick_handling
+
+  - type: checkboxes
     id: equipment_tags
     attributes:
       label: Tags - Equipment
@@ -200,7 +190,7 @@ body:
   - type: textarea
     id: diagram_image_or_screenshot
     attributes:
-      label: Drill Diagram(s)
+      label: Drill Diagram
       description: |
         Attach the drill diagram or a screenshot of the drill here.
       placeholder: Attach the drill diagram or a screenshot of the drill here.
@@ -208,30 +198,197 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## GitHub Copilot Instructions
+        ## Drill Progressions (Optional)
+
+        Add up to 6 progression entries. Leave any progression fields blank if not needed.
+
+  - type: input
+    id: progression_1_name
+    attributes:
+      label: Progression 1 Name (Optional)
+      description: Enter the name/title for progression 1.
+      placeholder: Progression 1
+
+  - type: textarea
+    id: progression_1_description
+    attributes:
+      label: Progression 1 Description (Optional)
+      description: Enter the progression 1 details.
+      placeholder: Describe progression 1.
+
+  - type: input
+    id: progression_1_image
+    attributes:
+      label: Progression 1 Image (Optional)
+      description: Enter the filename for progression 1 image if provided.
+      placeholder: progression-1.png
+
+  - type: input
+    id: progression_2_name
+    attributes:
+      label: Progression 2 Name (Optional)
+      description: Enter the name/title for progression 2.
+      placeholder: Progression 2
+
+  - type: textarea
+    id: progression_2_description
+    attributes:
+      label: Progression 2 Description (Optional)
+      description: Enter the progression 2 details.
+      placeholder: Describe progression 2.
+
+  - type: input
+    id: progression_2_image
+    attributes:
+      label: Progression 2 Image (Optional)
+      description: Enter the filename for progression 2 image if provided.
+      placeholder: progression-2.png
+
+  - type: input
+    id: progression_3_name
+    attributes:
+      label: Progression 3 Name (Optional)
+      description: Enter the name/title for progression 3.
+      placeholder: Progression 3
+
+  - type: textarea
+    id: progression_3_description
+    attributes:
+      label: Progression 3 Description (Optional)
+      description: Enter the progression 3 details.
+      placeholder: Describe progression 3.
+
+  - type: input
+    id: progression_3_image
+    attributes:
+      label: Progression 3 Image (Optional)
+      description: Enter the filename for progression 3 image if provided.
+      placeholder: progression-3.png
+
+  - type: input
+    id: progression_4_name
+    attributes:
+      label: Progression 4 Name (Optional)
+      description: Enter the name/title for progression 4.
+      placeholder: Progression 4
+
+  - type: textarea
+    id: progression_4_description
+    attributes:
+      label: Progression 4 Description (Optional)
+      description: Enter the progression 4 details.
+      placeholder: Describe progression 4.
+
+  - type: input
+    id: progression_4_image
+    attributes:
+      label: Progression 4 Image (Optional)
+      description: Enter the filename for progression 4 image if provided.
+      placeholder: progression-4.png
+
+  - type: input
+    id: progression_5_name
+    attributes:
+      label: Progression 5 Name (Optional)
+      description: Enter the name/title for progression 5.
+      placeholder: Progression 5
+
+  - type: textarea
+    id: progression_5_description
+    attributes:
+      label: Progression 5 Description (Optional)
+      description: Enter the progression 5 details.
+      placeholder: Describe progression 5.
+
+  - type: input
+    id: progression_5_image
+    attributes:
+      label: Progression 5 Image (Optional)
+      description: Enter the filename for progression 5 image if provided.
+      placeholder: progression-5.png
+
+  - type: input
+    id: progression_6_name
+    attributes:
+      label: Progression 6 Name (Optional)
+      description: Enter the name/title for progression 6.
+      placeholder: Progression 6
+
+  - type: textarea
+    id: progression_6_description
+    attributes:
+      label: Progression 6 Description (Optional)
+      description: Enter the progression 6 details.
+      placeholder: Describe progression 6.
+
+  - type: input
+    id: progression_6_image
+    attributes:
+      label: Progression 6 Image (Optional)
+      description: Enter the filename for progression 6 image if provided.
+      placeholder: progression-6.png
+
+  - type: markdown
+    attributes:
+      value: |
+        ## GitHub Copilot Instructions - Users can ignore this section
 
         - Use the information in the fields above to create a new drill YAML file in the `drills` folder.
         - Follow the instructions below to create the new drill.
         - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
-        - The `coaching_focus_points` field is required. Map the "Coaching Focus Points" form field to it.
-        - If "Drill Steps" was provided, add the `drill_steps` field as an array of strings
-          directly below `description` in the YAML.
+        - Convert all non-ascii characters to ascii equivalents, as needed
+        - For the fields of 'drill_steps', 'coaching_focus_points', and 'shooter_focus_points', make sure to
+          format the YAML as an array of strings, with each item on a new line and a dash in front.
+          If the user enters multiple lines in the text area, split them into an array. If they enter a single line, make it an array with one item.
+          If they enter multiple lines but some are blank, ignore the blank lines and only include the non-blank lines in the array.
+          If they do not make each line bulleted, add the dashes and format it as an array.
+          For example, if the user entered the following in the "Drill Steps" text area:
+          ```
+          Drill starting instruction
+          Next instruction
+          Another Instruction
+          ```
+          Then the YAML should include:
+          ```
+          drill_steps:
+            - Drill starting instruction
+            - Next instruction
+            - Another Instruction
+          ```
+        - If they leave an optional field blank, omit that field entirely from the YAML (do not include a commented-out placeholder).
+        - If "Description" was provided, add the `description` field as a string.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
+        - Add the `drill_steps` field as an array of strings directly below `description` (if present) in the YAML.
         - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
-        - If "Drill Progressions" was provided, add the `drill_progressions` field as an array of strings.
-          Otherwise, leave it out entirely.
-        - If "Team Drill" is "yes" and any "Tags - Team Concepts" checkboxes are checked,
-          add the `team_concepts` field under `tags` as an array of the selected values.
-          If "Team Drill" is "no" or no team concepts are selected, omit `team_concepts` entirely.
-        - Add the images to the folder, updating the `images` field as needed.
-          If the images are pasted into the text area and not attached, make sure to save the images and add them to the drill folder,
-          naming them after the drill name and updating the `images` field accordingly.
-          If more than one image is included, add a suffix to the filename
-          (e.g. `drill-name-1.jpg`, `drill-name-2.jpg`, etc.) and list all images in the YAML.
-          Keep them in the order they are uploaded if in the text field, and alphabetical if attached.
-        - Confirm image files are actual images, and that video links are real YouTube or Vimeo links.
+        - Build `drill_progressions` from the progression inputs (`Progression [#] Name`,
+          `Progression [#] Description`, `Progression [#] Image`) using up to 6 progression objects.
+        - For each progression item included in YAML:
+          - `progression_name` is required
+          - `progression_description` is required
+          - `progression_image` is optional (omit if blank)
+        - Only include progression items where both name and description were provided.
+        - If no valid progression items were provided, omit `drill_progressions` entirely.
+        - Use this YAML structure:
+          ```
+          drill_progressions:
+            - progression_name: Progression 1
+              progression_description: Description for progression 1
+              progression_image: progression-1.png
+          ```
+        - Save each progression image in the drill folder and name it similarly to the progression name
+          (using lowercase letters and hyphens), as long as it does not conflict with any other image name
+          in the same drill folder. If there is a conflict, append a unique suffix.
+        - Set `team_drill` under `tags` to the value selected in the "Tags - Team Drill" dropdown as a plain string
+          (e.g. `team_drill: no` or `team_drill: yes`), not as a YAML list.
+        - If "Tags - Game Situations" checkboxes are checked,
+          add the `game_situations` field under `tags` as an array of the selected values.
+          If no game situations are selected, omit `game_situations` entirely.
+        - Save the drill image to the drill folder, naming it after the drill folder name with the original file extension
+          (e.g. `rim-stop-cut-across.png`). If the uploaded or pasted file has a different name, rename it to match the drill
+          folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
+        - Confirm the image file is an actual image, and that video links are real YouTube or Vimeo links.
         - Make sure the new drill passes build validation and that the site builds properly.
         - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description. Link the PR in this issue.

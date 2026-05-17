@@ -3,33 +3,42 @@ import { Link } from "gatsby";
 import Seo from "../components/SEO";
 import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
+import HamburgerMenu from "../components/HamburgerMenu";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
+import ShareButton from "../components/ShareButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
+import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
+
+interface DrillProgression {
+  progression_name: string;
+  progression_description: string;
+  progression_image?: string;
+}
 
 interface DrillPageContext {
   slug: string;
   drillData: {
     name: string;
-    description: string;
-    drill_steps?: string[];
+    description?: string;
+    drill_steps: string[];
     coaching_focus_points: string[];
     shooter_focus_points?: string[];
-    drill_progressions?: string[];
-    images: string[];
+    drill_progressions?: DrillProgression[];
+    drill_image: string;
     video?: string;
     drill_creation_date: string;
     drill_updated_date?: string;
     tags: {
       skill_level?: string[];
-      team_drill?: string[];
+      team_drill?: string;
       age_level?: string[];
       fundamental_skill?: string[];
       skating_skill?: string[];
       equipment?: string[];
-      team_concepts?: string[];
+      game_situations?: string[];
     };
   };
   drillFolder: string;
@@ -50,6 +59,20 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext;
 
   const [isPrinting, setIsPrinting] = React.useState(false);
+  const [drillsBackUrl, setDrillsBackUrl] = React.useState("/goalie-drills");
+
+  React.useEffect(() => {
+    if (document.referrer) {
+      try {
+        const ref = new URL(document.referrer);
+        if (ref.pathname === "/goalie-drills") {
+          setDrillsBackUrl(ref.pathname + ref.search);
+        }
+      } catch {
+        // ignore malformed referrer
+      }
+    }
+  }, []);
 
   const handlePrint = async () => {
     setIsPrinting(true);
@@ -74,22 +97,29 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
-  const normalizedDescription = normalizeDrillDescription(drillData.description);
+  const normalizedDescription = drillData.description
+    ? normalizeDrillDescription(drillData.description)
+    : "";
+  const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
 
   // Calculate the last updated date (use updated date if available, otherwise creation date)
   const lastUpdatedDate = drillData.drill_updated_date || drillData.drill_creation_date;
 
-  // Apply max height when there are multiple images to keep layout compact
-  const hasMultipleImages = (drillData.images || []).length >= 2;
-  const imageClasses = hasMultipleImages
-    ? "w-full h-auto object-contain max-h-[300px]"
-    : "w-full h-auto object-contain";
-  const drillImageUrls = React.useMemo(
+  const drillImageUrl = React.useMemo(
     () =>
-      (drillData.images || []).map((image) =>
-        buildCacheBustedAssetPath(`/drills/${drillFolder}/${image}`)
+      drillData.drill_image
+        ? buildCacheBustedAssetPath(`/drills/${drillFolder}/${drillData.drill_image}`)
+        : "",
+    [drillData.drill_image, drillFolder]
+  );
+  const progressionImageUrls = React.useMemo(
+    () =>
+      (drillData.drill_progressions || []).map((progression) =>
+        progression.progression_image
+          ? buildCacheBustedAssetPath(`/drills/${drillFolder}/${progression.progression_image}`)
+          : ""
       ),
-    [drillData.images, drillFolder]
+    [drillData.drill_progressions, drillFolder]
   );
 
   return (
@@ -121,20 +151,48 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6 print:hidden">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <Link to="/">
-              <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <HamburgerMenu />
+              <Link to="/">
+                <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
+              </Link>
+            </div>
             <DarkModeToggle />
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8 print:py-0 print:px-0">
-        {/* Drill Name */}
-        <div className="mb-6 print:mb-2">
+        {/* Drill Name + Share + Back to Drills button on same row */}
+        <div className="flex items-start justify-between mb-6 print:mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-usa-blue dark:text-blue-400 print:text-usa-blue print:text-2xl print:mb-2">
             {drillData.name}
           </h1>
+          <div className="flex items-center gap-2 flex-shrink-0 ml-4 print:hidden">
+            <ShareButton
+              label="Share Drill"
+              title={drillData.name}
+              className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+            />
+            <Link
+              to={drillsBackUrl}
+              className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Back to Drills
+            </Link>
+          </div>
         </div>
 
         {/* Last Updated Date */}
@@ -181,82 +239,108 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions, and Images */}
+        {/* Two-column: Drill Information (left) + Image (right) */}
         <div className="grid md:grid-cols-2 gap-8 mb-8 print:grid-cols-2 print:gap-4 print:mb-4">
-          {/* Left Column: Description, Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
+          {/* Left Column: Drill Information (description + steps) */}
           <div>
-            <div className="mb-6 print:mb-3">
-              <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                Description
-              </h2>
+            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+              Drill Information
+            </h2>
+            {normalizedDescription && (
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
                 {normalizedDescription}
               </p>
-              {drillData.drill_steps && drillData.drill_steps.length > 0 && (
-                <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                  {drillData.drill_steps.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
-              )}
-            </div>
-
-            <div className="mb-6 print:mb-3">
-              <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                Coaching Focus Points
-              </h2>
-              <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                {(drillData.coaching_focus_points || []).map((point, index) => (
-                  <li key={index}>{point}</li>
-                ))}
-              </ul>
-            </div>
-
-            {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (
-              <div className="mb-6 print:mb-3">
-                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                  Shooter Focus Points
-                </h2>
-                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                  {drillData.shooter_focus_points.map((point, index) => (
-                    <li key={index}>{point}</li>
-                  ))}
-                </ul>
-              </div>
             )}
-
-            {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-                  Drill Progressions
-                </h2>
-                <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-                  {drillData.drill_progressions.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
-              </div>
-            )}
+            <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+              {drillData.drill_steps.map((step, index) => (
+                <li key={index}>{step}</li>
+              ))}
+            </ol>
           </div>
 
-          {/* Right Column: Images */}
-          <div className="space-y-4 print:space-y-2">
-            {drillImageUrls.map((imageUrl, index) => (
-              <div
-                key={index}
-                className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white"
-              >
+          {/* Right Column: Image */}
+          <div>
+            {drillImageUrl && (
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
                 <img
-                  src={imageUrl}
-                  alt={`Drill diagram ${index + 1}`}
-                  className={imageClasses}
+                  src={drillImageUrl}
+                  alt="Drill diagram"
+                  className="w-full h-auto object-contain"
                   loading="lazy"
                   decoding="async"
                 />
               </div>
-            ))}
+            )}
           </div>
         </div>
+
+        {/* Full-width sections: Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
+        <div className="mb-6 print:mb-3">
+          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+            Coaching Focus Points
+          </h2>
+          <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+            {(drillData.coaching_focus_points || []).map((point, index) => (
+              <li key={index}>{point}</li>
+            ))}
+          </ul>
+        </div>
+
+        {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (
+          <div className="mb-6 print:mb-3">
+            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+              Shooter Focus Points
+            </h2>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+              {drillData.shooter_focus_points.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
+          <div
+            className={`mb-6 print:mb-3 ${shouldMoveProgressionsToSecondPage ? "print-break-before-page" : ""}`}
+          >
+            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+              Drill Progressions
+            </h2>
+            <div className="space-y-4">
+              {drillData.drill_progressions.map((progression, index) => {
+                const progressionImageUrl = progressionImageUrls[index];
+                const hasProgressionImage = progressionImageUrl.length > 0;
+                return (
+                  <div key={`${progression.progression_name}-${index}`}>
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 print:text-base print:text-gray-900">
+                      {progression.progression_name}
+                    </h3>
+                    {hasProgressionImage ? (
+                      <div className="grid md:grid-cols-2 gap-4 mt-2 items-start print:grid-cols-2">
+                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-[9pt] print:text-gray-900">
+                          {progression.progression_description}
+                        </p>
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
+                          <img
+                            src={progressionImageUrl}
+                            alt={`${progression.progression_name} diagram`}
+                            className="w-full h-auto object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-[9pt] print:text-gray-900">
+                        {progression.progression_description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Video Section */}
         {drillData.video && (
@@ -315,12 +399,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             Skills Focus
           </h2>
           {(() => {
-            const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
-            const hasTeamConcepts =
-              isTeamDrill &&
-              drillData.tags.team_concepts &&
-              drillData.tags.team_concepts.length > 0;
-            const gridClass = hasTeamConcepts
+            const hasGameSituations =
+              drillData.tags.game_situations !== undefined &&
+              drillData.tags.game_situations.length > 0;
+            const gridClass = hasGameSituations
               ? "grid md:grid-cols-3 gap-6 print:grid-cols-3 print:gap-3"
               : "grid md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-3";
             return (
@@ -328,10 +410,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 {drillData.tags.fundamental_skill &&
                   drillData.tags.fundamental_skill.length > 0 && (
                     <div>
-                      <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                      <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-xs print:text-gray-900">
                         Fundamental Skills:
                       </h3>
-                      <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                      <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-xs print:text-gray-800">
                         {drillData.tags.fundamental_skill.map((skill, index) => (
                           <li key={index}>{formatTag(skill)}</li>
                         ))}
@@ -340,24 +422,24 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                   )}
                 {drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-xs print:text-gray-900">
                       Skating Skills:
                     </h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-xs print:text-gray-800">
                       {drillData.tags.skating_skill.map((skill, index) => (
                         <li key={index}>{formatTag(skill)}</li>
                       ))}
                     </ul>
                   </div>
                 )}
-                {hasTeamConcepts && (
+                {hasGameSituations && (
                   <div>
-                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-sm print:text-gray-900">
-                      Team Concepts:
+                    <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2 print:text-xs print:text-gray-900">
+                      Game Situations:
                     </h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-sm print:text-gray-800">
-                      {drillData.tags.team_concepts.map((concept, index) => (
-                        <li key={index}>{formatTag(concept)}</li>
+                    <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400 print:text-xs print:text-gray-800">
+                      {drillData.tags.game_situations!.map((situation, index) => (
+                        <li key={index}>{formatTag(situation)}</li>
                       ))}
                     </ul>
                   </div>
@@ -387,8 +469,9 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
         </div>
 
         {/* Print and Back Buttons - Hidden in print */}
-        <div className="mt-8 flex gap-4 print:hidden">
+        <div className="mt-8 flex flex-wrap gap-4 print:hidden">
           <button
+            type="button"
             onClick={handlePrint}
             disabled={isPrinting}
             className={`bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
@@ -398,11 +481,28 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             {isPrinting ? "Generating..." : "Print Drill"}
           </button>
           <DownloadDrillPdfButton drillData={drillData} drillFolder={drillFolder} />
+          <ShareButton
+            label="Share Drill"
+            title={drillData.name}
+            className="bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+          />
           <Link
             to="/goalie-drills"
-            className="bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
           >
-            ← Back to Drills
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                fillRule="evenodd"
+                d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Back to Drills
           </Link>
         </div>
       </main>

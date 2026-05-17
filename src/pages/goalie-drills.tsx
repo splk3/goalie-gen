@@ -5,16 +5,17 @@ import PageLayout from "../components/PageLayout";
 import Pagination from "../components/Pagination";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
+import ShareButton from "../components/ShareButton";
 
 interface DrillNode {
   slug: string;
   name: string;
-  images: string[];
+  drill_image: string;
   drill_creation_date: string;
   drill_updated_date?: string;
   tags: {
     skill_level?: string[];
-    team_drill?: string[];
+    team_drill?: string;
     age_level?: string[];
     fundamental_skill?: string[];
     skating_skill?: string[];
@@ -41,6 +42,15 @@ interface DrillCardData extends DrillNode {
   updatedTimestamp: number | null;
 }
 
+const FILTER_STATE_KEYS: Array<keyof FilterState> = [
+  "skill_level",
+  "team_drill",
+  "age_level",
+  "fundamental_skill",
+  "skating_skill",
+  "equipment",
+];
+
 const parseTimestamp = (value?: string): number | null => {
   if (!value) {
     return null;
@@ -50,13 +60,70 @@ const parseTimestamp = (value?: string): number | null => {
   return Number.isNaN(timestamp) ? null : timestamp;
 };
 
+const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterState => {
+  const parsedFilters: FilterState = {
+    ...DEFAULT_FILTER_STATE,
+  };
+
+  FILTER_STATE_KEYS.forEach((category) => {
+    const paramValue = searchParams.get(category);
+    if (!paramValue) {
+      return;
+    }
+
+    parsedFilters[category] = paramValue
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .sort();
+  });
+
+  return parsedFilters;
+};
+
+const areFiltersEqual = (left: FilterState, right: FilterState): boolean => {
+  return FILTER_STATE_KEYS.every((category) => {
+    const leftValues = left[category];
+    const rightValues = right[category];
+    if (leftValues.length !== rightValues.length) {
+      return false;
+    }
+
+    return leftValues.every((value, index) => value === rightValues[index]);
+  });
+};
+
+const parsePageFromSearchParams = (searchParams: URLSearchParams): number => {
+  const pageParam = searchParams.get("page");
+  if (!pageParam) {
+    return 1;
+  }
+
+  const parsed = parseInt(pageParam, 10);
+  return !Number.isNaN(parsed) && parsed > 0 ? parsed : 1;
+};
+
+const parseSortFromSearchParams = (searchParams: URLSearchParams): SortOrder => {
+  const sortParam = searchParams.get("sort");
+  if (
+    sortParam === "created_newest" ||
+    sortParam === "created_oldest" ||
+    sortParam === "updated_newest" ||
+    sortParam === "updated_oldest"
+  ) {
+    return sortParam;
+  }
+
+  return "updated_newest";
+};
+
 export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const search = location?.search || "";
   const initialSearchParams = React.useMemo(() => new URLSearchParams(search), [search]);
   const drills = React.useMemo<DrillCardData[]>(
     () =>
       data.allDrill.nodes.map((node) => {
-        const image = node.images && node.images.length > 0 ? node.images[0] : "placeholder.png";
+        const image = node.drill_image || "placeholder.png";
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
         return {
           ...node,
@@ -68,48 +135,22 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     [data.allDrill.nodes]
   );
 
-  const initialFilters = React.useMemo<FilterState>(() => {
-    const parsedFilters: FilterState = {
-      ...DEFAULT_FILTER_STATE,
-    };
-
-    Object.keys(parsedFilters).forEach((category) => {
-      const paramValue = initialSearchParams.get(category);
-      if (paramValue) {
-        parsedFilters[category as keyof FilterState] = paramValue
-          .split(",")
-          .filter((v) => v.trim());
-      }
-    });
-
-    return parsedFilters;
-  }, [initialSearchParams]);
-
-  const initialPage = React.useMemo(() => {
-    const pageParam = initialSearchParams.get("page");
-    if (!pageParam) {
-      return 1;
-    }
-
-    const parsed = parseInt(pageParam, 10);
-    return !Number.isNaN(parsed) && parsed > 0 ? parsed : 1;
-  }, [initialSearchParams]);
-
-  const initialSort = React.useMemo<SortOrder>(() => {
-    const sortParam = initialSearchParams.get("sort");
-    if (
-      sortParam === "created_newest" ||
-      sortParam === "created_oldest" ||
-      sortParam === "updated_newest" ||
-      sortParam === "updated_oldest"
-    ) {
-      return sortParam;
-    }
-    return "updated_newest";
-  }, [initialSearchParams]);
+  const initialFilters = React.useMemo<FilterState>(
+    () => parseFiltersFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialPage = React.useMemo(
+    () => parsePageFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialSort = React.useMemo<SortOrder>(
+    () => parseSortFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
 
   const {
     selectedFilters,
+    setSelectedFilters,
     tagCategories,
     filteredDrills,
     toggleFilter,
@@ -130,6 +171,20 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const hasMountedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(search);
+    const nextFilters = parseFiltersFromSearchParams(params);
+    const nextPage = parsePageFromSearchParams(params);
+    const nextSort = parseSortFromSearchParams(params);
+
+    setSelectedFilters((previous) =>
+      areFiltersEqual(previous, nextFilters) ? previous : nextFilters
+    );
+    setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
+    setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
+  }, [search, setSelectedFilters]);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -180,6 +235,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   }, [selectedFilters]);
 
   React.useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+
     setCurrentPage(1);
   }, [filterKey]);
 
@@ -243,7 +303,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               Develop your goalies during goalie-focused time or involve the whole team!
             </p>
           </div>
-          <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
+          <div className="flex-shrink-0 w-full md:w-auto flex flex-wrap justify-center md:justify-end gap-3">
+            <ShareButton
+              label="Share"
+              title="Goalie Drills — Goalie Gen"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
             <a
               href="https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
               target="_blank"
@@ -426,9 +491,21 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       <div className="mt-8 text-center">
         <Link
           to="/"
-          className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
+          className="inline-flex items-center gap-2 bg-usa-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
         >
-          ← Back to Home
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="w-5 h-5"
+          >
+            <path
+              fillRule="evenodd"
+              d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Back to Home
         </Link>
       </div>
     </PageLayout>
@@ -443,7 +520,7 @@ export const query = graphql`
       nodes {
         slug
         name
-        images
+        drill_image
         drill_creation_date
         drill_updated_date
         tags {

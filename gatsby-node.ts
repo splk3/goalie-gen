@@ -29,7 +29,13 @@ const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
-const ALLOWED_TEAM_CONCEPTS = ["power_play", "penalty_kill", "net_front_traffic", "dump_in"];
+const ALLOWED_GAME_SITUATIONS = [
+  "power_play",
+  "penalty_kill",
+  "net_front_traffic",
+  "dump_in",
+  "stick_handling",
+];
 
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
 // Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
@@ -52,18 +58,18 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml missing required field 'name' (string)`);
   }
 
-  if (!d.description || typeof d.description !== "string") {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`);
+  if (typeof d.description !== "undefined" && typeof d.description !== "string") {
+    throw new Error(`[${drillFolder}] drill.yml field 'description' must be a string`);
   }
 
-  if (typeof d.drill_steps !== "undefined" && !Array.isArray(d.drill_steps)) {
-    throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must be an array of strings`);
+  if (!Array.isArray(d.drill_steps) || d.drill_steps.length === 0) {
+    throw new Error(
+      `[${drillFolder}] drill.yml missing required field 'drill_steps' (non-empty array)`
+    );
   }
-  if (Array.isArray(d.drill_steps)) {
-    for (const step of d.drill_steps) {
-      if (typeof step !== "string") {
-        throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
-      }
+  for (const step of d.drill_steps) {
+    if (typeof step !== "string") {
+      throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
     }
   }
 
@@ -97,21 +103,53 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
 
   if (typeof d.drill_progressions !== "undefined" && !Array.isArray(d.drill_progressions)) {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of strings`
+      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of objects`
     );
   }
   if (Array.isArray(d.drill_progressions)) {
-    for (const step of d.drill_progressions) {
-      if (typeof step !== "string") {
+    if (d.drill_progressions.length > 6) {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 6 progressions`
+      );
+    }
+
+    d.drill_progressions.forEach((progression, index) => {
+      if (!progression || typeof progression !== "object" || Array.isArray(progression)) {
         throw new Error(
-          `[${drillFolder}] drill.yml field 'drill_progressions' must contain only strings`
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}]' must be an object`
         );
       }
-    }
+
+      const p = progression as Record<string, unknown>;
+
+      if (typeof p.progression_name !== "string" || p.progression_name.trim().length === 0) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_name' is required and must be a non-empty string`
+        );
+      }
+
+      if (
+        typeof p.progression_description !== "string" ||
+        p.progression_description.trim().length === 0
+      ) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_description' is required and must be a non-empty string`
+        );
+      }
+
+      if (
+        typeof p.progression_image !== "undefined" &&
+        (typeof p.progression_image !== "string" || p.progression_image.trim().length === 0)
+      ) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_image' must be a non-empty string when provided`
+        );
+      }
+    });
   }
 
-  if (!Array.isArray(d.images)) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'images' (array)`);
+  if (typeof d.drill_image !== "string" || !d.drill_image) {
+    throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_image' (string)`);
   }
 
   if (!d.tags || typeof d.tags !== "object" || Array.isArray(d.tags)) {
@@ -221,51 +259,35 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (typeof tags.team_drill !== "undefined" && !Array.isArray(tags.team_drill)) {
+  if (typeof tags.team_drill !== "undefined") {
+    if (typeof tags.team_drill !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'tags.team_drill' must be a string ('yes' or 'no')`
+      );
+    }
+    if (!ALLOWED_TEAM_DRILL.includes(tags.team_drill)) {
+      throw new Error(
+        `[${drillFolder}] invalid team_drill '${tags.team_drill}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
+      );
+    }
+  }
+
+  if (typeof tags.game_situations !== "undefined" && !Array.isArray(tags.game_situations)) {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`
+      `[${drillFolder}] drill.yml field 'tags.game_situations' must be an array of strings`
     );
   }
-  if (Array.isArray(tags.team_drill)) {
-    if (tags.team_drill.length !== 1) {
-      throw new Error(
-        `[${drillFolder}] 'tags.team_drill' must contain exactly one value ('yes' or 'no')`
-      );
-    }
-    const tdValue = tags.team_drill[0];
-    if (typeof tdValue !== "string") {
-      throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.team_drill' must contain only strings`
-      );
-    }
-    if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
-      throw new Error(
-        `[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
-      );
-    }
-  }
-
-  const isTeamDrill =
-    Array.isArray(tags.team_drill) && tags.team_drill.length === 1 && tags.team_drill[0] === "yes";
-
-  if (isTeamDrill) {
-    if (typeof tags.team_concepts !== "undefined" && !Array.isArray(tags.team_concepts)) {
-      throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.team_concepts' must be an array of strings`
-      );
-    }
-    if (Array.isArray(tags.team_concepts)) {
-      for (const concept of tags.team_concepts) {
-        if (typeof concept !== "string") {
-          throw new Error(
-            `[${drillFolder}] drill.yml field 'tags.team_concepts' must contain only strings`
-          );
-        }
-        if (!ALLOWED_TEAM_CONCEPTS.includes(concept)) {
-          throw new Error(
-            `[${drillFolder}] invalid team_concept '${concept}'. Allowed values: ${ALLOWED_TEAM_CONCEPTS.join(", ")}`
-          );
-        }
+  if (Array.isArray(tags.game_situations)) {
+    for (const concept of tags.game_situations) {
+      if (typeof concept !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.game_situations' must contain only strings`
+        );
+      }
+      if (!ALLOWED_GAME_SITUATIONS.includes(concept)) {
+        throw new Error(
+          `[${drillFolder}] invalid game_situation '${concept}'. Allowed values: ${ALLOWED_GAME_SITUATIONS.join(", ")}`
+        );
       }
     }
   }
@@ -502,7 +524,7 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         coaching_focus_points: drillData.coaching_focus_points,
         shooter_focus_points: drillData.shooter_focus_points,
         drill_progressions: drillData.drill_progressions,
-        images: drillData.images,
+        drill_image: drillData.drill_image,
         video: drillData.video,
         drill_creation_date: drillData.drill_creation_date,
         drill_updated_date: drillData.drill_updated_date,

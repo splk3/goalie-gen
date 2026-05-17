@@ -2,7 +2,7 @@ import * as React from "react";
 
 interface DrillTags {
   skill_level?: string[];
-  team_drill?: string[];
+  team_drill?: string;
   age_level?: string[];
   fundamental_skill?: string[];
   skating_skill?: string[];
@@ -84,6 +84,8 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
       Object.entries(drill.tags).forEach(([category, values]) => {
         if (Array.isArray(values)) {
           values.forEach((value) => categories[category]?.add(value));
+        } else if (typeof values === "string") {
+          categories[category]?.add(values);
         }
       });
     });
@@ -102,7 +104,12 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
 
     return drills.filter((drill) => {
       for (const activeFilter of activeFilterEntries) {
-        const drillTagValues = drill.tags[activeFilter.category as keyof DrillTags] || [];
+        const rawTagValue = drill.tags[activeFilter.category as keyof DrillTags];
+        const drillTagValues = Array.isArray(rawTagValue)
+          ? rawTagValue
+          : rawTagValue
+            ? [rawTagValue]
+            : [];
         const hasMatch = drillTagValues.some((value) => activeFilter.valueSet.has(value));
         if (!hasMatch) {
           return false;

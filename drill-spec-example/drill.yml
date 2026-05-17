@@ -1,15 +1,16 @@
 ---
 name: Drill Name
 
+# optional brief description of the drill
 description: |-
   A brief description of the drill.  This can be multiple lines and should provide
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
 
-# optional - ordered drill execution steps shown directly under description
-# drill_steps:
-#   - Drill step 1
-#   - Drill step 2
+# ordered drill execution steps shown directly under description
+drill_steps:
+  - Drill step 1
+  - Drill step 2
 
 coaching_focus_points:
   - Coaching point 1
@@ -19,11 +20,6 @@ coaching_focus_points:
 # optional - add shooter-specific cues
 # shooter_focus_points:
 #   - Shooter focus point 1
-
-# optional - use if updating existing drill
-# drill_progressions:
-#   - Add first progression step here.
-#   - Add second progression step here.
 
 # must be a list
 images:
@@ -45,8 +41,7 @@ tags:
     - intermediate
     - advanced
   # allowed values: yes or no (exactly one value)
-  team_drill:
-    - yes
+  team_drill: yes
   age_level:
     - all
     - 10U_below
@@ -73,3 +68,11 @@ tags:
     - ice_marker
     - bumpers
     - none
+
+# optional
+# drill_progressions:
+#   - progression_name: Progression 1
+#     progression_description: Add first progression step here.
+#   - progression_name: Progression 2
+#     progression_description: Add second progression step here.
+#     progression_image: progression-2.png

@@ -2,7 +2,10 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "../../types/drill";
-import { estimateDrillPdfPages } from "../estimateDrillPdfPages";
+import {
+  estimateDrillPdfPages,
+  shouldPlaceProgressionsOnSecondPage,
+} from "../estimateDrillPdfPages";
 
 const DRILLS_DIR = path.resolve(__dirname, "../../../drills");
 
@@ -44,16 +47,24 @@ describe("estimateDrillPdfPages", () => {
     }
   });
 
+  it("keeps rim-stop-cut-across at two pages total (main + dedicated progressions)", () => {
+    const rimStop = drills.find((entry) => entry.folder === "rim-stop-cut-across");
+    expect(rimStop).toBeDefined();
+    expect(shouldPlaceProgressionsOnSecondPage(rimStop!.drillData)).toBe(true);
+    expect(estimateDrillPdfPages(rimStop!.drillData)).toBe(2);
+  });
+
   it("uses larger follow-on page capacity after first-page overflow", () => {
     const shortPoint = "quick";
     const drillData = {
       name: "Estimator Capacity Regression",
       description: "Short description",
+      drill_steps: [] as string[],
       coaching_focus_points: Array.from({ length: 50 }, () => shortPoint),
       shooter_focus_points: Array.from({ length: 10 }, () => shortPoint),
-      images: [],
+      drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;
@@ -64,13 +75,14 @@ describe("estimateDrillPdfPages", () => {
   it("treats single newlines in descriptions the same as soft-wrapped spaces", () => {
     const commonDrillData = {
       name: "Description Normalization Regression",
+      drill_steps: [] as string[],
       coaching_focus_points: ["quick rep"],
-      images: [],
+      drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
-    } as Omit<DrillData, "description">;
+    } as DrillData;
 
     const softWrappedDescription =
       "This drill has a soft wrap in yaml source\nthat should not change estimated line usage.";
@@ -89,15 +101,16 @@ describe("estimateDrillPdfPages", () => {
     expect(softWrappedEstimate).toBe(spaceWrappedEstimate);
   });
 
-  it("accounts for optional drill steps when estimating page count", () => {
+  it("accounts for drill steps when estimating page count", () => {
     const baseData = {
       name: "Drill Steps Estimate",
       description: "Short description",
+      drill_steps: [] as string[],
       coaching_focus_points: Array.from({ length: 50 }, () => "quick"),
       shooter_focus_points: Array.from({ length: 10 }, () => "quick"),
-      images: [],
+      drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;
@@ -112,29 +125,135 @@ describe("estimateDrillPdfPages", () => {
     expect(withSteps).toBeGreaterThan(withoutSteps);
   });
 
-  it("accounts for a long drill name that expands the header when estimating page count", () => {
-    // 22 short coaching points produces content just under the short-name first-page limit
-    // but just over the long-name first-page limit (the expanded header reduces available
-    // space by ~5 mm, which is enough to push this drill to a second page).
+  it("accounts for a long drill name header without under-estimating page count", () => {
+    // With the current compact Skills Focus sizing, this dataset now fits on one page
+    // for both short and long names, but the long-name estimate must never be lower.
     const baseDrillData = {
       name: "Short Name",
       description: "Short",
+      drill_steps: [] as string[],
       coaching_focus_points: Array.from({ length: 22 }, () => "quick"),
-      images: [],
+      drill_image: "",
       tags: {
-        team_drill: ["no"],
+        team_drill: "no",
       },
       drill_creation_date: "2026-01-01",
     } as DrillData;
 
-    // Name > 80 chars wraps to 3 lines in the header title area (TITLE_CHARS_PER_LINE = 40),
-    // reducing available first-page space by ~5 mm compared to a short, single-line name.
+    // Name > 80 chars wraps to 3 lines in the header title area (TITLE_CHARS_PER_LINE = 40).
     const longNameDrillData: DrillData = {
       ...baseDrillData,
       name: "A Very Long Drill Name That Must Wrap to Three Lines in the PDF Header Title Area",
     };
 
     expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
-    expect(estimateDrillPdfPages(longNameDrillData)).toBe(2);
+    expect(estimateDrillPdfPages(longNameDrillData)).toBeGreaterThanOrEqual(
+      estimateDrillPdfPages(baseDrillData)
+    );
+  });
+
+  it("does not force a second page when progression images still fit on one page", () => {
+    const baseDrillData = {
+      name: "Progression Image Page Estimate",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus one"],
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Description 1",
+        },
+      ],
+    } as DrillData;
+
+    const withProgressionImage: DrillData = {
+      ...baseDrillData,
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Description 1",
+          progression_image: "progression-1.png",
+        },
+      ],
+    };
+
+    expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
+    expect(estimateDrillPdfPages(withProgressionImage)).toBe(1);
+    expect(shouldPlaceProgressionsOnSecondPage(withProgressionImage)).toBe(false);
+  });
+
+  it("does not force a second page when no progressions are present", () => {
+    const noProgressionsData = {
+      name: "No Progressions",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus one"],
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(noProgressionsData)).toBe(false);
+    expect(estimateDrillPdfPages(noProgressionsData)).toBe(1);
+  });
+
+  it("places progressions on a second page when full drill content cannot fit one page", () => {
+    const overflowData = {
+      name: "Progression Overflow Estimate",
+      description: "Short",
+      drill_steps: Array.from({ length: 40 }, (_, index) => `Step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 20 }, () => "Focus detail"),
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Description 1",
+          progression_image: "progression-1.png",
+        },
+      ],
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(overflowData)).toBe(true);
+    expect(estimateDrillPdfPages(overflowData)).toBeGreaterThan(1);
+  });
+
+  it("can place text-only progressions on a second page when inline content overflows", () => {
+    const overflowWithoutImages = {
+      name: "Text Progression Overflow",
+      description: "Short",
+      drill_steps: Array.from({ length: 36 }, (_, index) => `Step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 16 }, () => "Focus detail"),
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description:
+            "Longer progression details intended to consume enough inline space to trigger dedicated progression pagination behavior.",
+        },
+        {
+          progression_name: "Progression 2",
+          progression_description:
+            "Additional progression text to ensure the overall inline render would exceed one page before moving progressions.",
+        },
+      ],
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(overflowWithoutImages)).toBe(true);
+    expect(estimateDrillPdfPages(overflowWithoutImages)).toBeGreaterThan(1);
   });
 });

@@ -1,6 +1,7 @@
 import type { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
 import { normalizeDrillDescription } from "./normalizeDrillDescription";
+import { shouldPlaceProgressionsOnSecondPage } from "./estimateDrillPdfPages";
 import {
   buildCacheBustedAssetPath,
   DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
@@ -164,20 +165,23 @@ export const generateDrillPdf = async (
   const contentBottomLimit = footerSeparatorY - 8;
 
   // Pre-load all static header/footer images in parallel so none of the
-  // three network round-trips blocks the others.
+  // network round-trips blocks the others.
   onProgress?.("Loading images...");
-  const [goldLogoResult, leftLogoResult, rightLogoResult] = await Promise.allSettled([
+  const [goldLogoResult, leftLogoResult, rightLogoResult, ggLogoResult] = await Promise.allSettled([
     loadImageAsDataURL(
       buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
     ),
     loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
     loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
   ]);
 
   const goldLogoInfo = goldLogoResult.status === "fulfilled" ? goldLogoResult.value : null;
   if (goldLogoResult.status === "rejected") {
     console.error("Error loading gold certification logo:", goldLogoResult.reason);
   }
+
+  const ggLogoInfo = ggLogoResult.status === "fulfilled" ? ggLogoResult.value : null;
 
   const goldText =
     "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com";
@@ -186,6 +190,11 @@ export const generateDrillPdf = async (
   const drawPageFooter = () => {
     if (!goldLogoInfo) return;
     const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight;
+
+    // GG logo (right side) — sized to the same height as the gold cert logo
+    const ggLogoWidth = ggLogoInfo ? (ggLogoInfo.width / ggLogoInfo.height) * goldLogoHeight : 0;
+    const ggLogoX = pageWidth - margin - ggLogoWidth;
+
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
     doc.line(margin, footerSeparatorY, pageWidth - margin, footerSeparatorY);
@@ -193,101 +202,111 @@ export const generateDrillPdf = async (
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(7);
     doc.setFont(undefined, "normal");
-    const goldTextLines = doc.splitTextToSize(
-      goldText,
-      pageWidth - margin - goldLogoWidth - margin - 4
-    );
+
+    // Gold text spans between the two logos
+    const textRightEdge = ggLogoInfo ? ggLogoX - 4 : pageWidth - margin;
+    const goldTextLines = doc.splitTextToSize(goldText, textRightEdge - margin - goldLogoWidth - 4);
     doc.text(goldTextLines, margin + goldLogoWidth + 4, footerLogoY + 5);
+
+    // GG logo with white circular background
+    if (ggLogoInfo) {
+      const cx = ggLogoX + ggLogoWidth / 2;
+      const cy = footerLogoY + goldLogoHeight / 2;
+      const r = Math.max(ggLogoWidth, goldLogoHeight) / 2 + 1;
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx, cy, r, "F");
+      doc.addImage(ggLogoInfo.dataURL, "PNG", ggLogoX, footerLogoY, ggLogoWidth, goldLogoHeight);
+    }
   };
 
   // Track which page we are on so callers can detect multi-page output
   let currentPageNum = 1;
 
+  const startNewPage = (): number => {
+    drawPageFooter();
+    doc.addPage();
+    currentPageNum++;
+    return margin + 5;
+  };
+
   // If `neededHeight` mm of content won't fit below `currentY`, draw the footer on the
   // current page, add a new page, and return the Y position at the top of the new page.
   const ensureSpace = (currentY: number, neededHeight: number): number => {
     if (currentY + neededHeight > contentBottomLimit) {
-      drawPageFooter();
-      doc.addPage();
-      currentPageNum++;
-      return margin + 5;
+      return startNewPage();
     }
     return currentY;
   };
 
-  let currentY = 15;
+  const drawPageHeader = (title: string): number => {
+    let headerY = 15;
 
-  // Header with USA Hockey logos and title — use the already-loaded results.
-  if (leftLogoResult.status === "fulfilled" && rightLogoResult.status === "fulfilled") {
-    const leftLogoInfo = leftLogoResult.value;
-    const rightLogoInfo = rightLogoResult.value;
+    // Header with USA Hockey logos and title — use the already-loaded results.
+    if (leftLogoResult.status === "fulfilled" && rightLogoResult.status === "fulfilled") {
+      const leftLogoInfo = leftLogoResult.value;
+      const rightLogoInfo = rightLogoResult.value;
 
-    const logoHeight = 16;
-    const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
-    const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight;
+      const logoHeight = 16;
+      const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
+      const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight;
 
-    doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, currentY, leftLogoWidth, logoHeight);
-    doc.addImage(
-      rightLogoInfo.dataURL,
-      "JPEG",
-      pageWidth - margin - rightLogoWidth,
-      currentY,
-      rightLogoWidth,
-      logoHeight
-    );
+      doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, headerY, leftLogoWidth, logoHeight);
+      doc.addImage(
+        rightLogoInfo.dataURL,
+        "JPEG",
+        pageWidth - margin - rightLogoWidth,
+        headerY,
+        rightLogoWidth,
+        logoHeight
+      );
 
-    // Render the drill name as the header title, centered between the logos
-    const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(16);
-    doc.setFont(undefined, "bold");
-    const titleAvailableWidth =
-      pageWidth - 2 * margin - leftLogoWidth - rightLogoWidth - 2 * titleHorizontalPaddingMm;
-    const titleCenterX =
-      margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
-    const titleLines = doc.splitTextToSize(drillData.name, titleAvailableWidth);
-    // Use jsPDF's own text metrics to avoid hardcoded line-height values
-    const titleDimensions = doc.getTextDimensions(drillData.name, {
-      maxWidth: titleAvailableWidth,
-    });
-    const titleTotalHeight = titleDimensions.h;
-    // Per-character height (baseline offset) derived from jsPDF font metrics
-    const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
-    // Expand header area only if multi-line title exceeds the logo height
-    const effectiveHeaderHeight = Math.max(logoHeight, titleTotalHeight);
-    // Vertically center the text block; doc.text positions text at the first baseline
-    const titleFirstLineY =
-      currentY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
-    doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
+      const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.setFontSize(16);
+      doc.setFont(undefined, "bold");
+      const titleAvailableWidth =
+        pageWidth - 2 * margin - leftLogoWidth - rightLogoWidth - 2 * titleHorizontalPaddingMm;
+      const titleCenterX =
+        margin + leftLogoWidth + titleHorizontalPaddingMm + titleAvailableWidth / 2;
+      const titleLines = doc.splitTextToSize(title, titleAvailableWidth);
+      const titleDimensions = doc.getTextDimensions(title, {
+        maxWidth: titleAvailableWidth,
+      });
+      const titleTotalHeight = titleDimensions.h;
+      const titleCharHeight = doc.getFontSize() / doc.internal.scaleFactor;
+      const effectiveHeaderHeight = Math.max(logoHeight, titleTotalHeight);
+      const titleFirstLineY =
+        headerY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
+      doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
 
-    currentY += effectiveHeaderHeight + 4;
-
-    doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
-    doc.setLineWidth(2);
-    doc.line(margin, currentY, pageWidth - margin, currentY);
-    currentY += 8;
-  } else {
-    if (leftLogoResult.status === "rejected") {
-      console.error("Error loading header images:", leftLogoResult.reason);
-    } else if (rightLogoResult.status === "rejected") {
-      console.error("Error loading header images:", rightLogoResult.reason);
+      headerY += effectiveHeaderHeight + 4;
+    } else {
+      if (leftLogoResult.status === "rejected") {
+        console.error("Error loading header images:", leftLogoResult.reason);
+      } else if (rightLogoResult.status === "rejected") {
+        console.error("Error loading header images:", rightLogoResult.reason);
+      }
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.setFontSize(16);
+      doc.setFont(undefined, "bold");
+      const fallbackTitleWidth = pageWidth - 2 * margin;
+      const fallbackTitleLines = doc.splitTextToSize(title, fallbackTitleWidth);
+      const fallbackDimensions = doc.getTextDimensions(title, {
+        maxWidth: fallbackTitleWidth,
+      });
+      doc.text(fallbackTitleLines, pageWidth / 2, headerY, { align: "center" });
+      headerY += fallbackDimensions.h + 4;
     }
-    // No logos: render the drill name centered across the full page
-    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-    doc.setFontSize(16);
-    doc.setFont(undefined, "bold");
-    const fallbackTitleWidth = pageWidth - 2 * margin;
-    const fallbackTitleLines = doc.splitTextToSize(drillData.name, fallbackTitleWidth);
-    const fallbackDimensions = doc.getTextDimensions(drillData.name, {
-      maxWidth: fallbackTitleWidth,
-    });
-    doc.text(fallbackTitleLines, pageWidth / 2, currentY, { align: "center" });
-    currentY += fallbackDimensions.h + 4;
+
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
     doc.setLineWidth(2);
-    doc.line(margin, currentY, pageWidth - margin, currentY);
-    currentY += 8;
-  }
+    doc.line(margin, headerY, pageWidth - margin, headerY);
+
+    return headerY + 8;
+  };
+
+  let currentY = drawPageHeader(drillData.name);
+  const rightColumnStartY = currentY;
 
   // Tags section - bold labels, normal values, equipment on separate line
   doc.setFontSize(9);
@@ -328,105 +347,143 @@ export const generateDrillPdf = async (
 
   currentY += 2;
 
-  // Column layout: wider left column for more text, narrower right column for images.
-  // An 8 mm inter-column gap replaces the old full-margin gap, giving the left column
-  // ~29% more width. The right column's right edge aligns with the page's right margin.
-  const interColumnGap = 8;
-  const rightColumnWidth = 65;
-  const leftColumnWidth = pageWidth - 2 * margin - interColumnGap - rightColumnWidth; // ~97 mm
+  // Column layout: slightly text-prioritized split for better one-page fit.
+  // A tighter 6 mm inter-column gap plus a modest wider left column reduces
+  // line wraps in Drill Information while preserving overall visual balance.
+  const interColumnGap = 6;
+  const twoColumnContentWidth = pageWidth - 2 * margin - interColumnGap;
+  const leftColumnWidth = twoColumnContentWidth * 0.58;
+  const rightColumnWidth = twoColumnContentWidth - leftColumnWidth;
   const rightColumnX = margin + leftColumnWidth + interColumnGap;
   const contentStartY = currentY;
 
-  // --- RIGHT COLUMN: Images (rendered first so they always land on page 1) ---
-  // Load all drill images in parallel so network round-trips overlap.
-  const imageInfos: Array<{ dataURL: string; width: number; height: number }> = [];
+  // --- RIGHT COLUMN: Image (rendered first so it always lands on page 1) ---
+  let drillImageInfo: { dataURL: string; width: number; height: number } | null = null;
 
-  if (drillData.images && drillData.images.length > 0) {
-    const drillImageResults = await Promise.allSettled(
-      drillData.images.map((imageName) => {
-        const imagePath = `/drills/${drillFolder}/${imageName}`;
-        return loadImageAsDataURL(buildCacheBustedAssetPath(imagePath));
-      })
-    );
+  if (drillData.drill_image) {
+    const imagePath = `/drills/${drillFolder}/${drillData.drill_image}`;
+    const result = await Promise.allSettled([
+      loadImageAsDataURL(buildCacheBustedAssetPath(imagePath)),
+    ]);
+    if (result[0].status === "fulfilled") {
+      drillImageInfo = result[0].value;
+    } else {
+      console.error(`Error loading drill image (${drillData.drill_image}):`, result[0].reason);
+    }
+  }
 
-    drillImageResults.forEach((result, i) => {
-      if (result.status === "fulfilled") {
-        imageInfos.push(result.value);
-      } else {
-        console.error(`Error loading image ${i + 1} (${drillData.images[i]}):`, result.reason);
+  const progressions = drillData.drill_progressions || [];
+  const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
+  const hasProgressionImages = progressions.some(
+    (progression) =>
+      progression.progression_image !== undefined && progression.progression_image.trim().length > 0
+  );
+  const progressionImageInfoByIndex = new Map<
+    number,
+    { dataURL: string; width: number; height: number }
+  >();
+
+  if (hasProgressionImages) {
+    const progressionImagePromises = progressions.map((progression, index) => {
+      if (!progression.progression_image || progression.progression_image.trim().length === 0) {
+        return Promise.resolve({
+          index,
+          result: null as Awaited<ReturnType<typeof loadImageAsDataURL>> | null,
+        });
+      }
+      const imagePath = `/drills/${drillFolder}/${progression.progression_image}`;
+      return loadImageAsDataURL(buildCacheBustedAssetPath(imagePath))
+        .then((result) => ({ index, result }))
+        .catch((error: unknown) => {
+          console.error(
+            `Error loading progression image (${progression.progression_image}):`,
+            error
+          );
+          return { index, result: null };
+        });
+    });
+    const progressionImageResults = await Promise.all(progressionImagePromises);
+    progressionImageResults.forEach(({ index, result }) => {
+      if (result) {
+        progressionImageInfoByIndex.set(index, result);
       }
     });
   }
 
   onProgress?.("Generating PDF...");
 
-  let rightY = contentStartY;
+  let rightY = rightColumnStartY;
 
-  if (imageInfos.length > 0) {
+  if (drillImageInfo) {
     const maxImageWidth = rightColumnWidth;
-    // Distribute the full right-column height equally across all images so they all
-    // fit on page 1. Gaps between images are accounted for before dividing.
-    const totalGaps = (imageInfos.length - 1) * 4;
-    const availableHeight = contentBottomLimit - contentStartY - totalGaps;
-    const maxImageHeight = availableHeight / imageInfos.length;
+    const maxImageHeight = contentBottomLimit - rightColumnStartY;
+    const aspectRatio = drillImageInfo.width / drillImageInfo.height;
+    let imgWidth = maxImageWidth;
+    let imgHeight = imgWidth / aspectRatio;
 
-    imageInfos.forEach((imageInfo) => {
-      const aspectRatio = imageInfo.width / imageInfo.height;
-      let imgWidth = maxImageWidth;
-      let imgHeight = imgWidth / aspectRatio;
+    if (imgHeight > maxImageHeight) {
+      imgHeight = maxImageHeight;
+      imgWidth = imgHeight * aspectRatio;
+    }
 
-      // Shrink to fit the allocated height slice if needed
-      if (imgHeight > maxImageHeight) {
-        imgHeight = maxImageHeight;
-        imgWidth = imgHeight * aspectRatio;
-      }
-
-      // Right-align image so its right edge meets the page's right margin
-      const imgX = rightColumnX + rightColumnWidth - imgWidth;
-      doc.addImage(imageInfo.dataURL, "PNG", imgX, rightY, imgWidth, imgHeight);
-      rightY += imgHeight + 4;
-    });
+    // Right-align image so its right edge meets the page's right margin
+    const imgX = rightColumnX + rightColumnWidth - imgWidth;
+    doc.addImage(drillImageInfo.dataURL, "PNG", imgX, rightY, imgWidth, imgHeight);
+    rightY += imgHeight + 4;
   }
 
-  // --- LEFT COLUMN: Text sections (may overflow to additional pages) ---
+  const mainLineHeight = 3.2;
+
+  // --- LEFT COLUMN: Drill Information (description + steps) only ---
   // Images have already been placed on page 1; ensureSpace page breaks apply only to text here.
   let leftY = contentStartY;
 
-  // Description
+  // Drill Information (description optional + required steps)
   leftY = ensureSpace(leftY, 16); // heading + at least one text line
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
-  doc.text("Description", margin, leftY);
-  leftY += 5;
+  doc.text("Drill Information", margin, leftY);
+  leftY += 3.5;
 
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
   doc.setFont(undefined, "normal");
-  const normalizedDescription = normalizeDrillDescription(drillData.description);
-  const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
-  leftY = ensureSpace(leftY, descriptionLines.length * 4);
-  doc.text(descriptionLines, margin, leftY);
-  leftY += descriptionLines.length * 4 + 3;
-
-  // Drill Steps (optional, no heading)
-  if (drillData.drill_steps && drillData.drill_steps.length > 0) {
-    for (const [index, step] of drillData.drill_steps.entries()) {
-      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
-      doc.text(stepLines, margin + 3, leftY);
-      leftY += stepLines.length * 4 + 1;
-    }
-    leftY += 2;
+  if (drillData.description) {
+    const normalizedDescription = normalizeDrillDescription(drillData.description);
+    const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
+    leftY = ensureSpace(leftY, descriptionLines.length * mainLineHeight);
+    doc.text(descriptionLines, margin, leftY);
+    leftY += descriptionLines.length * mainLineHeight + 2.5;
   }
 
-  // Coaching Focus Points
-  leftY = ensureSpace(leftY, 12); // heading + at least one bullet
+  // Drill Steps (required)
+  for (const [index, step] of drillData.drill_steps.entries()) {
+    const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
+    leftY = ensureSpace(leftY, stepLines.length * mainLineHeight + 1);
+    doc.text(stepLines, margin + 3, leftY);
+    leftY += stepLines.length * mainLineHeight + 1;
+  }
+  leftY += 1.5;
+
+  // Determine starting Y for the full-width sections below the two-column layout.
+  // If the left column overflowed to a new page, we are already on that page.
+  let sectionY: number;
+  if (currentPageNum > 1) {
+    sectionY = leftY + 3;
+  } else {
+    sectionY = Math.max(leftY, rightY) + 3;
+  }
+
+  const fullWidth = pageWidth - 2 * margin;
+
+  // Coaching Focus Points (full width)
+  sectionY = ensureSpace(sectionY, 12); // heading + at least one bullet
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
-  doc.text("Coaching Focus Points", margin, leftY);
-  leftY += 5;
+  doc.text("Coaching Focus Points", margin, sectionY);
+  sectionY += 3.5;
 
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
@@ -434,86 +491,107 @@ export const generateDrillPdf = async (
 
   if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
     for (const point of drillData.coaching_focus_points) {
-      const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, pointLines.length * 4 + 1);
-      doc.text(pointLines, margin + 3, leftY);
-      leftY += pointLines.length * 4 + 1;
+      const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, pointLines.length * mainLineHeight + 1);
+      doc.text(pointLines, margin + 3, sectionY);
+      sectionY += pointLines.length * mainLineHeight + 1;
     }
   }
 
-  // Shooter Focus Points (optional)
+  // Shooter Focus Points (optional, full width)
   if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
-    leftY += 2;
-    leftY = ensureSpace(leftY, 12); // heading + at least one bullet
+    sectionY += 1.5;
+    sectionY = ensureSpace(sectionY, 12); // heading + at least one bullet
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
-    doc.text("Shooter Focus Points", margin, leftY);
-    leftY += 5;
+    doc.text("Shooter Focus Points", margin, sectionY);
+    sectionY += 3.5;
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
     doc.setFont(undefined, "normal");
 
     for (const point of drillData.shooter_focus_points) {
-      const pointLines = doc.splitTextToSize(`• ${point}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, pointLines.length * 4 + 1);
-      doc.text(pointLines, margin + 3, leftY);
-      leftY += pointLines.length * 4 + 1;
+      const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, pointLines.length * mainLineHeight + 1);
+      doc.text(pointLines, margin + 3, sectionY);
+      sectionY += pointLines.length * mainLineHeight + 1;
     }
   }
 
-  // Drill Progressions (optional)
-  if (drillData.drill_progressions && drillData.drill_progressions.length > 0) {
-    leftY += 2;
-    leftY = ensureSpace(leftY, 12); // heading + at least one step
+  // Drill Progressions (optional, full width) only when not moved to dedicated page.
+  if (progressions.length > 0 && !shouldMoveProgressionsToSecondPage) {
+    sectionY += 2;
+    sectionY = ensureSpace(sectionY, 12); // heading + at least one step
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
-    doc.text("Drill Progressions", margin, leftY);
-    leftY += 5;
+    doc.text("Drill Progressions", margin, sectionY);
+    sectionY += 4;
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
-    doc.setFont(undefined, "normal");
+    for (const [index, progression] of progressions.entries()) {
+      const progressionName = `• ${progression.progression_name}:`;
+      const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
+      sectionY = ensureSpace(sectionY, nameLines.length * mainLineHeight + 1);
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      doc.setFont(undefined, "bold");
+      doc.text(nameLines, margin + 3, sectionY);
+      sectionY += nameLines.length * mainLineHeight + 1;
 
-    for (const [index, step] of drillData.drill_progressions.entries()) {
-      const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-      leftY = ensureSpace(leftY, stepLines.length * 4 + 1);
-      doc.text(stepLines, margin + 3, leftY);
-      leftY += stepLines.length * 4 + 1;
+      const progressionImageInfo = progressionImageInfoByIndex.get(index);
+      if (progressionImageInfo) {
+        const maxImageWidth = Math.min(fullWidth - 12, 80);
+        const maxImageHeight = 34;
+        const aspectRatio = progressionImageInfo.width / progressionImageInfo.height;
+        let imgWidth = maxImageWidth;
+        let imgHeight = imgWidth / aspectRatio;
+        if (imgHeight > maxImageHeight) {
+          imgHeight = maxImageHeight;
+          imgWidth = imgHeight * aspectRatio;
+        }
+
+        sectionY = ensureSpace(sectionY, imgHeight + 3);
+        const imgX = margin + (fullWidth - imgWidth) / 2;
+        doc.addImage(progressionImageInfo.dataURL, "PNG", imgX, sectionY, imgWidth, imgHeight);
+        sectionY += imgHeight + 2;
+      }
+
+      const descriptionLines = doc.splitTextToSize(
+        progression.progression_description,
+        fullWidth - 5
+      );
+      sectionY = ensureSpace(sectionY, descriptionLines.length * mainLineHeight + 1);
+      doc.setFont(undefined, "normal");
+      doc.text(descriptionLines, margin + 6, sectionY);
+      sectionY += descriptionLines.length * mainLineHeight + 1;
     }
   }
 
-  // Determine starting Y for the sections below the two-column layout.
-  // If the left column overflowed to a new page, we are already on that page.
-  let sectionY: number;
-  if (currentPageNum > 1) {
-    sectionY = leftY + 4;
-  } else {
-    sectionY = Math.max(leftY, rightY) + 4;
-  }
+  sectionY += 4;
 
   // Border line before Skills Focus
   sectionY = ensureSpace(sectionY, 50); // separator + heading + skills content
   doc.setDrawColor(150, 150, 150);
   doc.setLineWidth(0.5);
   doc.line(margin, sectionY, pageWidth - margin, sectionY);
-  sectionY += 4;
+  sectionY += 3;
 
   // Skills Focus section
   doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
   doc.setFontSize(12);
   doc.setFont(undefined, "bold");
   doc.text("Skills Focus", margin, sectionY);
-  sectionY += 5;
+  sectionY += 4;
 
-  const isTeamDrill = drillData.tags.team_drill?.[0] === "yes";
-  const hasTeamConcepts =
-    isTeamDrill && drillData.tags.team_concepts && drillData.tags.team_concepts.length > 0;
+  const hasGameSituations =
+    drillData.tags.game_situations !== undefined && drillData.tags.game_situations.length > 0;
 
-  // Use 3-column layout when team concepts are present; otherwise 2-column
-  const colWidth = (pageWidth - 2 * margin) / (hasTeamConcepts ? 3 : 2);
+  // Use 3-column layout when game situations are present; otherwise 2-column
+  const colWidth = (pageWidth - 2 * margin) / (hasGameSituations ? 3 : 2);
 
   const skillsLeftX = margin;
   const skillsRightX = margin + colWidth;
@@ -530,11 +608,11 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Fundamental Skills:", skillsLeftX, skillsLeftY);
     doc.setFont(undefined, "normal");
-    skillsLeftY += 4;
+    skillsLeftY += 3;
 
     drillData.tags.fundamental_skill.forEach((skill) => {
       doc.text(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
-      skillsLeftY += 4;
+      skillsLeftY += 3;
     });
   }
 
@@ -542,48 +620,130 @@ export const generateDrillPdf = async (
     doc.setFont(undefined, "bold");
     doc.text("Skating Skills:", skillsRightX, skillsRightY);
     doc.setFont(undefined, "normal");
-    skillsRightY += 4;
+    skillsRightY += 3;
 
     drillData.tags.skating_skill.forEach((skill) => {
       doc.text(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY);
-      skillsRightY += 4;
+      skillsRightY += 3;
     });
   }
 
-  if (hasTeamConcepts) {
+  if (hasGameSituations) {
     doc.setFont(undefined, "bold");
-    doc.text("Team Concepts:", skillsThirdX, skillsThirdY);
+    doc.text("Game Situations:", skillsThirdX, skillsThirdY);
     doc.setFont(undefined, "normal");
-    skillsThirdY += 4;
+    skillsThirdY += 3;
 
-    drillData.tags.team_concepts.forEach((concept) => {
-      doc.text(`• ${formatTag(concept)}`, skillsThirdX + 3, skillsThirdY);
-      skillsThirdY += 4;
+    drillData.tags.game_situations!.forEach((situation) => {
+      doc.text(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
+      skillsThirdY += 3;
     });
   }
 
   // Video section — URL only, no thumbnail image
   if (drillData.video) {
-    sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 4;
+    sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
     const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
-    sectionY = ensureSpace(sectionY, 9 + videoLines.length * 4);
+    sectionY = ensureSpace(sectionY, 9 + videoLines.length * mainLineHeight);
 
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
     doc.line(margin, sectionY, pageWidth - margin, sectionY);
-    sectionY += 4;
+    sectionY += 3;
 
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
     doc.text("Video Demonstration", margin, sectionY);
-    sectionY += 5;
+    sectionY += 4;
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setFont(undefined, "normal");
     doc.text(videoLines, margin, sectionY);
-    sectionY += videoLines.length * 4;
+    sectionY += videoLines.length * mainLineHeight;
+  }
+
+  // Dedicated progression page is triggered by overall inline overflow, regardless
+  // of whether progression images are present.
+  if (progressions.length > 0 && shouldMoveProgressionsToSecondPage) {
+    startNewPage();
+    let progressionsY = drawPageHeader(drillData.name);
+
+    const progressionsTitleHeight = 8;
+    progressionsY = ensureSpace(progressionsY, progressionsTitleHeight);
+    doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("Drill Progressions", margin, progressionsY);
+    progressionsY += 6;
+
+    const columnGap = 8;
+    const progressionColumnWidth = (pageWidth - 2 * margin - columnGap) / 2;
+    const leftColumnX = margin;
+    const rightColumnX = margin + progressionColumnWidth + columnGap;
+    const rowGap = 4;
+    const rowsPerColumn = 3;
+    const availableProgressionHeight = contentBottomLimit - progressionsY;
+    const progressionBoxHeight =
+      (availableProgressionHeight - rowGap * (rowsPerColumn - 1)) / rowsPerColumn;
+
+    progressions.slice(0, 6).forEach((progression, index) => {
+      const columnIndex = index >= 3 ? 1 : 0;
+      const rowIndex = index % 3;
+      const boxX = columnIndex === 0 ? leftColumnX : rightColumnX;
+      const boxY = progressionsY + rowIndex * (progressionBoxHeight + rowGap);
+      const boxWidth = progressionColumnWidth;
+      const boxHeight = progressionBoxHeight;
+      const boxPadding = 3;
+
+      doc.setDrawColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.setLineWidth(0.7);
+      doc.rect(boxX, boxY, boxWidth, boxHeight);
+
+      const contentX = boxX + boxPadding;
+      let contentY = boxY + boxPadding + 2;
+      const contentWidth = boxWidth - boxPadding * 2;
+      const contentBottom = boxY + boxHeight - boxPadding;
+
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      doc.setFont(undefined, "bold");
+      const nameLines = doc.splitTextToSize(progression.progression_name, contentWidth);
+      const clampedNameLines = nameLines.slice(0, 2);
+      doc.text(clampedNameLines, contentX, contentY);
+      contentY += clampedNameLines.length * 3.8 + 2;
+
+      doc.setFont(undefined, "normal");
+      doc.setFontSize(9);
+      const descriptionLines = doc.splitTextToSize(
+        progression.progression_description,
+        contentWidth
+      );
+      const descriptionLineHeight = 3.6;
+      const descriptionHeight = descriptionLines.length * descriptionLineHeight;
+      const progressionImageInfo = progressionImageInfoByIndex.get(index);
+
+      if (progressionImageInfo) {
+        // Always prioritize full description text; shrink image to whatever space remains.
+        const imageSpaceHeight = Math.max(0, contentBottom - contentY - descriptionHeight - 2);
+        if (imageSpaceHeight > 0) {
+          const imageAspectRatio = progressionImageInfo.width / progressionImageInfo.height;
+          let imgWidth = contentWidth;
+          let imgHeight = imgWidth / imageAspectRatio;
+          if (imgHeight > imageSpaceHeight) {
+            imgHeight = imageSpaceHeight;
+            imgWidth = imgHeight * imageAspectRatio;
+          }
+          const imgX = contentX + (contentWidth - imgWidth) / 2;
+          doc.addImage(progressionImageInfo.dataURL, "PNG", imgX, contentY, imgWidth, imgHeight);
+          contentY += imgHeight + 2;
+        }
+      }
+
+      // Do not truncate description lines. Image is reduced/omitted first to preserve text.
+      doc.text(descriptionLines, contentX, contentY);
+    });
   }
 
   // Draw the footer on the last (current) page
