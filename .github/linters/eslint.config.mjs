@@ -8,7 +8,8 @@ import pluginVue from "eslint-plugin-vue";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import pkg from "@eslint/eslintrc";
+const { FlatCompat } = pkg;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
