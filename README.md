@@ -61,6 +61,7 @@ The site uses USA national colors:
 ```text
 ├── src/
 │   ├── components/       # React components (TypeScript)
+│   │   ├── BackLinkButton.tsx
 │   │   ├── DarkModeToggle.tsx
 │   │   ├── DownloadDrillPdfButton.tsx
 │   │   ├── DownloadMaterialButton.tsx
@@ -70,6 +71,7 @@ The site uses USA national colors:
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
+│   │   ├── HamburgerMenu.tsx
 │   │   ├── INeedADrillButton.tsx
 │   │   ├── ImageUploader.tsx
 │   │   ├── Logo.tsx
@@ -78,6 +80,7 @@ The site uses USA national colors:
 │   │   ├── PageLayout.tsx
 │   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
+│   │   ├── ShareButton.tsx
 │   │   ├── TermsPopup.tsx
 │   │   ├── UsaHockeyGoldBanner.tsx
 │   │   └── __tests__/     # Unit tests for components
@@ -121,7 +124,7 @@ The site uses USA national colors:
 │   ├── test-drill-beginner/
 │   ├── test-drill-intermediate/
 │   └── test-drill-max-content/
-├── drills_samples/       # Drill specification examples
+├── drill-spec-example/   # Drill specification example
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
 │   ├── favicons/        # Site icons
@@ -156,7 +159,7 @@ The site uses USA national colors:
 
 ## 🧊 Drills
 
-Drill examples live in [drills_samples/](drills_samples/) and the full field specification is in [drills_samples/test-drill-spec/drill.yml](drills_samples/test-drill-spec/drill.yml).
+Drill examples live in [drill-spec-example/](drill-spec-example/) and the full field specification is in [drill-spec-example/drill.yml](drill-spec-example/drill.yml).
 
 Active drills that appear on the site are in the [drills/](drills/) directory. Each drill gets its own dynamically generated page at `/drills/{drill-folder-name}` via the `gatsby-node.ts` configuration.
 
