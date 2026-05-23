@@ -183,7 +183,7 @@ All other fields are optional. Known optional fields include:
 - `description` — optional string shown above drill steps
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
-- `drill_progressions` — array of up to 6 progression objects. Each progression object requires:
+- `drill_progressions` — array of up to 8 progression objects. Each progression object requires:
   - `progression_name` (string)
   - `progression_description` (string)
   - `progression_image` (optional string filename)

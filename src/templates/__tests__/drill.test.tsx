@@ -156,17 +156,11 @@ describe("DrillTemplate", () => {
           ...basePageContext,
           drillData: {
             ...basePageContext.drillData,
-            drill_progressions: [
-              {
-                progression_name: "Progression 1",
-                progression_description: "Progression details here",
-              },
-              {
-                progression_name: "Progression 2",
-                progression_description: "Progression with image",
-                progression_image: "progression-2.png",
-              },
-            ],
+            drill_progressions: Array.from({ length: 8 }, (_, index) => ({
+              progression_name: `Progression ${index + 1}`,
+              progression_description: `Progression details ${index + 1}`,
+              ...(index === 1 ? { progression_image: "progression-2.png" } : {}),
+            })),
           },
         }}
       />
@@ -174,9 +168,9 @@ describe("DrillTemplate", () => {
 
     expect(screen.getByText("Drill Progressions")).toBeInTheDocument();
     expect(screen.getByText("Progression 1")).toBeInTheDocument();
-    expect(screen.getByText("Progression details here")).toBeInTheDocument();
-    expect(screen.getByText("Progression 2")).toBeInTheDocument();
-    expect(screen.getByText("Progression with image")).toBeInTheDocument();
+    expect(screen.getByText("Progression details 1")).toBeInTheDocument();
+    expect(screen.getByText("Progression 8")).toBeInTheDocument();
+    expect(screen.getByText("Progression details 8")).toBeInTheDocument();
     expect(screen.getByAltText("Progression 2 diagram")).toBeInTheDocument();
   });
 

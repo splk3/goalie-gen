@@ -14,7 +14,7 @@ body:
         ## Submitter Instructions
 
         - Fill out the drill information by answering the questions below.
-        - Attach any diagrams/images to this issue in the final **Drill Diagram** section.
+        - Attach any diagrams/images in the progression description fields or the final **Drill Diagram** section.
         - If you have any trouble with the drill submission process, email us at 
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
@@ -200,7 +200,7 @@ body:
       value: |
         ## Drill Progressions (Optional)
 
-        Add up to 6 progression entries. Leave any progression fields blank if not needed.
+        Add up to 8 progression entries. Leave any progression fields blank if not needed.
 
   - type: input
     id: progression_1_name
@@ -212,16 +212,9 @@ body:
   - type: textarea
     id: progression_1_description
     attributes:
-      label: Progression 1 Description (Optional)
-      description: Enter the progression 1 details.
-      placeholder: Describe progression 1.
-
-  - type: input
-    id: progression_1_image
-    attributes:
-      label: Progression 1 Image (Optional)
-      description: Enter the filename for progression 1 image if provided.
-      placeholder: progression-1.png
+      label: Progression 1 Description and Diagram (Optional)
+      description: Enter the progression 1 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 1 and include any diagram or image here.
 
   - type: input
     id: progression_2_name
@@ -233,16 +226,9 @@ body:
   - type: textarea
     id: progression_2_description
     attributes:
-      label: Progression 2 Description (Optional)
-      description: Enter the progression 2 details.
-      placeholder: Describe progression 2.
-
-  - type: input
-    id: progression_2_image
-    attributes:
-      label: Progression 2 Image (Optional)
-      description: Enter the filename for progression 2 image if provided.
-      placeholder: progression-2.png
+      label: Progression 2 Description and Diagram (Optional)
+      description: Enter the progression 2 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 2 and include any diagram or image here.
 
   - type: input
     id: progression_3_name
@@ -254,16 +240,9 @@ body:
   - type: textarea
     id: progression_3_description
     attributes:
-      label: Progression 3 Description (Optional)
-      description: Enter the progression 3 details.
-      placeholder: Describe progression 3.
-
-  - type: input
-    id: progression_3_image
-    attributes:
-      label: Progression 3 Image (Optional)
-      description: Enter the filename for progression 3 image if provided.
-      placeholder: progression-3.png
+      label: Progression 3 Description and Diagram (Optional)
+      description: Enter the progression 3 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 3 and include any diagram or image here.
 
   - type: input
     id: progression_4_name
@@ -275,16 +254,9 @@ body:
   - type: textarea
     id: progression_4_description
     attributes:
-      label: Progression 4 Description (Optional)
-      description: Enter the progression 4 details.
-      placeholder: Describe progression 4.
-
-  - type: input
-    id: progression_4_image
-    attributes:
-      label: Progression 4 Image (Optional)
-      description: Enter the filename for progression 4 image if provided.
-      placeholder: progression-4.png
+      label: Progression 4 Description and Diagram (Optional)
+      description: Enter the progression 4 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 4 and include any diagram or image here.
 
   - type: input
     id: progression_5_name
@@ -296,16 +268,9 @@ body:
   - type: textarea
     id: progression_5_description
     attributes:
-      label: Progression 5 Description (Optional)
-      description: Enter the progression 5 details.
-      placeholder: Describe progression 5.
-
-  - type: input
-    id: progression_5_image
-    attributes:
-      label: Progression 5 Image (Optional)
-      description: Enter the filename for progression 5 image if provided.
-      placeholder: progression-5.png
+      label: Progression 5 Description and Diagram (Optional)
+      description: Enter the progression 5 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 5 and include any diagram or image here.
 
   - type: input
     id: progression_6_name
@@ -317,16 +282,37 @@ body:
   - type: textarea
     id: progression_6_description
     attributes:
-      label: Progression 6 Description (Optional)
-      description: Enter the progression 6 details.
-      placeholder: Describe progression 6.
+      label: Progression 6 Description and Diagram (Optional)
+      description: Enter the progression 6 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 6 and include any diagram or image here.
 
   - type: input
-    id: progression_6_image
+    id: progression_7_name
     attributes:
-      label: Progression 6 Image (Optional)
-      description: Enter the filename for progression 6 image if provided.
-      placeholder: progression-6.png
+      label: Progression 7 Name (Optional)
+      description: Enter the name/title for progression 7.
+      placeholder: Progression 7
+
+  - type: textarea
+    id: progression_7_description
+    attributes:
+      label: Progression 7 Description and Diagram (Optional)
+      description: Enter the progression 7 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 7 and include any diagram or image here.
+
+  - type: input
+    id: progression_8_name
+    attributes:
+      label: Progression 8 Name (Optional)
+      description: Enter the name/title for progression 8.
+      placeholder: Progression 8
+
+  - type: textarea
+    id: progression_8_description
+    attributes:
+      label: Progression 8 Description and Diagram (Optional)
+      description: Enter the progression 8 details. Paste or attach an image here if applicable.
+      placeholder: Describe progression 8 and include any diagram or image here.
 
   - type: markdown
     attributes:
@@ -364,11 +350,10 @@ body:
         - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - Build `drill_progressions` from the progression inputs (`Progression [#] Name`,
-          `Progression [#] Description`, `Progression [#] Image`) using up to 6 progression objects.
+          `Progression [#] Description and Diagram`) using up to 8 progression objects.
         - For each progression item included in YAML:
           - `progression_name` is required
           - `progression_description` is required
-          - `progression_image` is optional (omit if blank)
         - Only include progression items where both name and description were provided.
         - If no valid progression items were provided, omit `drill_progressions` entirely.
         - Use this YAML structure:
@@ -376,11 +361,9 @@ body:
           drill_progressions:
             - progression_name: Progression 1
               progression_description: Description for progression 1
-              progression_image: progression-1.png
           ```
-        - Save each progression image in the drill folder and name it similarly to the progression name
-          (using lowercase letters and hyphens), as long as it does not conflict with any other image name
-          in the same drill folder. If there is a conflict, append a unique suffix.
+        - If the progression description includes a pasted or attached image, keep that content in the
+          `progression_description` field as-is when creating the YAML.
         - Set `team_drill` under `tags` to the value selected in the "Tags - Team Drill" dropdown as a plain string
           (e.g. `team_drill: no` or `team_drill: yes`), not as a YAML list.
         - If "Tags - Game Situations" checkboxes are checked,

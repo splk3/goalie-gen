@@ -1,5 +1,9 @@
-import { loadImageAsDataURL } from "../generateDrillPdf";
+import { loadImageAsDataURL, generateDrillPdf } from "../generateDrillPdf";
 import type { DrillPdfProgressCallback } from "../generateDrillPdf";
+import type { DrillData } from "../../types/drill";
+import * as fs from "fs";
+import * as path from "path";
+import * as yaml from "js-yaml";
 
 // ---------------------------------------------------------------------------
 // Browser API mocks
@@ -295,5 +299,87 @@ describe("DrillPdfProgressCallback type", () => {
     callback("Generating PDF...");
     callback("Finalizing...");
     expect(messages).toEqual(["Loading images...", "Generating PDF...", "Finalizing..."]);
+  });
+});
+
+describe("generateDrillPdf layout selection", () => {
+  jest.setTimeout(20000);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const baseDrillData: DrillData = {
+    name: "Layout Selection Test Drill",
+    description: "Short description for layout testing.",
+    drill_steps: ["Step one", "Step two"],
+    coaching_focus_points: ["Focus one", "Focus two"],
+    drill_image: "diagram.png",
+    tags: {
+      team_drill: "no",
+      fundamental_skill: ["angles"],
+      skating_skill: ["t-push"],
+    },
+    drill_creation_date: "2026-01-01",
+  };
+
+  it("uses centered 75% width image when single-column main layout fits one page", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown }, "addImage");
+
+    await generateDrillPdf(baseDrillData, "test-folder");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("falls back to two-column image width when single-column main layout overflows", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown }, "addImage");
+    const overflowData: DrillData = {
+      ...baseDrillData,
+      description: Array.from({ length: 40 }, () => "Very long description text").join(" "),
+      drill_steps: Array.from({ length: 40 }, (_, index) => `Extended step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 20 }, () => "Detailed coaching point text"),
+      shooter_focus_points: Array.from({ length: 12 }, () => "Detailed shooter point text"),
+    };
+
+    await generateDrillPdf(overflowData, "test-folder");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(false);
+  });
+
+  it("uses single-column image width for shot-rebound-recovery", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const drillPath = path.resolve(__dirname, "../../../drills/shot-rebound-recovery/drill.yml");
+    const drillData = yaml.load(fs.readFileSync(drillPath, "utf8"), {
+      schema: yaml.FAILSAFE_SCHEMA,
+    }) as DrillData;
+
+    await generateDrillPdf(drillData, "shot-rebound-recovery");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(true);
   });
 });

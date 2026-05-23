@@ -79,7 +79,7 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
     `drill_creation_date`
   - `description` is optional
   - `drill_image` is a single filename string (not an array)
-  - `drill_progressions` supports up to 6 objects with required
+  - `drill_progressions` supports up to 8 objects with required
     `progression_name`/`progression_description` and optional `progression_image`
   - `tags.game_situations` is optional and supports:
     `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
@@ -93,5 +93,9 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
 - Lint/style conventions enforced by repo config:
   - Prettier: double quotes, semicolons, 2-space indent, trailing commas (es5)
   - TypeScript unused args/vars should be removed or prefixed with `_`
+- Local Copilot behavior (VS Code Chat / Copilot CLI):
+  - Do not run `git add`, `git commit`, `git push`, or create pull requests unless explicitly requested by the user.
+  - Leave all edits unstaged by default.
+  - If a commit is explicitly requested, stage only files directly related to the requested task.
 - Do not edit generated lock artifacts unless explicitly requested:
   `.github/aw/actions-lock.json`, `.github/workflows/*.lock.yml`.

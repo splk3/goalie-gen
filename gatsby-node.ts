@@ -107,9 +107,9 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     );
   }
   if (Array.isArray(d.drill_progressions)) {
-    if (d.drill_progressions.length > 6) {
+    if (d.drill_progressions.length > 8) {
       throw new Error(
-        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 6 progressions`
+        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 8 progressions`
       );
     }
 
