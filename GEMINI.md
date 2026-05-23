@@ -25,7 +25,7 @@ Drills are the core data of the application. They are stored as a "database" of 
 ### Export Functionality
 The project features complex client-side document generation:
 - **PDF Generation:** Located in `src/utils/generateDrillPdf.ts`. Uses `jsPDF` with custom layouts for USA Hockey branding.
-- **DOCX Generation:** Handled by `src/utils/docxContent.ts`.
+- **DOCX Generation:** Document assembly/export is handled in `GenerateTeamPlanButton`, `GenerateClubPlanButton`, and `GoalieJournalButton`, while `src/utils/docxContent.ts` builds reusable `docx` paragraphs from parsed markdown content.
 - **Optimization:** Image downscaling and memory management are implemented in `loadImageAsDataURL` to ensure stability during PDF generation.
 
 ## 🛠 Development Workflow
@@ -35,7 +35,7 @@ The project features complex client-side document generation:
 - `npm run build`: Generate a production-ready static build.
 - `npm run test`: Execute unit tests with Jest.
 - `npm run clean`: Clear Gatsby's cache and public folders (useful for troubleshooting build issues).
-- `npm run deploy`: Build and deploy the current `dev` branch to GitHub Pages.
+- `npm run deploy`: Build and deploy the currently checked-out branch to GitHub Pages (publishes `public/` to the `gh-pages` branch).
 
 ### Adding a New Drill
 1. Create a folder in `drills/` named `my-new-drill`.
