@@ -184,48 +184,40 @@ export const generateDrillPdf = async (
   // Pre-load all static header/footer images in parallel so none of the
   // network round-trips blocks the others.
   onProgress?.("Loading images...");
-  const [goldLogoResult, leftLogoResult, rightLogoResult, ggLogoResult] = await Promise.allSettled([
+  const [leftLogoResult, rightLogoResult, ggLogoResult, ctLogoResult] = await Promise.allSettled([
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
     loadImageAsDataURL(
       buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
     ),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
     loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+    loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
   ]);
 
-  const goldLogoInfo = goldLogoResult.status === "fulfilled" ? goldLogoResult.value : null;
-  if (goldLogoResult.status === "rejected") {
-    console.error("Error loading gold certification logo:", goldLogoResult.reason);
-  }
-
   const ggLogoInfo = ggLogoResult.status === "fulfilled" ? ggLogoResult.value : null;
+  const ctLogoInfo = ctLogoResult.status === "fulfilled" ? ctLogoResult.value : null;
 
   const goldText =
-    "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com";
+    "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com.  All drills created and organized in CoachThem.";
 
   // Draw the gold certification footer on the current page
   const drawPageFooter = () => {
-    if (!goldLogoInfo) return;
-    const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight;
+    const footerWidth = pageWidth - 2 * margin;
 
-    // GG logo (right side) — sized to the same height as the gold cert logo
+    // GG logo (left side) — sized to goldLogoHeight, with white circular background
     const ggLogoWidth = ggLogoInfo ? (ggLogoInfo.width / ggLogoInfo.height) * goldLogoHeight : 0;
-    const ggLogoX = pageWidth - margin - ggLogoWidth;
+    const ggLogoX = margin;
+
+    // CT logo (right side) — fixed at 1/3 of footer width, height proportional
+    const ctLogoWidth = ctLogoInfo ? footerWidth / 3 : 0;
+    const ctLogoHeight = ctLogoInfo ? ctLogoWidth * (ctLogoInfo.height / ctLogoInfo.width) : 0;
+    const ctLogoY = footerLogoY + (goldLogoHeight - ctLogoHeight) / 2;
+    const ctLogoX = pageWidth - margin - ctLogoWidth;
 
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
     doc.line(margin, footerSeparatorY, pageWidth - margin, footerSeparatorY);
-    doc.addImage(goldLogoInfo.dataURL, "PNG", margin, footerLogoY, goldLogoWidth, goldLogoHeight);
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(7);
-    doc.setFont("helvetica", "normal");
 
-    // Gold text spans between the two logos
-    const textRightEdge = ggLogoInfo ? ggLogoX - 4 : pageWidth - margin;
-    const goldTextLines = doc.splitTextToSize(goldText, textRightEdge - margin - goldLogoWidth - 4);
-    doc.text(goldTextLines, margin + goldLogoWidth + 4, footerLogoY + 5);
-
-    // GG logo with white circular background
+    // GG logo with white circular background (left)
     if (ggLogoInfo) {
       const cx = ggLogoX + ggLogoWidth / 2;
       const cy = footerLogoY + goldLogoHeight / 2;
@@ -233,6 +225,20 @@ export const generateDrillPdf = async (
       doc.setFillColor(255, 255, 255);
       doc.circle(cx, cy, r, "F");
       doc.addImage(ggLogoInfo.dataURL, "PNG", ggLogoX, footerLogoY, ggLogoWidth, goldLogoHeight);
+    }
+
+    // Gold text spans between the GG logo and CT logo
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    const textLeftEdge = ggLogoInfo ? ggLogoX + ggLogoWidth + 4 : margin;
+    const textRightEdge = ctLogoInfo ? ctLogoX - 4 : pageWidth - margin;
+    const goldTextLines = doc.splitTextToSize(goldText, textRightEdge - textLeftEdge);
+    doc.text(goldTextLines, textLeftEdge, footerLogoY + 5);
+
+    // CT logo (right)
+    if (ctLogoInfo) {
+      doc.addImage(ctLogoInfo.dataURL, "PNG", ctLogoX, ctLogoY, ctLogoWidth, ctLogoHeight);
     }
   };
 
@@ -270,7 +276,7 @@ export const generateDrillPdf = async (
       doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, headerY, leftLogoWidth, logoHeight);
       doc.addImage(
         rightLogoInfo.dataURL,
-        "JPEG",
+        "PNG",
         pageWidth - margin - rightLogoWidth,
         headerY,
         rightLogoWidth,
@@ -323,7 +329,6 @@ export const generateDrillPdf = async (
   };
 
   let currentY = drawPageHeader(drillData.name);
-  const rightColumnStartY = currentY;
 
   // Tags section - bold labels, normal values, equipment on separate line
   doc.setFontSize(9);
@@ -363,6 +368,8 @@ export const generateDrillPdf = async (
   }
 
   currentY += 2;
+
+  const rightColumnStartY = currentY;
   const fullWidth = pageWidth - 2 * margin;
 
   // Column layout: slightly text-prioritized split for better one-page fit.

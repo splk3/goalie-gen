@@ -449,7 +449,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA
               Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending
-              content, visit GoalieGen.com
+              content, visit GoalieGen.com.  All drills created and organized in CoachThem.
             </p>
           </div>
         </div>
@@ -477,6 +477,20 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
           />
           <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
+        </div>
+
+        <div className="mt-8 print:hidden">
+          <a
+            href="https://coachthem.com/sports/ice-hockey"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/images/coachthem/ct-banner.png"
+              alt="CoachThem"
+              className="w-full h-auto"
+            />
+          </a>
         </div>
       </main>
 

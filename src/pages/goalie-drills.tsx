@@ -300,8 +300,22 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="flex-1">
             <h1 className="text-4xl font-bold mb-4">Goalie Drills</h1>
-            <p className="text-lg">
+            <p className="text-lg mb-4">
               Develop your goalies during goalie-focused time or involve the whole team!
+            </p>
+            <p className="text-lg">
+              All drills created and organizated in CoachThem. CoachThem has
+              generously sponsored the projects on this site to enable the team to collaborate on 
+              drill design using CoachThem&apos;s digital drill drawing and design tools. For more 
+              information about CoachThem, visit{" "}
+              <a
+                href="https://coachthem.com/sports/ice-hockey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-usa-blue dark:hover:text-blue-400"
+              >
+                CoachThem.com
+              </a>
             </p>
           </div>
           <div className="flex-shrink-0 w-full md:w-auto flex flex-wrap justify-center md:justify-end gap-3">
@@ -493,6 +507,20 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         <BackLinkButton to="/" className="w-full max-w-xs sm:w-auto">
           Back to Home
         </BackLinkButton>
+      </div>
+
+      <div className="mt-8">
+        <a
+          href="https://coachthem.com/sports/ice-hockey"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/images/coachthem/ct-banner.png"
+            alt="CoachThem"
+            className="w-full h-auto"
+          />
+        </a>
       </div>
     </PageLayout>
   );
