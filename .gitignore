@@ -79,3 +79,6 @@ super-linter.log
 
 # local tmp files
 tmp/
+
+# playwright mcp
+.playwright-mcp/
