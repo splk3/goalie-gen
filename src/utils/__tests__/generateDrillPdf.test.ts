@@ -9,6 +9,79 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
+const loadDrillFixture = (folder: string): DrillData => {
+  const drillPath = path.resolve(__dirname, `../../../drills/${folder}/drill.yml`);
+  return yaml.load(fs.readFileSync(drillPath, "utf8"), {
+    schema: yaml.FAILSAFE_SCHEMA,
+  }) as DrillData;
+};
+
+type TraceOp = "addImage" | "splitTextToSize";
+
+interface DrawTraceEntry {
+  order: number;
+  op: TraceOp;
+  args: unknown[];
+}
+
+const trimText = (value: string): string => {
+  if (value.length <= 80) {
+    return value;
+  }
+  return `${value.slice(0, 77)}...`;
+};
+
+const sanitizeTraceValue = (value: unknown): unknown => {
+  if (typeof value === "number") {
+    return Number(value.toFixed(2));
+  }
+  if (typeof value === "string") {
+    return trimText(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeTraceValue(item));
+  }
+  if (value && typeof value === "object") {
+    const asRecord = value as Record<string, unknown>;
+    return Object.fromEntries(
+      Object.entries(asRecord)
+        .filter(([, entryValue]) => entryValue !== undefined)
+        .map(([key, entryValue]) => [key, sanitizeTraceValue(entryValue)])
+    );
+  }
+  return value;
+};
+
+const getPdfDrawTrace = async (drillData: DrillData, drillFolder: string): Promise<DrawTraceEntry[]> => {
+  const jspdf = await import("jspdf");
+  const methods: TraceOp[] = ["addImage", "splitTextToSize"];
+  const spies = methods.map((method) =>
+    jest.spyOn(jspdf.jsPDF.API as Record<string, (...args: unknown[]) => unknown>, method)
+  );
+
+  try {
+    await generateDrillPdf(drillData, drillFolder);
+    const trace: DrawTraceEntry[] = [];
+
+    methods.forEach((method, index) => {
+      const spy = spies[index];
+      spy.mock.calls.forEach((call, callIndex) => {
+        trace.push({
+          order: spy.mock.invocationCallOrder[callIndex],
+          op: method,
+          args: call.map((arg) => sanitizeTraceValue(arg)),
+        });
+      });
+    });
+
+    return trace.sort((a, b) => a.order - b.order);
+  } finally {
+    spies.forEach((spy) => {
+      spy.mockRestore();
+    });
+  }
+};
+
 // ---------------------------------------------------------------------------
 // Browser API mocks
 // ---------------------------------------------------------------------------
@@ -427,13 +500,6 @@ describe("generateDrillPdf pagination regression alignment", () => {
     jest.restoreAllMocks();
   });
 
-  const loadDrillFixture = (folder: string): DrillData => {
-    const drillPath = path.resolve(__dirname, `../../../drills/${folder}/drill.yml`);
-    return yaml.load(fs.readFileSync(drillPath, "utf8"), {
-      schema: yaml.FAILSAFE_SCHEMA,
-    }) as DrillData;
-  };
-
   it("keeps rim-stop-cut-across in dedicated progression-page mode", async () => {
     const folder = "rim-stop-cut-across";
     const drillData = loadDrillFixture(folder);
@@ -509,5 +575,46 @@ describe("generateDrillPdf pagination regression alignment", () => {
 
     const doc = await generateDrillPdf(textOnlyProgressions, "test-folder");
     expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
+  });
+});
+
+describe("generateDrillPdf visual regression traces", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1600, imageHeight: 900 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("matches full-width first-page layout trace for shot-rebound-recovery", async () => {
+    const drillData = loadDrillFixture("shot-rebound-recovery");
+    const trace = await getPdfDrawTrace(drillData, "shot-rebound-recovery");
+    expect({
+      totalOps: trace.length,
+      firstOps: trace.slice(0, 80),
+      lastOps: trace.slice(-40),
+    }).toMatchSnapshot();
+  });
+
+  it("matches dedicated progression-card trace for rim-stop-cut-across", async () => {
+    const drillData = loadDrillFixture("rim-stop-cut-across");
+    const trace = await getPdfDrawTrace(drillData, "rim-stop-cut-across");
+    expect({
+      totalOps: trace.length,
+      firstOps: trace.slice(0, 120),
+      lastOps: trace.slice(-60),
+    }).toMatchSnapshot();
+  });
+
+  it("matches dense inline-content trace for two-shot", async () => {
+    const drillData = loadDrillFixture("two-shot");
+    const trace = await getPdfDrawTrace(drillData, "two-shot");
+    expect({
+      totalOps: trace.length,
+      firstOps: trace.slice(0, 100),
+      lastOps: trace.slice(-50),
+    }).toMatchSnapshot();
   });
 });

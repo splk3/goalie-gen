@@ -14,6 +14,7 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "jest",
+    "verify-drills": "tsx verify-drills.ts",
     "deploy": "gatsby build && gh-pages -d public",
     "postinstall": "patch-package"
   },
@@ -55,6 +56,7 @@
     "postcss": "^8.5.10",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.2.3",
+    "tsx": "^4.20.6",
     "typescript": "^6.0.3"
   },
   "overrides": {

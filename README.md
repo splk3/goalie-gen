@@ -55,6 +55,35 @@ The site uses USA national colors:
 - `npm run clean` - Clean the cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
 - `npm test` - Run unit tests with Jest
+- `npm run verify-drills` - Run fixture-based PDF pagination estimate checks
+
+## 🧾 PDF Pagination and Layout Notes
+
+`src/utils/generateDrillPdf.ts`, `src/utils/estimateDrillPdfPages.ts`, and
+`src/utils/drillPdfPaginationShared.ts` work together and should be updated as a set.
+
+### Main layout flow
+
+1. Page 1 starts with a dynamic header, tags, and a compact-fit probe.
+2. The renderer prefers a full-width first-page diagram layout when content fits.
+3. If that probe overflows, it falls back to a two-column first-page layout.
+4. Coaching/Shooter/Skills/Video sections flow with page-break checks against the footer-safe limit.
+
+### Progression pagination flow
+
+1. `shouldPlaceProgressionsOnSecondPage()` decides whether progressions move off inline flow.
+2. Dedicated progression pages use two columns and a shared card planner (`planDedicatedProgressionCards`).
+3. Cards first try preferred layouts (with images), then compact layouts (text-only) if needed.
+4. Progression section pages are capped by `PROGRESSION_SECTION_MAX_PAGES`; overflow is logged.
+
+### Tuning guidance
+
+- If you change constants affecting spacing, update both generator and estimator constants.
+- Re-run:
+  - `npm test -- src/utils/__tests__/estimateDrillPdfPages.test.ts`
+  - `npm test -- src/utils/__tests__/generateDrillPdf.test.ts`
+  - `npm run verify-drills`
+- Keep `generateDrillPdf` draw traces stable unless the layout change is intentional.
 
 ## 📁 Project Structure
 
