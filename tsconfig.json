@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*", "gatsby-*.ts", "gatsby-*.tsx"],
   "exclude": ["node_modules", "public", ".cache"]

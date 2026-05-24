@@ -5,7 +5,7 @@ const makeDrills = () => [
   {
     tags: {
       skill_level: ["beginner"],
-      team_drill: ["no"],
+      team_drill: "no",
       age_level: ["U10", "U12"],
       fundamental_skill: ["angles"],
       skating_skill: ["edges"],
@@ -15,7 +15,7 @@ const makeDrills = () => [
   {
     tags: {
       skill_level: ["intermediate"],
-      team_drill: ["yes"],
+      team_drill: "yes",
       age_level: ["U12", "U14"],
       fundamental_skill: ["positioning"],
       skating_skill: ["crossovers"],
@@ -25,7 +25,7 @@ const makeDrills = () => [
   {
     tags: {
       skill_level: ["advanced"],
-      team_drill: ["yes"],
+      team_drill: "yes",
       age_level: ["U14", "U16"],
       fundamental_skill: ["angles"],
       skating_skill: ["edges"],
@@ -165,5 +165,23 @@ describe("useDrillFilters", () => {
         { category: "team_drill", value: "yes" },
       ])
     );
+  });
+
+  it("applies initial filters on first render", () => {
+    const drills = makeDrills();
+    const { result } = renderHook(() =>
+      useDrillFilters(drills, {
+        skill_level: ["advanced"],
+        team_drill: [],
+        age_level: [],
+        fundamental_skill: [],
+        skating_skill: [],
+        equipment: [],
+      })
+    );
+
+    expect(result.current.selectedFilters.skill_level).toEqual(["advanced"]);
+    expect(result.current.filteredDrills).toHaveLength(1);
+    expect(result.current.filteredDrills[0].tags.skill_level).toContain("advanced");
   });
 });

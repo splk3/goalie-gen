@@ -1,0 +1,56 @@
+---
+name: Two Shot
+
+drill_steps:
+  - Pucks are placed a set distance apart just above the crease. Increasing the distance increases difficulty and forces the goalie to manage larger lateral pushes.
+  - The shooter skates in, takes the first shot, immediately adjusts their angle, and releases the second shot in rapid succession.
+
+coaching_focus_points:
+  - Set early — beat the shooter to the first puck with feet set and chest square.
+  - Controlled save and rebound awareness — track the puck off the blade and manage rebounds to the corners.
+  - Efficient recovery — after the first save, recover using the shortest path (T-push, shuffle, or lateral release depending on distance).
+  - Head leads the body — eyes snap to the second puck immediately after the first save.
+  - Stay tall on recovery — maintain posture so you arrive balanced for the second shot.
+  - Edge discipline — push with power but stop under control; avoid sliding past your angle.
+  - Hands out in front — keep gloves active and forward to smother pucks, seal space, and prevent rebounds.
+
+shooter_focus_points:
+  - Quick release — the drill only works if the second shot comes fast; no stickhandling between pucks.
+  - Accuracy over power — two precise shots are more valuable than two hard but uncontrolled ones.
+  - Consistent approach speed — don't slow down between pucks; maintain flow.
+  - "Repetition with purpose — vary shot types: first low, second high; first blocker, second glove; etc."
+
+drill_progressions:
+  - progression_name: Progression 1 — Increased Distance
+    progression_description: Move pucks farther apart to force longer goalie recoveries.
+    progression_image: progression-1-increased-distance.png
+  - progression_name: Progression 2 — Lane Variation
+    progression_description: Shooter approaches from different entry points (middle, left lane, right lane).
+    progression_image: progression-2-lane-variation.png
+  - progression_name: Progression 3 — Rebound Activation
+    progression_description: After the second shot, shooter plays any rebound for 1-2 seconds.
+
+drill_image: two-shot.png
+
+drill_creation_date: 2026-05-22
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: no
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - butterfly
+    - power_push
+  equipment: []
+  game_situations: []

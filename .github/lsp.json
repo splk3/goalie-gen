@@ -10,12 +10,35 @@
         ".jsx": "javascriptreact"
       }
     },
+    "tailwindcss": {
+      "command": "tailwindcss-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".tsx": "typescriptreact",
+        ".css": "css"
+      }
+    },
+    "css": {
+      "command": "vscode-css-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".css": "css"
+      }
+    },
     "yaml": {
       "command": "yaml-language-server",
       "args": ["--stdio"],
       "fileExtensions": {
         ".yaml": "yaml",
         ".yml": "yaml"
+      }
+    },
+    "json": {
+      "command": "vscode-json-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".json": "json",
+        ".jsonc": "jsonc"
       }
     }
   }

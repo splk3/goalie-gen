@@ -2,10 +2,10 @@
   "name": "goalie-gen",
   "private": true,
   "description": "Goalie Gen - Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": ">=24"
+    "node": "24.x"
   },
   "scripts": {
     "build": "gatsby build",
@@ -14,7 +14,9 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "jest",
-    "deploy": "gatsby build && gh-pages -d public"
+    "verify-drills": "tsx verify-drills.ts",
+    "deploy": "gatsby build && gh-pages -d public",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "docx": "^9.6.1",
@@ -24,12 +26,14 @@
     "js-yaml": "^4.1.1",
     "jspdf": "^4.2.1",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-image-crop": "^11.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-typescript": "^7.28.5",
-    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.3",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -48,10 +52,15 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "patch-package": "^8.0.1",
     "postcss": "^8.5.10",
     "prettier": "^3.8.3",
-    "tailwindcss": "^4.2.0",
-    "typescript": "^6.0.2"
+    "tailwindcss": "^4.2.3",
+    "tsx": "^4.20.6",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "jsdom": "29.1.1"
   },
   "repository": {
     "type": "git",

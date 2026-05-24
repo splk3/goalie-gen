@@ -55,24 +55,61 @@ The site uses USA national colors:
 - `npm run clean` - Clean the cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
 - `npm test` - Run unit tests with Jest
+- `npm run verify-drills` - Run fixture-based PDF pagination estimate checks
+
+## 🧾 PDF Pagination and Layout Notes
+
+`src/utils/generateDrillPdf.ts`, `src/utils/estimateDrillPdfPages.ts`, and
+`src/utils/drillPdfPaginationShared.ts` work together and should be updated as a set.
+
+### Main layout flow
+
+1. Page 1 starts with a dynamic header, tags, and a compact-fit probe.
+2. The renderer prefers a full-width first-page diagram layout when content fits.
+3. If that probe overflows, it falls back to a two-column first-page layout.
+4. Coaching/Shooter/Skills/Video sections flow with page-break checks against the footer-safe limit.
+
+### Progression pagination flow
+
+1. `shouldPlaceProgressionsOnSecondPage()` decides whether progressions move off inline flow.
+2. Dedicated progression pages use two columns and a shared card planner (`planDedicatedProgressionCards`).
+3. Cards first try preferred layouts (with images), then compact layouts (text-only) if needed.
+4. Progression section pages are capped by `PROGRESSION_SECTION_MAX_PAGES`; overflow is logged.
+
+### Tuning guidance
+
+- If you change constants affecting spacing, update both generator and estimator constants.
+- Re-run:
+  - `npm test -- src/utils/__tests__/estimateDrillPdfPages.test.ts`
+  - `npm test -- src/utils/__tests__/generateDrillPdf.test.ts`
+  - `npm run verify-drills`
+- Keep `generateDrillPdf` draw traces stable unless the layout change is intentional.
 
 ## 📁 Project Structure
 
 ```text
 ├── src/
 │   ├── components/       # React components (TypeScript)
+│   │   ├── BackLinkButton.tsx
 │   │   ├── DarkModeToggle.tsx
 │   │   ├── DownloadDrillPdfButton.tsx
 │   │   ├── DownloadMaterialButton.tsx
 │   │   ├── ExternalLinkButton.tsx
+│   │   ├── FeedbackButton.tsx
+│   │   ├── FormatSelector.tsx
 │   │   ├── GenerateClubPlanButton.tsx
 │   │   ├── GenerateTeamPlanButton.tsx
 │   │   ├── GoalieJournalButton.tsx
+│   │   ├── HamburgerMenu.tsx
 │   │   ├── INeedADrillButton.tsx
+│   │   ├── ImageUploader.tsx
 │   │   ├── Logo.tsx
+│   │   ├── Modal.tsx
 │   │   ├── NavigationButton.tsx
+│   │   ├── PageLayout.tsx
 │   │   ├── Pagination.tsx
 │   │   ├── SEO.tsx
+│   │   ├── ShareButton.tsx
 │   │   ├── TermsPopup.tsx
 │   │   ├── UsaHockeyGoldBanner.tsx
 │   │   └── __tests__/     # Unit tests for components
@@ -91,17 +128,32 @@ The site uses USA national colors:
 │   ├── hooks/            # Custom React hooks
 │   │   ├── useDrillFilters.ts
 │   │   └── __tests__/     # Unit tests for hooks
+│   ├── types/            # TypeScript type definitions
+│   │   └── drill.ts      # DrillData interface
+│   ├── declarations.d.ts # Module declarations (e.g., CSS modules)
+│   ├── content/          # Markdown content for plan and journal generation
+│   │   ├── club-plan/    # Club development plan sections
+│   │   ├── goalie-journal/ # Goalie journal sections
+│   │   └── team-plan/    # Team development plan sections
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
+│       ├── docxContent.ts
+│       ├── estimateDrillPdfPages.ts
 │       ├── generateDrillPdf.ts
+│       ├── loadExportModules.ts
+│       ├── markdownParser.ts
+│       ├── normalizeDrillDescription.ts
+│       ├── staticAsset.ts
 │       ├── videoUtils.ts
 │       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
 │   ├── power-push-quick-movement-blaze-pods/
+│   ├── rim-stop-cut-across/
 │   ├── test-drill-advanced-teams/
 │   ├── test-drill-beginner/
-│   └── test-drill-intermediate/
-├── drills_samples/       # Drill specification examples
+│   ├── test-drill-intermediate/
+│   └── test-drill-max-content/
+├── drill-spec-example/   # Drill specification example
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
 │   ├── favicons/        # Site icons
@@ -119,10 +171,15 @@ The site uses USA national colors:
 │       ├── coach-z-zone-map.pdf
 │       ├── goalie-evaluation-form.pdf
 │       └── goalie-single-game-review.pdf
+├── __mocks__/            # Jest mocks (Gatsby, static assets)
 ├── gatsby-config.ts     # Gatsby configuration (TypeScript)
 ├── gatsby-browser.tsx   # Browser APIs (TypeScript)
 ├── gatsby-node.ts       # Node APIs for dynamic page generation
 ├── gatsby-ssr.tsx       # SSR APIs (TypeScript)
+├── jest.config.js       # Jest test configuration
+├── jest-preprocess.js   # Babel/TypeScript transformer for Jest
+├── jest.setup.js        # Jest setup (testing-library/jest-dom, Gatsby mock)
+├── loadershim.js        # Gatsby loader mock (global.___loader) for Jest
 ├── wrangler.jsonc       # Cloudflare Pages configuration
 ├── tailwind.config.js   # Tailwind CSS configuration
 ├── postcss.config.js    # PostCSS configuration
@@ -131,31 +188,38 @@ The site uses USA national colors:
 
 ## 🧊 Drills
 
-Drill examples live in [drills_samples/](drills_samples/) and the full field specification is in [drills_samples/test-drill-spec/drill.yml](drills_samples/test-drill-spec/drill.yml).
+Drill examples live in [drill-spec-example/](drill-spec-example/) and the full field specification is in [drill-spec-example/drill.yml](drill-spec-example/drill.yml).
 
 Active drills that appear on the site are in the [drills/](drills/) directory. Each drill gets its own dynamically generated page at `/drills/{drill-folder-name}` via the `gatsby-node.ts` configuration.
 
 To add a new drill for the site, create a new folder under [drills/](drills/) named for the drill (one folder per drill). Each drill folder should include:
 
 - A drill.yml file that contains all applicable fields
-- One or more images for the drill
+- Any referenced drill or progression images when diagrams are available
 
 Required fields in drill.yml:
 
 - `name`
-- `description`
-- `coaching_points`
-- `images`
+- `drill_steps`
+- `coaching_focus_points`
 - `tags`
 - `drill_creation_date`
 
 `drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
 All other fields are optional. Known optional fields include:
 
+- `description` — optional string shown above drill steps
+- `drill_image` — optional main drill diagram filename
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
+- `drill_progressions` — array of up to 8 progression objects. Each progression object requires:
+  - `progression_name` (string)
+  - `progression_description` (string)
+  - `progression_image` (optional string filename)
 
-The `tags` field is required, but each sub-field is optional. Some sub-fields have restricted allowed values that are validated during build time (in `gatsby-node.ts`). Each of these sub-fields accepts an **array** of values from the allowed list (including an empty array):
+The `tags` field is required, but each sub-field is optional. Most sub-fields accept an **array** of
+values from an allowed list and are validated during build time (in `gatsby-node.ts`).
+The exception is `team_drill`, which is a single string value (`yes` or `no`):
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
@@ -188,11 +252,18 @@ The `tags` field is required, but each sub-field is optional. Some sub-fields ha
   - `ice_marker`
   - `none`
 
-- `team_drill`: Must be an array containing exactly one of:
+- `team_drill`: A single string value, either:
   - `yes`
   - `no`
 
-For media fields, `images` should be an array of image filenames, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
+- `game_situations`: Optional. Allowed values are:
+  - `power_play`
+  - `penalty_kill`
+  - `net_front_traffic`
+  - `dump_in`
+  - `stick_handling`
+
+For media fields, `drill_image` should be a single image filename string when provided, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (with `v` as the first query parameter) or `https://youtu.be/VIDEO_ID`
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`
@@ -248,6 +319,12 @@ This repository uses GitHub Actions for automation and CI/CD:
 - **Trigger**: Weekly schedule + manual dispatch
 - **Purpose**: Runs an AI docs-maintenance workflow that reviews repository state and proposes documentation updates
 - **Scope Guardrails**: Pull requests from this workflow must not modify `.github/workflows/` or `.github/aw/`
+
+### 5. Copilot Setup Steps (`copilot-setup-steps.yml`)
+
+- **Trigger**: Manual dispatch + push changes to the workflow file itself
+- **Purpose**: Configures the environment for GitHub Copilot Agent by installing the `gh-aw` MCP server extension
+- **Job**: `copilot-setup-steps` (recognized by GitHub Copilot Agent)
 
 ## 🚀 Deployment
 

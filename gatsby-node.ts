@@ -3,45 +3,14 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
+import {
+  estimateDrillPdfPages,
+  shouldUseFullWidthFirstPageDiagram,
+} from "./src/utils/estimateDrillPdfPages";
 
-// Helper function to recursively copy directory
-function copyDirectorySync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyDirectorySync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
-
-// Helper function to recursively delete directory
-function deleteDirectorySync(dir: string) {
-  if (fs.existsSync(dir)) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-
-      if (entry.isDirectory()) {
-        deleteDirectorySync(fullPath);
-      } else {
-        fs.unlinkSync(fullPath);
-      }
-    }
-
-    fs.rmdirSync(dir);
-  }
-}
+// Module-level cache: drills are loaded once per build process and reused
+// across createPages and sourceNodes to avoid redundant disk reads.
+let _drillsCache: Array<{ folder: string; drillData: DrillData }> | null = null;
 
 // Allowed tag values for validation
 const ALLOWED_FUNDAMENTAL_SKILLS = [
@@ -59,9 +28,17 @@ const ALLOWED_AGE_LEVELS = ["10U_below", "12U", "14U", "16U_and_older", "all"];
 
 const ALLOWED_SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
-const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker", "none"];
+const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "ice_marker", "none"];
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
+
+const ALLOWED_GAME_SITUATIONS = [
+  "power_play",
+  "penalty_kill",
+  "net_front_traffic",
+  "dump_in",
+  "stick_handling",
+];
 
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
 // Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
@@ -84,16 +61,103 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml missing required field 'name' (string)`);
   }
 
-  if (!d.description || typeof d.description !== "string") {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'description' (string)`);
+  if (typeof d.description !== "undefined" && typeof d.description !== "string") {
+    throw new Error(`[${drillFolder}] drill.yml field 'description' must be a string`);
   }
 
-  if (!Array.isArray(d.coaching_points)) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'coaching_points' (array)`);
+  if (!Array.isArray(d.drill_steps) || d.drill_steps.length === 0) {
+    throw new Error(
+      `[${drillFolder}] drill.yml missing required field 'drill_steps' (non-empty array)`
+    );
+  }
+  for (const step of d.drill_steps) {
+    if (typeof step !== "string") {
+      throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
+    }
   }
 
-  if (!Array.isArray(d.images)) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'images' (array)`);
+  if (!Array.isArray(d.coaching_focus_points)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
+    );
+  }
+  for (const point of d.coaching_focus_points) {
+    if (typeof point !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'coaching_focus_points' must contain only strings`
+      );
+    }
+  }
+
+  if (typeof d.shooter_focus_points !== "undefined" && !Array.isArray(d.shooter_focus_points)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be an array of strings`
+    );
+  }
+  if (Array.isArray(d.shooter_focus_points)) {
+    for (const point of d.shooter_focus_points) {
+      if (typeof point !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'shooter_focus_points' must contain only strings`
+        );
+      }
+    }
+  }
+
+  if (typeof d.drill_progressions !== "undefined" && !Array.isArray(d.drill_progressions)) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'drill_progressions' must be an array of objects`
+    );
+  }
+  if (Array.isArray(d.drill_progressions)) {
+    if (d.drill_progressions.length > 8) {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 8 progressions`
+      );
+    }
+
+    d.drill_progressions.forEach((progression, index) => {
+      if (!progression || typeof progression !== "object" || Array.isArray(progression)) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}]' must be an object`
+        );
+      }
+
+      const p = progression as Record<string, unknown>;
+
+      if (typeof p.progression_name !== "string" || p.progression_name.trim().length === 0) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_name' is required and must be a non-empty string`
+        );
+      }
+
+      if (
+        typeof p.progression_description !== "string" ||
+        p.progression_description.trim().length === 0
+      ) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_description' is required and must be a non-empty string`
+        );
+      }
+
+      if (
+        typeof p.progression_image !== "undefined" &&
+        (typeof p.progression_image !== "string" || p.progression_image.trim().length === 0)
+      ) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_image' must be a non-empty string when provided`
+        );
+      }
+    });
+  }
+
+  if (
+    typeof d.drill_image !== "undefined" &&
+    (typeof d.drill_image !== "string" || d.drill_image.trim().length === 0)
+  ) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'drill_image' must be a non-empty string when provided`
+    );
   }
 
   if (!d.tags || typeof d.tags !== "object" || Array.isArray(d.tags)) {
@@ -203,27 +267,36 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     }
   }
 
-  if (typeof tags.team_drill !== "undefined" && !Array.isArray(tags.team_drill)) {
+  if (typeof tags.team_drill !== "undefined") {
+    if (typeof tags.team_drill !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'tags.team_drill' must be a string ('yes' or 'no')`
+      );
+    }
+    if (!ALLOWED_TEAM_DRILL.includes(tags.team_drill)) {
+      throw new Error(
+        `[${drillFolder}] invalid team_drill '${tags.team_drill}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
+      );
+    }
+  }
+
+  if (typeof tags.game_situations !== "undefined" && !Array.isArray(tags.game_situations)) {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'tags.team_drill' must be an array of strings`
+      `[${drillFolder}] drill.yml field 'tags.game_situations' must be an array of strings`
     );
   }
-  if (Array.isArray(tags.team_drill)) {
-    if (tags.team_drill.length !== 1) {
-      throw new Error(
-        `[${drillFolder}] 'tags.team_drill' must contain exactly one value ('yes' or 'no')`
-      );
-    }
-    const tdValue = tags.team_drill[0];
-    if (typeof tdValue !== "string") {
-      throw new Error(
-        `[${drillFolder}] drill.yml field 'tags.team_drill' must contain only strings`
-      );
-    }
-    if (!ALLOWED_TEAM_DRILL.includes(tdValue)) {
-      throw new Error(
-        `[${drillFolder}] invalid team_drill '${tdValue}'. Allowed values: ${ALLOWED_TEAM_DRILL.join(", ")}`
-      );
+  if (Array.isArray(tags.game_situations)) {
+    for (const concept of tags.game_situations) {
+      if (typeof concept !== "string") {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'tags.game_situations' must contain only strings`
+        );
+      }
+      if (!ALLOWED_GAME_SITUATIONS.includes(concept)) {
+        throw new Error(
+          `[${drillFolder}] invalid game_situation '${concept}'. Allowed values: ${ALLOWED_GAME_SITUATIONS.join(", ")}`
+        );
+      }
     }
   }
 
@@ -311,20 +384,36 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   return true;
 }
 
+export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({ actions }) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [
+        {
+          test: /\.md$/,
+          type: "asset/source",
+        },
+      ],
+    },
+  });
+};
+
 export const onPreBootstrap: GatsbyNode["onPreBootstrap"] = () => {
+  console.log("── [onPreBootstrap] Syncing drill assets to static/drills ──");
   const drillsSource = path.resolve(__dirname, "drills");
   const drillsDestination = path.resolve(__dirname, "static/drills");
 
-  // Clean the destination directory to remove stale files
+  // Remove stale destination so the copy is always clean
   if (fs.existsSync(drillsDestination)) {
-    console.log("🧹 Cleaning static/drills directory...");
-    deleteDirectorySync(drillsDestination);
+    console.log("  🧹 Removing stale static/drills directory...");
+    fs.rmSync(drillsDestination, { recursive: true, force: true });
   }
 
-  // Copy drills folder to static
+  // Copy the entire drills folder into static/ using the native Node.js API
   if (fs.existsSync(drillsSource)) {
-    copyDirectorySync(drillsSource, drillsDestination);
-    console.log("✓ Copied drill files to static/drills");
+    fs.cpSync(drillsSource, drillsDestination, { recursive: true });
+    console.log("  ✓ Drill assets copied to static/drills");
+  } else {
+    console.warn("  ⚠️  drills/ source directory not found — no assets copied");
   }
 };
 
@@ -357,25 +446,50 @@ function loadDrillsFromDirectory(
   return drills;
 }
 
+/**
+ * Returns the drill list for the given directory, loading from disk only once per
+ * build process.  The cache is intentionally module-scoped so that createPages and
+ * sourceNodes — which both need the same data — share a single read pass.
+ */
+function getOrLoadDrills(drillsDir: string): Array<{ folder: string; drillData: DrillData }> {
+  if (_drillsCache === null) {
+    _drillsCache = loadDrillsFromDirectory(drillsDir);
+    console.log(`  ✓ Loaded ${_drillsCache.length} drill(s) from ${drillsDir}`);
+  }
+  return _drillsCache;
+}
+
 export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
+  console.log("── [createPages] Generating drill pages ──");
   const { createPage } = actions;
 
   const drillsDir = path.resolve(__dirname, "drills");
 
   if (!fs.existsSync(drillsDir)) {
-    console.warn("Warning: drills directory does not exist. No drill pages will be generated.");
+    console.warn("  ⚠️  drills/ directory does not exist — no drill pages will be generated.");
     return;
   }
 
   let drills: Array<{ folder: string; drillData: DrillData }>;
   try {
-    drills = loadDrillsFromDirectory(drillsDir);
+    drills = getOrLoadDrills(drillsDir);
   } catch (error) {
-    console.error(`Error loading drills:`, error instanceof Error ? error.message : String(error));
+    console.error(
+      `  ✗ Error loading drills:`,
+      error instanceof Error ? error.message : String(error)
+    );
     throw error;
   }
 
   for (const { folder, drillData } of drills) {
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    const fitsOnOneMainPageWithFullWidthLayout = shouldUseFullWidthFirstPageDiagram(drillData);
+    if (pageEstimate.mainContentPages > 1 && !fitsOnOneMainPageWithFullWidthLayout) {
+      console.warn(
+        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has non-progression content estimated to need ${pageEstimate.mainContentPages} page(s) even with the full-width first-page layout. Consider shortening content to reduce overflow risk.`
+      );
+    }
+
     createPage({
       path: `/drills/${folder}`,
       component: path.resolve("./src/templates/drill.tsx"),
@@ -386,6 +500,7 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
       },
     });
   }
+  console.log(`  ✓ Created ${drills.length} drill page(s)`);
 };
 
 export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
@@ -393,15 +508,16 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
   createNodeId,
   createContentDigest,
 }) => {
+  console.log("── [sourceNodes] Adding drill nodes to GraphQL ──");
   const { createNode } = actions;
 
   const drillsDir = path.resolve(__dirname, "drills");
   let drills: Array<{ folder: string; drillData: DrillData }>;
   try {
-    drills = loadDrillsFromDirectory(drillsDir);
+    drills = getOrLoadDrills(drillsDir);
   } catch (error) {
     console.error(
-      `Error loading drills for GraphQL:`,
+      `  ✗ Error loading drills for GraphQL:`,
       error instanceof Error ? error.message : String(error)
     );
     throw error;
@@ -413,8 +529,11 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         slug: folder,
         name: drillData.name,
         description: drillData.description,
-        coaching_points: drillData.coaching_points,
-        images: drillData.images,
+        drill_steps: drillData.drill_steps,
+        coaching_focus_points: drillData.coaching_focus_points,
+        shooter_focus_points: drillData.shooter_focus_points,
+        drill_progressions: drillData.drill_progressions,
+        drill_image: drillData.drill_image,
         video: drillData.video,
         drill_creation_date: drillData.drill_creation_date,
         drill_updated_date: drillData.drill_updated_date,
@@ -433,9 +552,10 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
       });
     } catch (error) {
       console.error(
-        `Error processing drill '${folder}' for GraphQL:`,
+        `  ✗ Error processing drill '${folder}' for GraphQL:`,
         error instanceof Error ? error.message : String(error)
       );
     }
   }
+  console.log(`  ✓ Sourced ${drills.length} drill node(s) into GraphQL`);
 };
