@@ -474,10 +474,10 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
   }
 
   for (const { folder, drillData } of drills) {
-    const estimatedPages = estimateDrillPdfPages(drillData);
-    if (estimatedPages > 1) {
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    if (pageEstimate.mainContentPages > 1) {
       console.warn(
-        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") is estimated to need ${estimatedPages} page(s). Consider shortening its content to fit on a single page.`
+        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has main content that is estimated to need ${pageEstimate.mainContentPages} page(s). Consider shortening its content to fit on a single page.`
       );
     }
 

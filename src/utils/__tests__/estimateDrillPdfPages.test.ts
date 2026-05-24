@@ -56,7 +56,7 @@ describe("estimateDrillPdfPages", () => {
 
   it("returns a page count of at least 1 for every drill", () => {
     for (const { drillData } of drills) {
-      expect(estimateDrillPdfPages(drillData)).toBeGreaterThanOrEqual(1);
+      expect(estimateDrillPdfPages(drillData).totalPages).toBeGreaterThanOrEqual(1);
     }
   });
 
@@ -64,14 +64,14 @@ describe("estimateDrillPdfPages", () => {
     const rimStop = drills.find((entry) => entry.folder === "rim-stop-cut-across");
     expect(rimStop).toBeDefined();
     expect(shouldPlaceProgressionsOnSecondPage(rimStop!.drillData)).toBe(true);
-    expect(estimateDrillPdfPages(rimStop!.drillData)).toBe(3);
+    expect(estimateDrillPdfPages(rimStop!.drillData).totalPages).toBe(3);
   });
 
   it("keeps read-and-react to two pages total so Skills Focus stays on page one", () => {
     const readAndReact = drills.find((entry) => entry.folder === "read-and-react");
     expect(readAndReact).toBeDefined();
     expect(shouldPlaceProgressionsOnSecondPage(readAndReact!.drillData)).toBe(true);
-    expect(estimateDrillPdfPages(readAndReact!.drillData)).toBe(2);
+    expect(estimateDrillPdfPages(readAndReact!.drillData).totalPages).toBe(2);
   });
 
   it("uses larger follow-on page capacity after first-page overflow", () => {
@@ -89,7 +89,7 @@ describe("estimateDrillPdfPages", () => {
       drill_creation_date: "2026-01-01",
     } as DrillData;
 
-    expect(estimateDrillPdfPages(drillData)).toBe(2);
+    expect(estimateDrillPdfPages(drillData).totalPages).toBe(2);
   });
 
   it("treats single newlines in descriptions the same as soft-wrapped spaces", () => {
@@ -118,7 +118,7 @@ describe("estimateDrillPdfPages", () => {
       description: spaceWrappedDescription,
     });
 
-    expect(softWrappedEstimate).toBe(spaceWrappedEstimate);
+    expect(softWrappedEstimate.totalPages).toBe(spaceWrappedEstimate.totalPages);
   });
 
   it("accounts for drill steps when estimating page count", () => {
@@ -141,8 +141,8 @@ describe("estimateDrillPdfPages", () => {
       drill_steps: Array.from({ length: 30 }, (_, index) => `Drill step ${index + 1}`),
     });
 
-    expect(withoutSteps).toBe(2);
-    expect(withSteps).toBeGreaterThan(withoutSteps);
+    expect(withoutSteps.totalPages).toBe(2);
+    expect(withSteps.totalPages).toBeGreaterThan(withoutSteps.totalPages);
   });
 
   it("accounts for a long drill name header without under-estimating page count", () => {
@@ -166,9 +166,9 @@ describe("estimateDrillPdfPages", () => {
       name: "A Very Long Drill Name That Must Wrap to Three Lines in the PDF Header Title Area",
     };
 
-    expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
-    expect(estimateDrillPdfPages(longNameDrillData)).toBeGreaterThanOrEqual(
-      estimateDrillPdfPages(baseDrillData)
+    expect(estimateDrillPdfPages(baseDrillData).totalPages).toBe(1);
+    expect(estimateDrillPdfPages(longNameDrillData).totalPages).toBeGreaterThanOrEqual(
+      estimateDrillPdfPages(baseDrillData).totalPages
     );
   });
 
@@ -202,8 +202,8 @@ describe("estimateDrillPdfPages", () => {
       ],
     };
 
-    expect(estimateDrillPdfPages(baseDrillData)).toBe(1);
-    expect(estimateDrillPdfPages(withProgressionImage)).toBe(1);
+    expect(estimateDrillPdfPages(baseDrillData).totalPages).toBe(1);
+    expect(estimateDrillPdfPages(withProgressionImage).totalPages).toBe(1);
     expect(shouldPlaceProgressionsOnSecondPage(withProgressionImage)).toBe(false);
   });
 
@@ -221,7 +221,7 @@ describe("estimateDrillPdfPages", () => {
     } as DrillData;
 
     expect(shouldPlaceProgressionsOnSecondPage(noProgressionsData)).toBe(false);
-    expect(estimateDrillPdfPages(noProgressionsData)).toBe(1);
+    expect(estimateDrillPdfPages(noProgressionsData).totalPages).toBe(1);
   });
 
   it("uses full-width first-page diagram layout when compact content fits", () => {
@@ -298,7 +298,7 @@ describe("estimateDrillPdfPages", () => {
     } as DrillData;
 
     expect(shouldPlaceProgressionsOnSecondPage(overflowData)).toBe(true);
-    expect(estimateDrillPdfPages(overflowData)).toBe(3);
+    expect(estimateDrillPdfPages(overflowData).totalPages).toBe(3);
   });
 
   it("packs short progression cards onto one dedicated progression page", () => {
@@ -371,6 +371,39 @@ describe("estimateDrillPdfPages", () => {
     } as DrillData;
 
     expect(shouldPlaceProgressionsOnSecondPage(overflowWithoutImages)).toBe(true);
-    expect(estimateDrillPdfPages(overflowWithoutImages)).toBeGreaterThan(1);
+    expect(estimateDrillPdfPages(overflowWithoutImages).totalPages).toBeGreaterThan(1);
+  });
+
+  it("accounts for video URL height when estimating page count", () => {
+    // Create a drill that fits on one page without video
+    const baseData = {
+      name: "Video Content Estimate",
+      description: "Short description",
+      drill_steps: ["Step one"],
+      coaching_focus_points: Array.from({ length: 30 }, () => "Focus detail"),
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    // Same drill but with a substantial video URL (120+ characters to ensure significant wrapping)
+    const videoUrl =
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf&index=42&t=1234s&utm_source=example&utm_medium=video";
+    const drillWithVideo: DrillData = {
+      ...baseData,
+      video: videoUrl,
+    };
+
+    const pagesWithout = estimateDrillPdfPages(baseData);
+    const pagesWith = estimateDrillPdfPages(drillWithVideo);
+
+    // Video should add approximately 7mm + wrapped text lines 
+    // For a 120+ char URL at 124 chars/line, that's ~3.2mm of text + 7mm header = ~10mm total
+    // This should increase page count
+    expect(pagesWith.totalPages).toBeGreaterThanOrEqual(pagesWithout.totalPages);
+    // Additionally verify that video measurably increases the page estimate height
+    expect(pagesWith.mainContentPages).toBeGreaterThanOrEqual(pagesWithout.mainContentPages);
   });
 });

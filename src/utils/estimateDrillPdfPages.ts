@@ -61,7 +61,7 @@ const PROGRESSION_CARD_GAP = 4;
 const PROGRESSION_CARD_PADDING = 3;
 const PROGRESSION_CARD_TEXT_TOP_OFFSET = 2;
 const PROGRESSION_CARD_NAME_BOTTOM_GAP = 2;
-const PROGRESSION_SECTION_TITLE_HEIGHT = 6;
+const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_HEADER_START_Y = 15;
 const PROGRESSION_HEADER_LOGO_GAP = 4;
 const PROGRESSION_HEADER_TITLE_GAP = 8;
@@ -418,6 +418,12 @@ export function shouldPlaceProgressionsOnSecondPage(drillData: DrillData): boole
   );
 }
 
+export interface DrillPageEstimate {
+  mainContentPages: number;
+  dedicatedProgressionPages: number;
+  totalPages: number;
+}
+
 /**
  * Estimates how many PDF pages a drill will need when rendered by generateDrillPdf.
  *
@@ -431,12 +437,45 @@ export function shouldPlaceProgressionsOnSecondPage(drillData: DrillData): boole
  *      Drill Progressions. Each uses a wider chars-per-line estimate.
  *   3. Post-column: Skills Focus + optional Video (full width, unchanged).
  *
- * Returns 1 when content is estimated to fit on a single page, 2+ otherwise.
+ * Returns a breakdown of page usage:
+ *   - mainContentPages: pages used by drill description, steps, coaching focus, and video (excluding dedicated progressions)
+ *   - dedicatedProgressionPages: pages used exclusively for dedicated progression cards
+ *   - totalPages: mainContentPages + dedicatedProgressionPages
  */
-export function estimateDrillPdfPages(drillData: DrillData): number {
+export function estimateDrillPdfPages(drillData: DrillData): DrillPageEstimate {
   const placeOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
-  return estimateDrillPdfPagesInternal(drillData, {
-    forceInlineProgressions: !placeOnSecondPage,
-    forceSecondPageForProgressions: placeOnSecondPage,
-  });
+  const progressions = drillData.drill_progressions || [];
+  
+  // Calculate main content pages (first segment without progressions)
+  const firstSegmentWithoutProgressions = estimateFirstPageSegmentHeight(
+    { ...drillData, drill_progressions: [] },
+    drillData.description ? normalizeDrillDescription(drillData.description) : "",
+    {
+      layoutMode: "two-column",
+      forceInlineProgressions: false,
+      forceSecondPageForProgressions: true,
+      excludeProgressionsWithImagesFromFirstPage: false,
+    }
+  );
+  
+  const titleHeaderHeight = estimateTitleHeaderHeight(drillData.name);
+  const contentStartY = MARGIN + titleHeaderHeight + HEADER_AND_TAGS_BASE;
+  const availableFirstPage = CONTENT_BOTTOM_LIMIT - contentStartY;
+  const availableOtherPages = CONTENT_BOTTOM_LIMIT - (MARGIN + 5);
+  
+  const mainContentPages =
+    firstSegmentWithoutProgressions <= availableFirstPage
+      ? 1
+      : 1 + Math.ceil((firstSegmentWithoutProgressions - availableFirstPage) / availableOtherPages);
+  
+  // Calculate dedicated progression pages
+  const dedicatedProgressionPages = placeOnSecondPage
+    ? estimateDedicatedProgressionPages(drillData.name, progressions)
+    : 0;
+  
+  return {
+    mainContentPages,
+    dedicatedProgressionPages,
+    totalPages: mainContentPages + dedicatedProgressionPages,
+  };
 }
