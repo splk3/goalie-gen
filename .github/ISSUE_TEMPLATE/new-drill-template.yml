@@ -14,7 +14,7 @@ body:
         ## Submitter Instructions
 
         - Fill out the drill information by answering the questions below.
-        - Attach any diagrams/images in the progression description fields or the final **Drill Diagram** section.
+        - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section.
         - If you have any trouble with the drill submission process, email us at 
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
@@ -212,8 +212,8 @@ body:
     id: progression_1_description
     attributes:
       label: Progression 1 Description and Diagram (Optional)
-      description: Enter the progression 1 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 1 and include any diagram or image here.
+      description: Enter the progression 1 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 1 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_2_name
@@ -226,8 +226,8 @@ body:
     id: progression_2_description
     attributes:
       label: Progression 2 Description and Diagram (Optional)
-      description: Enter the progression 2 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 2 and include any diagram or image here.
+      description: Enter the progression 2 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 2 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_3_name
@@ -240,8 +240,8 @@ body:
     id: progression_3_description
     attributes:
       label: Progression 3 Description and Diagram (Optional)
-      description: Enter the progression 3 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 3 and include any diagram or image here.
+      description: Enter the progression 3 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 3 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_4_name
@@ -254,8 +254,8 @@ body:
     id: progression_4_description
     attributes:
       label: Progression 4 Description and Diagram (Optional)
-      description: Enter the progression 4 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 4 and include any diagram or image here.
+      description: Enter the progression 4 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 4 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_5_name
@@ -268,8 +268,8 @@ body:
     id: progression_5_description
     attributes:
       label: Progression 5 Description and Diagram (Optional)
-      description: Enter the progression 5 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 5 and include any diagram or image here.
+      description: Enter the progression 5 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 5 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_6_name
@@ -282,8 +282,8 @@ body:
     id: progression_6_description
     attributes:
       label: Progression 6 Description and Diagram (Optional)
-      description: Enter the progression 6 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 6 and include any diagram or image here.
+      description: Enter the progression 6 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 6 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_7_name
@@ -296,8 +296,8 @@ body:
     id: progression_7_description
     attributes:
       label: Progression 7 Description and Diagram (Optional)
-      description: Enter the progression 7 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 7 and include any diagram or image here.
+      description: Enter the progression 7 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 7 here. Attach a progression image file here if needed.
 
   - type: input
     id: progression_8_name
@@ -310,8 +310,8 @@ body:
     id: progression_8_description
     attributes:
       label: Progression 8 Description and Diagram (Optional)
-      description: Enter the progression 8 details. Paste or attach an image here if applicable.
-      placeholder: Describe progression 8 and include any diagram or image here.
+      description: Enter the progression 8 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 8 here. Attach a progression image file here if needed.
 
   - type: markdown
     attributes:
