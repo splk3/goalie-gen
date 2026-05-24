@@ -1,6 +1,10 @@
 import { loadImageAsDataURL, generateDrillPdf } from "../generateDrillPdf";
 import type { DrillPdfProgressCallback } from "../generateDrillPdf";
 import type { DrillData } from "../../types/drill";
+import {
+  estimateDrillPdfPages,
+  shouldPlaceProgressionsOnSecondPage,
+} from "../estimateDrillPdfPages";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
@@ -381,5 +385,100 @@ describe("generateDrillPdf layout selection", () => {
       return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
     });
     expect(hasSingleColumnDrillImage).toBe(true);
+  });
+});
+
+describe("generateDrillPdf pagination regression alignment", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1600, imageHeight: 900 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const loadDrillFixture = (folder: string): DrillData => {
+    const drillPath = path.resolve(__dirname, `../../../drills/${folder}/drill.yml`);
+    return yaml.load(fs.readFileSync(drillPath, "utf8"), {
+      schema: yaml.FAILSAFE_SCHEMA,
+    }) as DrillData;
+  };
+
+  it("keeps rim-stop-cut-across in dedicated progression-page mode", async () => {
+    const folder = "rim-stop-cut-across";
+    const drillData = loadDrillFixture(folder);
+
+    expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    expect(pageEstimate).toMatchObject({
+      mainContentPages: 2,
+      dedicatedProgressionPages: 1,
+      totalPages: 3,
+    });
+
+    const doc = await generateDrillPdf(drillData, folder);
+    expect(doc.getNumberOfPages()).toBeGreaterThan(1);
+    expect(doc.getNumberOfPages()).toBeLessThanOrEqual(pageEstimate.totalPages);
+  });
+
+  it("keeps progression-image drills aligned between estimator and generator", async () => {
+    const withImageProgressions = {
+      name: "Regression Image Progression Alignment",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus detail"],
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: Array.from({ length: 8 }, (_, index) => ({
+        progression_name: `Progression ${index + 1}`,
+        progression_description:
+          "Long progression details intended to force dedicated progression pagination when rendered inline.",
+        progression_image: `progression-${index + 1}.png`,
+      })),
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(withImageProgressions)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(withImageProgressions);
+    expect(pageEstimate.dedicatedProgressionPages).toBeGreaterThan(0);
+
+    const doc = await generateDrillPdf(withImageProgressions, "test-folder");
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
+  });
+
+  it("keeps text-only progression drills aligned between estimator and generator", async () => {
+    const textOnlyProgressions = {
+      name: "Regression Text Progression Alignment",
+      description: "Short",
+      drill_steps: Array.from({ length: 36 }, (_, index) => `Step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 16 }, () => "Focus detail"),
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description:
+            "Longer progression details intended to consume enough inline space to trigger dedicated progression pagination behavior.",
+        },
+        {
+          progression_name: "Progression 2",
+          progression_description:
+            "Additional progression text to ensure the overall inline render would exceed one page before moving progressions.",
+        },
+      ],
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(textOnlyProgressions)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(textOnlyProgressions);
+    expect(pageEstimate.dedicatedProgressionPages).toBeGreaterThan(0);
+
+    const doc = await generateDrillPdf(textOnlyProgressions, "test-folder");
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
   });
 });

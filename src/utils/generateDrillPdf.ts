@@ -10,6 +10,7 @@ import {
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
 } from "./estimateDrillPdfPages";
+import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
 import {
   buildCacheBustedAssetPath,
   DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
@@ -627,7 +628,10 @@ export const generateDrillPdf = async (
       for (const [index, progression] of progressions.entries()) {
         const progressionName = `• ${progression.progression_name}:`;
         const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
-        sectionY = ensureSpaceForPass(sectionY, nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1);
+        sectionY = ensureSpaceForPass(
+          sectionY,
+          nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1
+        );
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(9);
         doc.setFont(undefined, "bold");
@@ -652,8 +656,14 @@ export const generateDrillPdf = async (
           sectionY += imgHeight + PROGRESSION_IMAGE_TEXT_GAP;
         }
 
-        const descriptionLines = doc.splitTextToSize(progression.progression_description, fullWidth - 5);
-        sectionY = ensureSpaceForPass(sectionY, descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1);
+        const descriptionLines = doc.splitTextToSize(
+          progression.progression_description,
+          fullWidth - 5
+        );
+        sectionY = ensureSpaceForPass(
+          sectionY,
+          descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1
+        );
         doc.setFont(undefined, "normal");
         drawText(descriptionLines, margin + 6, sectionY);
         sectionY += descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1;
@@ -820,7 +830,11 @@ export const generateDrillPdf = async (
       };
     });
 
-    const drawProgressionCard = (layout: ProgressionCardLayout, boxX: number, boxY: number): void => {
+    const drawProgressionCard = (
+      layout: ProgressionCardLayout,
+      boxX: number,
+      boxY: number
+    ): void => {
       doc.setDrawColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setLineWidth(0.7);
       doc.rect(boxX, boxY, progressionColumnWidth, layout.boxHeight);
@@ -832,7 +846,8 @@ export const generateDrillPdf = async (
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
       doc.setFont(undefined, "bold");
       doc.text(layout.nameLines, contentX, contentY);
-      contentY += layout.nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT + PROGRESSION_CARD_NAME_BOTTOM_GAP;
+      contentY +=
+        layout.nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT + PROGRESSION_CARD_NAME_BOTTOM_GAP;
 
       if (
         layout.imageDataURL &&
@@ -841,7 +856,14 @@ export const generateDrillPdf = async (
         layout.imageHeight > 0
       ) {
         const imgX = contentX + (cardContentWidth - layout.imageWidth) / 2;
-        doc.addImage(layout.imageDataURL, "PNG", imgX, contentY, layout.imageWidth, layout.imageHeight);
+        doc.addImage(
+          layout.imageDataURL,
+          "PNG",
+          imgX,
+          contentY,
+          layout.imageWidth,
+          layout.imageHeight
+        );
         contentY += layout.imageHeight + PROGRESSION_IMAGE_TEXT_GAP;
       }
 
@@ -849,7 +871,11 @@ export const generateDrillPdf = async (
       doc.text(layout.descriptionLines, contentX, contentY);
     };
 
-    const drawProgressionPageHeader = (): { columnStartY: number; leftY: number; rightY: number } => {
+    const drawProgressionPageHeader = (): {
+      columnStartY: number;
+      leftY: number;
+      rightY: number;
+    } => {
       let progressionsY = drawPageHeader(drillData.name);
       progressionsY = ensureSpace(progressionsY, PROGRESSION_SECTION_TITLE_HEIGHT);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
@@ -861,80 +887,71 @@ export const generateDrillPdf = async (
     };
 
     startNewPage();
-    let progressionPagesUsed = 1;
     let { columnStartY, leftY, rightY } = drawProgressionPageHeader();
-    let activeColumn = 0;
-
-    const tryPlaceCard = (layout: ProgressionCardLayout, columnIndex: number): boolean => {
-      const columnY = columnIndex === 0 ? leftY : rightY;
-      const gap = columnY > columnStartY ? PROGRESSION_CARD_GAP : 0;
-      const boxY = columnY + gap;
-      if (boxY + layout.boxHeight > contentBottomLimit) {
-        return false;
+    const columnCapacity = contentBottomLimit - columnStartY;
+    const progressionPlan = planDedicatedProgressionCards(
+      progressionLayouts.map((layouts) => {
+        const hasImageVariant =
+          !!layouts.withImage.imageDataURL &&
+          layouts.withImage.boxHeight !== layouts.withoutImage.boxHeight;
+        return {
+          preferredHeight: hasImageVariant
+            ? layouts.withImage.boxHeight
+            : layouts.withoutImage.boxHeight,
+          compactHeight: hasImageVariant ? layouts.withoutImage.boxHeight : undefined,
+        };
+      }),
+      {
+        columnCapacity,
+        columns: 2,
+        cardGap: PROGRESSION_CARD_GAP,
+        maxPages: PROGRESSION_SECTION_MAX_PAGES,
       }
+    );
 
-      const boxX = columnIndex === 0 ? leftColumnX : rightColumnX;
-      drawProgressionCard(layout, boxX, boxY);
-      if (columnIndex === 0) {
-        leftY = boxY + layout.boxHeight;
-      } else {
-        rightY = boxY + layout.boxHeight;
-      }
-      activeColumn = columnIndex;
-      return true;
-    };
+    const placementsByCardIndex = new Map(
+      progressionPlan.placements.map((placement) => [placement.cardIndex, placement])
+    );
+    const compactedCardIndices = new Set(progressionPlan.compactedCardIndices);
+    let renderedProgressionPageIndex = 0;
 
     for (let progressionIndex = 0; progressionIndex < progressions.length; progressionIndex++) {
       const progression = progressions[progressionIndex];
-      const layouts = progressionLayouts[progressionIndex];
-      const layoutCandidates: ProgressionCardLayout[] =
-        layouts.withImage.imageDataURL && layouts.withImage.boxHeight !== layouts.withoutImage.boxHeight
-          ? [layouts.withImage, layouts.withoutImage]
-          : [layouts.withoutImage];
-      let placed = false;
-
-      for (const layoutCandidate of layoutCandidates) {
-        if (tryPlaceCard(layoutCandidate, activeColumn)) {
-          placed = true;
-          break;
-        }
-
-        const alternateColumn = activeColumn === 0 ? 1 : 0;
-        if (tryPlaceCard(layoutCandidate, alternateColumn)) {
-          placed = true;
-          break;
-        }
-      }
-
-      if (placed) {
+      const placement = placementsByCardIndex.get(progressionIndex);
+      if (!placement) {
+        console.error(
+          `Progression '${progression.progression_name}' exceeded progression pagination limits; content may be clipped.`
+        );
         continue;
       }
 
-      if (progressionPagesUsed < PROGRESSION_SECTION_MAX_PAGES) {
+      while (renderedProgressionPageIndex < placement.pageIndex) {
         startNewPage();
-        progressionPagesUsed += 1;
         ({ columnStartY, leftY, rightY } = drawProgressionPageHeader());
-        activeColumn = 0;
-
-        for (const layoutCandidate of layoutCandidates) {
-          if (tryPlaceCard(layoutCandidate, 0) || tryPlaceCard(layoutCandidate, 1)) {
-            placed = true;
-            break;
-          }
-        }
+        renderedProgressionPageIndex += 1;
       }
 
-      if (!placed) {
-        const overflowLayout = layouts.withoutImage;
-        if (tryPlaceCard(overflowLayout, 0) || tryPlaceCard(overflowLayout, 1)) {
-          console.warn(
-            `Progression '${progression.progression_name}' was compacted to text-only layout to respect two progression pages.`
-          );
-          continue;
-        }
+      const layouts = progressionLayouts[progressionIndex];
+      const usesImageLayout =
+        !placement.usesCompactLayout &&
+        !!layouts.withImage.imageDataURL &&
+        layouts.withImage.boxHeight !== layouts.withoutImage.boxHeight;
+      const selectedLayout = usesImageLayout ? layouts.withImage : layouts.withoutImage;
+      const boxX = placement.columnIndex === 0 ? leftColumnX : rightColumnX;
+      const columnY = placement.columnIndex === 0 ? leftY : rightY;
+      const gap = columnY > columnStartY ? PROGRESSION_CARD_GAP : 0;
+      const boxY = columnY + gap;
 
-        console.error(
-          `Progression '${progression.progression_name}' exceeded progression pagination limits; content may be clipped.`
+      drawProgressionCard(selectedLayout, boxX, boxY);
+      if (placement.columnIndex === 0) {
+        leftY = boxY + selectedLayout.boxHeight;
+      } else {
+        rightY = boxY + selectedLayout.boxHeight;
+      }
+
+      if (compactedCardIndices.has(progressionIndex)) {
+        console.warn(
+          `Progression '${progression.progression_name}' was compacted to text-only layout to respect two progression pages.`
         );
       }
     }

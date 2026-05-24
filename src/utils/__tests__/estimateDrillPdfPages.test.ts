@@ -64,7 +64,10 @@ describe("estimateDrillPdfPages", () => {
     const rimStop = drills.find((entry) => entry.folder === "rim-stop-cut-across");
     expect(rimStop).toBeDefined();
     expect(shouldPlaceProgressionsOnSecondPage(rimStop!.drillData)).toBe(true);
-    expect(estimateDrillPdfPages(rimStop!.drillData).totalPages).toBe(3);
+    const pageEstimate = estimateDrillPdfPages(rimStop!.drillData);
+    expect(pageEstimate.mainContentPages).toBe(2);
+    expect(pageEstimate.dedicatedProgressionPages).toBe(1);
+    expect(pageEstimate.totalPages).toBe(3);
   });
 
   it("keeps read-and-react to two pages total so Skills Focus stays on page one", () => {
@@ -90,6 +93,25 @@ describe("estimateDrillPdfPages", () => {
     } as DrillData;
 
     expect(estimateDrillPdfPages(drillData).totalPages).toBe(2);
+  });
+
+  it("flags warning-worthy main-content overflow only when first-page fit fails", () => {
+    const warningCandidate = {
+      name: "Main Content Warning Candidate",
+      description: Array.from({ length: 36 }, () => "Long description detail").join(" "),
+      drill_steps: Array.from({ length: 38 }, (_, index) => `Extended step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 20 }, () => "Detailed coaching point"),
+      shooter_focus_points: Array.from({ length: 10 }, () => "Detailed shooter point"),
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    const pageEstimate = estimateDrillPdfPages(warningCandidate);
+    expect(pageEstimate.mainContentPages).toBeGreaterThan(1);
+    expect(shouldUseFullWidthFirstPageDiagram(warningCandidate)).toBe(false);
   });
 
   it("treats single newlines in descriptions the same as soft-wrapped spaces", () => {

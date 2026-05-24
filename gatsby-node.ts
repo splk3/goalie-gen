@@ -3,7 +3,11 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
-import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
+import {
+  estimateDrillPdfPages,
+  shouldPlaceProgressionsOnSecondPage,
+  shouldUseFullWidthFirstPageDiagram,
+} from "./src/utils/estimateDrillPdfPages";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
@@ -475,9 +479,15 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
 
   for (const { folder, drillData } of drills) {
     const pageEstimate = estimateDrillPdfPages(drillData);
-    if (pageEstimate.mainContentPages > 1) {
+    const fitsOnOneMainPageWithFullWidthLayout = shouldUseFullWidthFirstPageDiagram(drillData);
+    const progressionsAlreadySplitToDedicatedPages = shouldPlaceProgressionsOnSecondPage(drillData);
+    if (
+      pageEstimate.mainContentPages > 1 &&
+      !fitsOnOneMainPageWithFullWidthLayout &&
+      !progressionsAlreadySplitToDedicatedPages
+    ) {
       console.warn(
-        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has main content that is estimated to need ${pageEstimate.mainContentPages} page(s). Consider shortening its content to fit on a single page.`
+        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has non-progression content estimated to need ${pageEstimate.mainContentPages} page(s) even with the full-width first-page layout. Consider shortening content to reduce overflow risk.`
       );
     }
 
