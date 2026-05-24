@@ -726,7 +726,7 @@ export const generateDrillPdf = async (
       skillsThirdY += 3;
       drillData.tags.game_situations!.forEach((situation) => {
         drawText(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
-        skillsThirdY += 3;
+        skillsThirdY += 4;
       });
     }
 
