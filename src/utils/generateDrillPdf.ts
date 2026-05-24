@@ -704,7 +704,7 @@ export const generateDrillPdf = async (
       skillsLeftY += 3;
       drillData.tags.fundamental_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
-        skillsLeftY += 3;
+        skillsLeftY += 4;
       });
     }
 
