@@ -292,7 +292,9 @@ describe("estimateDrillPdfPages", () => {
       drill_creation_date: "2026-01-01",
       drill_progressions: Array.from({ length: 6 }, (_, index) => ({
         progression_name: `Progression ${index + 1}`,
-        progression_description: Array.from({ length: 12 }, () => "Long progression detail").join(" "),
+        progression_description: Array.from({ length: 12 }, () => "Long progression detail").join(
+          " "
+        ),
         progression_image: `progression-${index + 1}.png`,
       })),
     } as DrillData;
@@ -421,7 +423,7 @@ describe("estimateDrillPdfPages", () => {
     const pagesWithout = estimateDrillPdfPages(baseData);
     const pagesWith = estimateDrillPdfPages(drillWithVideo);
 
-    // Video should add approximately 7mm + wrapped text lines 
+    // Video should add approximately 7mm + wrapped text lines
     // For a 120+ char URL at 124 chars/line, that's ~3.2mm of text + 7mm header = ~10mm total
     // This should increase page count
     expect(pagesWith.totalPages).toBeGreaterThanOrEqual(pagesWithout.totalPages);

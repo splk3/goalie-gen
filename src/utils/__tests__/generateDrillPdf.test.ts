@@ -52,7 +52,10 @@ const sanitizeTraceValue = (value: unknown): unknown => {
   return value;
 };
 
-const getPdfDrawTrace = async (drillData: DrillData, drillFolder: string): Promise<DrawTraceEntry[]> => {
+const getPdfDrawTrace = async (
+  drillData: DrillData,
+  drillFolder: string
+): Promise<DrawTraceEntry[]> => {
   const jspdf = await import("jspdf");
   const methods: TraceOp[] = ["addImage", "splitTextToSize"];
   const spies = methods.map((method) =>
@@ -407,7 +410,10 @@ describe("generateDrillPdf layout selection", () => {
   it("uses centered 75% width image when single-column main layout fits one page", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
-    const addImageSpy = jest.spyOn(jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown }, "addImage");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
 
     await generateDrillPdf(baseDrillData, "test-folder");
 
@@ -421,7 +427,10 @@ describe("generateDrillPdf layout selection", () => {
   it("renders the drill diagram before the Drill Information section in single-column layout", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
-    const addImageSpy = jest.spyOn(jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown }, "addImage");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
     const splitTextSpy = jest.spyOn(
       jspdf.jsPDF.API as { splitTextToSize: (...args: unknown[]) => unknown },
       "splitTextToSize"
@@ -443,14 +452,19 @@ describe("generateDrillPdf layout selection", () => {
     expect(descriptionSplitCallIndexes.length).toBeGreaterThan(0);
 
     const descriptionSplitCallOrder =
-      splitTextSpy.mock.invocationCallOrder[descriptionSplitCallIndexes[descriptionSplitCallIndexes.length - 1]];
+      splitTextSpy.mock.invocationCallOrder[
+        descriptionSplitCallIndexes[descriptionSplitCallIndexes.length - 1]
+      ];
     expect(drillImageCallOrder).toBeLessThan(descriptionSplitCallOrder);
   });
 
   it("falls back to two-column image width when single-column main layout overflows", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
-    const addImageSpy = jest.spyOn(jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown }, "addImage");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
     const overflowData: DrillData = {
       ...baseDrillData,
       description: Array.from({ length: 40 }, () => "Very long description text").join(" "),

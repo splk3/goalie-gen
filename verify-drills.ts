@@ -1,7 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
-import { estimateDrillPdfPages, shouldPlaceProgressionsOnSecondPage } from "./src/utils/estimateDrillPdfPages.ts";
+import {
+  estimateDrillPdfPages,
+  shouldPlaceProgressionsOnSecondPage,
+} from "./src/utils/estimateDrillPdfPages.ts";
 import type { DrillData } from "./src/types/drill.ts";
 
 interface DrillExpectation {
@@ -102,8 +105,7 @@ for (const expectation of drillExpectations) {
   if (expectation.expectedDedicatedProgressionPages !== undefined) {
     checks.push({
       label: "dedicatedProgressionPages",
-      passed:
-        estimate.dedicatedProgressionPages === expectation.expectedDedicatedProgressionPages,
+      passed: estimate.dedicatedProgressionPages === expectation.expectedDedicatedProgressionPages,
       expected: expectation.expectedDedicatedProgressionPages,
       actual: estimate.dedicatedProgressionPages,
     });
@@ -124,8 +126,7 @@ for (const expectation of drillExpectations) {
 }
 
 if (failures > 0) {
-  console.error(`\n${failures} drill estimate check(s) failed.`);
-  process.exit(1);
+  throw new Error(`\n${failures} drill estimate check(s) failed.`);
 }
 
 console.log("\nAll drill estimate checks passed.\n");
