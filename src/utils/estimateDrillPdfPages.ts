@@ -241,7 +241,7 @@ function estimateFirstPageSegmentHeight(
   normalizedDescription: string,
   options: FirstPageEstimateOptions
 ): number {
-  // --- Top phase: drill information + primary diagram ---
+  // --- Top phase: primary diagram + drill information (single-column) ---
   let topPhaseHeight = 0;
 
   if (options.layoutMode === "two-column") {
@@ -261,7 +261,7 @@ function estimateFirstPageSegmentHeight(
       topPhaseHeight += SECTION_GAP;
     }
   } else {
-    // New mode: drill information full width, diagram full width below.
+    // New mode: diagram full width first, then drill information full width below.
     topPhaseHeight += HEADING_HEIGHT;
     if (normalizedDescription) {
       topPhaseHeight += estimateLines(normalizedDescription, CHARS_PER_LINE_FULL) * LINE_HEIGHT;

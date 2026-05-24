@@ -477,6 +477,16 @@ export const generateDrillPdf = async (
     let sectionY: number;
     if (layoutMode === "single-column") {
       let fullWidthY = contentStartY;
+      if (drillImageInfo) {
+        const aspectRatio = drillImageInfo.width / drillImageInfo.height;
+        const imgWidth = fullWidth * SINGLE_COLUMN_IMAGE_WIDTH_RATIO;
+        const imgHeight = imgWidth / aspectRatio;
+        const imgX = margin + (fullWidth - imgWidth) / 2;
+        fullWidthY = ensureSpaceForPass(fullWidthY, imgHeight + 4);
+        drawImage(drillImageInfo.dataURL, "PNG", imgX, fullWidthY, imgWidth, imgHeight);
+        fullWidthY += imgHeight + 4;
+      }
+
       fullWidthY = ensureSpaceForPass(fullWidthY, 16);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
@@ -502,16 +512,6 @@ export const generateDrillPdf = async (
         fullWidthY += stepLines.length * mainLineHeight + 1;
       }
       fullWidthY += 1.5;
-
-      if (drillImageInfo) {
-        const aspectRatio = drillImageInfo.width / drillImageInfo.height;
-        const imgWidth = fullWidth * SINGLE_COLUMN_IMAGE_WIDTH_RATIO;
-        const imgHeight = imgWidth / aspectRatio;
-        const imgX = margin + (fullWidth - imgWidth) / 2;
-        fullWidthY = ensureSpaceForPass(fullWidthY, imgHeight + 4);
-        drawImage(drillImageInfo.dataURL, "PNG", imgX, fullWidthY, imgWidth, imgHeight);
-        fullWidthY += imgHeight + 4;
-      }
 
       sectionY = fullWidthY + 3;
     } else {

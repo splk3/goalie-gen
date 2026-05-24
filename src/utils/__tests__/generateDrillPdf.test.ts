@@ -345,6 +345,35 @@ describe("generateDrillPdf layout selection", () => {
     expect(hasSingleColumnDrillImage).toBe(true);
   });
 
+  it("renders the drill diagram before the Drill Information section in single-column layout", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown }, "addImage");
+    const splitTextSpy = jest.spyOn(
+      jspdf.jsPDF.API as { splitTextToSize: (...args: unknown[]) => unknown },
+      "splitTextToSize"
+    );
+
+    await generateDrillPdf(baseDrillData, "test-folder");
+
+    const drillImageCallIndex = addImageSpy.mock.calls.findIndex((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(drillImageCallIndex).toBeGreaterThanOrEqual(0);
+
+    const drillImageCallOrder = addImageSpy.mock.invocationCallOrder[drillImageCallIndex];
+    const descriptionSplitCallIndexes = splitTextSpy.mock.calls
+      .map((call, index) => ({ value: call[0], index }))
+      .filter((entry) => entry.value === baseDrillData.description)
+      .map((entry) => entry.index);
+    expect(descriptionSplitCallIndexes.length).toBeGreaterThan(0);
+
+    const descriptionSplitCallOrder =
+      splitTextSpy.mock.invocationCallOrder[descriptionSplitCallIndexes[descriptionSplitCallIndexes.length - 1]];
+    expect(drillImageCallOrder).toBeLessThan(descriptionSplitCallOrder);
+  });
+
   it("falls back to two-column image width when single-column main layout overflows", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
