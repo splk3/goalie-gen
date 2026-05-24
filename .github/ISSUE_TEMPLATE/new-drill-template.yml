@@ -377,4 +377,5 @@ body:
           folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
         - Confirm the image file is an actual image, and that video links are real YouTube or Vimeo links.
         - Make sure the new drill passes build validation and that the site builds properly.
-        - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description. Link the PR in this issue.
+        - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description and an attached PDF of the drill printout
+        - Link the PR in this issue.
