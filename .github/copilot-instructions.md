@@ -75,10 +75,9 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
 - Static-hosted architecture only (GitHub Pages + Cloudflare Pages). Do not add runtime server
   dependencies (no Gatsby `getServerData`, no server API routes).
 - Drill YAML schema is strict and validated at build time:
-  - required: `name`, `drill_steps`, `coaching_focus_points`, `drill_image`, `tags`,
-    `drill_creation_date`
+  - required: `name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`
   - `description` is optional
-  - `drill_image` is a single filename string (not an array)
+  - `drill_image` is optional and must be a single filename string when provided (not an array)
   - `drill_progressions` supports up to 8 objects with required
     `progression_name`/`progression_description` and optional `progression_image`
   - `tags.game_situations` is optional and supports:

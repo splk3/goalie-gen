@@ -33,7 +33,7 @@ You are the specialist for goalie drill content lifecycle and presentation in th
 
 ## Workflow
 1. Identify the source path (manual drill folder/files or issue-template-driven drill creation).
-2. Validate drill structure and required fields (`name`, `drill_steps`, `coaching_focus_points`, `drill_image`, `tags`, `drill_creation_date`) and optional sections (description, shooter focus, video, progressions).
+2. Validate drill structure and required fields (`name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`) plus optional sections (description, drill image, shooter focus, video, progressions).
 3. Verify image naming/location rules and ensure drill image references are correct.
 4. Implement or adjust rendering behavior in web views, keeping responsive behavior intact for desktop and mobile.
 5. Implement or adjust print/PDF output so ordering, text, and progressions match drill page intent.

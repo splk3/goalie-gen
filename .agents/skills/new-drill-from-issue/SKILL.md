@@ -104,7 +104,7 @@ The main drill image comes from the **Drill Diagram** field of the issue.
    - Save it to `drills/{folder-name}/{folder-name}.{original-extension}` (e.g. `rim-stop-cut-across.png`)
    - Set `drill_image: {folder-name}.{ext}` in `drill.yml`
    - Verify the saved file is a real image
-2. If the **Drill Diagram** field is blank or contains no image, **omit `drill_image` from `drill.yml` entirely** and continue — drill images are not required.
+2. If the **Drill Diagram** field is blank or contains no image, **omit `drill_image` from `drill.yml` entirely** and continue — drill images are optional.
 
 ## Step 5 — Validate
 
@@ -120,6 +120,7 @@ Before building:
 - Confirm `team_drill` is a plain string (`yes` or `no`), not a list
 - Confirm all tag values are from the allowed values listed above
 - Confirm no required fields are missing (`name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`)
+- Confirm omitting `drill_image` is treated as valid when the issue did not include a drill diagram
 
 Then run a build to confirm the drill passes Gatsby's build-time validation:
 

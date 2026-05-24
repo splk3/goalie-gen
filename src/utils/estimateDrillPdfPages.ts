@@ -19,6 +19,7 @@ export const SKILLS_FOCUS_TOP_GAP = 4;
 export const PROGRESSION_TEXT_FONT_SIZE = 10;
 export const PROGRESSION_TEXT_LINE_HEIGHT = 4;
 export const PROGRESSION_IMAGE_TEXT_GAP = 4;
+export const SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO = 0.75;
 
 // Page layout constants (mm, A4 portrait)
 const PAGE_HEIGHT = 297;
@@ -278,7 +279,7 @@ function estimateFirstPageSegmentHeight(
     }
 
     if (drillData.drill_image) {
-      const fullWidth = 210 - 2 * MARGIN;
+      const fullWidth = (210 - 2 * MARGIN) * SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO;
       const aspectRatio =
         options.drillImageAspectRatio && options.drillImageAspectRatio > 0
           ? options.drillImageAspectRatio
@@ -445,13 +446,27 @@ export interface DrillPageEstimate {
  *   3. Post-column: Skills Focus + optional Video (full width, unchanged).
  *
  * Returns a breakdown of page usage:
- *   - mainContentPages: pages used by drill description, steps, coaching focus, and video (excluding dedicated progressions)
+ *   - mainContentPages: pages used by non-dedicated main-flow content, including inline
+ *     progressions when they remain on the main flow
  *   - dedicatedProgressionPages: pages used exclusively for dedicated progression cards
  *   - totalPages: mainContentPages + dedicatedProgressionPages
  */
 export function estimateDrillPdfPages(drillData: DrillData): DrillPageEstimate {
   const placeOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
   const progressions = drillData.drill_progressions || [];
+  if (!placeOnSecondPage) {
+    const inlinePages = estimateDrillPdfPagesInternal(drillData, {
+      forceInlineProgressions: true,
+      forceSecondPageForProgressions: false,
+    });
+
+    return {
+      mainContentPages: inlinePages,
+      dedicatedProgressionPages: 0,
+      totalPages: inlinePages,
+    };
+  }
+
   const normalizedDescription = drillData.description
     ? normalizeDrillDescription(drillData.description)
     : "";

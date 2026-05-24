@@ -5,17 +5,13 @@ import FormatSelector from "../FormatSelector";
 
 describe("FormatSelector", () => {
   it("checks the DOCX radio when format='docx'", () => {
-    render(
-      <FormatSelector format="docx" onChange={() => {}} name="test-format" />
-    );
+    render(<FormatSelector format="docx" onChange={() => {}} name="test-format" />);
     expect(screen.getByRole("radio", { name: /word/i })).toBeChecked();
     expect(screen.getByRole("radio", { name: /pdf/i })).not.toBeChecked();
   });
 
   it("checks the PDF radio when format='pdf'", () => {
-    render(
-      <FormatSelector format="pdf" onChange={() => {}} name="test-format" />
-    );
+    render(<FormatSelector format="pdf" onChange={() => {}} name="test-format" />);
     expect(screen.getByRole("radio", { name: /pdf/i })).toBeChecked();
     expect(screen.getByRole("radio", { name: /word/i })).not.toBeChecked();
   });
@@ -41,9 +37,7 @@ describe("FormatSelector", () => {
   });
 
   it("disables both radios when disabled=true", () => {
-    render(
-      <FormatSelector format="docx" onChange={() => {}} name="test-format" disabled />
-    );
+    render(<FormatSelector format="docx" onChange={() => {}} name="test-format" disabled />);
     expect(screen.getByRole("radio", { name: /word/i })).toBeDisabled();
     expect(screen.getByRole("radio", { name: /pdf/i })).toBeDisabled();
   });
@@ -51,9 +45,7 @@ describe("FormatSelector", () => {
   it("does not call onChange when a disabled radio is clicked", async () => {
     const user = userEvent.setup();
     const onChange = jest.fn();
-    render(
-      <FormatSelector format="docx" onChange={onChange} name="test-format" disabled />
-    );
+    render(<FormatSelector format="docx" onChange={onChange} name="test-format" disabled />);
     await user.click(screen.getByRole("radio", { name: /pdf/i }));
     expect(onChange).not.toHaveBeenCalled();
   });

@@ -592,7 +592,6 @@ describe("generateDrillPdf pagination regression alignment", () => {
     const doc = await generateDrillPdf(textOnlyProgressions, "test-folder");
     expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
   });
-
 });
 
 describe("generateDrillPdf visual regression traces", () => {

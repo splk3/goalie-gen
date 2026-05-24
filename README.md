@@ -195,14 +195,13 @@ Active drills that appear on the site are in the [drills/](drills/) directory. E
 To add a new drill for the site, create a new folder under [drills/](drills/) named for the drill (one folder per drill). Each drill folder should include:
 
 - A drill.yml file that contains all applicable fields
-- One or more images for the drill
+- Any referenced drill or progression images when diagrams are available
 
 Required fields in drill.yml:
 
 - `name`
 - `drill_steps`
 - `coaching_focus_points`
-- `drill_image`
 - `tags`
 - `drill_creation_date`
 
@@ -210,6 +209,7 @@ Required fields in drill.yml:
 All other fields are optional. Known optional fields include:
 
 - `description` — optional string shown above drill steps
+- `drill_image` — optional main drill diagram filename
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
 - `drill_progressions` — array of up to 8 progression objects. Each progression object requires:
@@ -263,7 +263,7 @@ The exception is `team_drill`, which is a single string value (`yes` or `no`):
   - `dump_in`
   - `stick_handling`
 
-For media fields, `drill_image` should be a single image filename string, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
+For media fields, `drill_image` should be a single image filename string when provided, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (with `v` as the first query parameter) or `https://youtu.be/VIDEO_ID`
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`

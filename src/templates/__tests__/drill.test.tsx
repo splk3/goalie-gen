@@ -124,6 +124,23 @@ describe("DrillTemplate", () => {
     expect(orderedLists[0].querySelectorAll("li")).toHaveLength(0);
   });
 
+  it("renders the page without a main drill image when drill_image is absent", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            drill_image: undefined,
+          },
+        }}
+      />
+    );
+
+    expect(screen.getByText("Drill Information")).toBeInTheDocument();
+    expect(screen.queryByAltText("Drill diagram")).not.toBeInTheDocument();
+  });
+
   it("renders a Back to Drills link defaulting to /goalie-drills", () => {
     render(<DrillTemplate pageContext={basePageContext} />);
     const links = screen.getAllByRole("link", { name: /back to drills/i });

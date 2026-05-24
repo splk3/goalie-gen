@@ -6,6 +6,7 @@ import {
   PROGRESSION_SECTION_MAX_PAGES,
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
+  SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
   SKILLS_FOCUS_TOP_GAP,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
@@ -430,7 +431,6 @@ export const generateDrillPdf = async (
   onProgress?.("Generating PDF...");
 
   const mainLineHeight = 3.2;
-  const SINGLE_COLUMN_IMAGE_WIDTH_RATIO = 0.75;
   type MainLayoutMode = "single-column" | "two-column";
 
   const renderMainSection = (
@@ -479,7 +479,7 @@ export const generateDrillPdf = async (
       let fullWidthY = contentStartY;
       if (drillImageInfo) {
         const aspectRatio = drillImageInfo.width / drillImageInfo.height;
-        const imgWidth = fullWidth * SINGLE_COLUMN_IMAGE_WIDTH_RATIO;
+        const imgWidth = fullWidth * SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO;
         const imgHeight = imgWidth / aspectRatio;
         const imgX = margin + (fullWidth - imgWidth) / 2;
         fullWidthY = ensureSpaceForPass(fullWidthY, imgHeight + 4);

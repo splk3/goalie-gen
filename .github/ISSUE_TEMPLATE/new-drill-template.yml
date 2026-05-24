@@ -14,7 +14,7 @@ body:
         ## Submitter Instructions
 
         - Fill out the drill information by answering the questions below.
-        - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section.
+        - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one.
         - If you have any trouble with the drill submission process, email us at 
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
@@ -189,10 +189,10 @@ body:
   - type: textarea
     id: diagram_image_or_screenshot
     attributes:
-      label: Drill Diagram
+      label: Drill Diagram (Optional)
       description: |
-        Attach the drill diagram or a screenshot of the drill here.
-      placeholder: Attach the drill diagram or a screenshot of the drill here.
+        Attach the drill diagram or a screenshot of the drill here if one is available.
+      placeholder: Attach the drill diagram or a screenshot of the drill here if available.
 
   - type: markdown
     attributes:
@@ -372,10 +372,11 @@ body:
         - If "Tags - Game Situations" checkboxes are checked,
           add the `game_situations` field under `tags` as an array of the selected values.
           If no game situations are selected, omit `game_situations` entirely.
-        - Save the drill image to the drill folder, naming it after the drill folder name with the original file extension
-          (e.g. `rim-stop-cut-across.png`). If the uploaded or pasted file has a different name, rename it to match the drill
-          folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
-        - Confirm the image file is an actual image, and that video links are real YouTube or Vimeo links.
+        - If a drill image was provided, save it to the drill folder, naming it after the drill folder name with the original
+          file extension (e.g. `rim-stop-cut-across.png`). If the uploaded or pasted file has a different name, rename it to
+          match the drill folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
+          If no drill image was provided, omit `drill_image`.
+        - Confirm any saved image file is an actual image, and that video links are real YouTube or Vimeo links.
         - Make sure the new drill passes build validation and that the site builds properly.
         - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description and an attached PDF of the drill printout
         - Link the PR in this issue.
