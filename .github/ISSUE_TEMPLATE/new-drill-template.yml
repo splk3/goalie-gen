@@ -319,6 +319,9 @@ body:
       value: |
         ## GitHub Copilot Instructions - Users can ignore this section
 
+        - If running in VS Code chat or Copilot CLI, explicitly use the "Goalie Drill Presentation Expert" agent for this issue.
+        - If this issue is assigned to the GitHub Copilot coding agent, do not assume custom sub-agent auto-selection is available.
+          In that mode, still follow these drill-specific instructions exactly, including schema, image naming, web/mobile rendering checks, and print/PDF parity checks.
         - Use the information in the fields above to create a new drill YAML file in the `drills` folder.
         - Follow the instructions below to create the new drill.
         - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
