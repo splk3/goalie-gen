@@ -1,117 +1,382 @@
-name: New Drill Template
+name: Add a New Drill
 description: Use this template to submit a new drill for the site
 title: "Add a new drill - [DRILL NAME HERE]"
 labels:
-  - new-drill
+  - goalie-drills
+projects:
+  - splk3/1
 assignees:
   - splk3
 body:
   - type: markdown
     attributes:
       value: |
-        ## GitHub Copilot Instructions
+        ## Submitter Instructions
 
-        - Use the content in the **Drill Information** section to create a new drill.
-        - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
-        - Use the text to create the `drill.yml` file in that folder.
-        - Add the images to the folder, updating the `images` field as needed.
-        - Submit the proposed changes as a PR.
-        - Confirm image files are actual images, and that video links are real YouTube or Vimeo links.
-        - Make sure the new drill passes build validation and that the site builds properly.
+        - Fill out the drill information by answering the questions below.
+        - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one.
+        - If you have any trouble with the drill submission process, email us at 
+          [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
   - type: markdown
     attributes:
       value: |
-        ## Submitter Instructions
+        ## Drill Information
 
-        Fill out the **Drill Information** field below.
-        - Attach any diagrams/images to this issue.
-        - Ensure image filenames in `images` match attachment filenames exactly.
-        - Update tag selections in the YAML by removing values that do not apply.
+        Fill out each field below. These values will be used to build the drill YAML.
 
   - type: textarea
-    id: drill_information
+    id: drill_name
     attributes:
-      label: Drill Information
-      description: Paste and complete this YAML. Keep valid YAML formatting.
-      render: yaml
-      value: |
-        ---
-        name: Drill Name
+      label: Name
+      description: Enter the drill name.
+      placeholder: Drill Name
+    validations:
+      required: true
 
-        description: |-
-          A brief description of the drill. This can be multiple lines and should provide
-          an overview of what the drill is about, its purpose, and any key details that
-          would help someone understand what the drill entails.
+  - type: textarea
+    id: drill_description
+    attributes:
+      label: Description (Optional)
+      description: Provide a brief overview and purpose of the drill. Leave blank if the drill steps are sufficient.
+      placeholder: |
+        A brief description of the drill. This can be multiple lines and should provide
+        an overview of what the drill is about, its purpose, and any key details.
 
-        coaching_points:
-          - Coaching point 1
-          - Coaching point 2
-          - Coaching point 3
+  - type: textarea
+    id: drill_steps
+    attributes:
+      label: Drill Steps
+      description: Enter one drill step per line.
+      placeholder: |
+        Drill step 1
+        Drill step 2
+    validations:
+      required: true
 
-        # must be a list
-        images:
-          - test-drill-image.png
+  - type: textarea
+    id: coaching_focus_points
+    attributes:
+      label: Coaching Focus Points
+      description: Enter one coaching focus point per line.
+      placeholder: |
+        - Coaching focus point 1
+        - Coaching focus point 2
+        - Coaching focus point 3
+    validations:
+      required: true
 
-        # HTTPS-only YouTube or Vimeo URL. Accepted formats:
-        #   https://www.youtube.com/watch?v=VIDEO_ID
-        #   https://youtu.be/VIDEO_ID
-        #   https://vimeo.com/NUMERIC_ID
-        video:
+  - type: textarea
+    id: shooter_focus_points
+    attributes:
+      label: Shooter Focus Points (Optional)
+      description: Enter one shooter focus point per line. Leave blank if not applicable.
+      placeholder: |
+        - Shooter focus point 1
+        - Shooter focus point 2
 
-        # must be a valid calendar date in YYYY-MM-DD format
-        drill_creation_date: YYYY-MM-DD
+  - type: textarea
+    id: video
+    attributes:
+      label: Video (Optional)
+      description: Enter a YouTube or Vimeo URL.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
 
-        # optional - use if updating existing drill - must be a valid calendar date in YYYY-MM-DD format
-        drill_updated_date: ''
-
-        # For each category below, remove the values that do not apply
-        tags:
-          skill_level:
-            - beginner
-            - intermediate
-            - advanced
-          # allowed values: yes or no (exactly one value required — change to "yes" if this is a team drill)
-          team_drill:
-            - no
-          age_level:
-            - all
-            - 10U_below
-            - 12U
-            - 14U
-            - 16U_and_older
-          fundamental_skill:
-            - skating
-            - positioning
-            - stance
-            - save_selection
-            - rebound_control
-            - recovery
-          skating_skill:
-            - shuffle
-            - t_push
-            - c_cut
-            - butterfly
-            - power_push
-          equipment:
-            - blaze_pods
-            - cones
-            - goal
-            - ice_marker
-            - bumpers
-            - none
+  - type: input
+    id: drill_creation_date
+    attributes:
+      label: Drill Creation Date
+      description: Must be a valid calendar date in YYYY-MM-DD format.
+      placeholder: YYYY-MM-DD
     validations:
       required: true
 
   - type: checkboxes
-    id: submitter_checks
+    id: skill_level_tags
     attributes:
-      label: Final Checks
-      description: Confirm before submitting.
+      label: Tags - Skill Level
+      description: Select all that apply.
       options:
-        - label: I attached all referenced image/diagram files to this issue.
-          required: true
-        - label: I ensured `images` filenames exactly match my attachments.
-          required: true
-        - label: I updated the YAML tags to include only applicable values.
-          required: true
+        - label: beginner
+        - label: intermediate
+        - label: advanced
+
+  - type: dropdown
+    id: team_drill
+    attributes:
+      label: Tags - Team Drill
+      description: Select one.
+      options:
+        - "yes"
+        - "no"
+      default: 1
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: age_level_tags
+    attributes:
+      label: Tags - Age Level
+      description: Select all that apply.
+      options:
+        - label: all
+        - label: 10U_below
+        - label: 12U
+        - label: 14U
+        - label: 16U_and_older
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: fundamental_skill_tags
+    attributes:
+      label: Tags - Fundamental Skill
+      description: Select all that apply.
+      options:
+        - label: skating
+        - label: positioning
+        - label: stance
+        - label: save_selection
+        - label: rebound_control
+        - label: recovery
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: skating_skill_tags
+    attributes:
+      label: Tags - Skating Skill
+      description: Select all that apply.
+      options:
+        - label: shuffle
+        - label: t_push
+        - label: c_cut
+        - label: butterfly
+        - label: power_push
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: game_situations_tags
+    attributes:
+      label: Tags - Game Situations (Optional)
+      description: Select all that apply. This tag group can be used for any drill (team or non-team).
+      options:
+        - label: power_play
+        - label: penalty_kill
+        - label: net_front_traffic
+        - label: dump_in
+        - label: stick_handling
+
+  - type: checkboxes
+    id: equipment_tags
+    attributes:
+      label: Tags - Equipment
+      description: Select all that apply.
+      options:
+        - label: blaze_pods
+        - label: cones
+        - label: ice_marker
+        - label: bumpers
+        - label: none
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagram_image_or_screenshot
+    attributes:
+      label: Drill Diagram (Optional)
+      description: |
+        Attach the drill diagram or a screenshot of the drill here if one is available.
+      placeholder: Attach the drill diagram or a screenshot of the drill here if available.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Drill Progressions (Optional)
+
+        Add up to 8 progression entries. Leave any progression fields blank if not needed.
+
+  - type: input
+    id: progression_1_name
+    attributes:
+      label: Progression 1 Name (Optional)
+      description: Enter the name/title for progression 1.
+      placeholder: Progression 1
+
+  - type: textarea
+    id: progression_1_description
+    attributes:
+      label: Progression 1 Description and Diagram (Optional)
+      description: Enter the progression 1 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 1 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_2_name
+    attributes:
+      label: Progression 2 Name (Optional)
+      description: Enter the name/title for progression 2.
+      placeholder: Progression 2
+
+  - type: textarea
+    id: progression_2_description
+    attributes:
+      label: Progression 2 Description and Diagram (Optional)
+      description: Enter the progression 2 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 2 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_3_name
+    attributes:
+      label: Progression 3 Name (Optional)
+      description: Enter the name/title for progression 3.
+      placeholder: Progression 3
+
+  - type: textarea
+    id: progression_3_description
+    attributes:
+      label: Progression 3 Description and Diagram (Optional)
+      description: Enter the progression 3 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 3 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_4_name
+    attributes:
+      label: Progression 4 Name (Optional)
+      description: Enter the name/title for progression 4.
+      placeholder: Progression 4
+
+  - type: textarea
+    id: progression_4_description
+    attributes:
+      label: Progression 4 Description and Diagram (Optional)
+      description: Enter the progression 4 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 4 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_5_name
+    attributes:
+      label: Progression 5 Name (Optional)
+      description: Enter the name/title for progression 5.
+      placeholder: Progression 5
+
+  - type: textarea
+    id: progression_5_description
+    attributes:
+      label: Progression 5 Description and Diagram (Optional)
+      description: Enter the progression 5 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 5 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_6_name
+    attributes:
+      label: Progression 6 Name (Optional)
+      description: Enter the name/title for progression 6.
+      placeholder: Progression 6
+
+  - type: textarea
+    id: progression_6_description
+    attributes:
+      label: Progression 6 Description and Diagram (Optional)
+      description: Enter the progression 6 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 6 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_7_name
+    attributes:
+      label: Progression 7 Name (Optional)
+      description: Enter the name/title for progression 7.
+      placeholder: Progression 7
+
+  - type: textarea
+    id: progression_7_description
+    attributes:
+      label: Progression 7 Description and Diagram (Optional)
+      description: Enter the progression 7 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 7 here. Attach a progression image file here if needed.
+
+  - type: input
+    id: progression_8_name
+    attributes:
+      label: Progression 8 Name (Optional)
+      description: Enter the name/title for progression 8.
+      placeholder: Progression 8
+
+  - type: textarea
+    id: progression_8_description
+    attributes:
+      label: Progression 8 Description and Diagram (Optional)
+      description: Enter the progression 8 details here. Attach a progression image file here if applicable.
+      placeholder: Describe progression 8 here. Attach a progression image file here if needed.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## GitHub Copilot Instructions - Users can ignore this section
+
+        - If running in VS Code chat or Copilot CLI, explicitly use the "Goalie Drill Presentation Expert" agent for this issue.
+        - If this issue is assigned to the GitHub Copilot coding agent, do not assume custom sub-agent auto-selection is available.
+          In that mode, still follow these drill-specific instructions exactly, including schema, image naming, web/mobile rendering checks, and print/PDF parity checks.
+        - Use the information in the fields above to create a new drill YAML file in the `drills` folder.
+        - Follow the instructions below to create the new drill.
+        - Create a new folder under `drills` using lowercase letters and hyphens for spaces, based on the supplied `name` field.
+        - Use the remaining fields to populate the drill YAML file, following the
+          structure of existing drill YAML files and drills_samples as a guide.
+        - Convert all non-ascii characters to ascii equivalents, as needed
+        - For the fields of 'drill_steps', 'coaching_focus_points', and 'shooter_focus_points', make sure to
+          format the YAML as an array of strings, with each item on a new line and a dash in front.
+          If the user enters multiple lines in the text area, split them into an array. If they enter a single line, make it an array with one item.
+          If they enter multiple lines but some are blank, ignore the blank lines and only include the non-blank lines in the array.
+          If they do not make each line bulleted, add the dashes and format it as an array.
+          For example, if the user entered the following in the "Drill Steps" text area:
+          ```
+          Drill starting instruction
+          Next instruction
+          Another Instruction
+          ```
+          Then the YAML should include:
+          ```
+          drill_steps:
+            - Drill starting instruction
+            - Next instruction
+            - Another Instruction
+          ```
+        - If they leave an optional field blank, omit that field entirely from the YAML (do not include a commented-out placeholder).
+        - If "Description" was provided, add the `description` field as a string.
+          Otherwise, leave it out entirely (do not include a commented-out placeholder).
+        - Add the `drill_steps` field as an array of strings directly below `description` (if present) in the YAML.
+        - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
+          Otherwise, leave it out entirely (do not include a commented-out placeholder).
+        - Build `drill_progressions` from the progression inputs (`Progression [#] Name`,
+          `Progression [#] Description and Diagram`) using up to 8 progression objects.
+        - For each progression item included in YAML:
+          - `progression_name` is required
+          - `progression_description` is required
+        - Only include progression items where both name and description were provided.
+        - If no valid progression items were provided, omit `drill_progressions` entirely.
+        - Use this YAML structure:
+          ```
+          drill_progressions:
+            - progression_name: Progression 1
+              progression_description: Description for progression 1
+          ```
+        - If the progression description includes a pasted or attached image, download that image into
+          the drill folder, set `progression_image` to the saved filename, and remove the raw image URL
+          from `progression_description`.
+        - Set `team_drill` under `tags` to the value selected in the "Tags - Team Drill" dropdown as a plain string
+          (e.g. `team_drill: no` or `team_drill: yes`), not as a YAML list.
+        - If "Tags - Game Situations" checkboxes are checked,
+          add the `game_situations` field under `tags` as an array of the selected values.
+          If no game situations are selected, omit `game_situations` entirely.
+        - If a drill image was provided, save it to the drill folder, naming it after the drill folder name with the original
+          file extension (e.g. `rim-stop-cut-across.png`). If the uploaded or pasted file has a different name, rename it to
+          match the drill folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
+          If no drill image was provided, omit `drill_image`.
+        - Confirm any saved image file is an actual image, and that video links are real YouTube or Vimeo links.
+        - Make sure the new drill passes build validation and that the site builds properly.
+        - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description and an attached PDF of the drill printout
+        - Link the PR in this issue.

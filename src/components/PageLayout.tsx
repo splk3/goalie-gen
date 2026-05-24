@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link } from "gatsby";
 import Logo from "./Logo";
 import DarkModeToggle from "./DarkModeToggle";
+import HamburgerMenu from "./HamburgerMenu";
 import UsaHockeyGoldBanner from "./UsaHockeyGoldBanner";
 
 interface PageLayoutProps {
@@ -14,9 +15,12 @@ export default function PageLayout({ children }: PageLayoutProps) {
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <Link to="/">
-              <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <HamburgerMenu />
+              <Link to="/">
+                <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
+              </Link>
+            </div>
             <DarkModeToggle />
           </div>
         </div>

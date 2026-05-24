@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Link } from "gatsby";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
+import BackLinkButton from "../components/BackLinkButton";
 
 export default function NotFoundPage() {
   return (
@@ -20,12 +20,9 @@ export default function NotFoundPage() {
           The page you are looking for might have been removed, had its name changed, or is
           temporarily unavailable.
         </p>
-        <Link
-          to="/"
-          className="bg-usa-blue dark:bg-blue-600 text-usa-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors"
-        >
-          ← Back to Home
-        </Link>
+        <BackLinkButton to="/" className="w-full max-w-xs sm:w-auto">
+          Back to Home
+        </BackLinkButton>
       </div>
     </PageLayout>
   );

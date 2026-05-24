@@ -73,3 +73,12 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+
+# local super-linter.log
+super-linter.log
+
+# local tmp files
+tmp/
+
+# playwright mcp
+.playwright-mcp/

@@ -1,17 +1,28 @@
 import * as React from "react";
-import { Link } from "gatsby";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import ExternalLinkButton from "../components/ExternalLinkButton";
+import ShareButton from "../components/ShareButton";
+import BackLinkButton from "../components/BackLinkButton";
 
 export default function ClubResources() {
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-        <h1 className="text-4xl font-bold mb-4">Club Resources</h1>
-        <p className="text-lg">
-          Resources and tools for managing club-wide goaltending development programs.
-        </p>
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-4">Club Resources</h1>
+            <p className="text-lg">
+              Resources and tools for managing club-wide goaltending development programs.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <ShareButton
+              label="Share"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="max-w-2xl mx-auto">
@@ -47,12 +58,9 @@ export default function ClubResources() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link
-            to="/"
-            className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
-          >
-            ← Back to Home
-          </Link>
+          <BackLinkButton to="/" className="w-full max-w-xs sm:w-auto">
+            Back to Home
+          </BackLinkButton>
         </div>
       </div>
     </PageLayout>

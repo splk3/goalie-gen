@@ -1,4 +1,3 @@
-import { defineConfig, globalIgnores } from "eslint/config";
 import n from "eslint-plugin-n";
 import prettier from "eslint-plugin-prettier";
 import globals from "globals";
@@ -19,11 +18,11 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default defineConfig([
-  globalIgnores(["!**/.*", "**/node_modules/.*"]),
+export default [
+  { ignores: ["!**/.*", "**/node_modules/.*"] },
+  // eslint:recommended for all files
+  ...compat.extends("eslint:recommended"),
   {
-    extends: compat.extends("eslint:recommended"),
-
     plugins: {
       n,
       prettier,
@@ -49,9 +48,13 @@ export default defineConfig([
     ...config,
     files: ["**/*.json5"],
   })),
+  // JS/JSX: react/recommended
+  ...compat.extends("plugin:react/recommended").map((config) => ({
+    ...config,
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
+  })),
   {
     files: ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
-    extends: compat.extends("plugin:react/recommended"),
 
     languageOptions: {
       ecmaVersion: "latest",
@@ -65,15 +68,20 @@ export default defineConfig([
       },
     },
   },
-  {
-    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
-
-    extends: compat.extends(
+  // TS/TSX: typescript-eslint + n + react + prettier
+  ...compat
+    .extends(
       "plugin:@typescript-eslint/recommended",
       "plugin:n/recommended",
       "plugin:react/recommended",
-      "prettier",
-    ),
+      "prettier"
+    )
+    .map((config) => ({
+      ...config,
+      files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
+    })),
+  {
+    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
 
     plugins: {
       "@typescript-eslint": typescriptEslint,
@@ -90,11 +98,27 @@ export default defineConfig([
         version: "detect",
       },
     },
+
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
   },
   // Disable n/* rules: they flag Node.js module resolution as errors in a
   // browser-based Gatsby app where node_modules are not present at lint time.
   {
-    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx", "**/*.js", "**/*.mjs", "**/*.cjs", "**/*.jsx"],
+    files: [
+      "**/*.ts",
+      "**/*.cts",
+      "**/*.mts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.mjs",
+      "**/*.cjs",
+      "**/*.jsx",
+    ],
     rules: {
       "n/no-missing-import": "off",
       "n/no-missing-require": "off",
@@ -106,4 +130,4 @@ export default defineConfig([
     },
   },
   ...pluginVue.configs["flat/recommended"],
-]);
+];

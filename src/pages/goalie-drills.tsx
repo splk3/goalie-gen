@@ -3,16 +3,20 @@ import { Link, graphql } from "gatsby";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import Pagination from "../components/Pagination";
+import { buildCacheBustedAssetPath } from "../utils/staticAsset";
+import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
+import ShareButton from "../components/ShareButton";
+import BackLinkButton from "../components/BackLinkButton";
 
 interface DrillNode {
   slug: string;
   name: string;
-  images: string[];
+  drill_image?: string;
   drill_creation_date: string;
   drill_updated_date?: string;
   tags: {
     skill_level?: string[];
-    team_drill?: string[];
+    team_drill?: string;
     age_level?: string[];
     fundamental_skill?: string[];
     skating_skill?: string[];
@@ -31,118 +35,157 @@ interface GoalieDrillsProps {
   };
 }
 
-export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
-  const drills = data.allDrill.nodes.map((node) => ({
-    slug: node.slug,
-    name: node.name,
-    image: node.images && node.images.length > 0 ? node.images[0] : "placeholder.png",
-    drill_creation_date: node.drill_creation_date,
-    drill_updated_date: node.drill_updated_date,
-    tags: node.tags,
-  }));
+type SortOrder = "created_newest" | "created_oldest" | "updated_newest" | "updated_oldest";
 
-  // Dynamically derive tag categories from actual drill data
-  // This ensures the filter options always match the available drills
-  const tagCategories = React.useMemo(() => {
-    const categories: Record<string, Set<string>> = {
-      skill_level: new Set(),
-      team_drill: new Set(),
-      age_level: new Set(),
-      fundamental_skill: new Set(),
-      skating_skill: new Set(),
-      equipment: new Set(),
-    };
+interface DrillCardData extends DrillNode {
+  imageUrl: string;
+  creationTimestamp: number | null;
+  updatedTimestamp: number | null;
+}
 
-    // Collect all unique tag values from drills
-    drills.forEach((drill) => {
-      Object.entries(drill.tags).forEach(([category, values]) => {
-        if (Array.isArray(values)) {
-          values.forEach((value) => categories[category]?.add(value));
-        }
-      });
-    });
+const FILTER_STATE_KEYS: Array<keyof FilterState> = [
+  "skill_level",
+  "team_drill",
+  "age_level",
+  "fundamental_skill",
+  "skating_skill",
+  "equipment",
+];
 
-    // Convert Sets to sorted arrays for consistent display
-    return Object.fromEntries(
-      Object.entries(categories).map(([key, set]) => [key, Array.from(set).sort()])
-    );
-  }, [drills]);
+const parseTimestamp = (value?: string): number | null => {
+  if (!value) {
+    return null;
+  }
 
-  // Parse URL search parameters to initialize filters
-  const getInitialFilters = React.useCallback(() => {
-    const initialFilters: Record<string, string[]> = {
-      skill_level: [],
-      team_drill: [],
-      age_level: [],
-      fundamental_skill: [],
-      skating_skill: [],
-      equipment: [],
-    };
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? null : timestamp;
+};
 
-    if (location?.search) {
-      const searchParams = new URLSearchParams(location.search);
+const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterState => {
+  const parsedFilters: FilterState = {
+    ...DEFAULT_FILTER_STATE,
+  };
 
-      // Check for each filter category in URL params
-      Object.keys(initialFilters).forEach((category) => {
-        const paramValue = searchParams.get(category);
-        if (paramValue) {
-          // Support comma-separated values for multiple selections
-          initialFilters[category] = paramValue.split(",").filter((v) => v.trim());
-        }
-      });
+  FILTER_STATE_KEYS.forEach((category) => {
+    const paramValue = searchParams.get(category);
+    if (!paramValue) {
+      return;
     }
 
-    return initialFilters;
-  }, [location?.search]);
+    parsedFilters[category] = paramValue
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .sort();
+  });
 
-  // Initialize pagination from URL "page" query parameter if present
-  const getInitialPage = React.useCallback(() => {
-    if (location?.search) {
-      const searchParams = new URLSearchParams(location.search);
-      const pageParam = searchParams.get("page");
-      if (pageParam) {
-        const parsed = parseInt(pageParam, 10);
-        if (!Number.isNaN(parsed) && parsed > 0) {
-          return parsed;
-        }
-      }
+  return parsedFilters;
+};
+
+const areFiltersEqual = (left: FilterState, right: FilterState): boolean => {
+  return FILTER_STATE_KEYS.every((category) => {
+    const leftValues = left[category];
+    const rightValues = right[category];
+    if (leftValues.length !== rightValues.length) {
+      return false;
     }
+
+    return leftValues.every((value, index) => value === rightValues[index]);
+  });
+};
+
+const parsePageFromSearchParams = (searchParams: URLSearchParams): number => {
+  const pageParam = searchParams.get("page");
+  if (!pageParam) {
     return 1;
-  }, [location?.search]);
+  }
 
-  // Initialize sort from URL "sort" query parameter if present
-  const getInitialSort = React.useCallback(() => {
-    if (location?.search) {
-      const searchParams = new URLSearchParams(location.search);
-      const sortParam = searchParams.get("sort");
-      if (
-        sortParam === "created_newest" ||
-        sortParam === "created_oldest" ||
-        sortParam === "updated_newest" ||
-        sortParam === "updated_oldest"
-      ) {
-        return sortParam;
-      }
-    }
-    return "updated_newest";
-  }, [location?.search]);
+  const parsed = parseInt(pageParam, 10);
+  return !Number.isNaN(parsed) && parsed > 0 ? parsed : 1;
+};
 
-  // State for selected filters - initialize from URL if present
-  const [selectedFilters, setSelectedFilters] =
-    React.useState<Record<string, string[]>>(getInitialFilters);
+const parseSortFromSearchParams = (searchParams: URLSearchParams): SortOrder => {
+  const sortParam = searchParams.get("sort");
+  if (
+    sortParam === "created_newest" ||
+    sortParam === "created_oldest" ||
+    sortParam === "updated_newest" ||
+    sortParam === "updated_oldest"
+  ) {
+    return sortParam;
+  }
+
+  return "updated_newest";
+};
+
+export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
+  const search = location?.search || "";
+  const initialSearchParams = React.useMemo(() => new URLSearchParams(search), [search]);
+  const drills = React.useMemo<DrillCardData[]>(
+    () =>
+      data.allDrill.nodes.map((node) => {
+        const image = node.drill_image || "placeholder.png";
+        const creationTimestamp = parseTimestamp(node.drill_creation_date);
+        return {
+          ...node,
+          imageUrl: buildCacheBustedAssetPath(`/drills/${node.slug}/${image}`),
+          creationTimestamp,
+          updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? creationTimestamp,
+        };
+      }),
+    [data.allDrill.nodes]
+  );
+
+  const initialFilters = React.useMemo<FilterState>(
+    () => parseFiltersFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialPage = React.useMemo(
+    () => parsePageFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialSort = React.useMemo<SortOrder>(
+    () => parseSortFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+
+  const {
+    selectedFilters,
+    setSelectedFilters,
+    tagCategories,
+    filteredDrills,
+    toggleFilter,
+    removeFilter,
+    resetFilters,
+    formatTagName,
+    formatTagValue,
+    activeFilters,
+  } = useDrillFilters(drills, initialFilters);
 
   // State for pagination - initialize from URL if present
-  const [currentPage, setCurrentPage] = React.useState<number>(getInitialPage);
+  const [currentPage, setCurrentPage] = React.useState<number>(initialPage);
   const itemsPerPage = 15;
 
   // State for sorting - initialize from URL if present
-  const [sortOrder, setSortOrder] = React.useState<
-    "created_newest" | "created_oldest" | "updated_newest" | "updated_oldest"
-  >(getInitialSort);
+  const [sortOrder, setSortOrder] = React.useState<SortOrder>(initialSort);
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const hasMountedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(search);
+    const nextFilters = parseFiltersFromSearchParams(params);
+    const nextPage = parsePageFromSearchParams(params);
+    const nextSort = parseSortFromSearchParams(params);
+
+    setSelectedFilters((previous) =>
+      areFiltersEqual(previous, nextFilters) ? previous : nextFilters
+    );
+    setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
+    setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
+  }, [search, setSelectedFilters]);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -161,55 +204,17 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     };
   }, [openDropdown]);
 
-  // Filter drills based on selected filters
-  const filteredDrills = React.useMemo(() => {
-    return drills.filter((drill) => {
-      // Check each filter category
-      for (const category in selectedFilters) {
-        const selectedValues = selectedFilters[category];
-        if (selectedValues.length > 0) {
-          const drillTagValues = drill.tags[category as keyof typeof drill.tags] || [];
-          // Check if any selected value is in the drill's tags for this category
-          const hasMatch = selectedValues.some((value) => drillTagValues.includes(value));
-          if (!hasMatch) {
-            return false;
-          }
-        }
-      }
-      return true;
-    });
-  }, [drills, selectedFilters]);
-
   // Sort drills based on sortOrder
   const sortedDrills = React.useMemo(() => {
     const sorted = [...filteredDrills];
 
     sorted.sort((a, b) => {
-      // Determine which date field to use based on sort order
       const isUpdatedSort = sortOrder === "updated_newest" || sortOrder === "updated_oldest";
-      // When sorting by updated date, fall back to creation date if updated date is missing
-      const dateFieldA = isUpdatedSort
-        ? a.drill_updated_date || a.drill_creation_date
-        : a.drill_creation_date;
-      const dateFieldB = isUpdatedSort
-        ? b.drill_updated_date || b.drill_creation_date
-        : b.drill_creation_date;
-
-      // Handle drills without dates - they go to the end
-      if (!dateFieldA && !dateFieldB) return 0;
-      if (!dateFieldA) return 1;
-      if (!dateFieldB) return -1;
-
-      const dateA = new Date(dateFieldA).getTime();
-      const dateB = new Date(dateFieldB).getTime();
-
-      // NaN guard - treat invalid dates as missing
-      const isInvalidA = Number.isNaN(dateA);
-      const isInvalidB = Number.isNaN(dateB);
-
-      if (isInvalidA && isInvalidB) return 0;
-      if (isInvalidA) return 1;
-      if (isInvalidB) return -1;
+      const dateA = isUpdatedSort ? a.updatedTimestamp : a.creationTimestamp;
+      const dateB = isUpdatedSort ? b.updatedTimestamp : b.creationTimestamp;
+      if (dateA === null && dateB === null) return 0;
+      if (dateA === null) return 1;
+      if (dateB === null) return -1;
 
       // Sort based on direction (newest vs oldest)
       const isNewest = sortOrder === "created_newest" || sortOrder === "updated_newest";
@@ -231,6 +236,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   }, [selectedFilters]);
 
   React.useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+
     setCurrentPage(1);
   }, [filterKey]);
 
@@ -284,71 +294,32 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const endIndex = startIndex + itemsPerPage;
   const paginatedDrills = sortedDrills.slice(startIndex, endIndex);
 
-  // Toggle filter selection
-  const toggleFilter = (category: string, value: string) => {
-    setSelectedFilters((prev) => {
-      const current = prev[category] || [];
-      const newValues = current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value];
-      return { ...prev, [category]: newValues };
-    });
-  };
-
-  // Remove a specific filter
-  const removeFilter = (category: string, value: string) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [category]: prev[category].filter((v) => v !== value),
-    }));
-  };
-
-  // Reset all filters
-  const resetFilters = () => {
-    setSelectedFilters({
-      skill_level: [],
-      team_drill: [],
-      age_level: [],
-      fundamental_skill: [],
-      skating_skill: [],
-      equipment: [],
-    });
-  };
-
-  // Format tag name for display
-  const formatTagName = (tag: string) => {
-    return tag
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  // Format tag value for display
-  const formatTagValue = (value: string) => {
-    return value
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  // Get all active filters
-  const activeFilters = React.useMemo(() => {
-    const filters: Array<{ category: string; value: string }> = [];
-    for (const category in selectedFilters) {
-      selectedFilters[category].forEach((value) => {
-        filters.push({ category, value });
-      });
-    }
-    return filters;
-  }, [selectedFilters]);
-
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-        <h1 className="text-4xl font-bold mb-4">Goalie Drills</h1>
-        <p className="text-lg">
-          Develop your goalies during goalie-focused time or involve the whole team!
-        </p>
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-4">Goalie Drills</h1>
+            <p className="text-lg">
+              Develop your goalies during goalie-focused time or involve the whole team!
+            </p>
+          </div>
+          <div className="flex-shrink-0 w-full md:w-auto flex flex-wrap justify-center md:justify-end gap-3">
+            <ShareButton
+              label="Share"
+              title="Goalie Drills — Goalie Gen"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            />
+            <a
+              href="https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+            >
+              Share a Drill Idea
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Sort Section */}
@@ -391,6 +362,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         {/* Filter Dropdowns */}
         <div ref={dropdownRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {Object.entries(tagCategories).map(([category, values]) => {
+            const filterCategory = category as keyof FilterState;
             const dropdownId = `filter-${category}-menu`;
 
             return (
@@ -405,8 +377,8 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                 >
                   <span className="font-semibold">{formatTagName(category)}</span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {selectedFilters[category].length > 0 &&
-                      `(${selectedFilters[category].length})`}
+                    {selectedFilters[filterCategory].length > 0 &&
+                      `(${selectedFilters[filterCategory].length})`}
                     <span className="ml-2">{openDropdown === category ? "▲" : "▼"}</span>
                   </span>
                 </button>
@@ -424,8 +396,8 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                       >
                         <input
                           type="checkbox"
-                          checked={selectedFilters[category].includes(value)}
-                          onChange={() => toggleFilter(category, value)}
+                          checked={selectedFilters[filterCategory].includes(value)}
+                          onChange={() => toggleFilter(filterCategory, value)}
                           className="mr-3 w-4 h-4"
                         />
                         <span className="text-gray-900 dark:text-gray-100">
@@ -489,9 +461,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           >
             <div className="aspect-video bg-gray-200 dark:bg-gray-700">
               <img
-                src={`/drills/${drill.slug}/${drill.image}`}
+                src={drill.imageUrl}
                 alt=""
                 className="w-full h-full object-contain"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div className="p-6">
@@ -516,12 +490,9 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <div className="mt-8 text-center">
-        <Link
-          to="/"
-          className="text-usa-blue dark:text-blue-400 hover:underline text-lg font-semibold"
-        >
-          ← Back to Home
-        </Link>
+        <BackLinkButton to="/" className="w-full max-w-xs sm:w-auto">
+          Back to Home
+        </BackLinkButton>
       </div>
     </PageLayout>
   );
@@ -535,7 +506,7 @@ export const query = graphql`
       nodes {
         slug
         name
-        images
+        drill_image
         drill_creation_date
         drill_updated_date
         tags {

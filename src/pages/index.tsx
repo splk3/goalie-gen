@@ -3,12 +3,15 @@ import { useStaticQuery, graphql } from "gatsby";
 import Seo from "../components/SEO";
 import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
+import HamburgerMenu from "../components/HamburgerMenu";
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton";
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton";
 import INeedADrillButton from "../components/INeedADrillButton";
 import NavigationButton from "../components/NavigationButton";
 import TermsPopup from "../components/TermsPopup";
+import FeedbackButton from "../components/FeedbackButton";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
+import ShareButton from "../components/ShareButton";
 
 export default function Home() {
   const data = useStaticQuery(graphql`
@@ -26,7 +29,10 @@ export default function Home() {
       <header className="bg-usa-blue dark:bg-gray-800 text-usa-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <Logo variant="full" format="png" className="w-32 md:w-48 lg:w-64" />
+            <div className="flex items-center gap-3">
+              <HamburgerMenu />
+              <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
+            </div>
             <div className="hidden md:block flex-1 mx-4">
               <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
                 Where every coach is a goalie coach!
@@ -39,18 +45,23 @@ export default function Home() {
 
       <main className="container mx-auto px-4 py-12">
         <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold mb-4">Welcome</h2>
-              <UsaHockeyGoldBanner />
+          <h2 className="text-2xl font-bold mb-4">Welcome</h2>
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            <div className="flex-1 min-w-0">
+              <UsaHockeyGoldBanner textClassName="text-base" />
             </div>
-            <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-end">
-              <INeedADrillButton />
+            <div className="flex-shrink-0 w-full lg:w-72 flex flex-col justify-center lg:justify-end gap-3">
+              <INeedADrillButton className="w-full" />
+              <ShareButton
+                label="Share Goalie Gen"
+                title="Goalie Gen — Goaltending Development Plans"
+                className="inline-flex w-full items-center gap-2 justify-center rounded-md bg-white px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100"
+              />
             </div>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           <div className="border-2 border-usa-blue dark:border-blue-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors">
             <h3 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3">
               For Organizations
@@ -102,12 +113,26 @@ export default function Home() {
 
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p>
-            © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
-            Kujawski
-          </p>
-          <div className="mt-2">
-            <TermsPopup />
+          <div className="flex items-start justify-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+              <img
+                src="/images/logos/logo-alt-light-whitebg.png"
+                alt="Goalie Gen"
+                width={56}
+                height={56}
+                className="w-14 h-14 object-contain"
+              />
+            </div>
+            <div>
+              <p>
+                © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
+                Kujawski
+              </p>
+              <div className="mt-2 flex items-center justify-center gap-3">
+                <TermsPopup />
+                <FeedbackButton />
+              </div>
+            </div>
           </div>
         </div>
       </footer>

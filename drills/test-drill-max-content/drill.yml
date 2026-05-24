@@ -1,0 +1,60 @@
+---
+name: Test Drill for Maximum Content on 1 Page
+
+description: |-
+  A brief description of the drill.  This can be multiple lines and should provide
+  an overview of what the drill is about, its purpose, and any key details that
+  would help someone understand what the drill entails.
+
+drill_steps:
+  - drill step 1 here. with some description and other content that provides more information about the drill step and what it involves.
+  - drill step 2 here. with some description and other content
+  - drill step 3 here. with some description and other content
+
+coaching_focus_points:
+  - Coaching point 1 that required a good amount of text to fully describe and explain the coaching point in detail.
+  - Coaching point 2 that also requires a good amount of text to fully describe and explain the coaching point in detail
+  - Coaching point 3 this coaching point is also important to include and takes a good amount of text to fully describe and explain the coaching point in detail.
+
+shooter_focus_points:
+  - Shooter focus point 1 that requires a good amount of text to fully describe and explain the shooter focus point in detail.
+  - Shooter focus point 2 that also requires a good amount of text to fully describe and explain the shooter focus point in detail
+  - Shooter focus point 3 this one is longer and takes more text to describe, but it's still important to include as a shooter focus point.
+
+drill_progressions:
+  - progression_name: Progression 1
+    progression_description: This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 2
+    progression_description: Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+  - progression_name: Progression 3
+    progression_description: Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+
+drill_image: test-drill-image-1.png
+
+video: https://vimeo.com/830266352?fl=pl&fe=sh
+
+drill_creation_date: 2024-01-15
+
+drill_updated_date: 2026-05-09
+
+tags:
+  skill_level:
+    - beginner
+  team_drill: no
+  age_level:
+    - 10U_below
+    - 12U
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - c_cut
+    - butterfly
+  equipment:
+    - ice_marker
+    - bumpers

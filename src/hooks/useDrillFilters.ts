@@ -2,7 +2,7 @@ import * as React from "react";
 
 interface DrillTags {
   skill_level?: string[];
-  team_drill?: string[];
+  team_drill?: string;
   age_level?: string[];
   fundamental_skill?: string[];
   skating_skill?: string[];
@@ -22,43 +22,73 @@ export interface FilterState {
   equipment: string[];
 }
 
+export type FilterCategory = keyof FilterState;
+
+const FILTER_CATEGORIES: FilterCategory[] = [
+  "skill_level",
+  "team_drill",
+  "age_level",
+  "fundamental_skill",
+  "skating_skill",
+  "equipment",
+];
+
+export const DEFAULT_FILTER_STATE: FilterState = {
+  skill_level: [],
+  team_drill: [],
+  age_level: [],
+  fundamental_skill: [],
+  skating_skill: [],
+  equipment: [],
+};
+
 /**
  * Custom hook for managing drill filtering functionality
  * Extracts shared logic between goalie-drills page and INeedADrillButton component
  */
 export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: FilterState) {
-  const defaultFilters: FilterState = React.useMemo(
+  const [selectedFilters, setSelectedFilters] = React.useState<FilterState>(() => ({
+    ...DEFAULT_FILTER_STATE,
+    ...(initialFilters || {}),
+  }));
+
+  const defaultFilters = React.useMemo(
     () => ({
-      skill_level: [],
-      team_drill: [],
-      age_level: [],
-      fundamental_skill: [],
-      skating_skill: [],
-      equipment: [],
+      ...DEFAULT_FILTER_STATE,
     }),
     []
   );
 
-  const [selectedFilters, setSelectedFilters] = React.useState<FilterState>(
-    initialFilters || defaultFilters
+  const activeFilterEntries = React.useMemo(
+    () =>
+      FILTER_CATEGORIES.filter((category) => selectedFilters[category].length > 0).map(
+        (category) => ({
+          category,
+          values: selectedFilters[category],
+          valueSet: new Set(selectedFilters[category]),
+        })
+      ),
+    [selectedFilters]
   );
 
   // Dynamically derive tag categories from actual drill data
   const tagCategories = React.useMemo(() => {
-    const categories: Record<string, Set<string>> = {
-      skill_level: new Set(),
-      team_drill: new Set(),
-      age_level: new Set(),
-      fundamental_skill: new Set(),
-      skating_skill: new Set(),
-      equipment: new Set(),
-    };
+    const categories = FILTER_CATEGORIES.reduce(
+      (acc, category) => {
+        acc[category] = new Set<string>();
+        return acc;
+      },
+      {} as Record<FilterCategory, Set<string>>
+    );
 
     // Collect all unique tag values from drills
     drills.forEach((drill) => {
-      Object.entries(drill.tags).forEach(([category, values]) => {
+      FILTER_CATEGORIES.forEach((category) => {
+        const values = drill.tags[category as keyof DrillTags];
         if (Array.isArray(values)) {
-          values.forEach((value) => categories[category]?.add(value));
+          values.forEach((value) => categories[category].add(value));
+        } else if (typeof values === "string") {
+          categories[category].add(values);
         }
       });
     });
@@ -66,32 +96,36 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
     // Convert Sets to sorted arrays for consistent display
     return Object.fromEntries(
       Object.entries(categories).map(([key, set]) => [key, Array.from(set).sort()])
-    );
+    ) as Record<FilterCategory, string[]>;
   }, [drills]);
 
   // Filter drills based on selected filters
   const filteredDrills = React.useMemo(() => {
+    if (activeFilterEntries.length === 0) {
+      return drills;
+    }
+
     return drills.filter((drill) => {
-      // Check each filter category
-      for (const category in selectedFilters) {
-        const selectedValues = selectedFilters[category as keyof FilterState];
-        if (selectedValues.length > 0) {
-          const drillTagValues = drill.tags[category as keyof DrillTags] || [];
-          // Check if any selected value is in the drill's tags for this category
-          const hasMatch = selectedValues.some((value) => drillTagValues.includes(value));
-          if (!hasMatch) {
-            return false;
-          }
+      for (const activeFilter of activeFilterEntries) {
+        const rawTagValue = drill.tags[activeFilter.category as keyof DrillTags];
+        const drillTagValues = Array.isArray(rawTagValue)
+          ? rawTagValue
+          : rawTagValue
+            ? [rawTagValue]
+            : [];
+        const hasMatch = drillTagValues.some((value) => activeFilter.valueSet.has(value));
+        if (!hasMatch) {
+          return false;
         }
       }
       return true;
     });
-  }, [drills, selectedFilters]);
+  }, [activeFilterEntries, drills]);
 
   // Toggle filter selection
-  const toggleFilter = React.useCallback((category: string, value: string) => {
+  const toggleFilter = React.useCallback((category: FilterCategory, value: string) => {
     setSelectedFilters((prev) => {
-      const current = prev[category as keyof FilterState] || [];
+      const current = prev[category];
       const newValues = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value];
@@ -100,10 +134,10 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
   }, []);
 
   // Remove a specific filter
-  const removeFilter = React.useCallback((category: string, value: string) => {
+  const removeFilter = React.useCallback((category: FilterCategory, value: string) => {
     setSelectedFilters((prev) => ({
       ...prev,
-      [category]: prev[category as keyof FilterState].filter((v) => v !== value),
+      [category]: prev[category].filter((v) => v !== value),
     }));
   }, []);
 
@@ -130,14 +164,10 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
 
   // Get all active filters
   const activeFilters = React.useMemo(() => {
-    const filters: Array<{ category: string; value: string }> = [];
-    for (const category in selectedFilters) {
-      selectedFilters[category as keyof FilterState].forEach((value) => {
-        filters.push({ category, value });
-      });
-    }
-    return filters;
-  }, [selectedFilters]);
+    return activeFilterEntries.flatMap(({ category, values }) =>
+      values.map((value) => ({ category, value }))
+    );
+  }, [activeFilterEntries]);
 
   return {
     selectedFilters,

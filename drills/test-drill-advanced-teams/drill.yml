@@ -6,14 +6,30 @@ description: |-
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
 
-coaching_points:
+drill_steps:
+  - Add drill step 1 here.
+  - Add drill step 2 here.
+
+coaching_focus_points:
   - Coaching point 1
   - Coaching point 2
   - Coaching point 3
 
-images:
-  - test-drill-image-1.png
-  - test-drill-image-2.png
+shooter_focus_points:
+  - Shooter focus point 1
+  - Shooter focus point 2
+  - Shooter focus point 3
+  - Shooter focus point 4
+
+drill_progressions:
+  - progression_name: Progression 1
+    progression_description: Add first progression step here.  same as before but with some fancier things to work on, like d, e, and f.
+  - progression_name: Progression 2
+    progression_description: Add second progression step here.  with some other stuff that's important to remember
+  - progression_name: Progression 3
+    progression_description: third is the most complicated.  add a 2nd and 3rd shooter, and have the shooters do some different things to keep the goalie on their toes.
+
+drill_image: test-drill-image-1.png
 
 video: https://vimeo.com/830266352?fl=pl&fe=sh
 
@@ -24,8 +40,7 @@ drill_updated_date: 2026-01-08
 tags:
   skill_level:
     - advanced
-  team_drill:
-    - yes
+  team_drill: yes
   age_level:
     - 14U
     - 16U_and_older
@@ -40,3 +55,6 @@ tags:
     - power_push
   equipment:
     - none
+  game_situations:
+    - power_play
+    - net_front_traffic

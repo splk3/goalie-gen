@@ -1,10 +1,12 @@
 import * as React from "react";
 import { withPrefix, useStaticQuery, graphql } from "gatsby";
 import TermsPopup from "./TermsPopup";
+import FeedbackButton from "./FeedbackButton";
 
 interface UsaHockeyGoldBannerProps {
   showCopyright?: boolean;
   showTerms?: boolean;
+  textClassName?: string;
 }
 
 /**
@@ -15,6 +17,7 @@ interface UsaHockeyGoldBannerProps {
 export default function UsaHockeyGoldBanner({
   showCopyright = false,
   showTerms = false,
+  textClassName = "text-lg",
 }: UsaHockeyGoldBannerProps) {
   const data = useStaticQuery(graphql`
     query {
@@ -38,7 +41,7 @@ export default function UsaHockeyGoldBanner({
           />
         </div>
         <div className="flex-1">
-          <p className="text-lg">
+          <p className={textClassName}>
             This website was developed as part of the{" "}
             <a
               href="https://lms.usahockeylearningcenter.com/pages/36/goalie-development"
@@ -56,15 +59,31 @@ export default function UsaHockeyGoldBanner({
           </p>
         </div>
       </div>
-      {showCopyright && (
-        <p className="text-center text-sm mt-4 opacity-80">
-          © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
-          Kujawski
-        </p>
-      )}
-      {showTerms && (
-        <div className="text-center mt-2">
-          <TermsPopup />
+      {(showCopyright || showTerms) && (
+        <div className="mt-4 flex items-start justify-center gap-3">
+          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+            <img
+              src={withPrefix("/images/logos/logo-alt-light-whitebg.png")}
+              alt="Goalie Gen"
+              width={56}
+              height={56}
+              className="w-14 h-14 object-contain"
+            />
+          </div>
+          <div className="text-center">
+            {showCopyright && (
+              <p className="text-sm opacity-80">
+                © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
+                Kujawski
+              </p>
+            )}
+            {showTerms && (
+              <div className="mt-2 flex items-center justify-center gap-3">
+                <TermsPopup />
+                <FeedbackButton />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>
