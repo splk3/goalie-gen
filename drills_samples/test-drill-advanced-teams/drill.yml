@@ -1,0 +1,38 @@
+---
+name: Advanced Test Drill for Teams
+
+description: |-
+  A brief description of the drill.  This can be multiple lines and should provide
+  an overview of what the drill is about, its purpose, and any key details that
+  would help someone understand what the drill entails.
+
+coaching_points:
+  - Coaching point 1
+  - Coaching point 2
+  - Coaching point 3
+
+images:
+  - test-drill-image-1.png
+  - test-drill-image-2.png
+
+video: https://www.youtube.com/watch?v=L4C5hPBv-LA
+
+tags:
+  skill_level:
+    - advanced
+  team_drill:
+    - yes
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - save_selection
+  skating_skill:
+    - shuffle
+    - t_push
+    - butterfly
+    - power_push
+  equipment:
+    - none
