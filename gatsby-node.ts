@@ -29,7 +29,7 @@ const ALLOWED_AGE_LEVELS = ["10U_below", "12U", "14U", "16U_and_older", "all"];
 
 const ALLOWED_SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
-const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker", "none"];
+const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "ice_marker", "none"];
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 

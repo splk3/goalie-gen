@@ -93,7 +93,7 @@ drill_progressions:
 | `fundamental_skill` | `skating`, `positioning`, `stance`, `save_selection`, `rebound_control`, `recovery` |
 | `skating_skill` | `shuffle`, `t_push`, `c_cut`, `butterfly`, `power_push` |
 | `game_situations` | `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling` |
-| `equipment` | `blaze_pods`, `cones`, `goal`, `ice_marker`, `bumpers`, `none` |
+| `equipment` | `blaze_pods`, `cones`, `ice_marker`, `bumpers`, `none` |
 
 ## Step 4 — Handle the Drill Image
 
@@ -172,5 +172,5 @@ tags:
     - c_cut
     - t_push
   equipment:
-    - goal
+    - ice_marker
 ```

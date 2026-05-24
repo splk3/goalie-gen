@@ -180,7 +180,6 @@ body:
       options:
         - label: blaze_pods
         - label: cones
-        - label: goal
         - label: ice_marker
         - label: bumpers
         - label: none
