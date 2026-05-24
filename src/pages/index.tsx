@@ -61,7 +61,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           <div className="border-2 border-usa-blue dark:border-blue-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors">
             <h3 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3">
               For Organizations
