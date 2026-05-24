@@ -1,5 +1,91 @@
-import { loadImageAsDataURL } from "../generateDrillPdf";
+import { loadImageAsDataURL, generateDrillPdf } from "../generateDrillPdf";
 import type { DrillPdfProgressCallback } from "../generateDrillPdf";
+import type { DrillData } from "../../types/drill";
+import {
+  estimateDrillPdfPages,
+  shouldPlaceProgressionsOnSecondPage,
+} from "../estimateDrillPdfPages";
+import * as drillPdfPaginationShared from "../drillPdfPaginationShared";
+import * as estimateDrillPdfPagesModule from "../estimateDrillPdfPages";
+import * as fs from "fs";
+import * as path from "path";
+import * as yaml from "js-yaml";
+
+const loadDrillFixture = (folder: string): DrillData => {
+  const drillPath = path.resolve(__dirname, `../../../drills/${folder}/drill.yml`);
+  return yaml.load(fs.readFileSync(drillPath, "utf8"), {
+    schema: yaml.FAILSAFE_SCHEMA,
+  }) as DrillData;
+};
+
+type TraceOp = "addImage" | "splitTextToSize";
+
+interface DrawTraceEntry {
+  order: number;
+  op: TraceOp;
+  args: unknown[];
+}
+
+const trimText = (value: string): string => {
+  if (value.length <= 80) {
+    return value;
+  }
+  return `${value.slice(0, 77)}...`;
+};
+
+const sanitizeTraceValue = (value: unknown): unknown => {
+  if (typeof value === "number") {
+    return Number(value.toFixed(2));
+  }
+  if (typeof value === "string") {
+    return trimText(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeTraceValue(item));
+  }
+  if (value && typeof value === "object") {
+    const asRecord = value as Record<string, unknown>;
+    return Object.fromEntries(
+      Object.entries(asRecord)
+        .filter(([, entryValue]) => entryValue !== undefined)
+        .map(([key, entryValue]) => [key, sanitizeTraceValue(entryValue)])
+    );
+  }
+  return value;
+};
+
+const getPdfDrawTrace = async (
+  drillData: DrillData,
+  drillFolder: string
+): Promise<DrawTraceEntry[]> => {
+  const jspdf = await import("jspdf");
+  const methods: TraceOp[] = ["addImage", "splitTextToSize"];
+  const spies = methods.map((method) =>
+    jest.spyOn(jspdf.jsPDF.API as Record<string, (...args: unknown[]) => unknown>, method)
+  );
+
+  try {
+    await generateDrillPdf(drillData, drillFolder);
+    const trace: DrawTraceEntry[] = [];
+
+    methods.forEach((method, index) => {
+      const spy = spies[index];
+      spy.mock.calls.forEach((call, callIndex) => {
+        trace.push({
+          order: spy.mock.invocationCallOrder[callIndex],
+          op: method,
+          args: call.map((arg) => sanitizeTraceValue(arg)),
+        });
+      });
+    });
+
+    return trace.sort((a, b) => a.order - b.order);
+  } finally {
+    spies.forEach((spy) => {
+      spy.mockRestore();
+    });
+  }
+};
 
 // ---------------------------------------------------------------------------
 // Browser API mocks
@@ -295,5 +381,309 @@ describe("DrillPdfProgressCallback type", () => {
     callback("Generating PDF...");
     callback("Finalizing...");
     expect(messages).toEqual(["Loading images...", "Generating PDF...", "Finalizing..."]);
+  });
+});
+
+describe("generateDrillPdf layout selection", () => {
+  jest.setTimeout(20000);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const baseDrillData: DrillData = {
+    name: "Layout Selection Test Drill",
+    description: "Short description for layout testing.",
+    drill_steps: ["Step one", "Step two"],
+    coaching_focus_points: ["Focus one", "Focus two"],
+    drill_image: "diagram.png",
+    tags: {
+      team_drill: "no",
+      fundamental_skill: ["angles"],
+      skating_skill: ["t-push"],
+    },
+    drill_creation_date: "2026-01-01",
+  };
+
+  it("uses centered 75% width image when single-column main layout fits one page", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+
+    await generateDrillPdf(baseDrillData, "test-folder");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("renders the drill diagram before the Drill Information section in single-column layout", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const splitTextSpy = jest.spyOn(
+      jspdf.jsPDF.API as { splitTextToSize: (...args: unknown[]) => unknown },
+      "splitTextToSize"
+    );
+
+    await generateDrillPdf(baseDrillData, "test-folder");
+
+    const drillImageCallIndex = addImageSpy.mock.calls.findIndex((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(drillImageCallIndex).toBeGreaterThanOrEqual(0);
+
+    const drillImageCallOrder = addImageSpy.mock.invocationCallOrder[drillImageCallIndex];
+    const descriptionSplitCallIndexes = splitTextSpy.mock.calls
+      .map((call, index) => ({ value: call[0], index }))
+      .filter((entry) => entry.value === baseDrillData.description)
+      .map((entry) => entry.index);
+    expect(descriptionSplitCallIndexes.length).toBeGreaterThan(0);
+
+    const descriptionSplitCallOrder =
+      splitTextSpy.mock.invocationCallOrder[
+        descriptionSplitCallIndexes[descriptionSplitCallIndexes.length - 1]
+      ];
+    expect(drillImageCallOrder).toBeLessThan(descriptionSplitCallOrder);
+  });
+
+  it("falls back to two-column image width when single-column main layout overflows", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const overflowData: DrillData = {
+      ...baseDrillData,
+      description: Array.from({ length: 40 }, () => "Very long description text").join(" "),
+      drill_steps: Array.from({ length: 40 }, (_, index) => `Extended step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 20 }, () => "Detailed coaching point text"),
+      shooter_focus_points: Array.from({ length: 12 }, () => "Detailed shooter point text"),
+    };
+
+    await generateDrillPdf(overflowData, "test-folder");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(false);
+  });
+
+  it("uses single-column image width for shot-rebound-recovery", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const drillPath = path.resolve(__dirname, "../../../drills/shot-rebound-recovery/drill.yml");
+    const drillData = yaml.load(fs.readFileSync(drillPath, "utf8"), {
+      schema: yaml.FAILSAFE_SCHEMA,
+    }) as DrillData;
+
+    await generateDrillPdf(drillData, "shot-rebound-recovery");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(true);
+  });
+});
+
+describe("generateDrillPdf pagination regression alignment", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1600, imageHeight: 900 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("keeps rim-stop-cut-across in dedicated progression-page mode", async () => {
+    const folder = "rim-stop-cut-across";
+    const drillData = loadDrillFixture(folder);
+
+    expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    expect(pageEstimate).toMatchObject({
+      mainContentPages: 2,
+      dedicatedProgressionPages: 1,
+      totalPages: 3,
+    });
+
+    const doc = await generateDrillPdf(drillData, folder);
+    expect(doc.getNumberOfPages()).toBeGreaterThan(1);
+    expect(doc.getNumberOfPages()).toBeLessThanOrEqual(pageEstimate.totalPages);
+  });
+
+  it("keeps progression-image drills aligned between estimator and generator", async () => {
+    const withImageProgressions = {
+      name: "Regression Image Progression Alignment",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus detail"],
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: Array.from({ length: 8 }, (_, index) => ({
+        progression_name: `Progression ${index + 1}`,
+        progression_description:
+          "Long progression details intended to force dedicated progression pagination when rendered inline.",
+        progression_image: `progression-${index + 1}.png`,
+      })),
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(withImageProgressions)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(withImageProgressions);
+    expect(pageEstimate.dedicatedProgressionPages).toBeGreaterThan(0);
+
+    const doc = await generateDrillPdf(withImageProgressions, "test-folder");
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
+  });
+
+  it("keeps text-only progression drills aligned between estimator and generator", async () => {
+    const textOnlyProgressions = {
+      name: "Regression Text Progression Alignment",
+      description: "Short",
+      drill_steps: Array.from({ length: 36 }, (_, index) => `Step ${index + 1}`),
+      coaching_focus_points: Array.from({ length: 16 }, () => "Focus detail"),
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description:
+            "Longer progression details intended to consume enough inline space to trigger dedicated progression pagination behavior.",
+        },
+        {
+          progression_name: "Progression 2",
+          progression_description:
+            "Additional progression text to ensure the overall inline render would exceed one page before moving progressions.",
+        },
+      ],
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(textOnlyProgressions)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(textOnlyProgressions);
+    expect(pageEstimate.dedicatedProgressionPages).toBeGreaterThan(0);
+
+    const doc = await generateDrillPdf(textOnlyProgressions, "test-folder");
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
+  });
+});
+
+describe("generateDrillPdf visual regression traces", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1600, imageHeight: 900 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("matches full-width first-page layout trace for shot-rebound-recovery", async () => {
+    const drillData = loadDrillFixture("shot-rebound-recovery");
+    const trace = await getPdfDrawTrace(drillData, "shot-rebound-recovery");
+    expect({
+      totalOps: trace.length,
+      firstOps: trace.slice(0, 80),
+      lastOps: trace.slice(-40),
+    }).toMatchSnapshot();
+  });
+
+  it("matches dedicated progression-card trace for rim-stop-cut-across", async () => {
+    const drillData = loadDrillFixture("rim-stop-cut-across");
+    const trace = await getPdfDrawTrace(drillData, "rim-stop-cut-across");
+    expect({
+      totalOps: trace.length,
+      firstOps: trace.slice(0, 120),
+      lastOps: trace.slice(-60),
+    }).toMatchSnapshot();
+  });
+
+  it("matches dense inline-content trace for two-shot", async () => {
+    const drillData = loadDrillFixture("two-shot");
+    const trace = await getPdfDrawTrace(drillData, "two-shot");
+    expect({
+      totalOps: trace.length,
+      firstOps: trace.slice(0, 100),
+      lastOps: trace.slice(-50),
+    }).toMatchSnapshot();
+  });
+});
+
+describe("generateDrillPdf overflow handling", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1600, imageHeight: 900 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("renders a placeholder card when a progression cannot be placed", async () => {
+    const splitTextSpy = jest.spyOn(
+      (await import("jspdf")).jsPDF.API as Record<string, (...args: unknown[]) => unknown>,
+      "splitTextToSize"
+    );
+    jest
+      .spyOn(estimateDrillPdfPagesModule, "shouldPlaceProgressionsOnSecondPage")
+      .mockReturnValue(true);
+    jest.spyOn(drillPdfPaginationShared, "planDedicatedProgressionCards").mockReturnValue({
+      pagesUsed: 1,
+      placements: [],
+      compactedCardIndices: [],
+      overflowCardIndices: [0],
+    });
+
+    const drillData = {
+      name: "Overflow Placeholder",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus detail"],
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Unplaced Progression",
+          progression_description: "Full progression details",
+        },
+      ],
+    } as DrillData;
+
+    await generateDrillPdf(drillData, "test-folder");
+
+    expect(
+      splitTextSpy.mock.calls.some((call) =>
+        JSON.stringify(call[0]).includes("This progression was omitted from the PDF")
+      )
+    ).toBe(true);
   });
 });

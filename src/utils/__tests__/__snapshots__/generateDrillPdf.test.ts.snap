@@ -1,0 +1,3091 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`generateDrillPdf visual regression traces matches dedicated progression-card trace for rim-stop-cut-across 1`] = `
+{
+  "firstOps": [
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 227,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 228,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 229,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 230,
+    },
+    {
+      "args": [
+        "This drill helps goalies develop stick skills behind the net and practice get...",
+        170,
+      ],
+      "op": "splitTextToSize",
+      "order": 231,
+    },
+    {
+      "args": [
+        "1. Shooter rims the puck to either side.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 232,
+    },
+    {
+      "args": [
+        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 233,
+    },
+    {
+      "args": [
+        "3. Shooter skates to either wall at the blue line to present a target.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 234,
+    },
+    {
+      "args": [
+        "4. Goalie makes a controlled pass to the shooter.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 235,
+    },
+    {
+      "args": [
+        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 236,
+    },
+    {
+      "args": [
+        "6. Shooter releases a shot back to the original side (against the grain).",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 237,
+    },
+    {
+      "args": [
+        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 238,
+    },
+    {
+      "args": [
+        "• Set early before the rim arrives; read the shooter's body language.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 239,
+    },
+    {
+      "args": [
+        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 240,
+    },
+    {
+      "args": [
+        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 241,
+    },
+    {
+      "args": [
+        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 242,
+    },
+    {
+      "args": [
+        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 243,
+    },
+    {
+      "args": [
+        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 244,
+    },
+    {
+      "args": [
+        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 245,
+    },
+    {
+      "args": [
+        "• Track the change of angle as the shooter cuts across; maintain edge control.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 246,
+    },
+    {
+      "args": [
+        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 247,
+    },
+    {
+      "args": [
+        "• Hard, purposeful rim — simulate a game speed dump in.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 248,
+    },
+    {
+      "args": [
+        "• Explode to the wall to present a clean passing target.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 249,
+    },
+    {
+      "args": [
+        "• Stick available early — show a clear target for the goalie.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 250,
+    },
+    {
+      "args": [
+        "• Skate the wall with pace — don't drift or slow down.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 251,
+    },
+    {
+      "args": [
+        "• Cut across with intent — force the goalie to move laterally.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 252,
+    },
+    {
+      "args": [
+        "• Shoot against the grain back to the original side.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 253,
+    },
+    {
+      "args": [
+        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 254,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        121.12,
+        43,
+        68.88,
+        38.75,
+      ],
+      "op": "addImage",
+      "order": 255,
+    },
+    {
+      "args": [
+        "This drill helps goalies develop stick skills behind the net and practice get...",
+        95.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 256,
+    },
+    {
+      "args": [
+        "1. Shooter rims the puck to either side.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 257,
+    },
+    {
+      "args": [
+        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 258,
+    },
+    {
+      "args": [
+        "3. Shooter skates to either wall at the blue line to present a target.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 259,
+    },
+    {
+      "args": [
+        "4. Goalie makes a controlled pass to the shooter.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 260,
+    },
+    {
+      "args": [
+        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 261,
+    },
+    {
+      "args": [
+        "6. Shooter releases a shot back to the original side (against the grain).",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 262,
+    },
+    {
+      "args": [
+        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 263,
+    },
+    {
+      "args": [
+        "• Set early before the rim arrives; read the shooter's body language.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 264,
+    },
+    {
+      "args": [
+        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 265,
+    },
+    {
+      "args": [
+        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 266,
+    },
+    {
+      "args": [
+        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 267,
+    },
+    {
+      "args": [
+        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 268,
+    },
+    {
+      "args": [
+        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 269,
+    },
+    {
+      "args": [
+        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 270,
+    },
+    {
+      "args": [
+        "• Track the change of angle as the shooter cuts across; maintain edge control.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 271,
+    },
+    {
+      "args": [
+        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 272,
+    },
+    {
+      "args": [
+        "• Hard, purposeful rim — simulate a game speed dump in.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 273,
+    },
+    {
+      "args": [
+        "• Explode to the wall to present a clean passing target.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 274,
+    },
+    {
+      "args": [
+        "• Stick available early — show a clear target for the goalie.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 275,
+    },
+    {
+      "args": [
+        "• Skate the wall with pace — don't drift or slow down.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 276,
+    },
+    {
+      "args": [
+        "• Cut across with intent — force the goalie to move laterally.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 277,
+    },
+    {
+      "args": [
+        "• Shoot against the grain back to the original side.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 278,
+    },
+    {
+      "args": [
+        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 279,
+    },
+    {
+      "args": [
+        "Variable Rim Locations",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 280,
+    },
+    {
+      "args": [
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 281,
+    },
+    {
+      "args": [
+        "Variable Rim Locations",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 282,
+    },
+    {
+      "args": [
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 283,
+    },
+    {
+      "args": [
+        "Shooter Delay Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 284,
+    },
+    {
+      "args": [
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 285,
+    },
+    {
+      "args": [
+        "Shooter Delay Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 286,
+    },
+    {
+      "args": [
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 287,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 288,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 289,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 290,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 291,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 292,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 293,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 294,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 295,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 296,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 297,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 298,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 299,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 300,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 301,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 302,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 303,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 304,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 305,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 306,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        60,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 307,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        124,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 308,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        184,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 309,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        122.83,
+        60,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 310,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        122.83,
+        120,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 311,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 312,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 313,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 314,
+    },
+  ],
+  "lastOps": [
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        121.12,
+        43,
+        68.88,
+        38.75,
+      ],
+      "op": "addImage",
+      "order": 255,
+    },
+    {
+      "args": [
+        "This drill helps goalies develop stick skills behind the net and practice get...",
+        95.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 256,
+    },
+    {
+      "args": [
+        "1. Shooter rims the puck to either side.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 257,
+    },
+    {
+      "args": [
+        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 258,
+    },
+    {
+      "args": [
+        "3. Shooter skates to either wall at the blue line to present a target.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 259,
+    },
+    {
+      "args": [
+        "4. Goalie makes a controlled pass to the shooter.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 260,
+    },
+    {
+      "args": [
+        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 261,
+    },
+    {
+      "args": [
+        "6. Shooter releases a shot back to the original side (against the grain).",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 262,
+    },
+    {
+      "args": [
+        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 263,
+    },
+    {
+      "args": [
+        "• Set early before the rim arrives; read the shooter's body language.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 264,
+    },
+    {
+      "args": [
+        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 265,
+    },
+    {
+      "args": [
+        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 266,
+    },
+    {
+      "args": [
+        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 267,
+    },
+    {
+      "args": [
+        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 268,
+    },
+    {
+      "args": [
+        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 269,
+    },
+    {
+      "args": [
+        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 270,
+    },
+    {
+      "args": [
+        "• Track the change of angle as the shooter cuts across; maintain edge control.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 271,
+    },
+    {
+      "args": [
+        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 272,
+    },
+    {
+      "args": [
+        "• Hard, purposeful rim — simulate a game speed dump in.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 273,
+    },
+    {
+      "args": [
+        "• Explode to the wall to present a clean passing target.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 274,
+    },
+    {
+      "args": [
+        "• Stick available early — show a clear target for the goalie.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 275,
+    },
+    {
+      "args": [
+        "• Skate the wall with pace — don't drift or slow down.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 276,
+    },
+    {
+      "args": [
+        "• Cut across with intent — force the goalie to move laterally.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 277,
+    },
+    {
+      "args": [
+        "• Shoot against the grain back to the original side.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 278,
+    },
+    {
+      "args": [
+        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 279,
+    },
+    {
+      "args": [
+        "Variable Rim Locations",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 280,
+    },
+    {
+      "args": [
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 281,
+    },
+    {
+      "args": [
+        "Variable Rim Locations",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 282,
+    },
+    {
+      "args": [
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 283,
+    },
+    {
+      "args": [
+        "Shooter Delay Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 284,
+    },
+    {
+      "args": [
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 285,
+    },
+    {
+      "args": [
+        "Shooter Delay Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 286,
+    },
+    {
+      "args": [
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 287,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 288,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 289,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 290,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 291,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 292,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 293,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 294,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 295,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 296,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 297,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 298,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 299,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 300,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 301,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 302,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 303,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 304,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 305,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 306,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        60,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 307,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        124,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 308,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        184,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 309,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        122.83,
+        60,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 310,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        122.83,
+        120,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 311,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 312,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 313,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 314,
+    },
+  ],
+  "totalOps": 88,
+}
+`;
+
+exports[`generateDrillPdf visual regression traces matches dense inline-content trace for two-shot 1`] = `
+{
+  "firstOps": [
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 315,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 316,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 317,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 318,
+    },
+    {
+      "args": [
+        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 331,
+    },
+    {
+      "args": [
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 332,
+    },
+    {
+      "args": [
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 333,
+    },
+    {
+      "args": [
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 334,
+    },
+    {
+      "args": [
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 335,
+    },
+    {
+      "args": [
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 336,
+    },
+    {
+      "args": [
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 337,
+    },
+    {
+      "args": [
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 338,
+    },
+    {
+      "args": [
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 339,
+    },
+    {
+      "args": [
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 340,
+    },
+    {
+      "args": [
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 341,
+    },
+    {
+      "args": [
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 342,
+    },
+    {
+      "args": [
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 343,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        41.25,
+        49,
+        127.5,
+        71.72,
+      ],
+      "op": "addImage",
+      "order": 344,
+    },
+    {
+      "args": [
+        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 345,
+    },
+    {
+      "args": [
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 346,
+    },
+    {
+      "args": [
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 347,
+    },
+    {
+      "args": [
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 348,
+    },
+    {
+      "args": [
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 349,
+    },
+    {
+      "args": [
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 350,
+    },
+    {
+      "args": [
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 351,
+    },
+    {
+      "args": [
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 352,
+    },
+    {
+      "args": [
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 353,
+    },
+    {
+      "args": [
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 354,
+    },
+    {
+      "args": [
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 355,
+    },
+    {
+      "args": [
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 356,
+    },
+    {
+      "args": [
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 357,
+    },
+    {
+      "args": [
+        "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 358,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 359,
+    },
+    {
+      "args": [
+        "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 360,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 361,
+    },
+    {
+      "args": [
+        "Progression 2 — Lane Variation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 362,
+    },
+    {
+      "args": [
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 363,
+    },
+    {
+      "args": [
+        "Progression 2 — Lane Variation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 364,
+    },
+    {
+      "args": [
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 365,
+    },
+    {
+      "args": [
+        "Progression 3 — Rebound Activation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 366,
+    },
+    {
+      "args": [
+        "After the second shot, shooter plays any rebound for 1-2 seconds.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 367,
+    },
+    {
+      "args": [
+        "Progression 3 — Rebound Activation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 368,
+    },
+    {
+      "args": [
+        "After the second shot, shooter plays any rebound for 1-2 seconds.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 369,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 370,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 371,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 372,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 373,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 374,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 375,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 376,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        60,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 377,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        120,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 378,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 379,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 380,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 381,
+    },
+  ],
+  "lastOps": [
+    {
+      "args": [
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 332,
+    },
+    {
+      "args": [
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 333,
+    },
+    {
+      "args": [
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 334,
+    },
+    {
+      "args": [
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 335,
+    },
+    {
+      "args": [
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 336,
+    },
+    {
+      "args": [
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 337,
+    },
+    {
+      "args": [
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 338,
+    },
+    {
+      "args": [
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 339,
+    },
+    {
+      "args": [
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 340,
+    },
+    {
+      "args": [
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 341,
+    },
+    {
+      "args": [
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 342,
+    },
+    {
+      "args": [
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 343,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        41.25,
+        49,
+        127.5,
+        71.72,
+      ],
+      "op": "addImage",
+      "order": 344,
+    },
+    {
+      "args": [
+        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 345,
+    },
+    {
+      "args": [
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 346,
+    },
+    {
+      "args": [
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 347,
+    },
+    {
+      "args": [
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 348,
+    },
+    {
+      "args": [
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 349,
+    },
+    {
+      "args": [
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 350,
+    },
+    {
+      "args": [
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 351,
+    },
+    {
+      "args": [
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 352,
+    },
+    {
+      "args": [
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 353,
+    },
+    {
+      "args": [
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 354,
+    },
+    {
+      "args": [
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 355,
+    },
+    {
+      "args": [
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 356,
+    },
+    {
+      "args": [
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 357,
+    },
+    {
+      "args": [
+        "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 358,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 359,
+    },
+    {
+      "args": [
+        "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 360,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 361,
+    },
+    {
+      "args": [
+        "Progression 2 — Lane Variation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 362,
+    },
+    {
+      "args": [
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 363,
+    },
+    {
+      "args": [
+        "Progression 2 — Lane Variation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 364,
+    },
+    {
+      "args": [
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 365,
+    },
+    {
+      "args": [
+        "Progression 3 — Rebound Activation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 366,
+    },
+    {
+      "args": [
+        "After the second shot, shooter plays any rebound for 1-2 seconds.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 367,
+    },
+    {
+      "args": [
+        "Progression 3 — Rebound Activation",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 368,
+    },
+    {
+      "args": [
+        "After the second shot, shooter plays any rebound for 1-2 seconds.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 369,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 370,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 371,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 372,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 373,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 374,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 375,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 376,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        60,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 377,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        33.83,
+        120,
+        53.33,
+        30,
+      ],
+      "op": "addImage",
+      "order": 378,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 379,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 380,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 381,
+    },
+  ],
+  "totalOps": 55,
+}
+`;
+
+exports[`generateDrillPdf visual regression traces matches full-width first-page layout trace for shot-rebound-recovery 1`] = `
+{
+  "firstOps": [
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 170,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 171,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 172,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 173,
+    },
+    {
+      "args": [
+        "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 174,
+    },
+    {
+      "args": [
+        "2. The goalie starts on the post in RVH, then releases off the post to establ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 175,
+    },
+    {
+      "args": [
+        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 176,
+    },
+    {
+      "args": [
+        "4. The goalie executes a controlled butterfly slide across the crease to make...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 177,
+    },
+    {
+      "args": [
+        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 178,
+    },
+    {
+      "args": [
+        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 179,
+    },
+    {
+      "args": [
+        "• Track the initial shot into the save and recover quickly to locate the rebo...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 180,
+    },
+    {
+      "args": [
+        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 181,
+    },
+    {
+      "args": [
+        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 182,
+    },
+    {
+      "args": [
+        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 183,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        41.25,
+        53,
+        127.5,
+        85,
+      ],
+      "op": "addImage",
+      "order": 184,
+    },
+    {
+      "args": [
+        "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 185,
+    },
+    {
+      "args": [
+        "2. The goalie starts on the post in RVH, then releases off the post to establ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 186,
+    },
+    {
+      "args": [
+        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 187,
+    },
+    {
+      "args": [
+        "4. The goalie executes a controlled butterfly slide across the crease to make...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 188,
+    },
+    {
+      "args": [
+        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 189,
+    },
+    {
+      "args": [
+        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 190,
+    },
+    {
+      "args": [
+        "• Track the initial shot into the save and recover quickly to locate the rebo...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 191,
+    },
+    {
+      "args": [
+        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 192,
+    },
+    {
+      "args": [
+        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 193,
+    },
+    {
+      "args": [
+        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 194,
+    },
+    {
+      "args": [
+        "Progression 1 - Variable Rebound Location",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 195,
+    },
+    {
+      "args": [
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 196,
+    },
+    {
+      "args": [
+        "Progression 1 - Variable Rebound Location",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 197,
+    },
+    {
+      "args": [
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 198,
+    },
+    {
+      "args": [
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 199,
+    },
+    {
+      "args": [
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 200,
+    },
+    {
+      "args": [
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 201,
+    },
+    {
+      "args": [
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 202,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 203,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 204,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 205,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 206,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 207,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 208,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 209,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 210,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 211,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 212,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 213,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 214,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 215,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 216,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 217,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 218,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 219,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 220,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 221,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        127,
+        60,
+        45,
+        30,
+      ],
+      "op": "addImage",
+      "order": 222,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        127,
+        140,
+        45,
+        30,
+      ],
+      "op": "addImage",
+      "order": 223,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 224,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 225,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 226,
+    },
+  ],
+  "lastOps": [
+    {
+      "args": [
+        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 187,
+    },
+    {
+      "args": [
+        "4. The goalie executes a controlled butterfly slide across the crease to make...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 188,
+    },
+    {
+      "args": [
+        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 189,
+    },
+    {
+      "args": [
+        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 190,
+    },
+    {
+      "args": [
+        "• Track the initial shot into the save and recover quickly to locate the rebo...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 191,
+    },
+    {
+      "args": [
+        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 192,
+    },
+    {
+      "args": [
+        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 193,
+    },
+    {
+      "args": [
+        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 194,
+    },
+    {
+      "args": [
+        "Progression 1 - Variable Rebound Location",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 195,
+    },
+    {
+      "args": [
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 196,
+    },
+    {
+      "args": [
+        "Progression 1 - Variable Rebound Location",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 197,
+    },
+    {
+      "args": [
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 198,
+    },
+    {
+      "args": [
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 199,
+    },
+    {
+      "args": [
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 200,
+    },
+    {
+      "args": [
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 201,
+    },
+    {
+      "args": [
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 202,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 203,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 204,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 205,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 206,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 207,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 208,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 209,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 210,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 211,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 212,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 213,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 214,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 215,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 216,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 217,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        20,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 218,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "JPEG",
+        166,
+        15,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 219,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 220,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 221,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        127,
+        60,
+        45,
+        30,
+      ],
+      "op": "addImage",
+      "order": 222,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        127,
+        140,
+        45,
+        30,
+      ],
+      "op": "addImage",
+      "order": 223,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        20,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 224,
+    },
+    {
+      "args": [
+        "This drill and the website on which it is hosted were developed as part of US...",
+        114,
+      ],
+      "op": "splitTextToSize",
+      "order": 225,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        166,
+        261,
+        24,
+        16,
+      ],
+      "op": "addImage",
+      "order": 226,
+    },
+  ],
+  "totalOps": 57,
+}
+`;

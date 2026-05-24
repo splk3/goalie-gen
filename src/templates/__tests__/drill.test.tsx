@@ -124,6 +124,23 @@ describe("DrillTemplate", () => {
     expect(orderedLists[0].querySelectorAll("li")).toHaveLength(0);
   });
 
+  it("renders the page without a main drill image when drill_image is absent", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            drill_image: undefined,
+          },
+        }}
+      />
+    );
+
+    expect(screen.getByText("Drill Information")).toBeInTheDocument();
+    expect(screen.queryByAltText("Drill diagram")).not.toBeInTheDocument();
+  });
+
   it("renders a Back to Drills link defaulting to /goalie-drills", () => {
     render(<DrillTemplate pageContext={basePageContext} />);
     const links = screen.getAllByRole("link", { name: /back to drills/i });
@@ -156,17 +173,11 @@ describe("DrillTemplate", () => {
           ...basePageContext,
           drillData: {
             ...basePageContext.drillData,
-            drill_progressions: [
-              {
-                progression_name: "Progression 1",
-                progression_description: "Progression details here",
-              },
-              {
-                progression_name: "Progression 2",
-                progression_description: "Progression with image",
-                progression_image: "progression-2.png",
-              },
-            ],
+            drill_progressions: Array.from({ length: 8 }, (_, index) => ({
+              progression_name: `Progression ${index + 1}`,
+              progression_description: `Progression details ${index + 1}`,
+              ...(index === 1 ? { progression_image: "progression-2.png" } : {}),
+            })),
           },
         }}
       />
@@ -174,9 +185,9 @@ describe("DrillTemplate", () => {
 
     expect(screen.getByText("Drill Progressions")).toBeInTheDocument();
     expect(screen.getByText("Progression 1")).toBeInTheDocument();
-    expect(screen.getByText("Progression details here")).toBeInTheDocument();
-    expect(screen.getByText("Progression 2")).toBeInTheDocument();
-    expect(screen.getByText("Progression with image")).toBeInTheDocument();
+    expect(screen.getByText("Progression details 1")).toBeInTheDocument();
+    expect(screen.getByText("Progression 8")).toBeInTheDocument();
+    expect(screen.getByText("Progression details 8")).toBeInTheDocument();
     expect(screen.getByAltText("Progression 2 diagram")).toBeInTheDocument();
   });
 

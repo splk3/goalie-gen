@@ -55,6 +55,35 @@ The site uses USA national colors:
 - `npm run clean` - Clean the cache and public directories
 - `npm run deploy` - Build and deploy to GitHub Pages
 - `npm test` - Run unit tests with Jest
+- `npm run verify-drills` - Run fixture-based PDF pagination estimate checks
+
+## 🧾 PDF Pagination and Layout Notes
+
+`src/utils/generateDrillPdf.ts`, `src/utils/estimateDrillPdfPages.ts`, and
+`src/utils/drillPdfPaginationShared.ts` work together and should be updated as a set.
+
+### Main layout flow
+
+1. Page 1 starts with a dynamic header, tags, and a compact-fit probe.
+2. The renderer prefers a full-width first-page diagram layout when content fits.
+3. If that probe overflows, it falls back to a two-column first-page layout.
+4. Coaching/Shooter/Skills/Video sections flow with page-break checks against the footer-safe limit.
+
+### Progression pagination flow
+
+1. `shouldPlaceProgressionsOnSecondPage()` decides whether progressions move off inline flow.
+2. Dedicated progression pages use two columns and a shared card planner (`planDedicatedProgressionCards`).
+3. Cards first try preferred layouts (with images), then compact layouts (text-only) if needed.
+4. Progression section pages are capped by `PROGRESSION_SECTION_MAX_PAGES`; overflow is logged.
+
+### Tuning guidance
+
+- If you change constants affecting spacing, update both generator and estimator constants.
+- Re-run:
+  - `npm test -- src/utils/__tests__/estimateDrillPdfPages.test.ts`
+  - `npm test -- src/utils/__tests__/generateDrillPdf.test.ts`
+  - `npm run verify-drills`
+- Keep `generateDrillPdf` draw traces stable unless the layout change is intentional.
 
 ## 📁 Project Structure
 
@@ -166,14 +195,13 @@ Active drills that appear on the site are in the [drills/](drills/) directory. E
 To add a new drill for the site, create a new folder under [drills/](drills/) named for the drill (one folder per drill). Each drill folder should include:
 
 - A drill.yml file that contains all applicable fields
-- One or more images for the drill
+- Any referenced drill or progression images when diagrams are available
 
 Required fields in drill.yml:
 
 - `name`
 - `drill_steps`
 - `coaching_focus_points`
-- `drill_image`
 - `tags`
 - `drill_creation_date`
 
@@ -181,9 +209,10 @@ Required fields in drill.yml:
 All other fields are optional. Known optional fields include:
 
 - `description` — optional string shown above drill steps
+- `drill_image` — optional main drill diagram filename
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
-- `drill_progressions` — array of up to 6 progression objects. Each progression object requires:
+- `drill_progressions` — array of up to 8 progression objects. Each progression object requires:
   - `progression_name` (string)
   - `progression_description` (string)
   - `progression_image` (optional string filename)
@@ -234,7 +263,7 @@ The exception is `team_drill`, which is a single string value (`yes` or `no`):
   - `dump_in`
   - `stick_handling`
 
-For media fields, `drill_image` should be a single image filename string, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
+For media fields, `drill_image` should be a single image filename string when provided, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (with `v` as the first query parameter) or `https://youtu.be/VIDEO_ID`
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`

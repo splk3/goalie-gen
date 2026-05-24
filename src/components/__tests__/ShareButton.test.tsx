@@ -56,9 +56,7 @@ describe("ShareButton", () => {
       fireEvent.click(screen.getByRole("button", { name: /share/i }));
     });
 
-    expect(mockShare).toHaveBeenCalledWith(
-      expect.objectContaining({ url: expect.any(String) })
-    );
+    expect(mockShare).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(String) }));
   });
 
   it("copies to clipboard when navigator.share is unavailable", async () => {

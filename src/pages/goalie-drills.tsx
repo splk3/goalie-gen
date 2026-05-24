@@ -11,7 +11,7 @@ import BackLinkButton from "../components/BackLinkButton";
 interface DrillNode {
   slug: string;
   name: string;
-  drill_image: string;
+  drill_image?: string;
   drill_creation_date: string;
   drill_updated_date?: string;
   tags: {

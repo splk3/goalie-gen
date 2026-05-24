@@ -3,7 +3,10 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
-import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
+import {
+  estimateDrillPdfPages,
+  shouldUseFullWidthFirstPageDiagram,
+} from "./src/utils/estimateDrillPdfPages";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
@@ -25,7 +28,7 @@ const ALLOWED_AGE_LEVELS = ["10U_below", "12U", "14U", "16U_and_older", "all"];
 
 const ALLOWED_SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
-const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "goal", "ice_marker", "none"];
+const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "ice_marker", "none"];
 
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
@@ -107,9 +110,9 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     );
   }
   if (Array.isArray(d.drill_progressions)) {
-    if (d.drill_progressions.length > 6) {
+    if (d.drill_progressions.length > 8) {
       throw new Error(
-        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 6 progressions`
+        `[${drillFolder}] drill.yml field 'drill_progressions' can contain at most 8 progressions`
       );
     }
 
@@ -148,8 +151,13 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     });
   }
 
-  if (typeof d.drill_image !== "string" || !d.drill_image) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_image' (string)`);
+  if (
+    typeof d.drill_image !== "undefined" &&
+    (typeof d.drill_image !== "string" || d.drill_image.trim().length === 0)
+  ) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'drill_image' must be a non-empty string when provided`
+    );
   }
 
   if (!d.tags || typeof d.tags !== "object" || Array.isArray(d.tags)) {
@@ -474,10 +482,11 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
   }
 
   for (const { folder, drillData } of drills) {
-    const estimatedPages = estimateDrillPdfPages(drillData);
-    if (estimatedPages > 1) {
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    const fitsOnOneMainPageWithFullWidthLayout = shouldUseFullWidthFirstPageDiagram(drillData);
+    if (pageEstimate.mainContentPages > 1 && !fitsOnOneMainPageWithFullWidthLayout) {
       console.warn(
-        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") is estimated to need ${estimatedPages} page(s). Consider shortening its content to fit on a single page.`
+        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has non-progression content estimated to need ${pageEstimate.mainContentPages} page(s) even with the full-width first-page layout. Consider shortening content to reduce overflow risk.`
       );
     }
 
