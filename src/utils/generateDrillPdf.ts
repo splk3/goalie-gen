@@ -750,7 +750,7 @@ export const generateDrillPdf = async (
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
       doc.setFont(undefined, "normal");
       drawText(videoLines, margin, sectionY);
-      sectionY += videoLines.length * mainLineHeight;
+      sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
     }
 
     return {
