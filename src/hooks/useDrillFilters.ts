@@ -22,7 +22,9 @@ export interface FilterState {
   equipment: string[];
 }
 
-const FILTER_CATEGORIES: Array<keyof FilterState> = [
+export type FilterCategory = keyof FilterState;
+
+const FILTER_CATEGORIES: FilterCategory[] = [
   "skill_level",
   "team_drill",
   "age_level",
@@ -76,16 +78,17 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
         acc[category] = new Set<string>();
         return acc;
       },
-      {} as Record<keyof FilterState, Set<string>>
+      {} as Record<FilterCategory, Set<string>>
     );
 
     // Collect all unique tag values from drills
     drills.forEach((drill) => {
-      Object.entries(drill.tags).forEach(([category, values]) => {
+      FILTER_CATEGORIES.forEach((category) => {
+        const values = drill.tags[category as keyof DrillTags];
         if (Array.isArray(values)) {
-          values.forEach((value) => categories[category]?.add(value));
+          values.forEach((value) => categories[category].add(value));
         } else if (typeof values === "string") {
-          categories[category]?.add(values);
+          categories[category].add(values);
         }
       });
     });
@@ -93,7 +96,7 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
     // Convert Sets to sorted arrays for consistent display
     return Object.fromEntries(
       Object.entries(categories).map(([key, set]) => [key, Array.from(set).sort()])
-    );
+    ) as Record<FilterCategory, string[]>;
   }, [drills]);
 
   // Filter drills based on selected filters
@@ -120,9 +123,9 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
   }, [activeFilterEntries, drills]);
 
   // Toggle filter selection
-  const toggleFilter = React.useCallback((category: string, value: string) => {
+  const toggleFilter = React.useCallback((category: FilterCategory, value: string) => {
     setSelectedFilters((prev) => {
-      const current = prev[category as keyof FilterState] || [];
+      const current = prev[category];
       const newValues = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value];
@@ -131,10 +134,10 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
   }, []);
 
   // Remove a specific filter
-  const removeFilter = React.useCallback((category: string, value: string) => {
+  const removeFilter = React.useCallback((category: FilterCategory, value: string) => {
     setSelectedFilters((prev) => ({
       ...prev,
-      [category]: prev[category as keyof FilterState].filter((v) => v !== value),
+      [category]: prev[category].filter((v) => v !== value),
     }));
   }, []);
 

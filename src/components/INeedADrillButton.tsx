@@ -3,7 +3,7 @@ import { useStaticQuery, graphql, navigate } from "gatsby";
 import Logo from "./Logo";
 import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
-import { useDrillFilters } from "../hooks/useDrillFilters";
+import { useDrillFilters, type FilterCategory } from "../hooks/useDrillFilters";
 
 interface DrillNode {
   slug: string;
@@ -160,7 +160,8 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
 
           {/* Filter Dropdowns */}
           <div ref={dropdownRef} className="grid md:grid-cols-2 gap-4 mb-6">
-            {Object.entries(tagCategories).map(([category, values]) => {
+            {(Object.keys(tagCategories) as FilterCategory[]).map((category) => {
+              const values = tagCategories[category];
               if (values.length === 0) return null;
               const dropdownId = `filter-${category}-menu`;
 

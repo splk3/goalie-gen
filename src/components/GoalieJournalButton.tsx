@@ -9,6 +9,7 @@ import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
 import { parseMarkdown } from "../utils/markdownParser";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
+import { toDocxImageTypeFromDataUrl } from "../utils/docxImageType";
 import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
 import coverMd from "../content/goalie-journal/cover.md";
 import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
@@ -190,9 +191,9 @@ export default function GoalieJournalButton() {
         doc.rect(15, startY, 180, entryHeight - 2);
 
         doc.setFontSize(11);
-        doc.setFont(undefined, "bold");
+        doc.setFont("helvetica", "bold");
         doc.text(`Entry ${entryNum}`, 20, startY + 7);
-        doc.setFont(undefined, "normal");
+        doc.setFont("helvetica", "normal");
 
         doc.setFontSize(9);
         doc.text("Date: _______________", 20, startY + 15);
@@ -306,6 +307,7 @@ export default function GoalieJournalButton() {
           new Paragraph({
             children: [
               new ImageRun({
+                type: toDocxImageTypeFromDataUrl(logoBase64),
                 data: logoBuffer,
                 transformation: { width: lw, height: lh },
               }),
