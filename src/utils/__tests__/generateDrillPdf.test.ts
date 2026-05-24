@@ -61,7 +61,10 @@ const getPdfDrawTrace = async (
   const jspdf = await import("jspdf");
   const methods: TraceOp[] = ["addImage", "splitTextToSize"];
   const spies = methods.map((method) =>
-    jest.spyOn(jspdf.jsPDF.API as Record<string, (...args: unknown[]) => unknown>, method)
+    jest.spyOn(
+      jspdf.jsPDF.API as unknown as Record<string, (...args: unknown[]) => unknown>,
+      method
+    )
   );
 
   try {
@@ -413,7 +416,7 @@ describe("generateDrillPdf layout selection", () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
     const addImageSpy = jest.spyOn(
-      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
       "addImage"
     );
 
@@ -430,11 +433,11 @@ describe("generateDrillPdf layout selection", () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
     const addImageSpy = jest.spyOn(
-      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
       "addImage"
     );
     const splitTextSpy = jest.spyOn(
-      jspdf.jsPDF.API as { splitTextToSize: (...args: unknown[]) => unknown },
+      jspdf.jsPDF.API as unknown as { splitTextToSize: (...args: unknown[]) => unknown },
       "splitTextToSize"
     );
 
@@ -464,7 +467,7 @@ describe("generateDrillPdf layout selection", () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
     const addImageSpy = jest.spyOn(
-      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
       "addImage"
     );
     const overflowData: DrillData = {
@@ -488,7 +491,7 @@ describe("generateDrillPdf layout selection", () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
     const addImageSpy = jest.spyOn(
-      jspdf.jsPDF.API as { addImage: (...args: unknown[]) => unknown },
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
       "addImage"
     );
     const drillPath = path.resolve(__dirname, "../../../drills/shot-rebound-recovery/drill.yml");
@@ -647,7 +650,10 @@ describe("generateDrillPdf overflow handling", () => {
 
   it("renders a placeholder card when a progression cannot be placed", async () => {
     const splitTextSpy = jest.spyOn(
-      (await import("jspdf")).jsPDF.API as Record<string, (...args: unknown[]) => unknown>,
+      (await import("jspdf")).jsPDF.API as unknown as Record<
+        string,
+        (...args: unknown[]) => unknown
+      >,
       "splitTextToSize"
     );
     jest

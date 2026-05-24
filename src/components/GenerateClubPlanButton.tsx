@@ -9,6 +9,7 @@ import FormatSelector from "./FormatSelector";
 import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
 import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
+import { toDocxImageTypeFromMime } from "../utils/docxImageType";
 import introductionMd from "../content/club-plan/introduction.md";
 import seasonGoalsMd from "../content/club-plan/season-goals.md";
 import trainingScheduleMd from "../content/club-plan/training-schedule.md";
@@ -65,6 +66,7 @@ export default function GenerateClubPlanButton() {
     ];
 
     if (arrayBuffer && imagePreview) {
+      const docxImageType = toDocxImageTypeFromMime(selectedImage?.type);
       let imgWidth = 400;
       let imgHeight = 400;
 
@@ -92,6 +94,7 @@ export default function GenerateClubPlanButton() {
         new Paragraph({
           children: [
             new ImageRun({
+              type: docxImageType,
               data: arrayBuffer,
               transformation: { width: imgWidth, height: imgHeight },
             }),

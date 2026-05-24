@@ -82,7 +82,7 @@ describe("ImageUploader", () => {
         setTimeout(() => {
           if (this.onloadend) {
             Object.defineProperty(this, "result", { value: "data:image/png;base64,abc" });
-            this.onloadend(new ProgressEvent("loadend"));
+            this.onloadend(new ProgressEvent("loadend") as ProgressEvent<FileReader>);
           }
         }, 0);
       }),

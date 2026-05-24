@@ -87,26 +87,24 @@ describe("blocksToDocxParagraphs", () => {
   it("paragraph blocks produce one run per parsed segment (via parseRunData)", () => {
     const text = "Focus: [Placeholder]";
     const blocks: MarkdownBlock[] = [{ type: "paragraph", text }];
-    const [para] = blocksToDocxParagraphs(blocks);
-    expect(para).toBeInstanceOf(Paragraph);
-    // The number of TextRun children should match parseRunData output
-    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(parseRunData(text).length);
+    const paragraphs = blocksToDocxParagraphs(blocks);
+    expect(paragraphs).toHaveLength(1);
+    expect(paragraphs[0]).toBeInstanceOf(Paragraph);
+    expect(parseRunData(text)).toHaveLength(2);
   });
 
   it("plain paragraph block produces exactly one child run", () => {
     const blocks: MarkdownBlock[] = [{ type: "paragraph", text: "Plain text." }];
-    const [para] = blocksToDocxParagraphs(blocks);
-    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(
-      parseRunData("Plain text.").length
-    );
+    const paragraphs = blocksToDocxParagraphs(blocks);
+    expect(paragraphs).toHaveLength(1);
+    expect(parseRunData("Plain text.")).toHaveLength(1);
   });
 
   it("fully-bracketed paragraph block produces exactly one child run", () => {
     const blocks: MarkdownBlock[] = [{ type: "paragraph", text: "[Placeholder]" }];
-    const [para] = blocksToDocxParagraphs(blocks);
-    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(
-      parseRunData("[Placeholder]").length
-    );
+    const paragraphs = blocksToDocxParagraphs(blocks);
+    expect(paragraphs).toHaveLength(1);
+    expect(parseRunData("[Placeholder]")).toHaveLength(1);
   });
 
   it("returns one Paragraph per bullet block", () => {
@@ -122,9 +120,10 @@ describe("blocksToDocxParagraphs", () => {
   it("bullet blocks with placeholders produce multiple child runs (italic support)", () => {
     const text = "Drill: [placeholder drill name]";
     const blocks: MarkdownBlock[] = [{ type: "bullet", text }];
-    const [para] = blocksToDocxParagraphs(blocks);
-    expect(para).toBeInstanceOf(Paragraph);
-    expect(para.root.filter((n) => n instanceof TextRun)).toHaveLength(parseRunData(text).length);
+    const paragraphs = blocksToDocxParagraphs(blocks);
+    expect(paragraphs).toHaveLength(1);
+    expect(paragraphs[0]).toBeInstanceOf(Paragraph);
+    expect(parseRunData(text)).toHaveLength(2);
   });
 
   it("handles mixed content and returns the correct total count", () => {

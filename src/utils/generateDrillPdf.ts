@@ -218,7 +218,7 @@ export const generateDrillPdf = async (
     doc.addImage(goldLogoInfo.dataURL, "PNG", margin, footerLogoY, goldLogoWidth, goldLogoHeight);
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(7);
-    doc.setFont(undefined, "normal");
+    doc.setFont("helvetica", "normal");
 
     // Gold text spans between the two logos
     const textRightEdge = ggLogoInfo ? ggLogoX - 4 : pageWidth - margin;
@@ -280,7 +280,7 @@ export const generateDrillPdf = async (
       const titleHorizontalPaddingMm = 4; // gap between each logo edge and the title text
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(16);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       const titleAvailableWidth =
         pageWidth - 2 * margin - leftLogoWidth - rightLogoWidth - 2 * titleHorizontalPaddingMm;
       const titleCenterX =
@@ -305,7 +305,7 @@ export const generateDrillPdf = async (
       }
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(16);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       const fallbackTitleWidth = pageWidth - 2 * margin;
       const fallbackTitleLines = doc.splitTextToSize(title, fallbackTitleWidth);
       const fallbackDimensions = doc.getTextDimensions(title, {
@@ -332,20 +332,20 @@ export const generateDrillPdf = async (
   let firstLineX = margin;
 
   if (drillData.tags.age_level && drillData.tags.age_level.length > 0) {
-    doc.setFont(undefined, "bold");
+    doc.setFont("helvetica", "bold");
     doc.text("Age Group: ", firstLineX, currentY);
     const labelWidth = doc.getTextWidth("Age Group: ");
-    doc.setFont(undefined, "normal");
+    doc.setFont("helvetica", "normal");
     const ageValues = drillData.tags.age_level.map(formatTag).join(", ");
     doc.text(ageValues, firstLineX + labelWidth, currentY);
     firstLineX += labelWidth + doc.getTextWidth(ageValues) + 5;
   }
 
   if (drillData.tags.skill_level && drillData.tags.skill_level.length > 0) {
-    doc.setFont(undefined, "bold");
+    doc.setFont("helvetica", "bold");
     doc.text("Skill Level: ", firstLineX, currentY);
     const labelWidth = doc.getTextWidth("Skill Level: ");
-    doc.setFont(undefined, "normal");
+    doc.setFont("helvetica", "normal");
     const skillValues = drillData.tags.skill_level.map(formatTag).join(", ");
     doc.text(skillValues, firstLineX + labelWidth, currentY);
   }
@@ -353,10 +353,10 @@ export const generateDrillPdf = async (
   currentY += 4;
 
   if (drillData.tags.equipment && drillData.tags.equipment.length > 0) {
-    doc.setFont(undefined, "bold");
+    doc.setFont("helvetica", "bold");
     doc.text("Equipment Needed: ", margin, currentY);
     const labelWidth = doc.getTextWidth("Equipment Needed: ");
-    doc.setFont(undefined, "normal");
+    doc.setFont("helvetica", "normal");
     const equipmentValues = drillData.tags.equipment.map(formatTag).join(", ");
     doc.text(equipmentValues, margin + labelWidth, currentY);
     currentY += 4;
@@ -490,13 +490,13 @@ export const generateDrillPdf = async (
       fullWidthY = ensureSpaceForPass(fullWidthY, 16);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Drill Information", margin, fullWidthY);
       fullWidthY += 3.5;
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       if (drillData.description) {
         const normalizedDescription = normalizeDrillDescription(drillData.description);
         const descriptionLines = doc.splitTextToSize(normalizedDescription, fullWidth);
@@ -544,13 +544,13 @@ export const generateDrillPdf = async (
       leftY = ensureSpaceForPass(leftY, 16);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Drill Information", margin, leftY);
       leftY += 3.5;
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       if (drillData.description) {
         const normalizedDescription = normalizeDrillDescription(drillData.description);
         const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
@@ -578,13 +578,13 @@ export const generateDrillPdf = async (
     sectionY = ensureSpaceForPass(sectionY, 12);
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
-    doc.setFont(undefined, "bold");
+    doc.setFont("helvetica", "bold");
     drawText("Coaching Focus Points", margin, sectionY);
     sectionY += 3.5;
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
-    doc.setFont(undefined, "normal");
+    doc.setFont("helvetica", "normal");
     if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
       for (const point of drillData.coaching_focus_points) {
         const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
@@ -599,13 +599,13 @@ export const generateDrillPdf = async (
       sectionY = ensureSpaceForPass(sectionY, 12);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Shooter Focus Points", margin, sectionY);
       sectionY += 3.5;
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       for (const point of drillData.shooter_focus_points) {
         const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
         sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
@@ -619,7 +619,7 @@ export const generateDrillPdf = async (
       sectionY = ensureSpaceForPass(sectionY, 12);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Drill Progressions", margin, sectionY);
       sectionY += 4;
 
@@ -634,7 +634,7 @@ export const generateDrillPdf = async (
         );
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(9);
-        doc.setFont(undefined, "bold");
+        doc.setFont("helvetica", "bold");
         drawText(nameLines, margin + 3, sectionY);
         sectionY += nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1;
 
@@ -664,7 +664,7 @@ export const generateDrillPdf = async (
           sectionY,
           descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1
         );
-        doc.setFont(undefined, "normal");
+        doc.setFont("helvetica", "normal");
         drawText(descriptionLines, margin + 6, sectionY);
         sectionY += descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1;
       }
@@ -680,7 +680,7 @@ export const generateDrillPdf = async (
 
     doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
     doc.setFontSize(12);
-    doc.setFont(undefined, "bold");
+    doc.setFont("helvetica", "bold");
     drawText("Skills Focus", margin, sectionY);
     sectionY += 4;
 
@@ -698,9 +698,9 @@ export const generateDrillPdf = async (
     doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
 
     if (drillData.tags.fundamental_skill && drillData.tags.fundamental_skill.length > 0) {
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Fundamental Skills:", skillsLeftX, skillsLeftY);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       skillsLeftY += 3;
       drillData.tags.fundamental_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
@@ -709,9 +709,9 @@ export const generateDrillPdf = async (
     }
 
     if (drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0) {
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Skating Skills:", skillsRightX, skillsRightY);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       skillsRightY += 3;
       drillData.tags.skating_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY);
@@ -720,9 +720,9 @@ export const generateDrillPdf = async (
     }
 
     if (hasGameSituations) {
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Game Situations:", skillsThirdX, skillsThirdY);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       skillsThirdY += 3;
       drillData.tags.game_situations!.forEach((situation) => {
         drawText(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
@@ -742,13 +742,13 @@ export const generateDrillPdf = async (
 
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       drawText("Video Demonstration", margin, sectionY);
       sectionY += 4;
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       drawText(videoLines, margin, sectionY);
       sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
     }
@@ -844,7 +844,7 @@ export const generateDrillPdf = async (
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       doc.text(layout.nameLines, contentX, contentY);
       contentY +=
         layout.nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT + PROGRESSION_CARD_NAME_BOTTOM_GAP;
@@ -867,7 +867,7 @@ export const generateDrillPdf = async (
         contentY += layout.imageHeight + PROGRESSION_IMAGE_TEXT_GAP;
       }
 
-      doc.setFont(undefined, "normal");
+      doc.setFont("helvetica", "normal");
       doc.text(layout.descriptionLines, contentX, contentY);
     };
 
@@ -899,7 +899,7 @@ export const generateDrillPdf = async (
       progressionsY = ensureSpace(progressionsY, PROGRESSION_SECTION_TITLE_HEIGHT);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
+      doc.setFont("helvetica", "bold");
       doc.text("Drill Progressions", margin, progressionsY);
       const columnStartY = progressionsY + 6;
       return { columnStartY, leftY: columnStartY, rightY: columnStartY };

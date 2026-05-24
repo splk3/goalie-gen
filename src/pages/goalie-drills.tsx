@@ -397,7 +397,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                         <input
                           type="checkbox"
                           checked={selectedFilters[filterCategory].includes(value)}
-                          onChange={() => toggleFilter(category, value)}
+                          onChange={() => toggleFilter(filterCategory, value)}
                           className="mr-3 w-4 h-4"
                         />
                         <span className="text-gray-900 dark:text-gray-100">

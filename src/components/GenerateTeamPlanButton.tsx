@@ -9,6 +9,7 @@ import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
 import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
 import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
+import { toDocxImageTypeFromMime } from "../utils/docxImageType";
 import seasonOverviewMd from "../content/team-plan/season-overview.md";
 import keyDevelopmentGoalsMd from "../content/team-plan/key-development-goals.md";
 import practiceTemplateMd from "../content/team-plan/practice-template.md";
@@ -112,6 +113,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     ];
 
     if (arrayBuffer && imagePreview) {
+      const docxImageType = toDocxImageTypeFromMime(selectedImage?.type);
       let imgWidth = 400;
       let imgHeight = 400;
 
@@ -139,6 +141,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         new Paragraph({
           children: [
             new ImageRun({
+              type: docxImageType,
               data: arrayBuffer,
               transformation: { width: imgWidth, height: imgHeight },
             }),
