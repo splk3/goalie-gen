@@ -5,7 +5,6 @@ import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
 import {
   estimateDrillPdfPages,
-  shouldPlaceProgressionsOnSecondPage,
   shouldUseFullWidthFirstPageDiagram,
 } from "./src/utils/estimateDrillPdfPages";
 
@@ -152,8 +151,13 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     });
   }
 
-  if (typeof d.drill_image !== "string" || !d.drill_image) {
-    throw new Error(`[${drillFolder}] drill.yml missing required field 'drill_image' (string)`);
+  if (
+    typeof d.drill_image !== "undefined" &&
+    (typeof d.drill_image !== "string" || d.drill_image.trim().length === 0)
+  ) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'drill_image' must be a non-empty string when provided`
+    );
   }
 
   if (!d.tags || typeof d.tags !== "object" || Array.isArray(d.tags)) {
@@ -480,12 +484,7 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
   for (const { folder, drillData } of drills) {
     const pageEstimate = estimateDrillPdfPages(drillData);
     const fitsOnOneMainPageWithFullWidthLayout = shouldUseFullWidthFirstPageDiagram(drillData);
-    const progressionsAlreadySplitToDedicatedPages = shouldPlaceProgressionsOnSecondPage(drillData);
-    if (
-      pageEstimate.mainContentPages > 1 &&
-      !fitsOnOneMainPageWithFullWidthLayout &&
-      !progressionsAlreadySplitToDedicatedPages
-    ) {
+    if (pageEstimate.mainContentPages > 1 && !fitsOnOneMainPageWithFullWidthLayout) {
       console.warn(
         `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has non-progression content estimated to need ${pageEstimate.mainContentPages} page(s) even with the full-width first-page layout. Consider shortening content to reduce overflow risk.`
       );

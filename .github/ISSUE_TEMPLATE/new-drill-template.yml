@@ -364,8 +364,9 @@ body:
             - progression_name: Progression 1
               progression_description: Description for progression 1
           ```
-        - If the progression description includes a pasted or attached image, keep that content in the
-          `progression_description` field as-is when creating the YAML.
+        - If the progression description includes a pasted or attached image, download that image into
+          the drill folder, set `progression_image` to the saved filename, and remove the raw image URL
+          from `progression_description`.
         - Set `team_drill` under `tags` to the value selected in the "Tags - Team Drill" dropdown as a plain string
           (e.g. `team_drill: no` or `team_drill: yes`), not as a YAML list.
         - If "Tags - Game Situations" checkboxes are checked,

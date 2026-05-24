@@ -871,6 +871,25 @@ export const generateDrillPdf = async (
       doc.text(layout.descriptionLines, contentX, contentY);
     };
 
+    const buildOmittedProgressionLayout = (progressionName: string): ProgressionCardLayout => {
+      const nameLines = doc.splitTextToSize(progressionName, cardContentWidth);
+      const descriptionLines = doc.splitTextToSize(
+        "This progression was omitted from the PDF because it exceeded pagination limits. Review the web version for the full details.",
+        cardContentWidth
+      );
+
+      return {
+        boxHeight:
+          PROGRESSION_CARD_PADDING * 2 +
+          PROGRESSION_CARD_TEXT_TOP_OFFSET +
+          nameLines.length * PROGRESSION_TEXT_LINE_HEIGHT +
+          PROGRESSION_CARD_NAME_BOTTOM_GAP +
+          descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT,
+        nameLines,
+        descriptionLines,
+      };
+    };
+
     const drawProgressionPageHeader = (): {
       columnStartY: number;
       leftY: number;
@@ -920,8 +939,15 @@ export const generateDrillPdf = async (
       const placement = placementsByCardIndex.get(progressionIndex);
       if (!placement) {
         console.error(
-          `Progression '${progression.progression_name}' exceeded progression pagination limits; content may be clipped.`
+          `Progression '${progression.progression_name}' exceeded progression pagination limits; rendering placeholder card instead.`
         );
+        startNewPage();
+        ({ columnStartY, leftY, rightY } = drawProgressionPageHeader());
+        renderedProgressionPageIndex += 1;
+
+        const omittedLayout = buildOmittedProgressionLayout(progression.progression_name);
+        drawProgressionCard(omittedLayout, leftColumnX, columnStartY);
+        leftY = columnStartY + omittedLayout.boxHeight;
         continue;
       }
 

@@ -5,6 +5,8 @@ import {
   estimateDrillPdfPages,
   shouldPlaceProgressionsOnSecondPage,
 } from "../estimateDrillPdfPages";
+import * as drillPdfPaginationShared from "../drillPdfPaginationShared";
+import * as estimateDrillPdfPagesModule from "../estimateDrillPdfPages";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
@@ -590,6 +592,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
     const doc = await generateDrillPdf(textOnlyProgressions, "test-folder");
     expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
   });
+
 });
 
 describe("generateDrillPdf visual regression traces", () => {
@@ -630,5 +633,58 @@ describe("generateDrillPdf visual regression traces", () => {
       firstOps: trace.slice(0, 100),
       lastOps: trace.slice(-50),
     }).toMatchSnapshot();
+  });
+});
+
+describe("generateDrillPdf overflow handling", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1600, imageHeight: 900 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("renders a placeholder card when a progression cannot be placed", async () => {
+    const splitTextSpy = jest.spyOn(
+      (await import("jspdf")).jsPDF.API as Record<string, (...args: unknown[]) => unknown>,
+      "splitTextToSize"
+    );
+    jest
+      .spyOn(estimateDrillPdfPagesModule, "shouldPlaceProgressionsOnSecondPage")
+      .mockReturnValue(true);
+    jest.spyOn(drillPdfPaginationShared, "planDedicatedProgressionCards").mockReturnValue({
+      pagesUsed: 1,
+      placements: [],
+      compactedCardIndices: [],
+      overflowCardIndices: [0],
+    });
+
+    const drillData = {
+      name: "Overflow Placeholder",
+      description: "Short",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus detail"],
+      drill_image: "diagram.png",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Unplaced Progression",
+          progression_description: "Full progression details",
+        },
+      ],
+    } as DrillData;
+
+    await generateDrillPdf(drillData, "test-folder");
+
+    expect(
+      splitTextSpy.mock.calls.some((call) =>
+        JSON.stringify(call[0]).includes("This progression was omitted from the PDF")
+      )
+    ).toBe(true);
   });
 });
