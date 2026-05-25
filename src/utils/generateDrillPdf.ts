@@ -209,7 +209,10 @@ export const generateDrillPdf = async (
 
     // CT logo (right side) — fixed at 1/3 of footer width, height proportional
     const ctLogoWidth = ctLogoInfo ? footerWidth / 3 : 0;
-    const ctLogoHeight = ctLogoInfo ? ctLogoWidth * (ctLogoInfo.height / ctLogoInfo.width) : 0;
+    const ctLogoHeight =
+      ctLogoInfo && ctLogoInfo.width > 0
+        ? ctLogoWidth * (ctLogoInfo.height / ctLogoInfo.width)
+        : 0;
     const ctLogoY = footerLogoY + (goldLogoHeight - ctLogoHeight) / 2;
     const ctLogoX = pageWidth - margin - ctLogoWidth;
 
