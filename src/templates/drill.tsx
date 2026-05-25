@@ -140,8 +140,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img
-            src={buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")}
-            alt="51 in 30 USA Hockey Goaltending"
+            src={buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")}
+            alt="USA Hockey Goaltending Gold Certification"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
             loading="eager"
@@ -449,7 +449,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA
               Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending
-              content, visit GoalieGen.com
+              content, visit GoalieGen.com. All drills created and organized in CoachThem.
             </p>
           </div>
         </div>
@@ -477,6 +477,16 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
           />
           <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
+        </div>
+
+        <div className="mt-8 print:hidden">
+          <a
+            href="https://coachthem.com/sports/ice-hockey"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto" />
+          </a>
         </div>
       </main>
 
