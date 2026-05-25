@@ -16,6 +16,7 @@ const LINE_HEIGHT = 3.2; // body text / bullet line
 const SECTION_GAP = 2; // gap between sections
 const SEPARATOR_AND_GAP = 8; // horizontal rule + spacing
 export const SKILLS_FOCUS_TOP_GAP = 4;
+export const SKILLS_FOCUS_LABEL_TO_VALUES_GAP = 4;
 export const PROGRESSION_TEXT_FONT_SIZE = 10;
 export const PROGRESSION_TEXT_LINE_HEIGHT = 4;
 export const PROGRESSION_IMAGE_TEXT_GAP = 4;
@@ -73,15 +74,15 @@ export function estimateSkillsFocusSectionHeight(drillData: DrillData): number {
   const columns: number[] = [];
 
   if (drillData.tags.fundamental_skill && drillData.tags.fundamental_skill.length > 0) {
-    columns.push(3 + drillData.tags.fundamental_skill.length * 3);
+    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.fundamental_skill.length * 3);
   }
 
   if (drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0) {
-    columns.push(3 + drillData.tags.skating_skill.length * 3);
+    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.skating_skill.length * 3);
   }
 
   if (drillData.tags.game_situations && drillData.tags.game_situations.length > 0) {
-    columns.push(3 + drillData.tags.game_situations.length * 3);
+    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.game_situations.length * 3);
   }
 
   return 7 + (columns.length > 0 ? Math.max(...columns) : 0);
