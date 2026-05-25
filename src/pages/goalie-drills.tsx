@@ -12,8 +12,8 @@ interface DrillNode {
   slug: string;
   name: string;
   description?: string;
-  drill_steps?: string[];
-  coaching_focus_points?: string[];
+  drill_steps: string[];
+  coaching_focus_points: string[];
   shooter_focus_points?: string[];
   drill_image?: string;
   drill_creation_date: string;
@@ -45,6 +45,7 @@ interface DrillCardData extends DrillNode {
   imageUrl: string;
   creationTimestamp: number | null;
   updatedTimestamp: number | null;
+  searchableText: string;
 }
 
 const FILTER_STATE_KEYS: Array<keyof FilterState> = [
@@ -136,11 +137,21 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       data.allDrill.nodes.map((node) => {
         const image = node.drill_image || "placeholder.png";
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
+        const searchableText = [
+          node.name,
+          node.description || "",
+          ...node.drill_steps,
+          ...node.coaching_focus_points,
+          ...(node.shooter_focus_points || []),
+        ]
+          .join(" ")
+          .toLowerCase();
         return {
           ...node,
           imageUrl: buildCacheBustedAssetPath(`/drills/${node.slug}/${image}`),
           creationTimestamp,
           updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? creationTimestamp,
+          searchableText,
         };
       }),
     [data.allDrill.nodes]
@@ -183,12 +194,25 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   // State for sorting - initialize from URL if present
   const [sortOrder, setSortOrder] = React.useState<SortOrder>(initialSort);
   const [textQuery, setTextQuery] = React.useState<string>(initialTextQuery);
-  const [debouncedTextQuery, setDebouncedTextQuery] = React.useState<string>(initialTextQuery.trim());
+  const [debouncedTextQuery, setDebouncedTextQuery] = React.useState<string>(
+    initialTextQuery.trim()
+  );
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const hasMountedRef = React.useRef(false);
+  const suppressNextPageResetRef = React.useRef(false);
+  const selectedFiltersRef = React.useRef(initialFilters);
+  const textQueryRef = React.useRef(initialTextQuery);
+
+  React.useEffect(() => {
+    selectedFiltersRef.current = selectedFilters;
+  }, [selectedFilters]);
+
+  React.useEffect(() => {
+    textQueryRef.current = textQuery;
+  }, [textQuery]);
 
   React.useEffect(() => {
     const params = new URLSearchParams(search);
@@ -196,13 +220,21 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     const nextPage = parsePageFromSearchParams(params);
     const nextSort = parseSortFromSearchParams(params);
     const nextTextQuery = parseTextQueryFromSearchParams(params);
+    const filtersWillChange = !areFiltersEqual(selectedFiltersRef.current, nextFilters);
+    const textWillChange = textQueryRef.current.trim() !== nextTextQuery.trim();
 
-    setSelectedFilters((previous) =>
-      areFiltersEqual(previous, nextFilters) ? previous : nextFilters
-    );
+    if (filtersWillChange || textWillChange) {
+      suppressNextPageResetRef.current = true;
+    }
+
+    setSelectedFilters((previous) => {
+      return areFiltersEqual(previous, nextFilters) ? previous : nextFilters;
+    });
     setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
     setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
-    setTextQuery((previous) => (previous.trim() === nextTextQuery.trim() ? previous : nextTextQuery));
+    setTextQuery((previous) => {
+      return previous.trim() === nextTextQuery.trim() ? previous : nextTextQuery;
+    });
   }, [search, setSelectedFilters]);
 
   React.useEffect(() => {
@@ -223,17 +255,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     }
 
     return filteredDrills.filter((drill) => {
-      const searchableText = [
-        drill.name,
-        drill.description || "",
-        ...(drill.drill_steps || []),
-        ...(drill.coaching_focus_points || []),
-        ...(drill.shooter_focus_points || []),
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return searchableText.includes(normalizedTextQuery);
+      return drill.searchableText.includes(normalizedTextQuery);
     });
   }, [filteredDrills, normalizedTextQuery]);
 
@@ -288,6 +310,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   React.useEffect(() => {
     if (!hasMountedRef.current) {
       hasMountedRef.current = true;
+      return;
+    }
+
+    if (suppressNextPageResetRef.current) {
+      suppressNextPageResetRef.current = false;
       return;
     }
 

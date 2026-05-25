@@ -168,7 +168,9 @@ describe("GoalieDrills page", () => {
   it("initializes and updates text query from URL search params", async () => {
     window.history.replaceState(null, "", "/goalie-drills");
 
-    const { rerender } = render(<GoalieDrills data={data} location={{ search: "?q=release+timing" }} />);
+    const { rerender } = render(
+      <GoalieDrills data={data} location={{ search: "?q=release+timing" }} />
+    );
 
     expect(screen.getByRole("searchbox", { name: /Text Search/i })).toHaveValue("release timing");
     expect(screen.getByRole("link", { name: "Goalie Drill" })).toBeInTheDocument();
@@ -247,6 +249,19 @@ describe("GoalieDrills page", () => {
     });
   });
 
+  it("preserves page from URL when text query is hydrated from location search", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
+    const { rerender } = render(<GoalieDrills data={largeData} location={{ search: "" }} />);
+
+    rerender(<GoalieDrills data={largeData} location={{ search: "?q=drill&page=2" }} />);
+
+    await waitFor(() => {
+      const params = new URLSearchParams(window.location.search);
+      expect(params.get("q")).toBe("drill");
+      expect(params.get("page")).toBe("2");
+    });
+  });
+
   it("serializes and hydrates multiple values for the same filter category", async () => {
     window.history.replaceState(null, "", "/goalie-drills");
     const { rerender } = render(<GoalieDrills data={data} location={{ search: "" }} />);
@@ -260,9 +275,7 @@ describe("GoalieDrills page", () => {
       expect(params.get("skill_level")).toBe("advanced,beginner");
     });
 
-    rerender(
-      <GoalieDrills data={data} location={{ search: "?skill_level=advanced,beginner" }} />
-    );
+    rerender(<GoalieDrills data={data} location={{ search: "?skill_level=advanced,beginner" }} />);
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /Skill Level/i })).toHaveTextContent("(2)");
