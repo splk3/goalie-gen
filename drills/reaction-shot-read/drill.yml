@@ -1,0 +1,51 @@
+---
+name: Reaction Shot Read
+
+drill_steps:
+  - Shooter begins each rep by presenting a 5-hole threat (stick angle, puck position, body language).
+  - "Shooter may: Shoot 5-hole, or fake 5-hole and elevate if the goalie drops early."
+  - "Goalie must: Stay patient. Read the puck release. React appropriately: hold edges if shooter delays, seal 5-hole if shot is released low, or extend hands upward if shot elevates."
+
+coaching_focus_points:
+  - "Read the blade: watch the shooter's bottom hand, blade angle, and puck position."
+  - "Patience first: avoid pre-dropping; force the shooter to make the first commitment."
+  - "Seal 5-hole with purpose: knees snap together, stick blade flat, no gaps."
+  - Track up through the puck on high shots - don't collapse backward.
+  - "Recover immediately: reset to stance after each rep."
+
+shooter_focus_points:
+  - "Sell the 5-hole threat: show a believable low release."
+  - "Read the goalie's posture: If goalie stays tall = shoot 5-hole. If goalie drops early = elevate."
+  - "Keep release deceptive: slight delay, change blade angle late."
+  - Maintain consistent body language so the goalie must read the puck, not the shooter's habits.
+
+drill_image: reaction-shot-read.png
+
+drill_progressions:
+  - progression_name: Progression 1. Tempo Variation
+    progression_description: Shooter releases immediately or delays the shot/fake. Forces goalie to read timing, not just release angle.
+  - progression_name: Progression 2. Lateral Movement Start
+    progression_description: Shooter takes one or two lateral steps before shooting. Goalie must adjust angle and still read release.
+    progression_image: progression-2.png
+  - progression_name: Progression 3. Screened Release
+    progression_description: "Add a stationary screen player between shooter and goalie (Extra Goalie, Player, Pads). Shooter still uses 5-hole vs. high read. Goalie must track puck late and maintain patience."
+    progression_image: progression-3.png
+  - progression_name: Progression 4. Rebound Reaction Layer
+    progression_description: After the initial shot, shooter immediately shoots any rebound. Goalie must recover and react quickly.
+
+drill_creation_date: 2026-05-25
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: no
+  age_level:
+    - all
+  fundamental_skill:
+    - stance
+    - save_selection
+    - rebound_control
+  equipment:
+    - none
