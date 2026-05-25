@@ -7,6 +7,7 @@ import {
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
   SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
+  SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
   SKILLS_FOCUS_TOP_GAP,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
@@ -709,7 +710,7 @@ export const generateDrillPdf = async (
       doc.setFont("helvetica", "bold");
       drawText("Fundamental Skills:", skillsLeftX, skillsLeftY);
       doc.setFont("helvetica", "normal");
-      skillsLeftY += 3;
+      skillsLeftY += SKILLS_FOCUS_LABEL_TO_VALUES_GAP;
       drillData.tags.fundamental_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
         skillsLeftY += 4;
@@ -720,7 +721,7 @@ export const generateDrillPdf = async (
       doc.setFont("helvetica", "bold");
       drawText("Skating Skills:", skillsRightX, skillsRightY);
       doc.setFont("helvetica", "normal");
-      skillsRightY += 3;
+      skillsRightY += SKILLS_FOCUS_LABEL_TO_VALUES_GAP;
       drillData.tags.skating_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY);
         skillsRightY += 4;
@@ -731,7 +732,7 @@ export const generateDrillPdf = async (
       doc.setFont("helvetica", "bold");
       drawText("Game Situations:", skillsThirdX, skillsThirdY);
       doc.setFont("helvetica", "normal");
-      skillsThirdY += 3;
+      skillsThirdY += SKILLS_FOCUS_LABEL_TO_VALUES_GAP;
       drillData.tags.game_situations!.forEach((situation) => {
         drawText(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
         skillsThirdY += 4;
