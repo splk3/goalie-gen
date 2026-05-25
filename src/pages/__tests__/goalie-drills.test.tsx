@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import GoalieDrills from "../goalie-drills";
 
 jest.mock("../../components/PageLayout", () => {
@@ -15,6 +15,10 @@ describe("GoalieDrills page", () => {
         {
           slug: "team-drill",
           name: "Team Drill",
+          description: "Great for rebound control and crease awareness.",
+          drill_steps: ["Start at post", "Recover to center lane quickly"],
+          coaching_focus_points: ["Track puck into body", "Control second save"],
+          shooter_focus_points: ["Shoot low for rebounds"],
           drill_image: "team.png",
           drill_creation_date: "2026-01-01",
           drill_updated_date: "2026-01-02",
@@ -30,6 +34,10 @@ describe("GoalieDrills page", () => {
         {
           slug: "goalie-drill",
           name: "Goalie Drill",
+          description: "Works on elite tracking and reading release points.",
+          drill_steps: ["Shallow angle setup", "React to pass across seam"],
+          coaching_focus_points: ["Stay patient on feet", "Hands in front"],
+          shooter_focus_points: ["Change release timing"],
           drill_image: "goalie.png",
           drill_creation_date: "2026-01-01",
           drill_updated_date: "2026-01-02",
@@ -69,6 +77,56 @@ describe("GoalieDrills page", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /Team Drill/i })).toHaveTextContent("(1)");
+    });
+  });
+
+  it("filters drills by text across name, description, steps, and focus points", () => {
+    render(<GoalieDrills data={data} />);
+
+    const searchInput = screen.getByRole("searchbox", { name: /Text Search/i });
+
+    fireEvent.change(searchInput, { target: { value: "release timing" } });
+    expect(screen.getByRole("link", { name: "Goalie Drill" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Team Drill" })).not.toBeInTheDocument();
+
+    fireEvent.change(searchInput, { target: { value: "recover to center lane" } });
+    expect(screen.getByRole("link", { name: "Team Drill" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Goalie Drill" })).not.toBeInTheDocument();
+  });
+
+  it("shows zero results when text search has no matches", () => {
+    render(<GoalieDrills data={data} />);
+
+    fireEvent.change(screen.getByRole("searchbox", { name: /Text Search/i }), {
+      target: { value: "not-a-real-drill-text" },
+    });
+
+    expect(screen.getByText("Showing 0 drills")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Team Drill" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Goalie Drill" })).not.toBeInTheDocument();
+  });
+
+  it("initializes and updates text query from URL search params", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
+
+    const { rerender } = render(<GoalieDrills data={data} location={{ search: "?q=release+timing" }} />);
+
+    expect(screen.getByRole("searchbox", { name: /Text Search/i })).toHaveValue("release timing");
+    expect(screen.getByRole("link", { name: "Goalie Drill" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Team Drill" })).not.toBeInTheDocument();
+
+    rerender(<GoalieDrills data={data} location={{ search: "?q=rebound" }} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("searchbox", { name: /Text Search/i })).toHaveValue("rebound");
+    });
+
+    fireEvent.change(screen.getByRole("searchbox", { name: /Text Search/i }), {
+      target: { value: "center lane" },
+    });
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("q=center+lane");
     });
   });
 });
