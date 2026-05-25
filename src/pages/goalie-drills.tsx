@@ -281,60 +281,29 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     setCurrentPage(1);
   }, [filterKey, normalizedTextQuery]);
 
-  // Keep pagination state synchronized with the URL
+  // Keep page/sort/text query state synchronized with the URL in one atomic update
   React.useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }
 
     const searchParams = new URLSearchParams(window.location.search);
+    const trimmedQuery = textQuery.trim();
 
     if (currentPage > 1) {
       searchParams.set("page", String(currentPage));
     } else {
-      // Remove "page" when on the first page to keep URLs clean
       searchParams.delete("page");
     }
-
-    const searchString = searchParams.toString();
-    const newUrl =
-      window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
-
-    window.history.replaceState(null, "", newUrl);
-  }, [currentPage]);
-
-  // Keep sort state synchronized with the URL
-  React.useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const searchParams = new URLSearchParams(window.location.search);
 
     if (sortOrder !== "updated_newest") {
       searchParams.set("sort", sortOrder);
     } else {
-      // Remove "sort" when it's the default value to keep URLs clean
       searchParams.delete("sort");
     }
 
-    const searchString = searchParams.toString();
-    const newUrl =
-      window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
-
-    window.history.replaceState(null, "", newUrl);
-  }, [sortOrder]);
-
-  // Keep text query state synchronized with the URL
-  React.useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const searchParams = new URLSearchParams(window.location.search);
-
-    if (normalizedTextQuery) {
-      searchParams.set("q", textQuery.trim());
+    if (trimmedQuery) {
+      searchParams.set("q", trimmedQuery);
     } else {
       searchParams.delete("q");
     }
@@ -344,7 +313,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
 
     window.history.replaceState(null, "", newUrl);
-  }, [normalizedTextQuery, textQuery]);
+  }, [currentPage, sortOrder, textQuery]);
 
   const handleResetFilters = React.useCallback(() => {
     resetFilters();

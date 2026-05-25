@@ -129,4 +129,28 @@ describe("GoalieDrills page", () => {
       expect(window.location.search).toContain("q=center+lane");
     });
   });
+
+  it("reset filters clears selected tag filters and text query", async () => {
+    render(<GoalieDrills data={data} />);
+
+    const searchInput = screen.getByRole("searchbox", { name: /Text Search/i });
+    fireEvent.change(searchInput, { target: { value: "rebound" } });
+    expect(searchInput).toHaveValue("rebound");
+    expect(screen.getByText("Showing 1 drill")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Team Drill/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Yes" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Team Drill/i })).toHaveTextContent("(1)");
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset Filters" }));
+
+    await waitFor(() => {
+      expect(searchInput).toHaveValue("");
+      expect(screen.getByRole("button", { name: /Team Drill/i })).not.toHaveTextContent("(1)");
+      expect(screen.getByText("Showing 2 drills")).toBeInTheDocument();
+    });
+  });
 });
