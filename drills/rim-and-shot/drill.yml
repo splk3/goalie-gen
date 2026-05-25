@@ -1,0 +1,66 @@
+---
+name: Rim and Shot
+
+drill_steps:
+  - Shooter 1 rims the puck hard around the boards.
+  - Goalie leaves the crease, sets their angle, and stops the rim behind the net.
+  - Shooter 2 skates to the opposite corner to present as an outlet.
+  - Goalie retrieves the puck and makes a pass to Shooter 2.
+  - After the pass, the goalie moves across the crease, re-establishes positioning on the new puck side, and returns to the front of the net.
+  - Shooter 2 passes to Shooter 1, who has skated into a scoring area.
+  - Shooter 1 receives and shoots in stride.
+
+coaching_focus_points:
+  - Read the rim early - shoulder check before leaving the crease.
+  - Beat the puck to the stop point; arrive set, not sliding.
+  - Hands out in front when handling the puck to stay balanced and control the blade.
+  - After the pass, explode laterally to the new puck side and arrive on angle.
+  - Set feet before the shot - no drifting.
+  - Track the puck through the pass sequence to maintain visual connection.
+
+shooter_focus_points:
+  - "Shooter 1: Time the entry - do not arrive too early."
+  - "Shooter 1: Shoot in stride to maintain deception."
+  - "Shooter 1: Aim for purposeful locations (low far pad, high short side, etc.)."
+  - "Shooter 1: Stay inside the dots to create a realistic scoring threat."
+  - "Shooter 2: Arrive with speed to be a viable outlet for the goalie."
+  - "Shooter 2: Open up to the puck - hips facing the goalie for a clean catch-and-release pass."
+  - "Shooter 2: Scan before receiving to locate Shooter 1."
+  - "Shooter 2: Deliver a firm, flat pass into Shooter 1's shooting lane."
+
+drill_image: rim-and-shot.png
+
+drill_progressions:
+  - progression_name: Progression 1 - Add Shot Options
+    progression_description: Shooter 2 may shoot or pass. Goalie must read body language and react accordingly.
+    progression_image: progression-1.png
+  - progression_name: Progression 2 - Add a Coach or Player Forechecker
+    progression_description: Light pressure on the goalie during the rim retrieval. Forces quicker decision-making and stronger puck protection.
+    progression_image: progression-2.png
+  - progression_name: Progression 3 - Shooter 2 Randomly Chooses Corner
+    progression_description: Shooter 2 can choose the same corner as the rim or the opposite corner. Shooter 1 reads Shooter 2 and sets up for a shot on the appropriate side. Goalie must read the passing option and adjust accordingly.
+    progression_image: progression-3.png
+  - progression_name: Progression 4 - Add a Screen or Net-Front Player
+    progression_description: Place a stationary or moving screen in front. Goalie works on finding sightlines and tracking through traffic.
+    progression_image: progression-4.png
+  - progression_name: Progression 5 - Combine All Four Previous Progressions
+    progression_description: Combine Shooter 2's shoot option, coach pressure, random corner, and screen. Goalie works on puck handling, decision-making, scanning, and puck tracking.
+
+drill_creation_date: 2026-05-25
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: no
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+  skating_skill: []
+  equipment: []
+  game_situations: []
