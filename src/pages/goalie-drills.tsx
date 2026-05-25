@@ -11,6 +11,10 @@ import BackLinkButton from "../components/BackLinkButton";
 interface DrillNode {
   slug: string;
   name: string;
+  description?: string;
+  drill_steps: string[];
+  coaching_focus_points: string[];
+  shooter_focus_points?: string[];
   drill_image?: string;
   drill_creation_date: string;
   drill_updated_date?: string;
@@ -41,6 +45,7 @@ interface DrillCardData extends DrillNode {
   imageUrl: string;
   creationTimestamp: number | null;
   updatedTimestamp: number | null;
+  searchableText: string;
 }
 
 const FILTER_STATE_KEYS: Array<keyof FilterState> = [
@@ -118,6 +123,12 @@ const parseSortFromSearchParams = (searchParams: URLSearchParams): SortOrder => 
   return "updated_newest";
 };
 
+const parseTextQueryFromSearchParams = (searchParams: URLSearchParams): string => {
+  return searchParams.get("q") || "";
+};
+
+const URL_QUERY_DEBOUNCE_MS = 300;
+
 export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const search = location?.search || "";
   const initialSearchParams = React.useMemo(() => new URLSearchParams(search), [search]);
@@ -126,11 +137,21 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       data.allDrill.nodes.map((node) => {
         const image = node.drill_image || "placeholder.png";
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
+        const searchableText = [
+          node.name,
+          node.description || "",
+          ...node.drill_steps,
+          ...node.coaching_focus_points,
+          ...(node.shooter_focus_points || []),
+        ]
+          .join(" ")
+          .toLowerCase();
         return {
           ...node,
           imageUrl: buildCacheBustedAssetPath(`/drills/${node.slug}/${image}`),
           creationTimestamp,
           updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? creationTimestamp,
+          searchableText,
         };
       }),
     [data.allDrill.nodes]
@@ -146,6 +167,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   );
   const initialSort = React.useMemo<SortOrder>(
     () => parseSortFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialTextQuery = React.useMemo(
+    () => parseTextQueryFromSearchParams(initialSearchParams),
     [initialSearchParams]
   );
 
@@ -168,24 +193,71 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
   // State for sorting - initialize from URL if present
   const [sortOrder, setSortOrder] = React.useState<SortOrder>(initialSort);
+  const [textQuery, setTextQuery] = React.useState<string>(initialTextQuery);
+  const [debouncedTextQuery, setDebouncedTextQuery] = React.useState<string>(
+    initialTextQuery.trim()
+  );
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const hasMountedRef = React.useRef(false);
+  const suppressNextPageResetRef = React.useRef(false);
+  const selectedFiltersRef = React.useRef(initialFilters);
+  const textQueryRef = React.useRef(initialTextQuery);
+
+  React.useEffect(() => {
+    selectedFiltersRef.current = selectedFilters;
+  }, [selectedFilters]);
+
+  React.useEffect(() => {
+    textQueryRef.current = textQuery;
+  }, [textQuery]);
 
   React.useEffect(() => {
     const params = new URLSearchParams(search);
     const nextFilters = parseFiltersFromSearchParams(params);
     const nextPage = parsePageFromSearchParams(params);
     const nextSort = parseSortFromSearchParams(params);
+    const nextTextQuery = parseTextQueryFromSearchParams(params);
+    const filtersWillChange = !areFiltersEqual(selectedFiltersRef.current, nextFilters);
+    const textWillChange = textQueryRef.current.trim() !== nextTextQuery.trim();
 
-    setSelectedFilters((previous) =>
-      areFiltersEqual(previous, nextFilters) ? previous : nextFilters
-    );
+    if (filtersWillChange || textWillChange) {
+      suppressNextPageResetRef.current = true;
+    }
+
+    setSelectedFilters((previous) => {
+      return areFiltersEqual(previous, nextFilters) ? previous : nextFilters;
+    });
     setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
     setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
+    setTextQuery((previous) => {
+      return previous.trim() === nextTextQuery.trim() ? previous : nextTextQuery;
+    });
   }, [search, setSelectedFilters]);
+
+  React.useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedTextQuery(textQuery.trim());
+    }, URL_QUERY_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [textQuery]);
+
+  const normalizedTextQuery = React.useMemo(() => textQuery.trim().toLowerCase(), [textQuery]);
+
+  const textFilteredDrills = React.useMemo(() => {
+    if (!normalizedTextQuery) {
+      return filteredDrills;
+    }
+
+    return filteredDrills.filter((drill) => {
+      return drill.searchableText.includes(normalizedTextQuery);
+    });
+  }, [filteredDrills, normalizedTextQuery]);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -206,7 +278,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
   // Sort drills based on sortOrder
   const sortedDrills = React.useMemo(() => {
-    const sorted = [...filteredDrills];
+    const sorted = [...textFilteredDrills];
 
     sorted.sort((a, b) => {
       const isUpdatedSort = sortOrder === "updated_newest" || sortOrder === "updated_oldest";
@@ -222,7 +294,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     });
 
     return sorted;
-  }, [filteredDrills, sortOrder]);
+  }, [sortOrder, textFilteredDrills]);
 
   // Reset to page 1 when filters change
   // Use a stable key to prevent unnecessary rerenders
@@ -241,44 +313,48 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       return;
     }
 
-    setCurrentPage(1);
-  }, [filterKey]);
+    if (suppressNextPageResetRef.current) {
+      suppressNextPageResetRef.current = false;
+      return;
+    }
 
-  // Keep pagination state synchronized with the URL
+    setCurrentPage(1);
+  }, [filterKey, normalizedTextQuery]);
+
+  // Keep page/sort/text query state synchronized with the URL in one atomic update
   React.useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }
 
     const searchParams = new URLSearchParams(window.location.search);
+    FILTER_STATE_KEYS.forEach((category) => {
+      const values = selectedFilters[category];
+      if (values.length === 0) {
+        searchParams.delete(category);
+        return;
+      }
+
+      const serializedValues = [...values].sort().join(",");
+      searchParams.set(category, serializedValues);
+    });
 
     if (currentPage > 1) {
       searchParams.set("page", String(currentPage));
     } else {
-      // Remove "page" when on the first page to keep URLs clean
       searchParams.delete("page");
     }
-
-    const searchString = searchParams.toString();
-    const newUrl =
-      window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
-
-    window.history.replaceState(null, "", newUrl);
-  }, [currentPage]);
-
-  // Keep sort state synchronized with the URL
-  React.useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const searchParams = new URLSearchParams(window.location.search);
 
     if (sortOrder !== "updated_newest") {
       searchParams.set("sort", sortOrder);
     } else {
-      // Remove "sort" when it's the default value to keep URLs clean
       searchParams.delete("sort");
+    }
+
+    if (debouncedTextQuery) {
+      searchParams.set("q", debouncedTextQuery);
+    } else {
+      searchParams.delete("q");
     }
 
     const searchString = searchParams.toString();
@@ -286,7 +362,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
 
     window.history.replaceState(null, "", newUrl);
-  }, [sortOrder]);
+  }, [currentPage, debouncedTextQuery, selectedFilters, sortOrder]);
+
+  const handleResetFilters = React.useCallback(() => {
+    resetFilters();
+    setTextQuery("");
+  }, [resetFilters]);
 
   // Calculate pagination values
   const totalPages = Math.ceil(sortedDrills.length / itemsPerPage);
@@ -426,10 +507,27 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           })}
         </div>
 
+        <div className="mb-6">
+          <label
+            htmlFor="drill-text-search"
+            className="block text-gray-900 dark:text-gray-100 font-semibold mb-2"
+          >
+            Text Search
+          </label>
+          <input
+            id="drill-text-search"
+            type="search"
+            value={textQuery}
+            onChange={(event) => setTextQuery(event.target.value)}
+            placeholder="Search title, description, steps, and focus points"
+            className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600"
+          />
+        </div>
+
         {/* Reset Button */}
         <div className="flex justify-end">
           <button
-            onClick={resetFilters}
+            onClick={handleResetFilters}
             className="bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900 text-white font-semibold py-2 px-6 rounded transition-colors"
           >
             Reset Filters
@@ -526,6 +624,10 @@ export const query = graphql`
       nodes {
         slug
         name
+        description
+        drill_steps
+        coaching_focus_points
+        shooter_focus_points
         drill_image
         drill_creation_date
         drill_updated_date
