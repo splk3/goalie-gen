@@ -304,10 +304,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               Develop your goalies during goalie-focused time or involve the whole team!
             </p>
             <p className="text-lg">
-              All drills created and organized in CoachThem. CoachThem has
-              generously sponsored the projects on this site to enable the team to collaborate on 
-              drill design using CoachThem&apos;s digital drill drawing and design tools. For more 
-              information about CoachThem, visit{" "}
+              All drills created and organized in CoachThem. CoachThem has generously sponsored the
+              projects on this site to enable the team to collaborate on drill design using
+              CoachThem&apos;s digital drill drawing and design tools. For more information about
+              CoachThem, visit{" "}
               <a
                 href="https://coachthem.com/sports/ice-hockey"
                 target="_blank"
@@ -510,16 +510,8 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       </div>
 
       <div className="mt-8">
-        <a
-          href="https://coachthem.com/sports/ice-hockey"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="/images/coachthem/ct-banner.png"
-            alt="CoachThem"
-            className="w-full h-auto"
-          />
+        <a href="https://coachthem.com/sports/ice-hockey" target="_blank" rel="noopener noreferrer">
+          <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto" />
         </a>
       </div>
     </PageLayout>

@@ -113,11 +113,11 @@ export default function Home() {
         <div className="mt-10 flex flex-col lg:flex-row items-center gap-6 w-full">
           <div className="w-full lg:flex-1 text-gray-700 dark:text-gray-300">
             <p>
-              Drills and diagrams for this site are created and organized with CoachThem. CoachThem has
-              generously sponsored the USA Hockey Goaltending Gold projects for Patrick Boyle, Katie
-              Jablynski, and James Kujawski to enable the team to collaborate on drill design using
-              CoachThem&apos;s digital drill drawing and design tools. For more information about
-              CoachThem, visit{" "}
+              Drills and diagrams for this site are created and organized with CoachThem. CoachThem
+              has generously sponsored the USA Hockey Goaltending Gold projects for Patrick Boyle,
+              Katie Jablynski, and James Kujawski to enable the team to collaborate on drill design
+              using CoachThem&apos;s digital drill drawing and design tools. For more information
+              about CoachThem, visit{" "}
               <a
                 href="https://coachthem.com/sports/ice-hockey"
                 target="_blank"
