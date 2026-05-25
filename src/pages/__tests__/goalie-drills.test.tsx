@@ -9,6 +9,48 @@ jest.mock("../../components/PageLayout", () => {
 });
 
 describe("GoalieDrills page", () => {
+  const createDrill = (
+    index: number,
+    overrides?: Partial<{
+      slug: string;
+      name: string;
+      description: string;
+      drill_steps: string[];
+      coaching_focus_points: string[];
+      shooter_focus_points: string[];
+      drill_image: string;
+      drill_creation_date: string;
+      drill_updated_date: string;
+      tags: {
+        skill_level: string[];
+        team_drill: string;
+        age_level: string[];
+        fundamental_skill: string[];
+        skating_skill: string[];
+        equipment: string[];
+      };
+    }>
+  ) => ({
+    slug: `drill-${index}`,
+    name: `Drill ${index}`,
+    description: `Description ${index}`,
+    drill_steps: [`Step ${index}`],
+    coaching_focus_points: [`Coaching point ${index}`],
+    shooter_focus_points: [`Shooter point ${index}`],
+    drill_image: `drill-${index}.png`,
+    drill_creation_date: "2026-01-01",
+    drill_updated_date: "2026-01-02",
+    tags: {
+      skill_level: [index % 2 === 0 ? "beginner" : "advanced"],
+      team_drill: index % 2 === 0 ? "yes" : "no",
+      age_level: ["12U"],
+      fundamental_skill: ["positioning"],
+      skating_skill: ["t_push"],
+      equipment: ["cones"],
+    },
+    ...overrides,
+  });
+
   const data = {
     allDrill: {
       nodes: [
@@ -53,6 +95,11 @@ describe("GoalieDrills page", () => {
       ],
     },
   };
+  const largeData = {
+    allDrill: {
+      nodes: Array.from({ length: 20 }, (_, index) => createDrill(index + 1)),
+    },
+  };
 
   it("renders a Share a Drill Idea link that opens in a new tab", () => {
     render(<GoalieDrills data={data} />);
@@ -77,6 +124,18 @@ describe("GoalieDrills page", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /Team Drill/i })).toHaveTextContent("(1)");
+    });
+  });
+
+  it("updates URL query params when dropdown filters are selected", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
+    render(<GoalieDrills data={data} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Team Drill/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Yes" }));
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("team_drill=yes");
     });
   });
 
@@ -131,6 +190,7 @@ describe("GoalieDrills page", () => {
   });
 
   it("reset filters clears selected tag filters and text query", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
     render(<GoalieDrills data={data} />);
 
     const searchInput = screen.getByRole("searchbox", { name: /Text Search/i });
@@ -151,6 +211,61 @@ describe("GoalieDrills page", () => {
       expect(searchInput).toHaveValue("");
       expect(screen.getByRole("button", { name: /Team Drill/i })).not.toHaveTextContent("(1)");
       expect(screen.getByText("Showing 2 drills")).toBeInTheDocument();
+      expect(window.location.search).not.toContain("team_drill=yes");
+      expect(window.location.search).not.toContain("q=");
+    });
+  });
+
+  it("keeps combined shareable URL state for text, dropdown filters, and sort", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
+    render(<GoalieDrills data={data} />);
+
+    fireEvent.change(screen.getByRole("searchbox", { name: /Text Search/i }), {
+      target: { value: "rebound" },
+    });
+    fireEvent.change(screen.getByLabelText("Sort by:"), { target: { value: "created_oldest" } });
+    fireEvent.click(screen.getByRole("button", { name: /Team Drill/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Yes" }));
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("q=rebound");
+      expect(window.location.search).toContain("team_drill=yes");
+      expect(window.location.search).toContain("sort=created_oldest");
+    });
+  });
+
+  it("resets to page 1 in URL when filters change from a paged view", async () => {
+    window.history.replaceState(null, "", "/goalie-drills?page=2");
+    render(<GoalieDrills data={largeData} location={{ search: "?page=2" }} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Team Drill/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Yes" }));
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("team_drill=yes");
+      expect(window.location.search).not.toContain("page=");
+    });
+  });
+
+  it("serializes and hydrates multiple values for the same filter category", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
+    const { rerender } = render(<GoalieDrills data={data} location={{ search: "" }} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Skill Level/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Beginner" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Advanced" }));
+
+    await waitFor(() => {
+      const params = new URLSearchParams(window.location.search);
+      expect(params.get("skill_level")).toBe("advanced,beginner");
+    });
+
+    rerender(
+      <GoalieDrills data={data} location={{ search: "?skill_level=advanced,beginner" }} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Skill Level/i })).toHaveTextContent("(2)");
     });
   });
 });

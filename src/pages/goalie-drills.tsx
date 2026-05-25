@@ -126,6 +126,8 @@ const parseTextQueryFromSearchParams = (searchParams: URLSearchParams): string =
   return searchParams.get("q") || "";
 };
 
+const URL_QUERY_DEBOUNCE_MS = 300;
+
 export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const search = location?.search || "";
   const initialSearchParams = React.useMemo(() => new URLSearchParams(search), [search]);
@@ -181,6 +183,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   // State for sorting - initialize from URL if present
   const [sortOrder, setSortOrder] = React.useState<SortOrder>(initialSort);
   const [textQuery, setTextQuery] = React.useState<string>(initialTextQuery);
+  const [debouncedTextQuery, setDebouncedTextQuery] = React.useState<string>(initialTextQuery.trim());
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
@@ -201,6 +204,16 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
     setTextQuery((previous) => (previous === nextTextQuery ? previous : nextTextQuery));
   }, [search, setSelectedFilters]);
+
+  React.useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedTextQuery(textQuery.trim());
+    }, URL_QUERY_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [textQuery]);
 
   const normalizedTextQuery = React.useMemo(() => textQuery.trim().toLowerCase(), [textQuery]);
 
@@ -288,7 +301,16 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     }
 
     const searchParams = new URLSearchParams(window.location.search);
-    const trimmedQuery = textQuery.trim();
+    FILTER_STATE_KEYS.forEach((category) => {
+      const values = selectedFilters[category];
+      if (values.length === 0) {
+        searchParams.delete(category);
+        return;
+      }
+
+      const serializedValues = [...values].sort().join(",");
+      searchParams.set(category, serializedValues);
+    });
 
     if (currentPage > 1) {
       searchParams.set("page", String(currentPage));
@@ -302,8 +324,8 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       searchParams.delete("sort");
     }
 
-    if (trimmedQuery) {
-      searchParams.set("q", trimmedQuery);
+    if (debouncedTextQuery) {
+      searchParams.set("q", debouncedTextQuery);
     } else {
       searchParams.delete("q");
     }
@@ -313,7 +335,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
 
     window.history.replaceState(null, "", newUrl);
-  }, [currentPage, sortOrder, textQuery]);
+  }, [currentPage, debouncedTextQuery, selectedFilters, sortOrder]);
 
   const handleResetFilters = React.useCallback(() => {
     resetFilters();
