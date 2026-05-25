@@ -202,7 +202,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     );
     setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
     setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
-    setTextQuery((previous) => (previous === nextTextQuery ? previous : nextTextQuery));
+    setTextQuery((previous) => (previous.trim() === nextTextQuery.trim() ? previous : nextTextQuery));
   }, [search, setSelectedFilters]);
 
   React.useEffect(() => {
