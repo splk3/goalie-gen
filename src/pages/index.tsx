@@ -115,7 +115,7 @@ export default function Home() {
             <p>
               Drills and diagrams for this site are created and organized with CoachThem. CoachThem has
               generously sponsored the USA Hockey Goaltending Gold projects for Patrick Boyle, Katie
-              Jablynski, and James Kujowski to enable the team to collaborate on drill design using
+              Jablynski, and James Kujawski to enable the team to collaborate on drill design using
               CoachThem&apos;s digital drill drawing and design tools. For more information about
               CoachThem, visit{" "}
               <a
