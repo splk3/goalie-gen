@@ -487,6 +487,34 @@ describe("generateDrillPdf layout selection", () => {
     expect(hasSingleColumnDrillImage).toBe(false);
   });
 
+  it("renders sectioned coaching focus points as headings with nested bullets", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const splitTextSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { splitTextToSize: (...args: unknown[]) => unknown },
+      "splitTextToSize"
+    );
+
+    await generateDrillPdf(
+      {
+        ...baseDrillData,
+        coaching_focus_points: [
+          {
+            "Movement Quality:": ["Explode on the first push", "Arrive set at each point"],
+          },
+          "Track puck into body",
+        ],
+      },
+      "test-folder"
+    );
+
+    const splitValues = splitTextSpy.mock.calls.map((call) => call[0]);
+    expect(splitValues).toContain("Movement Quality:");
+    expect(splitValues).toContain("• Explode on the first push");
+    expect(splitValues).toContain("• Arrive set at each point");
+    expect(splitValues).toContain("• Track puck into body");
+  });
+
   it("uses single-column image width for shot-rebound-recovery", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
@@ -506,6 +534,42 @@ describe("generateDrillPdf layout selection", () => {
       return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
     });
     expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("uses single-column image width for beat-the-pass", async () => {
+    setupMocks({ imageWidth: 1081, imageHeight: 523 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const drillData = loadDrillFixture("beat-the-pass");
+
+    await generateDrillPdf(drillData, "beat-the-pass");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("keeps butterfly-map-series in two-column mode", async () => {
+    setupMocks({ imageWidth: 862, imageHeight: 411 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const drillData = loadDrillFixture("butterfly-map-series");
+
+    await generateDrillPdf(drillData, "butterfly-map-series");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(false);
   });
 });
 

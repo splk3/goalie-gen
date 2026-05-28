@@ -11,6 +11,7 @@ import {
   SKILLS_FOCUS_TOP_GAP,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
+  shouldUseFullWidthFirstPageDiagram,
 } from "./estimateDrillPdfPages";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
 import {
@@ -18,6 +19,7 @@ import {
   DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
   DRILL_EXPORT_PDF_CACHE_TTL_MS,
 } from "./staticAsset";
+import { normalizeCoachingFocusPoints } from "./coachingFocusPoints";
 
 export type { DrillData };
 
@@ -595,11 +597,22 @@ export const generateDrillPdf = async (
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
-      for (const point of drillData.coaching_focus_points) {
-        const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-        sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
-        drawText(pointLines, margin + 3, sectionY);
-        sectionY += pointLines.length * mainLineHeight + 1;
+      for (const block of normalizeCoachingFocusPoints(drillData.coaching_focus_points)) {
+        if (block.heading) {
+          doc.setFont("helvetica", "bold");
+          const headingLines = doc.splitTextToSize(block.heading, fullWidth - 5);
+          sectionY = ensureSpaceForPass(sectionY, headingLines.length * mainLineHeight + 1);
+          drawText(headingLines, margin + 3, sectionY);
+          sectionY += headingLines.length * mainLineHeight + 1;
+        }
+
+        doc.setFont("helvetica", "normal");
+        for (const point of block.bullets) {
+          const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
+          sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
+          drawText(pointLines, margin + 3, sectionY);
+          sectionY += pointLines.length * mainLineHeight + 1;
+        }
       }
     }
 
@@ -769,7 +782,12 @@ export const generateDrillPdf = async (
   };
 
   const singleColumnProbe = renderMainSection("single-column", false);
-  const useSingleColumnMainLayout = singleColumnProbe.endPageNum === currentPageNum;
+  const preferSingleColumnForProgressionHeavyLayout = shouldUseFullWidthFirstPageDiagram(
+    drillData,
+    drillImageInfo ? drillImageInfo.width / drillImageInfo.height : undefined
+  );
+  const useSingleColumnMainLayout =
+    singleColumnProbe.endPageNum === currentPageNum || preferSingleColumnForProgressionHeavyLayout;
   renderMainSection(useSingleColumnMainLayout ? "single-column" : "two-column", true);
 
   // Dedicated progression pages are triggered by overall inline overflow. When used,

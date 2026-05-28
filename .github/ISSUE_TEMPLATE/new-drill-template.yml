@@ -58,11 +58,15 @@ body:
     id: coaching_focus_points
     attributes:
       label: Coaching Focus Points
-      description: Enter one coaching focus point per line.
+      description: Enter either one focus point per line, or sectioned focus points using heading lines with indented bullet sub-items.
       placeholder: |
-        - Coaching focus point 1
-        - Coaching focus point 2
-        - Coaching focus point 3
+        - Movement Quality:
+          - Explode on the first push
+          - Arrive set at each point
+        - Body Positioning:
+          - Hands in front
+          - Stick centered on the ice
+        - Track puck into body
     validations:
       required: true
 
@@ -327,11 +331,14 @@ body:
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
         - Convert all non-ascii characters to ascii equivalents, as needed
-        - For the fields of 'drill_steps', 'coaching_focus_points', and 'shooter_focus_points', make sure to
-          format the YAML as an array of strings, with each item on a new line and a dash in front.
-          If the user enters multiple lines in the text area, split them into an array. If they enter a single line, make it an array with one item.
-          If they enter multiple lines but some are blank, ignore the blank lines and only include the non-blank lines in the array.
-          If they do not make each line bulleted, add the dashes and format it as an array.
+        - For `drill_steps` and `shooter_focus_points`, format YAML as arrays of strings, with each item on a new line and a dash in front.
+        - For `coaching_focus_points`, support both:
+          - flat string items (`- Keep chest square`)
+          - one-level section objects (`- Movement Quality:` with nested `- sub-item` bullets)
+          Keep mixed entries in the same order if both formats are present.
+        - If the user enters multiple lines in a text area, split into array items. If they enter a single line, make it an array with one item.
+        - If they enter multiple lines but some are blank, ignore blank lines and only include non-blank lines.
+        - If they do not add YAML dashes, add the dashes and format as valid YAML arrays.
           For example, if the user entered the following in the "Drill Steps" text area:
           ```
           Drill starting instruction

@@ -12,36 +12,12 @@ import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
-
-interface DrillProgression {
-  progression_name: string;
-  progression_description: string;
-  progression_image?: string;
-}
+import type { DrillData } from "../types/drill";
+import { normalizeCoachingFocusPoints } from "../utils/coachingFocusPoints";
 
 interface DrillPageContext {
   slug: string;
-  drillData: {
-    name: string;
-    description?: string;
-    drill_steps: string[];
-    coaching_focus_points: string[];
-    shooter_focus_points?: string[];
-    drill_progressions?: DrillProgression[];
-    drill_image?: string;
-    video?: string;
-    drill_creation_date: string;
-    drill_updated_date?: string;
-    tags: {
-      skill_level?: string[];
-      team_drill?: string;
-      age_level?: string[];
-      fundamental_skill?: string[];
-      skating_skill?: string[];
-      equipment?: string[];
-      game_situations?: string[];
-    };
-  };
+  drillData: DrillData;
   drillFolder: string;
 }
 
@@ -58,6 +34,10 @@ const formatTag = (tag: string): string => {
 
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext;
+  const coachingFocusBlocks = React.useMemo(
+    () => normalizeCoachingFocusPoints(drillData.coaching_focus_points || []),
+    [drillData.coaching_focus_points]
+  );
 
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [drillsBackUrl, setDrillsBackUrl] = React.useState("/goalie-drills");
@@ -265,11 +245,22 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
             Coaching Focus Points
           </h2>
-          <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-            {(drillData.coaching_focus_points || []).map((point, index) => (
-              <li key={index}>{point}</li>
+          <div className="space-y-3 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
+            {coachingFocusBlocks.map((block, blockIndex) => (
+              <div key={`${block.heading || "point"}-${blockIndex}`}>
+                {block.heading && (
+                  <h3 className="font-bold text-gray-800 dark:text-gray-200 print:text-gray-900">
+                    {block.heading}
+                  </h3>
+                )}
+                <ul className="list-disc list-inside space-y-2">
+                  {block.bullets.map((point, pointIndex) => (
+                    <li key={`${blockIndex}-${pointIndex}`}>{point}</li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
         {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (

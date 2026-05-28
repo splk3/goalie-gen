@@ -7,6 +7,7 @@ import {
   estimateDrillPdfPages,
   shouldUseFullWidthFirstPageDiagram,
 } from "./src/utils/estimateDrillPdfPages";
+import { flattenCoachingFocusPoints } from "./src/utils/coachingFocusPoints";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
@@ -81,11 +82,41 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
       `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
     );
   }
-  for (const point of d.coaching_focus_points) {
+  for (const [index, point] of d.coaching_focus_points.entries()) {
     if (typeof point !== "string") {
-      throw new Error(
-        `[${drillFolder}] drill.yml field 'coaching_focus_points' must contain only strings`
-      );
+      if (!point || typeof point !== "object" || Array.isArray(point)) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' must be a string or single-key object`
+        );
+      }
+
+      const sectionEntries = Object.entries(point as Record<string, unknown>);
+      if (sectionEntries.length !== 1) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' must contain exactly one section heading`
+        );
+      }
+
+      const [sectionHeading, subPoints] = sectionEntries[0];
+      if (sectionHeading.trim().length === 0) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' section heading must be a non-empty string`
+        );
+      }
+
+      if (!Array.isArray(subPoints) || subPoints.length === 0) {
+        throw new Error(
+          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' section values must be a non-empty array of strings`
+        );
+      }
+
+      for (const [subIndex, subPoint] of subPoints.entries()) {
+        if (typeof subPoint !== "string") {
+          throw new Error(
+            `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}].${sectionHeading}[${subIndex}]' must be a string`
+          );
+        }
+      }
     }
   }
 
@@ -530,7 +561,7 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         name: drillData.name,
         description: drillData.description,
         drill_steps: drillData.drill_steps,
-        coaching_focus_points: drillData.coaching_focus_points,
+        coaching_focus_points: flattenCoachingFocusPoints(drillData.coaching_focus_points),
         shooter_focus_points: drillData.shooter_focus_points,
         drill_progressions: drillData.drill_progressions,
         drill_image: drillData.drill_image,

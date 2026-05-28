@@ -1,6 +1,7 @@
 import type { DrillData } from "../types/drill";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
 import { normalizeDrillDescription } from "./normalizeDrillDescription";
+import { normalizeCoachingFocusPoints } from "./coachingFocusPoints";
 
 // Approximate characters per line at fontSize 9 (Helvetica):
 //   - Left column (~95 mm after gap reduction + text-priority split): ~68 chars/line
@@ -96,6 +97,10 @@ function estimateLines(text: string, charsPerLine = CHARS_PER_LINE_COL): number 
 
 function estimateBulletHeight(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
   return estimateLines(`• ${text}`, charsPerLine) * LINE_HEIGHT + 1;
+}
+
+function estimateTextHeight(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
+  return estimateLines(text, charsPerLine) * LINE_HEIGHT + 1;
 }
 
 function estimateNumberedHeight(
@@ -207,6 +212,28 @@ interface FirstPageEstimateOptions extends EstimateOptions {
 }
 
 const DEFAULT_DRILL_IMAGE_ASPECT_RATIO = 16 / 9;
+const PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO = 0.63;
+
+function isProgressionHeavy(drillData: DrillData): boolean {
+  return (drillData.drill_progressions?.length || 0) >= 5;
+}
+
+function shouldUseProgressionHeavyFullWidthLayout(
+  drillData: DrillData,
+  normalizedDescription: string,
+  availableFirstPage: number,
+  drillImageAspectRatio?: number
+): boolean {
+  const fullWidthTopPhaseHeight = estimateTopPhaseHeight(
+    drillData,
+    normalizedDescription,
+    "full-width",
+    drillImageAspectRatio
+  );
+  const singleColumnTopPhaseLimit =
+    availableFirstPage * PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO;
+  return fullWidthTopPhaseHeight <= singleColumnTopPhaseLimit;
+}
 
 function getFirstPageLayoutMetrics(drillName: string): {
   availableFirstPage: number;
@@ -226,6 +253,16 @@ function chooseFirstPageLayoutMode(
   availableFirstPage: number,
   options: EstimateOptions
 ): FirstPageLayoutMode {
+  if (options.forceSecondPageForProgressions && isProgressionHeavy(drillData)) {
+    return shouldUseProgressionHeavyFullWidthLayout(
+      drillData,
+      normalizedDescription,
+      availableFirstPage
+    )
+      ? "full-width"
+      : "two-column";
+  }
+
   const fullWidthFirstPageHeight = estimateFirstPageSegmentHeight(
     drillData,
     normalizedDescription,
@@ -238,15 +275,15 @@ function chooseFirstPageLayoutMode(
   return fullWidthFirstPageHeight <= availableFirstPage ? "full-width" : "two-column";
 }
 
-function estimateFirstPageSegmentHeight(
+function estimateTopPhaseHeight(
   drillData: DrillData,
   normalizedDescription: string,
-  options: FirstPageEstimateOptions
+  layoutMode: FirstPageLayoutMode,
+  drillImageAspectRatio?: number
 ): number {
-  // --- Top phase: primary diagram + drill information (single-column) ---
   let topPhaseHeight = 0;
 
-  if (options.layoutMode === "two-column") {
+  if (layoutMode === "two-column") {
     // Existing layout: drill information in left column, image in right column.
     topPhaseHeight += HEADING_HEIGHT;
     if (normalizedDescription) {
@@ -263,7 +300,7 @@ function estimateFirstPageSegmentHeight(
       topPhaseHeight += SECTION_GAP;
     }
   } else {
-    // New mode: diagram full width first, then drill information full width below.
+    // Single-column layout: diagram full width first, then drill information below.
     topPhaseHeight += HEADING_HEIGHT;
     if (normalizedDescription) {
       topPhaseHeight += estimateLines(normalizedDescription, CHARS_PER_LINE_FULL) * LINE_HEIGHT;
@@ -282,18 +319,39 @@ function estimateFirstPageSegmentHeight(
     if (drillData.drill_image) {
       const fullWidth = (210 - 2 * MARGIN) * SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO;
       const aspectRatio =
-        options.drillImageAspectRatio && options.drillImageAspectRatio > 0
-          ? options.drillImageAspectRatio
+        drillImageAspectRatio && drillImageAspectRatio > 0
+          ? drillImageAspectRatio
           : DEFAULT_DRILL_IMAGE_ASPECT_RATIO;
       topPhaseHeight += fullWidth / aspectRatio + 4;
     }
   }
 
+  return topPhaseHeight;
+}
+
+function estimateFirstPageSegmentHeight(
+  drillData: DrillData,
+  normalizedDescription: string,
+  options: FirstPageEstimateOptions
+): number {
+  // --- Top phase: primary diagram + drill information ---
+  const topPhaseHeight = estimateTopPhaseHeight(
+    drillData,
+    normalizedDescription,
+    options.layoutMode,
+    options.drillImageAspectRatio
+  );
+
   // --- Full-width sections before progressions: coaching + shooter ---
   let preProgressionHeight = 0;
   preProgressionHeight += HEADING_HEIGHT;
-  for (const point of drillData.coaching_focus_points) {
-    preProgressionHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
+  for (const block of normalizeCoachingFocusPoints(drillData.coaching_focus_points)) {
+    if (block.heading) {
+      preProgressionHeight += estimateTextHeight(block.heading, CHARS_PER_LINE_FULL);
+    }
+    for (const point of block.bullets) {
+      preProgressionHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
+    }
   }
 
   if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
@@ -341,6 +399,14 @@ export function shouldUseFullWidthFirstPageDiagram(
     ? normalizeDrillDescription(drillData.description)
     : "";
   const placeProgressionsOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
+  if (placeProgressionsOnSecondPage && isProgressionHeavy(drillData)) {
+    return shouldUseProgressionHeavyFullWidthLayout(
+      drillData,
+      normalizedDescription,
+      availableFirstPage,
+      drillImageAspectRatio
+    );
+  }
 
   const fullWidthFirstPageHeight = estimateFirstPageSegmentHeight(
     drillData,
