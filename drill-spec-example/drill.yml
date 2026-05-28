@@ -14,10 +14,10 @@ drill_steps:
 
 coaching_focus_points:
   - Movement Quality:
-    - Coaching point 1
-    - Coaching point 2
+      - Coaching point 1
+      - Coaching point 2
   - Body Positioning:
-    - Coaching point 3
+      - Coaching point 3
   - Coaching point 4
 
 # optional - add shooter-specific cues

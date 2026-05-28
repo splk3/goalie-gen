@@ -89,7 +89,9 @@ describe("estimateDrillPdfPages", () => {
     const creaseFootwork = drills.find((entry) => entry.folder === "crease-footwork");
     expect(butterflyMapSeries).toBeDefined();
     expect(creaseFootwork).toBeDefined();
-    expect(shouldUseFullWidthFirstPageDiagram(butterflyMapSeries!.drillData, 862 / 411)).toBe(false);
+    expect(shouldUseFullWidthFirstPageDiagram(butterflyMapSeries!.drillData, 862 / 411)).toBe(
+      false
+    );
     expect(shouldUseFullWidthFirstPageDiagram(creaseFootwork!.drillData, 863 / 410)).toBe(false);
   });
 
