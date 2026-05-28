@@ -217,6 +217,18 @@ All other fields are optional. Known optional fields include:
   - `progression_description` (string)
   - `progression_image` (optional string filename)
 
+`coaching_focus_points` supports two formats (and they can be mixed in order):
+
+- Flat bullets:
+  - `- Keep chest square`
+- Sectioned bullets:
+  - `- Movement Quality:`
+    - `- Explode on first push`
+    - `- Arrive set at each point`
+
+Sectioned entries must be one-level objects: exactly one section title mapped to an array of
+string bullet items.
+
 The `tags` field is required, but each sub-field is optional. Most sub-fields accept an **array** of
 values from an allowed list and are validated during build time (in `gatsby-node.ts`).
 The exception is `team_drill`, which is a single string value (`yes` or `no`):

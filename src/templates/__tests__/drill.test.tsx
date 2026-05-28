@@ -214,4 +214,30 @@ describe("DrillTemplate", () => {
     const progressionHeading = screen.getByText("Drill Progressions");
     expect(progressionHeading.closest("div")).toHaveClass("print-break-before-page");
   });
+
+  it("renders sectioned coaching focus points with bold headings and nested bullets", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            coaching_focus_points: [
+              {
+                "Movement Quality:": ["Explode on the first push", "Arrive set at each point"],
+              },
+              "Track puck into body",
+            ],
+          },
+        }}
+      />
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Movement Quality:" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("Explode on the first push")).toBeInTheDocument();
+    expect(screen.getByText("Arrive set at each point")).toBeInTheDocument();
+    expect(screen.getByText("Track puck into body")).toBeInTheDocument();
+  });
 });

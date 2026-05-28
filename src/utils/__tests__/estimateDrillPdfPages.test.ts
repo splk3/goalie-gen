@@ -77,6 +77,22 @@ describe("estimateDrillPdfPages", () => {
     expect(estimateDrillPdfPages(readAndReact!.drillData).totalPages).toBe(2);
   });
 
+  it("keeps beat-the-pass on full-width first-page layout with its actual diagram aspect ratio", () => {
+    const beatThePass = drills.find((entry) => entry.folder === "beat-the-pass");
+    expect(beatThePass).toBeDefined();
+    expect(shouldPlaceProgressionsOnSecondPage(beatThePass!.drillData)).toBe(true);
+    expect(shouldUseFullWidthFirstPageDiagram(beatThePass!.drillData, 1081 / 523)).toBe(true);
+  });
+
+  it("keeps butterfly-map-series and crease-footwork in two-column first-page layout", () => {
+    const butterflyMapSeries = drills.find((entry) => entry.folder === "butterfly-map-series");
+    const creaseFootwork = drills.find((entry) => entry.folder === "crease-footwork");
+    expect(butterflyMapSeries).toBeDefined();
+    expect(creaseFootwork).toBeDefined();
+    expect(shouldUseFullWidthFirstPageDiagram(butterflyMapSeries!.drillData, 862 / 411)).toBe(false);
+    expect(shouldUseFullWidthFirstPageDiagram(creaseFootwork!.drillData, 863 / 410)).toBe(false);
+  });
+
   it("uses larger follow-on page capacity after first-page overflow", () => {
     const shortPoint = "quick";
     const drillData = {
@@ -93,6 +109,27 @@ describe("estimateDrillPdfPages", () => {
     } as DrillData;
 
     expect(estimateDrillPdfPages(drillData).totalPages).toBe(2);
+  });
+
+  it("supports mixed sectioned and flat coaching focus points", () => {
+    const drillData = {
+      name: "Sectioned Coaching Focus Estimate",
+      description: "Short description",
+      drill_steps: ["Step one"],
+      coaching_focus_points: [
+        {
+          "Movement Quality:": ["Explode on the first push", "Arrive set at each point"],
+        },
+        "Track puck into body",
+      ],
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    expect(estimateDrillPdfPages(drillData).totalPages).toBeGreaterThanOrEqual(1);
   });
 
   it("flags warning-worthy main-content overflow only when first-page fit fails", () => {

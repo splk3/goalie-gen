@@ -4,11 +4,14 @@ export interface DrillProgression {
   progression_image?: string;
 }
 
+export type CoachingFocusPointSection = Record<string, string[]>;
+export type CoachingFocusPoint = string | CoachingFocusPointSection;
+
 export interface DrillData {
   name: string;
   description?: string;
   drill_steps: string[];
-  coaching_focus_points: string[];
+  coaching_focus_points: CoachingFocusPoint[];
   shooter_focus_points?: string[];
   drill_progressions?: DrillProgression[];
   drill_image?: string;
