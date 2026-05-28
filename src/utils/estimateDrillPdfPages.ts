@@ -214,6 +214,27 @@ interface FirstPageEstimateOptions extends EstimateOptions {
 const DEFAULT_DRILL_IMAGE_ASPECT_RATIO = 16 / 9;
 const PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO = 0.63;
 
+function isProgressionHeavy(drillData: DrillData): boolean {
+  return (drillData.drill_progressions?.length || 0) >= 5;
+}
+
+function shouldUseProgressionHeavyFullWidthLayout(
+  drillData: DrillData,
+  normalizedDescription: string,
+  availableFirstPage: number,
+  drillImageAspectRatio?: number
+): boolean {
+  const fullWidthTopPhaseHeight = estimateTopPhaseHeight(
+    drillData,
+    normalizedDescription,
+    "full-width",
+    drillImageAspectRatio
+  );
+  const singleColumnTopPhaseLimit =
+    availableFirstPage * PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO;
+  return fullWidthTopPhaseHeight <= singleColumnTopPhaseLimit;
+}
+
 function getFirstPageLayoutMetrics(drillName: string): {
   availableFirstPage: number;
   availableOtherPages: number;
@@ -232,16 +253,14 @@ function chooseFirstPageLayoutMode(
   availableFirstPage: number,
   options: EstimateOptions
 ): FirstPageLayoutMode {
-  const progressionCount = drillData.drill_progressions?.length || 0;
-  if (options.forceSecondPageForProgressions && progressionCount >= 5) {
-    const fullWidthTopPhaseHeight = estimateTopPhaseHeight(
+  if (options.forceSecondPageForProgressions && isProgressionHeavy(drillData)) {
+    return shouldUseProgressionHeavyFullWidthLayout(
       drillData,
       normalizedDescription,
-      "full-width"
-    );
-    const singleColumnTopPhaseLimit =
-      availableFirstPage * PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO;
-    return fullWidthTopPhaseHeight <= singleColumnTopPhaseLimit ? "full-width" : "two-column";
+      availableFirstPage
+    )
+      ? "full-width"
+      : "two-column";
   }
 
   const fullWidthFirstPageHeight = estimateFirstPageSegmentHeight(
@@ -380,17 +399,13 @@ export function shouldUseFullWidthFirstPageDiagram(
     ? normalizeDrillDescription(drillData.description)
     : "";
   const placeProgressionsOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
-  const progressionCount = drillData.drill_progressions?.length || 0;
-  if (placeProgressionsOnSecondPage && progressionCount >= 5) {
-    const fullWidthTopPhaseHeight = estimateTopPhaseHeight(
+  if (placeProgressionsOnSecondPage && isProgressionHeavy(drillData)) {
+    return shouldUseProgressionHeavyFullWidthLayout(
       drillData,
       normalizedDescription,
-      "full-width",
+      availableFirstPage,
       drillImageAspectRatio
     );
-    const singleColumnTopPhaseLimit =
-      availableFirstPage * PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO;
-    return fullWidthTopPhaseHeight <= singleColumnTopPhaseLimit;
   }
 
   const fullWidthFirstPageHeight = estimateFirstPageSegmentHeight(
