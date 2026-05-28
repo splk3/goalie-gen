@@ -1,4 +1,5 @@
 {
+  "overridesBuiltInTool": true,
   "lspServers": {
     "typescript": {
       "command": "typescript-language-server",
