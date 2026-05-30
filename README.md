@@ -137,7 +137,10 @@ The site uses USA national colors:
 │   │   └── team-plan/    # Team development plan sections
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
+│       ├── coachingFocusPoints.ts
 │       ├── docxContent.ts
+│       ├── docxImageType.ts
+│       ├── drillPdfPaginationShared.ts
 │       ├── estimateDrillPdfPages.ts
 │       ├── generateDrillPdf.ts
 │       ├── loadExportModules.ts
@@ -147,12 +150,16 @@ The site uses USA national colors:
 │       ├── videoUtils.ts
 │       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
-│   ├── power-push-quick-movement-blaze-pods/
+│   ├── beat-the-pass/
+│   ├── butterfly-map-series/
+│   ├── crease-footwork/
+│   ├── reaction-shot-read/
+│   ├── read-and-react/
+│   ├── rim-and-shot/
 │   ├── rim-stop-cut-across/
-│   ├── test-drill-advanced-teams/
-│   ├── test-drill-beginner/
-│   ├── test-drill-intermediate/
-│   └── test-drill-max-content/
+│   ├── rvh-low-to-high-release/
+│   ├── shot-rebound-recovery/
+│   └── two-shot/
 ├── drill-spec-example/   # Drill specification example
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
