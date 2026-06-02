@@ -35,6 +35,7 @@ drill_image: crease-footwork.png
 
 drill_progressions:
   - progression_name: Progression 1 - All T-Push
+    progression_image: crease-footwork-progression-1.png
     progression_description: |-
       Replace every movement in the pattern with a T-push.
       Pattern
@@ -45,6 +46,7 @@ drill_progressions:
       Reinforces clean mechanics, builds explosive first pushes, emphasizes arriving set at each point
       Lead with the head and shoulders, push with full extension, recover under control, hands stay active and forward
   - progression_name: Progression 2 - T-Push With Butterfly
+    progression_image: crease-footwork-progression-2.png
     progression_description: |-
       Add a controlled butterfly at each arrival point.
       Pattern
@@ -55,6 +57,7 @@ drill_progressions:
       Connects movement to save execution and builds recovery strength and balance
       Arrive balanced before the butterfly, keep chest tall and hands active through the drop, lead with head and shoulders
   - progression_name: Progression 3 - Butterfly With Power Push
+    progression_image: crease-footwork-progression-3.png
     progression_description: |-
       Now the goalie drops into a butterfly at each point and uses a power push recovery to move to the next point.
       Pattern
@@ -65,6 +68,7 @@ drill_progressions:
       Builds explosive lateral movement from the butterfly, trains game-realistic recovery patterns, reinforces strong edge engagement and hip control
       Seal the ice cleanly on each butterfly, load the pushing leg before exploding laterally, keep shoulders level during the power push
   - progression_name: Progression 4 - Start Facing the Boards, Recover to Post, Hinge to RVH, Then Begin Previous Sequence's Pattern
+    progression_image: crease-footwork-progression-4.png
     progression_description: |-
       Pattern
       1. Goalie starts on side of the net, set on knees facing the end boards
