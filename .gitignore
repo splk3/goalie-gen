@@ -80,5 +80,8 @@ super-linter.log
 # local tmp files
 tmp/
 
+# test drills
+drills/test-*
+
 # playwright mcp
 .playwright-mcp/

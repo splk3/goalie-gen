@@ -603,6 +603,7 @@ describe("generateDrillPdf layout selection", () => {
         url: videoUrl,
       })
     );
+    expect(textWithLinkSpy).toHaveBeenCalledTimes(1);
     expect(
       addImageSpy.mock.calls.some((call) => {
         return call[0] === "data:image/png;base64,MOCK";

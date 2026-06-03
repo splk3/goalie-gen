@@ -13,7 +13,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 299,
+      "order": 298,
     },
     {
       "args": [
@@ -25,6 +25,14 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
+      "order": 299,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 300,
     },
     {
@@ -37,19 +45,11 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Rim Stop Cut Across",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 302,
-    },
-    {
-      "args": [
         "This drill helps goalies develop stick skills behind the net and practice get...",
         170,
       ],
       "op": "splitTextToSize",
-      "order": 303,
+      "order": 302,
     },
     {
       "args": [
@@ -57,7 +57,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 304,
+      "order": 303,
     },
     {
       "args": [
@@ -65,7 +65,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 305,
+      "order": 304,
     },
     {
       "args": [
@@ -73,7 +73,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 306,
+      "order": 305,
     },
     {
       "args": [
@@ -81,7 +81,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 307,
+      "order": 306,
     },
     {
       "args": [
@@ -89,7 +89,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 308,
+      "order": 307,
     },
     {
       "args": [
@@ -97,7 +97,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 309,
+      "order": 308,
     },
     {
       "args": [
@@ -105,7 +105,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 310,
+      "order": 309,
     },
     {
       "args": [
@@ -113,7 +113,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 311,
+      "order": 310,
     },
     {
       "args": [
@@ -121,7 +121,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 312,
+      "order": 311,
     },
     {
       "args": [
@@ -129,7 +129,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 313,
+      "order": 312,
     },
     {
       "args": [
@@ -137,7 +137,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 314,
+      "order": 313,
     },
     {
       "args": [
@@ -145,7 +145,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 315,
+      "order": 314,
     },
     {
       "args": [
@@ -153,7 +153,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 316,
+      "order": 315,
     },
     {
       "args": [
@@ -161,7 +161,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 317,
+      "order": 316,
     },
     {
       "args": [
@@ -169,7 +169,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 318,
+      "order": 317,
     },
     {
       "args": [
@@ -177,7 +177,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 319,
+      "order": 318,
     },
     {
       "args": [
@@ -185,7 +185,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 320,
+      "order": 319,
     },
     {
       "args": [
@@ -193,7 +193,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 321,
+      "order": 320,
     },
     {
       "args": [
@@ -201,7 +201,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 322,
+      "order": 321,
     },
     {
       "args": [
@@ -209,7 +209,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 323,
+      "order": 322,
     },
     {
       "args": [
@@ -217,7 +217,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 324,
+      "order": 323,
     },
     {
       "args": [
@@ -225,7 +225,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 325,
+      "order": 324,
     },
     {
       "args": [
@@ -233,7 +233,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 326,
+      "order": 325,
     },
     {
       "args": [
@@ -245,7 +245,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         38.75,
       ],
       "op": "addImage",
-      "order": 327,
+      "order": 326,
     },
     {
       "args": [
@@ -253,7 +253,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         95.12,
       ],
       "op": "splitTextToSize",
-      "order": 328,
+      "order": 327,
     },
     {
       "args": [
@@ -261,7 +261,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 329,
+      "order": 328,
     },
     {
       "args": [
@@ -269,7 +269,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 330,
+      "order": 329,
     },
     {
       "args": [
@@ -277,7 +277,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 331,
+      "order": 330,
     },
     {
       "args": [
@@ -285,7 +285,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 332,
+      "order": 331,
     },
     {
       "args": [
@@ -293,7 +293,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 333,
+      "order": 332,
     },
     {
       "args": [
@@ -301,7 +301,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 334,
+      "order": 333,
     },
     {
       "args": [
@@ -309,7 +309,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 335,
+      "order": 334,
     },
     {
       "args": [
@@ -317,7 +317,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 336,
+      "order": 335,
     },
     {
       "args": [
@@ -325,7 +325,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 337,
+      "order": 336,
     },
     {
       "args": [
@@ -333,7 +333,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 338,
+      "order": 337,
     },
     {
       "args": [
@@ -341,7 +341,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 339,
+      "order": 338,
     },
     {
       "args": [
@@ -349,7 +349,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 340,
+      "order": 339,
     },
     {
       "args": [
@@ -357,7 +357,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 341,
+      "order": 340,
     },
     {
       "args": [
@@ -365,7 +365,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 342,
+      "order": 341,
     },
     {
       "args": [
@@ -373,7 +373,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 343,
+      "order": 342,
     },
     {
       "args": [
@@ -381,7 +381,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 344,
+      "order": 343,
     },
     {
       "args": [
@@ -389,7 +389,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 345,
+      "order": 344,
     },
     {
       "args": [
@@ -397,7 +397,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 346,
+      "order": 345,
     },
     {
       "args": [
@@ -405,7 +405,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 347,
+      "order": 346,
     },
     {
       "args": [
@@ -413,7 +413,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 348,
+      "order": 347,
     },
     {
       "args": [
@@ -421,7 +421,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 349,
+      "order": 348,
     },
     {
       "args": [
@@ -429,7 +429,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 350,
+      "order": 349,
     },
     {
       "args": [
@@ -437,11 +437,19 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 351,
+      "order": 350,
     },
     {
       "args": [
         "Variable Rim Locations",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 351,
+    },
+    {
+      "args": [
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -449,7 +457,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Variable Rim Locations",
         75,
       ],
       "op": "splitTextToSize",
@@ -457,7 +465,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Variable Rim Locations",
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -465,7 +473,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter Delay Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -473,7 +481,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter Delay Options",
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
         75,
       ],
       "op": "splitTextToSize",
@@ -481,7 +489,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Shooter Delay Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -489,7 +497,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter Delay Options",
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
         75,
       ],
       "op": "splitTextToSize",
@@ -497,7 +505,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Coach Pressure",
         75,
       ],
       "op": "splitTextToSize",
@@ -505,7 +513,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach Pressure",
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
         75,
       ],
       "op": "splitTextToSize",
@@ -513,7 +521,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Coach Pressure",
         75,
       ],
       "op": "splitTextToSize",
@@ -521,7 +529,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach Pressure",
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
         75,
       ],
       "op": "splitTextToSize",
@@ -529,7 +537,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Second Shooter Option",
         75,
       ],
       "op": "splitTextToSize",
@@ -537,7 +545,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Second Shooter Option",
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -545,7 +553,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Second Shooter Option",
         75,
       ],
       "op": "splitTextToSize",
@@ -553,7 +561,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Second Shooter Option",
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -561,7 +569,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Net Front Screen",
         75,
       ],
       "op": "splitTextToSize",
@@ -569,7 +577,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
         75,
       ],
       "op": "splitTextToSize",
@@ -577,7 +585,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Net Front Screen",
         75,
       ],
       "op": "splitTextToSize",
@@ -585,19 +593,11 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 370,
-    },
-    {
-      "args": [
         "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
         75,
       ],
       "op": "splitTextToSize",
-      "order": 371,
+      "order": 370,
     },
     {
       "args": [
@@ -609,7 +609,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 372,
+      "order": 371,
     },
     {
       "args": [
@@ -617,7 +617,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 373,
+      "order": 372,
     },
     {
       "args": [
@@ -629,7 +629,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 374,
+      "order": 373,
     },
     {
       "args": [
@@ -641,7 +641,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 375,
+      "order": 374,
     },
     {
       "args": [
@@ -653,6 +653,14 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
+      "order": 375,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 376,
     },
     {
@@ -665,14 +673,6 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Rim Stop Cut Across",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 378,
-    },
-    {
-      "args": [
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
@@ -681,7 +681,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 379,
+      "order": 378,
     },
     {
       "args": [
@@ -693,7 +693,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 380,
+      "order": 379,
     },
     {
       "args": [
@@ -705,7 +705,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 381,
+      "order": 380,
     },
     {
       "args": [
@@ -717,7 +717,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 382,
+      "order": 381,
     },
     {
       "args": [
@@ -729,7 +729,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 383,
+      "order": 382,
     },
     {
       "args": [
@@ -741,7 +741,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 384,
+      "order": 383,
     },
     {
       "args": [
@@ -749,7 +749,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 385,
+      "order": 384,
     },
     {
       "args": [
@@ -761,7 +761,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 386,
+      "order": 385,
     },
   ],
   "lastOps": [
@@ -775,7 +775,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         38.75,
       ],
       "op": "addImage",
-      "order": 327,
+      "order": 326,
     },
     {
       "args": [
@@ -783,7 +783,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         95.12,
       ],
       "op": "splitTextToSize",
-      "order": 328,
+      "order": 327,
     },
     {
       "args": [
@@ -791,7 +791,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 329,
+      "order": 328,
     },
     {
       "args": [
@@ -799,7 +799,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 330,
+      "order": 329,
     },
     {
       "args": [
@@ -807,7 +807,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 331,
+      "order": 330,
     },
     {
       "args": [
@@ -815,7 +815,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 332,
+      "order": 331,
     },
     {
       "args": [
@@ -823,7 +823,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 333,
+      "order": 332,
     },
     {
       "args": [
@@ -831,7 +831,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 334,
+      "order": 333,
     },
     {
       "args": [
@@ -839,7 +839,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         90.12,
       ],
       "op": "splitTextToSize",
-      "order": 335,
+      "order": 334,
     },
     {
       "args": [
@@ -847,7 +847,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 336,
+      "order": 335,
     },
     {
       "args": [
@@ -855,7 +855,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 337,
+      "order": 336,
     },
     {
       "args": [
@@ -863,7 +863,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 338,
+      "order": 337,
     },
     {
       "args": [
@@ -871,7 +871,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 339,
+      "order": 338,
     },
     {
       "args": [
@@ -879,7 +879,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 340,
+      "order": 339,
     },
     {
       "args": [
@@ -887,7 +887,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 341,
+      "order": 340,
     },
     {
       "args": [
@@ -895,7 +895,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 342,
+      "order": 341,
     },
     {
       "args": [
@@ -903,7 +903,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 343,
+      "order": 342,
     },
     {
       "args": [
@@ -911,7 +911,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 344,
+      "order": 343,
     },
     {
       "args": [
@@ -919,7 +919,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 345,
+      "order": 344,
     },
     {
       "args": [
@@ -927,7 +927,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 346,
+      "order": 345,
     },
     {
       "args": [
@@ -935,7 +935,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 347,
+      "order": 346,
     },
     {
       "args": [
@@ -943,7 +943,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 348,
+      "order": 347,
     },
     {
       "args": [
@@ -951,7 +951,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 349,
+      "order": 348,
     },
     {
       "args": [
@@ -959,7 +959,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 350,
+      "order": 349,
     },
     {
       "args": [
@@ -967,11 +967,19 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 351,
+      "order": 350,
     },
     {
       "args": [
         "Variable Rim Locations",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 351,
+    },
+    {
+      "args": [
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -979,7 +987,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Variable Rim Locations",
         75,
       ],
       "op": "splitTextToSize",
@@ -987,7 +995,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Variable Rim Locations",
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -995,7 +1003,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter Delay Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -1003,7 +1011,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter Delay Options",
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1011,7 +1019,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Shooter Delay Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -1019,7 +1027,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter Delay Options",
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1027,7 +1035,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Coach Pressure",
         75,
       ],
       "op": "splitTextToSize",
@@ -1035,7 +1043,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach Pressure",
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1043,7 +1051,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Coach Pressure",
         75,
       ],
       "op": "splitTextToSize",
@@ -1051,7 +1059,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach Pressure",
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1059,7 +1067,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Second Shooter Option",
         75,
       ],
       "op": "splitTextToSize",
@@ -1067,7 +1075,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Second Shooter Option",
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1075,7 +1083,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Second Shooter Option",
         75,
       ],
       "op": "splitTextToSize",
@@ -1083,7 +1091,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Second Shooter Option",
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1091,7 +1099,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Net Front Screen",
         75,
       ],
       "op": "splitTextToSize",
@@ -1099,7 +1107,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1107,7 +1115,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Net Front Screen",
         75,
       ],
       "op": "splitTextToSize",
@@ -1115,19 +1123,11 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 370,
-    },
-    {
-      "args": [
         "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
         75,
       ],
       "op": "splitTextToSize",
-      "order": 371,
+      "order": 370,
     },
     {
       "args": [
@@ -1139,7 +1139,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 372,
+      "order": 371,
     },
     {
       "args": [
@@ -1147,7 +1147,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 373,
+      "order": 372,
     },
     {
       "args": [
@@ -1159,7 +1159,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 374,
+      "order": 373,
     },
     {
       "args": [
@@ -1171,7 +1171,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 375,
+      "order": 374,
     },
     {
       "args": [
@@ -1183,6 +1183,14 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
+      "order": 375,
+    },
+    {
+      "args": [
+        "Rim Stop Cut Across",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 376,
     },
     {
@@ -1195,14 +1203,6 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Rim Stop Cut Across",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 378,
-    },
-    {
-      "args": [
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
@@ -1211,7 +1211,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 379,
+      "order": 378,
     },
     {
       "args": [
@@ -1223,7 +1223,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 380,
+      "order": 379,
     },
     {
       "args": [
@@ -1235,7 +1235,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 381,
+      "order": 380,
     },
     {
       "args": [
@@ -1247,7 +1247,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 382,
+      "order": 381,
     },
     {
       "args": [
@@ -1259,7 +1259,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 383,
+      "order": 382,
     },
     {
       "args": [
@@ -1271,7 +1271,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 384,
+      "order": 383,
     },
     {
       "args": [
@@ -1279,7 +1279,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 385,
+      "order": 384,
     },
     {
       "args": [
@@ -1291,7 +1291,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 386,
+      "order": 385,
     },
   ],
   "totalOps": 88,
@@ -1311,7 +1311,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 387,
+      "order": 386,
     },
     {
       "args": [
@@ -1323,6 +1323,14 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
+      "order": 387,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 388,
     },
     {
@@ -1335,19 +1343,11 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Two Shot",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 390,
-    },
-    {
-      "args": [
         "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
         165,
       ],
       "op": "splitTextToSize",
-      "order": 403,
+      "order": 402,
     },
     {
       "args": [
@@ -1355,7 +1355,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 404,
+      "order": 403,
     },
     {
       "args": [
@@ -1363,7 +1363,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 405,
+      "order": 404,
     },
     {
       "args": [
@@ -1371,7 +1371,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 406,
+      "order": 405,
     },
     {
       "args": [
@@ -1379,7 +1379,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 407,
+      "order": 406,
     },
     {
       "args": [
@@ -1387,7 +1387,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 408,
+      "order": 407,
     },
     {
       "args": [
@@ -1395,7 +1395,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 409,
+      "order": 408,
     },
     {
       "args": [
@@ -1403,7 +1403,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 410,
+      "order": 409,
     },
     {
       "args": [
@@ -1411,7 +1411,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 411,
+      "order": 410,
     },
     {
       "args": [
@@ -1419,7 +1419,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 412,
+      "order": 411,
     },
     {
       "args": [
@@ -1427,7 +1427,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 413,
+      "order": 412,
     },
     {
       "args": [
@@ -1435,7 +1435,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 414,
+      "order": 413,
     },
     {
       "args": [
@@ -1443,7 +1443,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 415,
+      "order": 414,
     },
     {
       "args": [
@@ -1455,7 +1455,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         71.72,
       ],
       "op": "addImage",
-      "order": 416,
+      "order": 415,
     },
     {
       "args": [
@@ -1463,7 +1463,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 417,
+      "order": 416,
     },
     {
       "args": [
@@ -1471,7 +1471,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 418,
+      "order": 417,
     },
     {
       "args": [
@@ -1479,7 +1479,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 419,
+      "order": 418,
     },
     {
       "args": [
@@ -1487,7 +1487,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 420,
+      "order": 419,
     },
     {
       "args": [
@@ -1495,7 +1495,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 421,
+      "order": 420,
     },
     {
       "args": [
@@ -1503,7 +1503,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 422,
+      "order": 421,
     },
     {
       "args": [
@@ -1511,7 +1511,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 423,
+      "order": 422,
     },
     {
       "args": [
@@ -1519,7 +1519,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 424,
+      "order": 423,
     },
     {
       "args": [
@@ -1527,7 +1527,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 425,
+      "order": 424,
     },
     {
       "args": [
@@ -1535,7 +1535,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 426,
+      "order": 425,
     },
     {
       "args": [
@@ -1543,7 +1543,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 427,
+      "order": 426,
     },
     {
       "args": [
@@ -1551,7 +1551,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 428,
+      "order": 427,
     },
     {
       "args": [
@@ -1559,11 +1559,19 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 429,
+      "order": 428,
     },
     {
       "args": [
         "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 429,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1571,7 +1579,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Progression 1 — Increased Distance",
         75,
       ],
       "op": "splitTextToSize",
@@ -1579,7 +1587,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 1 — Increased Distance",
+        "Move pucks farther apart to force longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1587,7 +1595,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Progression 2 — Lane Variation",
         75,
       ],
       "op": "splitTextToSize",
@@ -1595,7 +1603,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 2 — Lane Variation",
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
         75,
       ],
       "op": "splitTextToSize",
@@ -1603,7 +1611,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Progression 2 — Lane Variation",
         75,
       ],
       "op": "splitTextToSize",
@@ -1611,7 +1619,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 2 — Lane Variation",
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
         75,
       ],
       "op": "splitTextToSize",
@@ -1619,7 +1627,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Progression 3 — Rebound Activation",
         75,
       ],
       "op": "splitTextToSize",
@@ -1627,7 +1635,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 3 — Rebound Activation",
+        "After the second shot, shooter plays any rebound for 1-2 seconds.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1635,7 +1643,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "After the second shot, shooter plays any rebound for 1-2 seconds.",
+        "Progression 3 — Rebound Activation",
         75,
       ],
       "op": "splitTextToSize",
@@ -1643,19 +1651,11 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 3 — Rebound Activation",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 440,
-    },
-    {
-      "args": [
         "After the second shot, shooter plays any rebound for 1-2 seconds.",
         75,
       ],
       "op": "splitTextToSize",
-      "order": 441,
+      "order": 440,
     },
     {
       "args": [
@@ -1667,7 +1667,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 442,
+      "order": 441,
     },
     {
       "args": [
@@ -1675,7 +1675,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 443,
+      "order": 442,
     },
     {
       "args": [
@@ -1687,7 +1687,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 444,
+      "order": 443,
     },
     {
       "args": [
@@ -1699,7 +1699,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 445,
+      "order": 444,
     },
     {
       "args": [
@@ -1711,6 +1711,14 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
+      "order": 445,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 446,
     },
     {
@@ -1723,14 +1731,6 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Two Shot",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 448,
-    },
-    {
-      "args": [
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
@@ -1739,7 +1739,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 449,
+      "order": 448,
     },
     {
       "args": [
@@ -1751,7 +1751,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 450,
+      "order": 449,
     },
     {
       "args": [
@@ -1763,7 +1763,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 451,
+      "order": 450,
     },
     {
       "args": [
@@ -1771,7 +1771,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 452,
+      "order": 451,
     },
     {
       "args": [
@@ -1783,7 +1783,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 453,
+      "order": 452,
     },
   ],
   "lastOps": [
@@ -1793,7 +1793,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 404,
+      "order": 403,
     },
     {
       "args": [
@@ -1801,7 +1801,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 405,
+      "order": 404,
     },
     {
       "args": [
@@ -1809,7 +1809,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 406,
+      "order": 405,
     },
     {
       "args": [
@@ -1817,7 +1817,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 407,
+      "order": 406,
     },
     {
       "args": [
@@ -1825,7 +1825,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 408,
+      "order": 407,
     },
     {
       "args": [
@@ -1833,7 +1833,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 409,
+      "order": 408,
     },
     {
       "args": [
@@ -1841,7 +1841,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 410,
+      "order": 409,
     },
     {
       "args": [
@@ -1849,7 +1849,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 411,
+      "order": 410,
     },
     {
       "args": [
@@ -1857,7 +1857,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 412,
+      "order": 411,
     },
     {
       "args": [
@@ -1865,7 +1865,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 413,
+      "order": 412,
     },
     {
       "args": [
@@ -1873,7 +1873,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 414,
+      "order": 413,
     },
     {
       "args": [
@@ -1881,7 +1881,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 415,
+      "order": 414,
     },
     {
       "args": [
@@ -1893,7 +1893,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         71.72,
       ],
       "op": "addImage",
-      "order": 416,
+      "order": 415,
     },
     {
       "args": [
@@ -1901,7 +1901,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 417,
+      "order": 416,
     },
     {
       "args": [
@@ -1909,7 +1909,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 418,
+      "order": 417,
     },
     {
       "args": [
@@ -1917,7 +1917,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 419,
+      "order": 418,
     },
     {
       "args": [
@@ -1925,7 +1925,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 420,
+      "order": 419,
     },
     {
       "args": [
@@ -1933,7 +1933,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 421,
+      "order": 420,
     },
     {
       "args": [
@@ -1941,7 +1941,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 422,
+      "order": 421,
     },
     {
       "args": [
@@ -1949,7 +1949,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 423,
+      "order": 422,
     },
     {
       "args": [
@@ -1957,7 +1957,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 424,
+      "order": 423,
     },
     {
       "args": [
@@ -1965,7 +1965,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 425,
+      "order": 424,
     },
     {
       "args": [
@@ -1973,7 +1973,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 426,
+      "order": 425,
     },
     {
       "args": [
@@ -1981,7 +1981,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 427,
+      "order": 426,
     },
     {
       "args": [
@@ -1989,7 +1989,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 428,
+      "order": 427,
     },
     {
       "args": [
@@ -1997,11 +1997,19 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 429,
+      "order": 428,
     },
     {
       "args": [
         "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 429,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -2009,7 +2017,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Progression 1 — Increased Distance",
         75,
       ],
       "op": "splitTextToSize",
@@ -2017,7 +2025,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 1 — Increased Distance",
+        "Move pucks farther apart to force longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -2025,7 +2033,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Progression 2 — Lane Variation",
         75,
       ],
       "op": "splitTextToSize",
@@ -2033,7 +2041,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 2 — Lane Variation",
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
         75,
       ],
       "op": "splitTextToSize",
@@ -2041,7 +2049,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Progression 2 — Lane Variation",
         75,
       ],
       "op": "splitTextToSize",
@@ -2049,7 +2057,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 2 — Lane Variation",
+        "Shooter approaches from different entry points (middle, left lane, right lane).",
         75,
       ],
       "op": "splitTextToSize",
@@ -2057,7 +2065,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Progression 3 — Rebound Activation",
         75,
       ],
       "op": "splitTextToSize",
@@ -2065,7 +2073,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 3 — Rebound Activation",
+        "After the second shot, shooter plays any rebound for 1-2 seconds.",
         75,
       ],
       "op": "splitTextToSize",
@@ -2073,7 +2081,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "After the second shot, shooter plays any rebound for 1-2 seconds.",
+        "Progression 3 — Rebound Activation",
         75,
       ],
       "op": "splitTextToSize",
@@ -2081,19 +2089,11 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 3 — Rebound Activation",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 440,
-    },
-    {
-      "args": [
         "After the second shot, shooter plays any rebound for 1-2 seconds.",
         75,
       ],
       "op": "splitTextToSize",
-      "order": 441,
+      "order": 440,
     },
     {
       "args": [
@@ -2105,7 +2105,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 442,
+      "order": 441,
     },
     {
       "args": [
@@ -2113,7 +2113,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 443,
+      "order": 442,
     },
     {
       "args": [
@@ -2125,7 +2125,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 444,
+      "order": 443,
     },
     {
       "args": [
@@ -2137,7 +2137,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 445,
+      "order": 444,
     },
     {
       "args": [
@@ -2149,6 +2149,14 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
+      "order": 445,
+    },
+    {
+      "args": [
+        "Two Shot",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 446,
     },
     {
@@ -2161,14 +2169,6 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Two Shot",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 448,
-    },
-    {
-      "args": [
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
@@ -2177,7 +2177,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 449,
+      "order": 448,
     },
     {
       "args": [
@@ -2189,7 +2189,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 450,
+      "order": 449,
     },
     {
       "args": [
@@ -2201,7 +2201,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 451,
+      "order": 450,
     },
     {
       "args": [
@@ -2209,7 +2209,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 452,
+      "order": 451,
     },
     {
       "args": [
@@ -2221,7 +2221,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 453,
+      "order": 452,
     },
   ],
   "totalOps": 55,
@@ -2241,7 +2241,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 242,
+      "order": 241,
     },
     {
       "args": [
@@ -2253,6 +2253,14 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
+      "order": 242,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 243,
     },
     {
@@ -2265,19 +2273,11 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Shot Rebound Recovery",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 245,
-    },
-    {
-      "args": [
         "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
         165,
       ],
       "op": "splitTextToSize",
-      "order": 246,
+      "order": 245,
     },
     {
       "args": [
@@ -2285,7 +2285,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 247,
+      "order": 246,
     },
     {
       "args": [
@@ -2293,7 +2293,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 248,
+      "order": 247,
     },
     {
       "args": [
@@ -2301,7 +2301,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 249,
+      "order": 248,
     },
     {
       "args": [
@@ -2309,7 +2309,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 250,
+      "order": 249,
     },
     {
       "args": [
@@ -2317,7 +2317,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 251,
+      "order": 250,
     },
     {
       "args": [
@@ -2325,7 +2325,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 252,
+      "order": 251,
     },
     {
       "args": [
@@ -2333,7 +2333,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 253,
+      "order": 252,
     },
     {
       "args": [
@@ -2341,7 +2341,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 254,
+      "order": 253,
     },
     {
       "args": [
@@ -2349,7 +2349,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 255,
+      "order": 254,
     },
     {
       "args": [
@@ -2361,7 +2361,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         85,
       ],
       "op": "addImage",
-      "order": 256,
+      "order": 255,
     },
     {
       "args": [
@@ -2369,7 +2369,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 257,
+      "order": 256,
     },
     {
       "args": [
@@ -2377,7 +2377,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 258,
+      "order": 257,
     },
     {
       "args": [
@@ -2385,7 +2385,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 259,
+      "order": 258,
     },
     {
       "args": [
@@ -2393,7 +2393,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 260,
+      "order": 259,
     },
     {
       "args": [
@@ -2401,7 +2401,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 261,
+      "order": 260,
     },
     {
       "args": [
@@ -2409,7 +2409,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 262,
+      "order": 261,
     },
     {
       "args": [
@@ -2417,7 +2417,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 263,
+      "order": 262,
     },
     {
       "args": [
@@ -2425,7 +2425,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 264,
+      "order": 263,
     },
     {
       "args": [
@@ -2433,7 +2433,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 265,
+      "order": 264,
     },
     {
       "args": [
@@ -2441,11 +2441,19 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 266,
+      "order": 265,
     },
     {
       "args": [
         "Progression 1 - Variable Rebound Location",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 266,
+    },
+    {
+      "args": [
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2453,7 +2461,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        "Progression 1 - Variable Rebound Location",
         75,
       ],
       "op": "splitTextToSize",
@@ -2461,7 +2469,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 1 - Variable Rebound Location",
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2469,7 +2477,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -2477,7 +2485,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2485,7 +2493,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -2493,7 +2501,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2501,7 +2509,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Progression 3 - Coach Shot Fake Before Pass",
         75,
       ],
       "op": "splitTextToSize",
@@ -2509,7 +2517,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2517,7 +2525,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        "Progression 3 - Coach Shot Fake Before Pass",
         75,
       ],
       "op": "splitTextToSize",
@@ -2525,7 +2533,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2533,7 +2541,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        "Progression 4 - Third Shot Recovery",
         75,
       ],
       "op": "splitTextToSize",
@@ -2541,7 +2549,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2549,7 +2557,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 4 - Third Shot Recovery",
         75,
       ],
       "op": "splitTextToSize",
@@ -2557,7 +2565,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2565,7 +2573,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 5 - Traffic / Screen Layer",
         75,
       ],
       "op": "splitTextToSize",
@@ -2573,7 +2581,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2581,7 +2589,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Progression 5 - Traffic / Screen Layer",
         75,
       ],
       "op": "splitTextToSize",
@@ -2589,19 +2597,11 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 285,
-    },
-    {
-      "args": [
         "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
         75,
       ],
       "op": "splitTextToSize",
-      "order": 286,
+      "order": 285,
     },
     {
       "args": [
@@ -2613,7 +2613,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 287,
+      "order": 286,
     },
     {
       "args": [
@@ -2621,7 +2621,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 288,
+      "order": 287,
     },
     {
       "args": [
@@ -2633,7 +2633,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 289,
+      "order": 288,
     },
     {
       "args": [
@@ -2645,7 +2645,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 290,
+      "order": 289,
     },
     {
       "args": [
@@ -2657,6 +2657,14 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
+      "order": 290,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 291,
     },
     {
@@ -2669,14 +2677,6 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Shot Rebound Recovery",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 293,
-    },
-    {
-      "args": [
         "data:image/png;base64,MOCK",
         "PNG",
         127,
@@ -2685,7 +2685,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 294,
+      "order": 293,
     },
     {
       "args": [
@@ -2697,7 +2697,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 295,
+      "order": 294,
     },
     {
       "args": [
@@ -2709,7 +2709,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 296,
+      "order": 295,
     },
     {
       "args": [
@@ -2717,7 +2717,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 297,
+      "order": 296,
     },
     {
       "args": [
@@ -2729,7 +2729,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 298,
+      "order": 297,
     },
   ],
   "lastOps": [
@@ -2739,7 +2739,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 259,
+      "order": 258,
     },
     {
       "args": [
@@ -2747,7 +2747,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 260,
+      "order": 259,
     },
     {
       "args": [
@@ -2755,7 +2755,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 261,
+      "order": 260,
     },
     {
       "args": [
@@ -2763,7 +2763,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 262,
+      "order": 261,
     },
     {
       "args": [
@@ -2771,7 +2771,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 263,
+      "order": 262,
     },
     {
       "args": [
@@ -2779,7 +2779,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 264,
+      "order": 263,
     },
     {
       "args": [
@@ -2787,7 +2787,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 265,
+      "order": 264,
     },
     {
       "args": [
@@ -2795,11 +2795,19 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 266,
+      "order": 265,
     },
     {
       "args": [
         "Progression 1 - Variable Rebound Location",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 266,
+    },
+    {
+      "args": [
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2807,7 +2815,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        "Progression 1 - Variable Rebound Location",
         75,
       ],
       "op": "splitTextToSize",
@@ -2815,7 +2823,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 1 - Variable Rebound Location",
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2823,7 +2831,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -2831,7 +2839,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2839,7 +2847,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -2847,7 +2855,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2855,7 +2863,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Progression 3 - Coach Shot Fake Before Pass",
         75,
       ],
       "op": "splitTextToSize",
@@ -2863,7 +2871,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2871,7 +2879,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        "Progression 3 - Coach Shot Fake Before Pass",
         75,
       ],
       "op": "splitTextToSize",
@@ -2879,7 +2887,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2887,7 +2895,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        "Progression 4 - Third Shot Recovery",
         75,
       ],
       "op": "splitTextToSize",
@@ -2895,7 +2903,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2903,7 +2911,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 4 - Third Shot Recovery",
         75,
       ],
       "op": "splitTextToSize",
@@ -2911,7 +2919,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2919,7 +2927,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 5 - Traffic / Screen Layer",
         75,
       ],
       "op": "splitTextToSize",
@@ -2927,7 +2935,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2935,7 +2943,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Progression 5 - Traffic / Screen Layer",
         75,
       ],
       "op": "splitTextToSize",
@@ -2943,19 +2951,11 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 285,
-    },
-    {
-      "args": [
         "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
         75,
       ],
       "op": "splitTextToSize",
-      "order": 286,
+      "order": 285,
     },
     {
       "args": [
@@ -2967,7 +2967,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 287,
+      "order": 286,
     },
     {
       "args": [
@@ -2975,7 +2975,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 288,
+      "order": 287,
     },
     {
       "args": [
@@ -2987,7 +2987,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 289,
+      "order": 288,
     },
     {
       "args": [
@@ -2999,7 +2999,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 290,
+      "order": 289,
     },
     {
       "args": [
@@ -3011,6 +3011,14 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
+      "order": 290,
+    },
+    {
+      "args": [
+        "Shot Rebound Recovery",
+        114,
+      ],
+      "op": "splitTextToSize",
       "order": 291,
     },
     {
@@ -3023,14 +3031,6 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Shot Rebound Recovery",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 293,
-    },
-    {
-      "args": [
         "data:image/png;base64,MOCK",
         "PNG",
         127,
@@ -3039,7 +3039,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 294,
+      "order": 293,
     },
     {
       "args": [
@@ -3051,7 +3051,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 295,
+      "order": 294,
     },
     {
       "args": [
@@ -3063,7 +3063,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 296,
+      "order": 295,
     },
     {
       "args": [
@@ -3071,7 +3071,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 297,
+      "order": 296,
     },
     {
       "args": [
@@ -3083,7 +3083,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 298,
+      "order": 297,
     },
   ],
   "totalOps": 57,

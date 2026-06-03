@@ -808,7 +808,7 @@ export const generateDrillPdf = async (
       doc.setDrawColor(150, 150, 150);
       doc.setLineWidth(0.5);
       drawLine(margin, sectionY, pageWidth - margin, sectionY);
-      sectionY += 3;
+      sectionY += SKILLS_FOCUS_TOP_GAP;
 
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
@@ -820,7 +820,7 @@ export const generateDrillPdf = async (
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
       doc.setFont("helvetica", "normal");
       const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
-      if (typeof linkMethod === "function") {
+      if (draw && typeof linkMethod === "function") {
         videoLines.forEach((line, lineIndex) => {
           linkMethod.call(doc, line, margin, sectionY + lineIndex * PROGRESSION_TEXT_LINE_HEIGHT, {
             url: videoUrl,
