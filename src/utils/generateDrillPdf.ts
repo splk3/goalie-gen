@@ -47,7 +47,9 @@ const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_MAX_IMAGE_HEIGHT = 30;
 const LINK_QR_CODE_SIZE_MM = 6;
 const LINK_QR_CODE_GAP_MM = 2;
+const MAX_QR_CACHE_ENTRIES = 32;
 const qrCodeDataCache = new Map<string, string>();
+let qrCodeModulePromise: Promise<typeof import("qrcode")> | null = null;
 
 /**
  * Maximum pixel dimension (width or height) for canvas-encoded images.
@@ -83,7 +85,10 @@ const getQrCodeDataURL = async (url: string): Promise<string | null> => {
   }
 
   try {
-    const qrCode = await import("qrcode");
+    if (!qrCodeModulePromise) {
+      qrCodeModulePromise = import("qrcode");
+    }
+    const qrCode = await qrCodeModulePromise;
     const dataURL = await qrCode.toDataURL(trimmedUrl, {
       margin: 0,
       errorCorrectionLevel: "M",
@@ -93,6 +98,12 @@ const getQrCodeDataURL = async (url: string): Promise<string | null> => {
         light: "#FFFFFF",
       },
     });
+    if (qrCodeDataCache.size >= MAX_QR_CACHE_ENTRIES) {
+      const oldestKey = qrCodeDataCache.keys().next().value;
+      if (oldestKey) {
+        qrCodeDataCache.delete(oldestKey);
+      }
+    }
     qrCodeDataCache.set(trimmedUrl, dataURL);
     return dataURL;
   } catch (error) {
@@ -808,12 +819,8 @@ export const generateDrillPdf = async (
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
       doc.setFont("helvetica", "normal");
-      const linkMethod = (
-        doc as unknown as {
-          textWithLink?: (text: string, x: number, y: number, options: { url: string }) => void;
-        }
-      ).textWithLink;
-      if (linkMethod) {
+      const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
+      if (typeof linkMethod === "function") {
         videoLines.forEach((line, lineIndex) => {
           linkMethod.call(doc, line, margin, sectionY + lineIndex * PROGRESSION_TEXT_LINE_HEIGHT, {
             url: videoUrl,
@@ -825,10 +832,9 @@ export const generateDrillPdf = async (
 
       if (videoQrCodeDataURL && videoLines.length > 0) {
         const firstLineWidth = doc.getTextWidth(videoLines[0]);
-        const maxFirstLineWidth = maxVideoLineWidth;
-        const qrX = margin + Math.min(firstLineWidth, maxFirstLineWidth) + LINK_QR_CODE_GAP_MM;
+        const qrX = margin + Math.min(firstLineWidth, maxVideoLineWidth) + LINK_QR_CODE_GAP_MM;
         const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
-        const qrY = sectionY - lineTextHeight;
+        const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
         drawImage(
           videoQrCodeDataURL,
           "PNG",

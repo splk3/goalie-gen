@@ -587,6 +587,12 @@ describe("generateDrillPdf layout selection", () => {
       videoUrl,
       expect.objectContaining({
         margin: 0,
+        errorCorrectionLevel: "M",
+        width: 128,
+        color: {
+          dark: "#000000",
+          light: "#FFFFFF",
+        },
       })
     );
     expect(textWithLinkSpy).toHaveBeenCalledWith(
