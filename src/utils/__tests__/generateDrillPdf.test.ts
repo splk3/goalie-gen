@@ -605,9 +605,9 @@ describe("generateDrillPdf layout selection", () => {
     );
     expect(textWithLinkSpy).toHaveBeenCalledTimes(1);
     expect(
-      addImageSpy.mock.calls.some((call) => {
-        return call[0] === "data:image/png;base64,MOCK";
-      })
+      addImageSpy.mock.calls.some(
+        (call) => call[0] === "data:image/png;base64,MOCK" && call[4] === 9 && call[5] === 9
+      )
     ).toBe(true);
   });
 
