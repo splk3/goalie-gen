@@ -45,6 +45,9 @@ const PROGRESSION_CARD_TEXT_TOP_OFFSET = 2;
 const PROGRESSION_CARD_NAME_BOTTOM_GAP = 2;
 const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_MAX_IMAGE_HEIGHT = 30;
+const LINK_QR_CODE_SIZE_MM = 6;
+const LINK_QR_CODE_GAP_MM = 2;
+const qrCodeDataCache = new Map<string, string>();
 
 /**
  * Maximum pixel dimension (width or height) for canvas-encoded images.
@@ -66,6 +69,36 @@ const formatTag = (tag: string): string => {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+};
+
+const getQrCodeDataURL = async (url: string): Promise<string | null> => {
+  const trimmedUrl = url.trim();
+  if (!trimmedUrl) {
+    return null;
+  }
+
+  const cached = qrCodeDataCache.get(trimmedUrl);
+  if (cached) {
+    return cached;
+  }
+
+  try {
+    const qrCode = await import("qrcode");
+    const dataURL = await qrCode.toDataURL(trimmedUrl, {
+      margin: 0,
+      errorCorrectionLevel: "M",
+      width: 128,
+      color: {
+        dark: "#000000",
+        light: "#FFFFFF",
+      },
+    });
+    qrCodeDataCache.set(trimmedUrl, dataURL);
+    return dataURL;
+  } catch (error) {
+    console.error("Error generating QR code for link:", error);
+    return null;
+  }
 };
 
 export const loadImageAsDataURL = (
@@ -442,6 +475,7 @@ export const generateDrillPdf = async (
   onProgress?.("Generating PDF...");
 
   const mainLineHeight = 3.2;
+  const videoQrCodeDataURL = drillData.video ? await getQrCodeDataURL(drillData.video) : null;
   type MainLayoutMode = "single-column" | "two-column";
 
   const renderMainSection = (
@@ -754,7 +788,10 @@ export const generateDrillPdf = async (
 
     if (drillData.video) {
       sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
-      const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
+      const videoUrl = drillData.video.trim();
+      const maxVideoLineWidth =
+        pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
+      const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth);
       sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * mainLineHeight);
 
       doc.setDrawColor(150, 150, 150);
@@ -768,10 +805,41 @@ export const generateDrillPdf = async (
       drawText("Video Demonstration", margin, sectionY);
       sectionY += 4;
 
-      doc.setTextColor(0, 0, 0);
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
       doc.setFont("helvetica", "normal");
-      drawText(videoLines, margin, sectionY);
+      const linkMethod = (
+        doc as unknown as {
+          textWithLink?: (text: string, x: number, y: number, options: { url: string }) => void;
+        }
+      ).textWithLink;
+      if (linkMethod) {
+        videoLines.forEach((line, lineIndex) => {
+          linkMethod.call(doc, line, margin, sectionY + lineIndex * PROGRESSION_TEXT_LINE_HEIGHT, {
+            url: videoUrl,
+          });
+        });
+      } else {
+        drawText(videoLines, margin, sectionY);
+      }
+
+      if (videoQrCodeDataURL && videoLines.length > 0) {
+        const firstLineWidth = doc.getTextWidth(videoLines[0]);
+        const maxFirstLineWidth = maxVideoLineWidth;
+        const qrX = margin + Math.min(firstLineWidth, maxFirstLineWidth) + LINK_QR_CODE_GAP_MM;
+        const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
+        const qrY = sectionY - lineTextHeight;
+        drawImage(
+          videoQrCodeDataURL,
+          "PNG",
+          qrX,
+          qrY,
+          LINK_QR_CODE_SIZE_MM,
+          LINK_QR_CODE_SIZE_MM
+        );
+      }
+
+      doc.setTextColor(0, 0, 0);
       sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
     }
 
