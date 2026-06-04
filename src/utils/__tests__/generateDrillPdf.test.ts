@@ -11,6 +11,11 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
+const mockQrCodeToDataURL = jest.fn(async () => "data:image/png;base64,MOCK");
+jest.mock("qrcode", () => ({
+  toDataURL: (...args: unknown[]) => mockQrCodeToDataURL(...args),
+}));
+
 const loadDrillFixture = (folder: string): DrillData => {
   const drillPath = path.resolve(__dirname, `../../../drills/${folder}/drill.yml`);
   return yaml.load(fs.readFileSync(drillPath, "utf8"), {
@@ -392,6 +397,7 @@ describe("generateDrillPdf layout selection", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockQrCodeToDataURL.mockClear();
   });
 
   afterEach(() => {
@@ -552,6 +558,55 @@ describe("generateDrillPdf layout selection", () => {
       return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
     });
     expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("renders video URL as a clickable link and adds an inline QR code image", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const textWithLinkSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
+      "textWithLink"
+    );
+    const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+    await generateDrillPdf(
+      {
+        ...baseDrillData,
+        video: videoUrl,
+      },
+      "test-folder"
+    );
+
+    expect(mockQrCodeToDataURL).toHaveBeenCalledWith(
+      videoUrl,
+      expect.objectContaining({
+        margin: 0,
+        errorCorrectionLevel: "M",
+        width: 128,
+        color: {
+          dark: "#000000",
+          light: "#FFFFFF",
+        },
+      })
+    );
+    expect(textWithLinkSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Number),
+      expect.any(Number),
+      expect.objectContaining({
+        url: videoUrl,
+      })
+    );
+    expect(textWithLinkSpy).toHaveBeenCalledTimes(1);
+    expect(
+      addImageSpy.mock.calls.some(
+        (call) => call[0] === "data:image/png;base64,MOCK" && call[4] === 9 && call[5] === 9
+      )
+    ).toBe(true);
   });
 
   it("keeps butterfly-map-series in two-column mode", async () => {
