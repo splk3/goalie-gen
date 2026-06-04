@@ -803,7 +803,7 @@ export const generateDrillPdf = async (
       const maxVideoLineWidth =
         pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
       const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth);
-      sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * mainLineHeight);
+      sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT);
 
       doc.setDrawColor(150, 150, 150);
       doc.setLineWidth(0.5);
