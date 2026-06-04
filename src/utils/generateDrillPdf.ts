@@ -215,6 +215,7 @@ export const generateDrillPdf = async (
 ): Promise<jsPDF> => {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
+  
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
   const margin = 20;
@@ -800,8 +801,7 @@ export const generateDrillPdf = async (
     if (drillData.video) {
       sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
       const videoUrl = drillData.video.trim();
-      const maxVideoLineWidth =
-        pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
+      const maxVideoLineWidth = pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
       const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth);
       sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT);
 
@@ -835,14 +835,7 @@ export const generateDrillPdf = async (
         const qrX = margin + Math.min(firstLineWidth, maxVideoLineWidth) + LINK_QR_CODE_GAP_MM;
         const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
         const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
-        drawImage(
-          videoQrCodeDataURL,
-          "PNG",
-          qrX,
-          qrY,
-          LINK_QR_CODE_SIZE_MM,
-          LINK_QR_CODE_SIZE_MM
-        );
+        drawImage(videoQrCodeDataURL, "PNG", qrX, qrY, LINK_QR_CODE_SIZE_MM, LINK_QR_CODE_SIZE_MM);
       }
 
       doc.setTextColor(0, 0, 0);
