@@ -215,7 +215,7 @@ export const generateDrillPdf = async (
 ): Promise<jsPDF> => {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
-  
+
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
   const margin = 20;

@@ -11,9 +11,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
-const mockQrCodeToDataURL = jest.fn(
-  async () => "data:image/png;base64,MOCK"
-);
+const mockQrCodeToDataURL = jest.fn(async () => "data:image/png;base64,MOCK");
 jest.mock("qrcode", () => ({
   toDataURL: (...args: unknown[]) => mockQrCodeToDataURL(...args),
 }));
