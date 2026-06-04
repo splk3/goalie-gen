@@ -59,6 +59,14 @@ const FILTER_STATE_KEYS: Array<keyof FilterState> = [
   "space_required",
 ];
 
+const normalizeFilterValue = (category: keyof FilterState, value: string): string => {
+  if (category === "space_required" && value === "single_zone") {
+    return "whole_zone";
+  }
+
+  return value;
+};
+
 const parseTimestamp = (value?: string): number | null => {
   if (!value) {
     return null;
@@ -81,7 +89,7 @@ const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterStat
 
     parsedFilters[category] = paramValue
       .split(",")
-      .map((value) => value.trim())
+      .map((value) => normalizeFilterValue(category, value.trim()))
       .filter(Boolean)
       .sort();
   });
@@ -589,12 +597,24 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               >
                 {drill.name}
               </h2>
-              <span
-                aria-hidden="true"
-                className="inline-block bg-usa-blue dark:bg-blue-600 text-white font-semibold py-2 px-6 rounded"
-              >
-                View Drill
-              </span>
+              <div className="flex items-end justify-between gap-4">
+                <span
+                  aria-hidden="true"
+                  className="inline-block bg-usa-blue dark:bg-blue-600 text-white font-semibold py-2 px-6 rounded"
+                >
+                  View Drill
+                </span>
+                <div className="text-right text-sm text-gray-700 dark:text-gray-300">
+                  {drill.drill_updated_date && (
+                    <p>
+                      <span className="font-semibold">Updated:</span> {drill.drill_updated_date}
+                    </p>
+                  )}
+                  <p>
+                    <span className="font-semibold">Created:</span> {drill.drill_creation_date}
+                  </p>
+                </div>
+              </div>
             </div>
           </Link>
         ))}

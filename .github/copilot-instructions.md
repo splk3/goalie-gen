@@ -85,7 +85,7 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
   - `tags.game_situations` is optional and supports:
     `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
   - `tags.space_required` is **required** (at least one value) and supports:
-    `full_ice`, `half_ice`, `single_zone`, `half_zone`, `crease_only`, `flexible`.
+    `full_ice`, `half_ice`, `whole_zone`, `half_zone`, `crease_only`, `flexible`.
     Default to `flexible` when no specific space is needed. It is shown on the drill page after
     "Equipment Needed" but is intentionally excluded from the print/PDF output.
   - video URLs must be HTTPS YouTube or Vimeo formats accepted by the validator

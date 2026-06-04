@@ -34,7 +34,7 @@ const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "ice_marker", "none
 const ALLOWED_SPACE_REQUIRED = [
   "full_ice",
   "half_ice",
-  "single_zone",
+  "whole_zone",
   "half_zone",
   "crease_only",
   "flexible",

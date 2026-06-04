@@ -95,7 +95,7 @@ drill_progressions:
 | `skating_skill` | `shuffle`, `t_push`, `c_cut`, `butterfly`, `power_push` |
 | `game_situations` | `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling` |
 | `equipment` | `blaze_pods`, `cones`, `ice_marker`, `bumpers`, `none` |
-| `space_required` | `full_ice`, `half_ice`, `single_zone`, `half_zone`, `crease_only`, `flexible` |
+| `space_required` | `full_ice`, `half_ice`, `whole_zone`, `half_zone`, `crease_only`, `flexible` |
 
 ## Step 4 — Handle the Drill Image
 

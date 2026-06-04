@@ -74,7 +74,7 @@ tags:
     - t_push
   equipment: []
   space_required:
-    - flexible
+    - whole_zone
   game_situations:
     - dump_in
     - stick_handling

@@ -86,6 +86,7 @@ drill_progressions:
       Begin the footwork sequence only after achieving a clean, stable stance.
 
 drill_creation_date: 2026-05-25
+drill_updated_date: 2026-05-31
 
 tags:
   skill_level:
@@ -100,4 +101,4 @@ tags:
   skating_skill: []
   equipment: []
   space_required:
-    - flexible
+    - crease_only

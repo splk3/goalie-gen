@@ -276,7 +276,7 @@ The exceptions are `team_drill`, which is a single string value (`yes` or `no`),
   does not require a specific amount of space. Allowed values are:
   - `full_ice`
   - `half_ice`
-  - `single_zone`
+  - `whole_zone`
   - `half_zone`
   - `crease_only`
   - `flexible`
