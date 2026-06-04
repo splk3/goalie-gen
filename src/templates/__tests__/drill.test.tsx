@@ -242,7 +242,7 @@ describe("DrillTemplate", () => {
   });
 
   it("renders Space Required after Equipment Needed and hides it from print", () => {
-    const { container } = render(
+    render(
       <DrillTemplate
         pageContext={{
           ...basePageContext,
