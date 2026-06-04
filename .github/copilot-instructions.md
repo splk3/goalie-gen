@@ -83,7 +83,9 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
   - `drill_progressions` supports up to 8 objects with required
     `progression_name`/`progression_description` and optional `progression_image`
   - `tags.game_situations` is optional and supports:
-    `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
+    `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`,
+    `odd_man_rush`, `macro_game`, `small_sided_game`, `small_unit_play`,
+    `opposed_practice`, `unopposed_practice`
   - video URLs must be HTTPS YouTube or Vimeo formats accepted by the validator
 - Because drill YAML uses `yaml.FAILSAFE_SCHEMA`, values containing `:` in progression text should
   be quoted to avoid YAML parsing into non-string structures.
