@@ -48,6 +48,12 @@ const ALLOWED_GAME_SITUATIONS = [
   "net_front_traffic",
   "dump_in",
   "stick_handling",
+  "odd_man_rush",
+  "macro_game",
+  "small_sided_game",
+  "small_unit_play",
+  "opposed_practice",
+  "unopposed_practice",
 ];
 
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.

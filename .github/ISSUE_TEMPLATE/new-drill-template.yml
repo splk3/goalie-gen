@@ -175,6 +175,12 @@ body:
         - label: net_front_traffic
         - label: dump_in
         - label: stick_handling
+        - label: odd_man_rush
+        - label: macro_game
+        - label: small_sided_game
+        - label: small_unit_play
+        - label: opposed_practice
+        - label: unopposed_practice
 
   - type: checkboxes
     id: equipment_tags

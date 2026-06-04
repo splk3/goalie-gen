@@ -83,7 +83,9 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
   - `drill_progressions` supports up to 8 objects with required
     `progression_name`/`progression_description` and optional `progression_image`
   - `tags.game_situations` is optional and supports:
-    `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`
+    `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`,
+    `odd_man_rush`, `macro_game`, `small_sided_game`, `small_unit_play`,
+    `opposed_practice`, `unopposed_practice`
   - `tags.space_required` is **required** (at least one value) and supports:
     `full_ice`, `half_ice`, `whole_zone`, `half_zone`, `crease_only`, `flexible`.
     Default to `flexible` when no specific space is needed. It is shown on the drill page after

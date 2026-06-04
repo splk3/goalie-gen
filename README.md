@@ -291,6 +291,12 @@ The exceptions are `team_drill`, which is a single string value (`yes` or `no`),
   - `net_front_traffic`
   - `dump_in`
   - `stick_handling`
+  - `odd_man_rush`
+  - `macro_game`
+  - `small_sided_game`
+  - `small_unit_play`
+  - `opposed_practice`
+  - `unopposed_practice`
 
 For media fields, `drill_image` should be a single image filename string when provided, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 

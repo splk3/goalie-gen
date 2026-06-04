@@ -93,7 +93,7 @@ drill_progressions:
 | `age_level` | `all`, `10U_below`, `12U`, `14U`, `16U_and_older` |
 | `fundamental_skill` | `skating`, `positioning`, `stance`, `save_selection`, `rebound_control`, `recovery` |
 | `skating_skill` | `shuffle`, `t_push`, `c_cut`, `butterfly`, `power_push` |
-| `game_situations` | `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling` |
+| `game_situations` | `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`, `odd_man_rush`, `macro_game`, `small_sided_game`, `small_unit_play`, `opposed_practice`, `unopposed_practice` |
 | `equipment` | `blaze_pods`, `cones`, `ice_marker`, `bumpers`, `none` |
 | `space_required` | `full_ice`, `half_ice`, `whole_zone`, `half_zone`, `crease_only`, `flexible` |
 
