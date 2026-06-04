@@ -58,3 +58,6 @@ tags:
   equipment:
     - ice_marker
     - bumpers
+  space_required:
+    - crease_only
+    - half_zone

@@ -55,6 +55,9 @@ tags:
     - power_push
   equipment:
     - none
+  space_required:
+    - full_ice
+    - half_ice
   game_situations:
     - power_play
     - net_front_traffic

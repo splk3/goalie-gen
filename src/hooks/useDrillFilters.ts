@@ -7,6 +7,7 @@ interface DrillTags {
   fundamental_skill?: string[];
   skating_skill?: string[];
   equipment?: string[];
+  space_required?: string[];
 }
 
 interface Drill {
@@ -20,6 +21,7 @@ export interface FilterState {
   fundamental_skill: string[];
   skating_skill: string[];
   equipment: string[];
+  space_required: string[];
 }
 
 export type FilterCategory = keyof FilterState;
@@ -31,6 +33,7 @@ const FILTER_CATEGORIES: FilterCategory[] = [
   "fundamental_skill",
   "skating_skill",
   "equipment",
+  "space_required",
 ];
 
 export const DEFAULT_FILTER_STATE: FilterState = {
@@ -40,6 +43,7 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   fundamental_skill: [],
   skating_skill: [],
   equipment: [],
+  space_required: [],
 };
 
 /**

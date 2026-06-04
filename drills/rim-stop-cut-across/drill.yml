@@ -73,6 +73,8 @@ tags:
     - shuffle
     - t_push
   equipment: []
+  space_required:
+    - flexible
   game_situations:
     - dump_in
     - stick_handling

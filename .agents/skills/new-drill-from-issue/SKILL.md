@@ -55,6 +55,7 @@ Create `drills/{folder-name}/drill.yml` using the field mapping below.
 | Tags - Skating Skill | `tags.skating_skill` | Array of checked values |
 | Tags - Game Situations (Optional) | `tags.game_situations` | Array — omit entirely if none checked |
 | Tags - Equipment | `tags.equipment` | Array of checked values |
+| Tags - Space Required | `tags.space_required` | Array of checked values — **required**; default to `[flexible]` if none checked |
 | Drill Diagram | `drill_image` | See Step 4; value is the derived filename string |
 | Progression [#] Name + Description | `drill_progressions` | See progressions rules below |
 
@@ -94,6 +95,7 @@ drill_progressions:
 | `skating_skill` | `shuffle`, `t_push`, `c_cut`, `butterfly`, `power_push` |
 | `game_situations` | `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling` |
 | `equipment` | `blaze_pods`, `cones`, `ice_marker`, `bumpers`, `none` |
+| `space_required` | `full_ice`, `half_ice`, `single_zone`, `half_zone`, `crease_only`, `flexible` |
 
 ## Step 4 — Handle the Drill Image
 
@@ -174,4 +176,6 @@ tags:
     - t_push
   equipment:
     - ice_marker
+  space_required:
+    - flexible
 ```

@@ -15,6 +15,7 @@ interface DrillNode {
     fundamental_skill?: string[];
     skating_skill?: string[];
     equipment?: string[];
+    space_required?: string[];
   };
 }
 
@@ -36,6 +37,7 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
             fundamental_skill
             skating_skill
             equipment
+            space_required
           }
         }
       }

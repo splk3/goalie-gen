@@ -62,4 +62,6 @@ tags:
   skating_skill:
     - t_push
   equipment: []
+  space_required:
+    - flexible
   game_situations: []

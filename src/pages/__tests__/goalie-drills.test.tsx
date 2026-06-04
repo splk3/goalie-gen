@@ -28,6 +28,7 @@ describe("GoalieDrills page", () => {
         fundamental_skill: string[];
         skating_skill: string[];
         equipment: string[];
+        space_required: string[];
       };
     }>
   ) => ({
@@ -47,6 +48,7 @@ describe("GoalieDrills page", () => {
       fundamental_skill: ["positioning"],
       skating_skill: ["t_push"],
       equipment: ["cones"],
+      space_required: ["flexible"],
     },
     ...overrides,
   });
@@ -71,6 +73,7 @@ describe("GoalieDrills page", () => {
             fundamental_skill: ["positioning"],
             skating_skill: ["t_push"],
             equipment: ["cones"],
+            space_required: ["full_ice"],
           },
         },
         {
@@ -90,6 +93,7 @@ describe("GoalieDrills page", () => {
             fundamental_skill: ["tracking"],
             skating_skill: ["shuffle"],
             equipment: [],
+            space_required: ["flexible"],
           },
         },
       ],

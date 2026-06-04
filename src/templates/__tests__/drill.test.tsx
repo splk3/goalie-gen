@@ -240,4 +240,49 @@ describe("DrillTemplate", () => {
     expect(screen.getByText("Arrive set at each point")).toBeInTheDocument();
     expect(screen.getByText("Track puck into body")).toBeInTheDocument();
   });
+
+  it("renders Space Required after Equipment Needed and hides it from print", () => {
+    const { container } = render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            tags: {
+              team_drill: "no",
+              equipment: ["cones"],
+              space_required: ["full_ice", "crease_only"],
+            },
+          },
+        }}
+      />
+    );
+
+    const spaceLabel = screen.getByText("Space Required:");
+    expect(spaceLabel).toBeInTheDocument();
+    expect(screen.getByText("Full Ice, Crease Only")).toBeInTheDocument();
+
+    // The Space Required block must be hidden in print/PDF output.
+    const spaceContainer = spaceLabel.closest("div");
+    expect(spaceContainer).not.toBeNull();
+    expect(spaceContainer).toHaveClass("print:hidden");
+  });
+
+  it("does not render Space Required when the tag is absent", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            tags: {
+              team_drill: "no",
+            },
+          },
+        }}
+      />
+    );
+
+    expect(screen.queryByText("Space Required:")).not.toBeInTheDocument();
+  });
 });

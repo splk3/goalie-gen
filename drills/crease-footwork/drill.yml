@@ -99,3 +99,5 @@ tags:
     - skating
   skating_skill: []
   equipment: []
+  space_required:
+    - flexible

@@ -25,6 +25,7 @@ interface DrillNode {
     fundamental_skill?: string[];
     skating_skill?: string[];
     equipment?: string[];
+    space_required?: string[];
   };
 }
 
@@ -55,6 +56,7 @@ const FILTER_STATE_KEYS: Array<keyof FilterState> = [
   "fundamental_skill",
   "skating_skill",
   "equipment",
+  "space_required",
 ];
 
 const parseTimestamp = (value?: string): number | null => {
@@ -638,6 +640,7 @@ export const query = graphql`
           fundamental_skill
           skating_skill
           equipment
+          space_required
         }
       }
     }

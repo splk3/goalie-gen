@@ -55,4 +55,6 @@ tags:
     - butterfly
   equipment:
     - none
+  space_required:
+    - flexible
   game_situations: []
