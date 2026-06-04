@@ -70,6 +70,10 @@ tags:
     - ice_marker
     - bumpers
     - none
+  # required: at least one value
+  # allowed values: full_ice, half_ice, whole_zone, half_zone, crease_only, flexible
+  space_required:
+    - flexible
 
 # optional
 # drill_progressions:

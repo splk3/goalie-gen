@@ -64,3 +64,5 @@ tags:
   skating_skill: []
   equipment:
     - none
+  space_required:
+    - half_zone

@@ -55,4 +55,6 @@ tags:
     - butterfly
   equipment:
     - none
+  space_required:
+    - half_zone
   game_situations: []

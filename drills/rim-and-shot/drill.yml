@@ -63,4 +63,6 @@ tags:
     - save_selection
   skating_skill: []
   equipment: []
+  space_required:
+    - whole_zone
   game_situations: []

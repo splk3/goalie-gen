@@ -55,6 +55,8 @@ tags:
     - power_push
   equipment:
     - none
+  space_required:
+    - flexible
   game_situations:
     - power_play
     - net_front_traffic

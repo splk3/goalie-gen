@@ -39,3 +39,5 @@ tags:
     - rebound_control
   equipment:
     - none
+  space_required:
+    - full_ice

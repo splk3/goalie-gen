@@ -86,6 +86,10 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
     `power_play`, `penalty_kill`, `net_front_traffic`, `dump_in`, `stick_handling`,
     `odd_man_rush`, `macro_game`, `small_sided_game`, `small_unit_play`,
     `opposed_practice`, `unopposed_practice`
+  - `tags.space_required` is **required** (at least one value) and supports:
+    `full_ice`, `half_ice`, `whole_zone`, `half_zone`, `crease_only`, `flexible`.
+    Default to `flexible` when no specific space is needed. It is shown on the drill page after
+    "Equipment Needed" but is intentionally excluded from the print/PDF output.
   - video URLs must be HTTPS YouTube or Vimeo formats accepted by the validator
 - Because drill YAML uses `yaml.FAILSAFE_SCHEMA`, values containing `:` in progression text should
   be quoted to avoid YAML parsing into non-string structures.

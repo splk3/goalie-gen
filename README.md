@@ -236,9 +236,10 @@ All other fields are optional. Known optional fields include:
 Sectioned entries must be one-level objects: exactly one section title mapped to an array of
 string bullet items.
 
-The `tags` field is required, but each sub-field is optional. Most sub-fields accept an **array** of
+The `tags` field is required. Most sub-fields are optional and accept an **array** of
 values from an allowed list and are validated during build time (in `gatsby-node.ts`).
-The exception is `team_drill`, which is a single string value (`yes` or `no`):
+The exceptions are `team_drill`, which is a single string value (`yes` or `no`), and
+`space_required`, which is required and must contain at least one value:
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
@@ -270,6 +271,15 @@ The exception is `team_drill`, which is a single string value (`yes` or `no`):
   - `goal`
   - `ice_marker`
   - `none`
+
+- `space_required`: **Required.** At least one value must be selected. Use `flexible` when the drill
+  does not require a specific amount of space. Allowed values are:
+  - `full_ice`
+  - `half_ice`
+  - `whole_zone`
+  - `half_zone`
+  - `crease_only`
+  - `flexible`
 
 - `team_drill`: A single string value, either:
   - `yes`

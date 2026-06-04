@@ -1,5 +1,5 @@
 import * as React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import GoalieDrills from "../goalie-drills";
 
 jest.mock("../../components/PageLayout", () => {
@@ -20,7 +20,7 @@ describe("GoalieDrills page", () => {
       shooter_focus_points: string[];
       drill_image: string;
       drill_creation_date: string;
-      drill_updated_date: string;
+      drill_updated_date?: string;
       tags: {
         skill_level: string[];
         team_drill: string;
@@ -28,6 +28,7 @@ describe("GoalieDrills page", () => {
         fundamental_skill: string[];
         skating_skill: string[];
         equipment: string[];
+        space_required: string[];
       };
     }>
   ) => ({
@@ -47,6 +48,7 @@ describe("GoalieDrills page", () => {
       fundamental_skill: ["positioning"],
       skating_skill: ["t_push"],
       equipment: ["cones"],
+      space_required: ["flexible"],
     },
     ...overrides,
   });
@@ -71,6 +73,7 @@ describe("GoalieDrills page", () => {
             fundamental_skill: ["positioning"],
             skating_skill: ["t_push"],
             equipment: ["cones"],
+            space_required: ["full_ice"],
           },
         },
         {
@@ -90,6 +93,7 @@ describe("GoalieDrills page", () => {
             fundamental_skill: ["tracking"],
             skating_skill: ["shuffle"],
             equipment: [],
+            space_required: ["whole_zone"],
           },
         },
       ],
@@ -114,6 +118,39 @@ describe("GoalieDrills page", () => {
     expect(submitLink).toHaveAttribute("rel", "noopener noreferrer");
   });
 
+  it("shows updated above created when present and hides updated when missing", () => {
+    const dataWithMissingUpdatedDate = {
+      allDrill: {
+        nodes: [
+          data.allDrill.nodes[0],
+          {
+            ...data.allDrill.nodes[1],
+            drill_updated_date: undefined,
+          },
+        ],
+      },
+    };
+
+    render(<GoalieDrills data={dataWithMissingUpdatedDate} />);
+
+    const teamDrillCard = screen.getByRole("link", { name: "Team Drill" });
+    expect(within(teamDrillCard).getByText("Created:")).toBeInTheDocument();
+    expect(within(teamDrillCard).getByText("Updated:")).toBeInTheDocument();
+    expect(within(teamDrillCard).getByText("Created:").parentElement).toHaveTextContent(
+      "Created: 2026-01-01"
+    );
+    expect(within(teamDrillCard).getByText("Updated:").parentElement).toHaveTextContent(
+      "Updated: 2026-01-02"
+    );
+    expect(teamDrillCard).toHaveTextContent(/Updated:\s*2026-01-02[\s\S]*Created:\s*2026-01-01/);
+
+    const goalieDrillCard = screen.getByRole("link", { name: "Goalie Drill" });
+    expect(within(goalieDrillCard).getByText("Created:").parentElement).toHaveTextContent(
+      "Created: 2026-01-01"
+    );
+    expect(within(goalieDrillCard).queryByText("Updated:")).not.toBeInTheDocument();
+  });
+
   it("syncs filters when location.search changes while mounted", async () => {
     const { rerender } = render(<GoalieDrills data={data} location={{ search: "" }} />);
 
@@ -124,6 +161,18 @@ describe("GoalieDrills page", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /Team Drill/i })).toHaveTextContent("(1)");
+    });
+  });
+
+  it("normalizes legacy single_zone URL filters to whole_zone", async () => {
+    window.history.replaceState(null, "", "/goalie-drills");
+    render(<GoalieDrills data={data} location={{ search: "?space_required=single_zone" }} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Space Required/i })).toHaveTextContent("(1)");
+      expect(screen.getByRole("link", { name: "Goalie Drill" })).toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: "Team Drill" })).not.toBeInTheDocument();
+      expect(window.location.search).toContain("space_required=whole_zone");
     });
   });
 

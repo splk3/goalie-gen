@@ -57,3 +57,5 @@ tags:
     - butterfly
     - power_push
   equipment: []
+  space_required:
+    - half_zone

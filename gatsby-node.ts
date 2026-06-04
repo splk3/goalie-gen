@@ -31,6 +31,15 @@ const ALLOWED_SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
 const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "ice_marker", "none"];
 
+const ALLOWED_SPACE_REQUIRED = [
+  "full_ice",
+  "half_ice",
+  "whole_zone",
+  "half_zone",
+  "crease_only",
+  "flexible",
+];
+
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
 const ALLOWED_GAME_SITUATIONS = [
@@ -203,7 +212,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
 
   const tags = d.tags as Record<string, unknown>;
 
-  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment, team_drill)
+  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment, space_required, team_drill)
   if (typeof tags.fundamental_skill !== "undefined" && !Array.isArray(tags.fundamental_skill)) {
     throw new Error(
       `[${drillFolder}] drill.yml field 'tags.fundamental_skill' must be an array of strings`
@@ -301,6 +310,26 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
           `[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(", ")}`
         );
       }
+    }
+  }
+
+  // space_required is required: every drill must declare at least one value.
+  if (!Array.isArray(tags.space_required) || tags.space_required.length === 0) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'tags.space_required' is required and must be a non-empty array of strings. ` +
+        `Use 'flexible' when no specific space is required. Allowed values: ${ALLOWED_SPACE_REQUIRED.join(", ")}`
+    );
+  }
+  for (const space of tags.space_required) {
+    if (typeof space !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'tags.space_required' must contain only strings`
+      );
+    }
+    if (!ALLOWED_SPACE_REQUIRED.includes(space)) {
+      throw new Error(
+        `[${drillFolder}] invalid space_required '${space}'. Allowed values: ${ALLOWED_SPACE_REQUIRED.join(", ")}`
+      );
     }
   }
 

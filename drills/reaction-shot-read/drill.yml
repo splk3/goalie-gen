@@ -49,3 +49,5 @@ tags:
     - rebound_control
   equipment:
     - none
+  space_required:
+    - half_zone

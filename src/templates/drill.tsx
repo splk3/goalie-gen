@@ -202,6 +202,14 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 </span>
               </div>
             )}
+            {drillData.tags.space_required && drillData.tags.space_required.length > 0 && (
+              <div className="print:hidden">
+                <span className="font-bold text-gray-700 dark:text-gray-300">Space Required: </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {drillData.tags.space_required.map(formatTag).join(", ")}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
