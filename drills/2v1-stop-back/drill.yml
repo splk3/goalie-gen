@@ -1,36 +1,27 @@
----
 name: 2v1 Stop Back
-
-description: |-
-  This drill starts with a defensive puck recovery to a pass up to the slot into a 2v1 back into the same zone.
-
-drill_steps:
-  - Defense starts by skating to the top of the circle transitioning towards the boards then retrieving puck from corner.
-  - Forward starts by skating down to the dot then cutting towards the center to retrieve pass.
-  - Defense passes to forward, forward skates up ice to make a pass to the forward on the wall.
-  - Continues skating and stops at the blue line.
-  - Once they hit the blue line the second forward is activated and they go back 2v1 on the defense that gaps up in the neutral zone.
-
-coaching_focus_points:
+description: This drill starts with a defensive puck recovery to a pass up to the slot into a 2v1 back into the same zone.
+drill_steps: |-
+  1. Defense starts by skating to the top of the circle transitioning towards the boards then retrieving puck from corner.
+  2. Forward starts by skating down to the dot then cutting towards the center to retrieve pass.
+  3. Defense passes to forward, forward skates up ice to make a pass to the forward on the wall.
+  4. Continues skating and stops at the blue line.
+  5. Once they hit the blue line the second forward is activated and they go back 2v1 on the defense that gaps up in the neutral zone.
+coaching_focus_points: |-
   - Follow passes.
   - Gain depth on the rush.
   - Recognize the hand of the pass threat.
   - Rebound control to non dangerous areas.
-
-shooter_focus_points:
+shooter_focus_points: |-
   - Recognize if goalie is cheating the pass.
   - Read a net drive or pass.
   - Do not force pass.
-
 drill_image: 2v1-stop-back.png
-
 drill_creation_date: 2026-06-02
-
 tags:
   skill_level:
     - intermediate
     - advanced
-  team_drill: yes
+  team_drill: "yes"
   age_level:
     - 14U
     - 16U_and_older

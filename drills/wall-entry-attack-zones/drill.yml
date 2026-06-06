@@ -1,0 +1,93 @@
+name: Wall Entry Attack Zones
+description: |-
+  A shooter attacks down the wall and enters one of seven designated attack zones.
+  The shooter releases a shot from that zone.
+  The goalie reads the shooter's lane, identifies the correct zone, and adjusts angle, depth, and post integration accordingly.
+drill_steps: |-
+  Goalie:
+    1. Track the puck carrier from the top of the crease.
+    2. Identify the zone early.
+    3. Move into the correct angle, depth, and post-integration technique.
+    4. Execute the appropriate save selection for that zone.
+  Shooter:
+    1. Skate down the wall with controlled speed.
+    2. Enter one of the seven zones.
+    3. Release a shot or attempt a tight-angle attack depending on the zone.
+coaching_focus_points: |-
+  - Zone 1 - High Wall Shot (Angle & Depth Control)
+    - Goalie Focus
+      - Strong angle with chest square to puck.
+      - Maintain optimal depth (1-2 feet above top of crease).
+      - Hands active and in front.
+      - Avoid drifting backward as shooter releases.
+    - Shooter Coaching: shoot in stride.
+  - Zone 2 - MidWall Shot (Overlap Positioning)
+    - Goalie Focus
+      - Use overlap technique with skate blade outside post.
+      - Keep hands tight with no reaching.
+      - Stay tall and do not drift too far out.
+      - Maintain short-side seal while staying square.
+    - Shooter Coaching
+      - Release quickly off the wall.
+      - Aim for short side high or far-side pad.
+  - Zone 3 - Low Wall, Tight Angle (Foot on Post)
+    - Goalie Focus
+      - Inside skate on the post.
+      - Stay tall and do not drop early.
+    - Shooter Coaching: Attack downhill with speed.
+  - Zone 4 - Low Corner Entry (Foot on Post)
+    - Goalie Focus
+      - Use the same mechanics as Zone 3.
+      - Avoid leaning off the post.
+      - Prepare for jam, sharp-angle shot, or pass below goal line.
+    - Shooter Coaching: drive hard to the goal line.
+  - Zone 5 - Tight-Angle Threat (RVH When Shot Threat Exists)
+    - Goalie Focus
+      - Enter RVH only when shooter is below the dot line and shot threat is real.
+      - Maintain a strong short-side seal.
+      - Be ready to push out if shooter passes puck up ice.
+    - Shooter Coaching: sell shot to force RVH.
+  - Zone 6 - Below the Hashmarks (RVH)
+    - Goalie Focus
+      - Full RVH integration.
+      - Stick blade seals ice.
+      - Watch for walk-out attempts.
+      - Maintain ability to push up and out if shooter climbs the wall.
+    - Shooter Coaching: look for far-side openings if goalie over leans.
+  - Zone 7 - Goal Line / Below Goal Line (RVH)
+    - Goalie Focus
+      - Strong RVH seal.
+      - Prepare for jam, walkout, or pass to slot.
+      - Avoid over-rotation.
+    - Shooter Coaching: look for goalie leaning off post.
+drill_image: wall-entry-attack-zones.png
+drill_progressions:
+  - progression_name: Progression 1 - Random Zone Activation
+    progression_description: Coach calls out a zone number as the shooter enters the zone to force late goalie reaction and build reading and adjustment speed.
+  - progression_name: Progression 2 - Shooter Deception Layer
+    progression_description: Shooter fakes entering one zone, then cuts into another. Goalie must read hips instead of the stick to build discipline and patience.
+    progression_image: progression-2.png
+  - progression_name: Progression 3 - Add a Second Shooter
+    progression_description: Add a second attacker in the slot or weak side to force goalie management of shot versus pass threat and teach proper RVH exit mechanics.
+    progression_image: progression-3.png
+  - progression_name: Progression 4 - Screen
+    progression_description: Add a player or barrier as a screen to force goalie tracking through traffic while the shooter learns to use the screen effectively.
+    progression_image: progression-4.png
+drill_creation_date: 2026-06-05
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "no"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+  skating_skill: []
+  equipment: []
+  space_required:
+    - whole_zone

@@ -45,6 +45,7 @@ The project features complex client-side document generation:
 
 1. Create a folder in `drills/` named `my-new-drill`.
 2. Add a `drill.yml` with required fields: `name`, `drill_steps`, `coaching_focus_points`, `drill_image`, `tags`, and `drill_creation_date`.
+   - Format `drill_creation_date` as `YYYY-MM-DD`; if you add `drill_updated_date`, it must also be `YYYY-MM-DD`.
 3. Add the referenced `drill_image` file to the same folder.
 4. (Optional) Add `drill_progressions` with their own images.
 5. Restart the development server to see the new page at `/drills/my-new-drill`.

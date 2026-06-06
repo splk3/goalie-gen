@@ -7,7 +7,6 @@ import {
   estimateDrillPdfPages,
   shouldUseFullWidthFirstPageDiagram,
 } from "./src/utils/estimateDrillPdfPages";
-import { flattenCoachingFocusPoints } from "./src/utils/coachingFocusPoints";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
@@ -81,73 +80,27 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml field 'description' must be a string`);
   }
 
-  if (!Array.isArray(d.drill_steps) || d.drill_steps.length === 0) {
+  if (typeof d.drill_steps !== "string" || d.drill_steps.trim().length === 0) {
     throw new Error(
-      `[${drillFolder}] drill.yml missing required field 'drill_steps' (non-empty array)`
+      `[${drillFolder}] drill.yml missing required field 'drill_steps' (non-empty markdown string)`
     );
   }
-  for (const step of d.drill_steps) {
-    if (typeof step !== "string") {
-      throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
-    }
-  }
 
-  if (!Array.isArray(d.coaching_focus_points)) {
+  if (typeof d.coaching_focus_points !== "string" || d.coaching_focus_points.trim().length === 0) {
     throw new Error(
-      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
+      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (non-empty markdown string)`
     );
   }
-  for (const [index, point] of d.coaching_focus_points.entries()) {
-    if (typeof point !== "string") {
-      if (!point || typeof point !== "object" || Array.isArray(point)) {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' must be a string or single-key object`
-        );
-      }
 
-      const sectionEntries = Object.entries(point as Record<string, unknown>);
-      if (sectionEntries.length !== 1) {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' must contain exactly one section heading`
-        );
-      }
-
-      const [sectionHeading, subPoints] = sectionEntries[0];
-      if (sectionHeading.trim().length === 0) {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' section heading must be a non-empty string`
-        );
-      }
-
-      if (!Array.isArray(subPoints) || subPoints.length === 0) {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}]' section values must be a non-empty array of strings`
-        );
-      }
-
-      for (const [subIndex, subPoint] of subPoints.entries()) {
-        if (typeof subPoint !== "string") {
-          throw new Error(
-            `[${drillFolder}] drill.yml field 'coaching_focus_points[${index}].${sectionHeading}[${subIndex}]' must be a string`
-          );
-        }
-      }
-    }
-  }
-
-  if (typeof d.shooter_focus_points !== "undefined" && !Array.isArray(d.shooter_focus_points)) {
+  if (typeof d.shooter_focus_points !== "undefined" && typeof d.shooter_focus_points !== "string") {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be an array of strings`
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be a markdown string when provided`
     );
   }
-  if (Array.isArray(d.shooter_focus_points)) {
-    for (const point of d.shooter_focus_points) {
-      if (typeof point !== "string") {
-        throw new Error(
-          `[${drillFolder}] drill.yml field 'shooter_focus_points' must contain only strings`
-        );
-      }
-    }
+  if (typeof d.shooter_focus_points === "string" && d.shooter_focus_points.trim().length === 0) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be non-empty when provided`
+    );
   }
 
   if (typeof d.drill_progressions !== "undefined" && !Array.isArray(d.drill_progressions)) {
@@ -596,7 +549,7 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
         name: drillData.name,
         description: drillData.description,
         drill_steps: drillData.drill_steps,
-        coaching_focus_points: flattenCoachingFocusPoints(drillData.coaching_focus_points),
+        coaching_focus_points: drillData.coaching_focus_points,
         shooter_focus_points: drillData.shooter_focus_points,
         drill_progressions: drillData.drill_progressions,
         drill_image: drillData.drill_image,

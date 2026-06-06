@@ -1,59 +1,50 @@
----
 name: Butterfly Map Series
-
 description: |-
   Goalie begins in butterfly, hands active, chest up, weight slightly forward.
   Shooter stands at Location 1
   Pucks staged in a clean line for rhythm and consistency.
   Goalie resets to butterfly between each shot.
-
-drill_steps:
-  - "For each location, complete the following 5-shot sequence:"
-  - "5 Low Right: Shooter targets pad along the ice. Goalie executes controlled pad save and square recovery."
-  - "5 High Right: Shooter places puck to blocker/catcher side high. Goalie tracks with eyes first, hands second."
-  - "5 Five-Hole: Shooter shoots through the center line. Goalie seals knees, keeps chest tall, hands forward, stick on the ice."
-  - "5 Low Left: Shooter targets opposite pad. Goalie drives rebound to corners with active stick or pad angle."
-  - "5 High Left: Shooter places puck high glove/blocker side. Goalie maintains hand discipline and controlled catch/deflection."
-  - Repeat the entire sequence at Location 2 and Location 3.
-
-coaching_focus_points:
-  - "Hands out in front - present early, maintain shape, smother pucks."
-  - "Track the puck from stick to impact - no guessing."
-  - "Stay tall in the butterfly - chest up, shoulders forward."
-  - "Seal the five-hole - knees tight, stick blade flat."
-  - "Active stick - angle low shots to safe areas."
-  - "Controlled rebounds - no unnecessary chaos."
-  - "Reset quickly - recover to ready butterfly between reps."
-  - "Head leads every movement - eyes before body."
-
-shooter_focus_points:
-  - "Consistency of release - same body language for all shot types."
-  - "Hit precise locations - this drill is about accuracy, not velocity."
-  - "Maintain rhythm - 1-2 seconds between shots."
-  - "Don't cheat the pattern - follow the 5-shot sequence exactly."
-  - "Keep feet set - stable base produces predictable, coachable shots."
-
+drill_steps: |-
+  1. For each location, complete the following 5-shot sequence:
+  2. 5 Low Right: Shooter targets pad along the ice. Goalie executes controlled pad save and square recovery.
+  3. 5 High Right: Shooter places puck to blocker/catcher side high. Goalie tracks with eyes first, hands second.
+  4. 5 Five-Hole: Shooter shoots through the center line. Goalie seals knees, keeps chest tall, hands forward, stick on the ice.
+  5. 5 Low Left: Shooter targets opposite pad. Goalie drives rebound to corners with active stick or pad angle.
+  6. 5 High Left: Shooter places puck high glove/blocker side. Goalie maintains hand discipline and controlled catch/deflection.
+  7. Repeat the entire sequence at Location 2 and Location 3.
+coaching_focus_points: |-
+  - Hands out in front - present early, maintain shape, smother pucks.
+  - Track the puck from stick to impact - no guessing.
+  - Stay tall in the butterfly - chest up, shoulders forward.
+  - Seal the five-hole - knees tight, stick blade flat.
+  - Active stick - angle low shots to safe areas.
+  - Controlled rebounds - no unnecessary chaos.
+  - Reset quickly - recover to ready butterfly between reps.
+  - Head leads every movement - eyes before body.
+shooter_focus_points: |-
+  - Consistency of release - same body language for all shot types.
+  - Hit precise locations - this drill is about accuracy, not velocity.
+  - Maintain rhythm - 1-2 seconds between shots.
+  - Don't cheat the pattern - follow the 5-shot sequence exactly.
+  - Keep feet set - stable base produces predictable, coachable shots.
 drill_image: butterfly-map-series.png
-
 drill_progressions:
   - progression_name: Progression 1 - Variable Timing
-    progression_description: "Shooter varies release timing (hold, quick release, delay). Goalie must maintain discipline and patience."
+    progression_description: Shooter varies release timing (hold, quick release, delay). Goalie must maintain discipline and patience.
   - progression_name: Progression 2 - Lateral Movement Added
-    progression_description: "After each shot, goalie performs a butterfly slide to one post or post to post, returns to center, resets to butterfly, then receives the next shot."
+    progression_description: After each shot, goalie performs a butterfly slide to one post or post to post, returns to center, resets to butterfly, then receives the next shot.
     progression_image: progression-2.png
   - progression_name: Progression 3 - Shot Deception
-    progression_description: "Shooter adds slight shoulder fakes, shoots at any of the 5 locations, blade angle changes, quick puck pulls before release."
+    progression_description: Shooter adds slight shoulder fakes, shoots at any of the 5 locations, blade angle changes, quick puck pulls before release.
   - progression_name: Progression 4 - Timed Set
-    progression_description: "25 shots in 45-60 seconds. Simulate focus and late game fatigue."
-
+    progression_description: 25 shots in 45-60 seconds. Simulate focus and late game fatigue.
 drill_creation_date: 2026-05-25
-
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  team_drill: no
+  team_drill: "no"
   age_level:
     - all
   fundamental_skill:

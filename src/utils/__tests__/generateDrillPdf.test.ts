@@ -11,7 +11,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
-const mockQrCodeToDataURL = jest.fn(async () => "data:image/png;base64,MOCK");
+const mockQrCodeToDataURL = jest.fn<Promise<string>, unknown[]>(
+  async () => "data:image/png;base64,MOCK"
+);
 jest.mock("qrcode", () => ({
   toDataURL: (...args: unknown[]) => mockQrCodeToDataURL(...args),
 }));
@@ -414,6 +416,7 @@ describe("generateDrillPdf layout selection", () => {
       team_drill: "no",
       fundamental_skill: ["angles"],
       skating_skill: ["t-push"],
+      space_required: ["flexible"],
     },
     drill_creation_date: "2026-01-01",
   };
@@ -515,10 +518,56 @@ describe("generateDrillPdf layout selection", () => {
     );
 
     const splitValues = splitTextSpy.mock.calls.map((call) => call[0]);
-    expect(splitValues).toContain("Movement Quality:");
+    expect(splitValues).toContain("• Movement Quality:");
     expect(splitValues).toContain("• Explode on the first push");
     expect(splitValues).toContain("• Arrive set at each point");
     expect(splitValues).toContain("• Track puck into body");
+  });
+
+  it("indents nested description markdown lines in the PDF", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const splitTextSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { splitTextToSize: (...args: unknown[]) => unknown },
+      "splitTextToSize"
+    );
+
+    await generateDrillPdf(
+      {
+        ...baseDrillData,
+        description: "- Primary detail\n  - Nested detail",
+      },
+      "test-folder"
+    );
+
+    const primaryDescriptionCall = splitTextSpy.mock.calls.find(
+      (call) => call[0] === "• Primary detail"
+    );
+    const nestedDescriptionCall = splitTextSpy.mock.calls.find(
+      (call) => call[0] === "• Nested detail"
+    );
+
+    expect(primaryDescriptionCall).toBeDefined();
+    expect(nestedDescriptionCall).toBeDefined();
+    expect(nestedDescriptionCall?.[1]).toBeLessThan(primaryDescriptionCall?.[1] as number);
+  });
+
+  it("renders markdown coaching headings in bold", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const doc = await generateDrillPdf(
+      {
+        ...baseDrillData,
+        coaching_focus_points:
+          "### Movement Quality\n- Explode on the first push\n- Arrive set at each point",
+      },
+      "test-folder"
+    );
+
+    const output = doc.output();
+    const headingIndex = output.indexOf("(Movement Quality)");
+
+    expect(headingIndex).toBeGreaterThanOrEqual(0);
+    expect(output.slice(Math.max(0, headingIndex - 80), headingIndex)).toMatch(/F2 9 Tf/);
   });
 
   it("uses single-column image width for shot-rebound-recovery", async () => {
@@ -664,6 +713,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: Array.from({ length: 8 }, (_, index) => ({
@@ -691,6 +741,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: [
@@ -793,6 +844,7 @@ describe("generateDrillPdf overflow handling", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: [

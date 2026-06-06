@@ -42,10 +42,10 @@ Create `drills/{folder-name}/drill.yml` using the field mapping below.
 | Issue field | YAML key | Notes |
 |---|---|---|
 | Name | `name` | String |
-| Description (Optional) | `description` | Omit entirely if blank; use `\|-` block scalar for multi-line |
-| Drill Steps | `drill_steps` | Array — split on newlines, skip blank lines, strip leading `- ` or `* ` if present |
-| Coaching Focus Points | `coaching_focus_points` | Array — same rules as drill_steps |
-| Shooter Focus Points (Optional) | `shooter_focus_points` | Array — omit entirely if blank |
+| Description (Optional) | `description` | Markdown string; omit entirely if blank; use `\|-` block scalar for multi-line |
+| Drill Steps | `drill_steps` | Markdown string in `\|-`; preserve list structure (single-tier list = ordered steps, nested/indented sub-items = bullets) |
+| Coaching Focus Points | `coaching_focus_points` | Markdown string in `\|-`; preserve submitted list/paragraph structure, including nested bullets/lists |
+| Shooter Focus Points (Optional) | `shooter_focus_points` | Markdown string in `\|-`; omit entirely if blank |
 | Video (Optional) | `video` | Omit if blank; must be HTTPS YouTube or Vimeo URL |
 | Drill Creation Date | `drill_creation_date` | YYYY-MM-DD string |
 | Tags - Skill Level | `tags.skill_level` | Array of checked values |
@@ -57,13 +57,14 @@ Create `drills/{folder-name}/drill.yml` using the field mapping below.
 | Tags - Equipment | `tags.equipment` | Array of checked values |
 | Tags - Space Required | `tags.space_required` | Array of checked values — **required**; default to `[flexible]` if none checked |
 | Drill Diagram | `drill_image` | See Step 4; value is the derived filename string |
-| Progression [#] Name + Description | `drill_progressions` | See progressions rules below |
+| Progression [#] Name + Description | `drill_progressions` | See progressions rules below; descriptions remain markdown text |
 
 ### Progressions Rules
 
 - Build `drill_progressions` from Progression 1–8 fields (up to 8 entries)
 - Include a progression entry **only when both** `progression_name` and `progression_description` are provided
 - If no valid progressions exist, omit `drill_progressions` entirely
+- Preserve markdown formatting in `progression_description` (including nested list indentation up to 3 levels)
 - If a progression description contains an attached or pasted image URL (GitHub CDN link):
   - Download the image file
   - Save it to `drills/{folder-name}/progression-{N}.{ext}` (e.g. `progression-1.png`)
@@ -80,7 +81,10 @@ drill_progressions:
 ### YAML Authoring Rules
 
 - Use `yaml.FAILSAFE_SCHEMA` compatibility: **quote any string value that contains a colon** to prevent parse errors
+- Store drill text fields as markdown strings using YAML block scalars (`|-`), not arrays or section-object hybrids
+- Preserve meaningful markdown structure from the issue for all drill text fields (paragraphs, ordered/unordered lists, and nested list indentation up to 3 levels)
 - `drill_image` is a **single filename string**, not an array
+- Date fields must use `YYYY-MM-DD` format (`drill_creation_date` required; `drill_updated_date` optional)
 - Omit optional fields entirely when blank — do not leave commented-out placeholders
 - Do not add `drill_updated_date` for new drills
 
@@ -119,6 +123,7 @@ Before building:
   - `https://youtu.be/VIDEO_ID`
   - `https://vimeo.com/NUMERIC_ID`
 - Confirm `drill_creation_date` is a valid YYYY-MM-DD calendar date
+- If `drill_updated_date` is present, confirm it is a valid YYYY-MM-DD calendar date and not earlier than `drill_creation_date`
 - Confirm `team_drill` is a plain string (`yes` or `no`), not a list
 - Confirm all tag values are from the allowed values listed above
 - Confirm no required fields are missing (`name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`)
@@ -149,12 +154,14 @@ If the build fails with a drill validation error, fix the YAML and rebuild.
 ---
 name: Rim Stop Cut Across
 
-drill_steps:
-  - Start in ready position at the post.
-  - On whistle, execute a rim stop then push across to the opposite post.
+drill_steps: |-
+  1. Start in ready position at the post.
+  2. On whistle, execute a rim stop then push across to the opposite post.
+     - Stay low through the transition.
 
-coaching_focus_points:
+coaching_focus_points: |-
   - Maintain depth on the push across.
+    - Match edge angle to movement path.
   - Keep head and eyes up tracking the puck.
 
 drill_image: rim-stop-cut-across.png

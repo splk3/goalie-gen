@@ -62,6 +62,7 @@ const basePageContext = {
     drill_creation_date: "2026-01-01",
     tags: {
       team_drill: "no",
+      space_required: ["flexible"],
     },
   },
 };
@@ -117,11 +118,10 @@ describe("DrillTemplate", () => {
     expect(descParagraph).toBeUndefined();
   });
 
-  it("renders an empty ordered list when drill_steps is an empty array", () => {
+  it("does not render a list when drill_steps is empty", () => {
     const { container } = render(<DrillTemplate pageContext={basePageContext} />);
     const orderedLists = container.querySelectorAll("ol");
-    expect(orderedLists).toHaveLength(1);
-    expect(orderedLists[0].querySelectorAll("li")).toHaveLength(0);
+    expect(orderedLists).toHaveLength(0);
   });
 
   it("renders the page without a main drill image when drill_image is absent", () => {
@@ -215,7 +215,7 @@ describe("DrillTemplate", () => {
     expect(progressionHeading.closest("div")).toHaveClass("print-break-before-page");
   });
 
-  it("renders sectioned coaching focus points with bold headings and nested bullets", () => {
+  it("renders sectioned coaching focus points with nested bullets", () => {
     render(
       <DrillTemplate
         pageContext={{
@@ -233,9 +233,7 @@ describe("DrillTemplate", () => {
       />
     );
 
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Movement Quality:" })
-    ).toBeInTheDocument();
+    expect(screen.getByText("Movement Quality:")).toBeInTheDocument();
     expect(screen.getByText("Explode on the first push")).toBeInTheDocument();
     expect(screen.getByText("Arrive set at each point")).toBeInTheDocument();
     expect(screen.getByText("Track puck into body")).toBeInTheDocument();
@@ -277,6 +275,7 @@ describe("DrillTemplate", () => {
             ...basePageContext.drillData,
             tags: {
               team_drill: "no",
+              space_required: [],
             },
           },
         }}

@@ -1,6 +1,5 @@
 import type { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
-import { normalizeDrillDescription } from "./normalizeDrillDescription";
 import {
   PROGRESSION_IMAGE_TEXT_GAP,
   PROGRESSION_SECTION_MAX_PAGES,
@@ -19,7 +18,12 @@ import {
   DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
   DRILL_EXPORT_PDF_CACHE_TTL_MS,
 } from "./staticAsset";
-import { normalizeCoachingFocusPoints } from "./coachingFocusPoints";
+import {
+  drillMarkdownToPlainLines,
+  parseDrillMarkdown,
+  parseDrillStepsMarkdown,
+} from "./drillMarkdown";
+import type { DrillMarkdownBlock, DrillMarkdownListBlock } from "./drillMarkdown";
 
 export type { DrillData };
 
@@ -50,6 +54,8 @@ const LINK_QR_CODE_GAP_MM = 2;
 const MAX_QR_CACHE_ENTRIES = 32;
 const qrCodeDataCache = new Map<string, string>();
 let qrCodeModulePromise: Promise<typeof import("qrcode")> | null = null;
+const MARKDOWN_NESTED_INDENT_MM = 4.5;
+const MARKDOWN_INDENT_SPACES_PER_LEVEL = 2;
 
 /**
  * Maximum pixel dimension (width or height) for canvas-encoded images.
@@ -494,6 +500,48 @@ export const generateDrillPdf = async (
     layoutMode: MainLayoutMode,
     draw: boolean
   ): { endPageNum: number; endSectionY: number } => {
+    interface RenderableMarkdownLine {
+      text: string;
+      bold?: boolean;
+      indentLevel?: number;
+    }
+
+    const pushRenderableListLines = (
+      list: DrillMarkdownListBlock,
+      lines: RenderableMarkdownLine[],
+      depth = 0
+    ): void => {
+      list.items.forEach((item, itemIndex) => {
+        lines.push({
+          text: `${list.ordered ? `${itemIndex + 1}. ` : "• "}${item.text}`,
+          indentLevel: depth,
+        });
+        item.children.forEach((child) => pushRenderableListLines(child, lines, depth + 1));
+      });
+    };
+
+    const buildRenderableMarkdownLines = (
+      blocks: DrillMarkdownBlock[]
+    ): RenderableMarkdownLine[] => {
+      const lines: RenderableMarkdownLine[] = [];
+
+      blocks.forEach((block) => {
+        if (block.type === "heading") {
+          lines.push({ text: block.text, bold: true });
+          return;
+        }
+
+        if (block.type === "paragraph") {
+          lines.push({ text: block.text });
+          return;
+        }
+
+        pushRenderableListLines(block, lines);
+      });
+
+      return lines;
+    };
+
     let simulatedPageNum = currentPageNum;
     const startNewPageForPass = (): number => {
       if (draw) {
@@ -517,6 +565,49 @@ export const generateDrillPdf = async (
       if (draw) {
         doc.text(text, x, y);
       }
+    };
+    const getIndentLevel = (line: string): number => {
+      const leadingSpaces = line.match(/^ */)?.[0].length ?? 0;
+      return Math.max(0, Math.floor(leadingSpaces / MARKDOWN_INDENT_SPACES_PER_LEVEL));
+    };
+    const stripLeadingIndent = (line: string): string => line.replace(/^\s+/, "");
+    const drawNestedMarkdownLine = (
+      line: string,
+      baseX: number,
+      currentYForPass: number,
+      maxWidth: number,
+      lineHeight: number,
+      options?: { bold?: boolean; indentLevel?: number }
+    ): number => {
+      const indentLevel = options?.indentLevel ?? getIndentLevel(line);
+      const indentOffset = indentLevel * MARKDOWN_NESTED_INDENT_MM;
+      const availableWidth = Math.max(16, maxWidth - indentOffset);
+      const wrapped = doc.splitTextToSize(stripLeadingIndent(line), availableWidth);
+      const startY = ensureSpaceForPass(currentYForPass, wrapped.length * lineHeight + 1);
+      if (draw) {
+        doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+      }
+      drawText(wrapped, baseX + indentOffset, startY);
+      return startY + wrapped.length * lineHeight + 1;
+    };
+    const drawMarkdownBlocks = (
+      blocks: DrillMarkdownBlock[],
+      baseX: number,
+      currentYForPass: number,
+      maxWidth: number,
+      lineHeight: number
+    ): number => {
+      let nextY = currentYForPass;
+      for (const line of buildRenderableMarkdownLines(blocks)) {
+        nextY = drawNestedMarkdownLine(line.text, baseX, nextY, maxWidth, lineHeight, {
+          bold: line.bold,
+          indentLevel: line.indentLevel,
+        });
+      }
+      if (draw) {
+        doc.setFont("helvetica", "normal");
+      }
+      return nextY;
     };
     const drawImage = (
       dataURL: string,
@@ -555,19 +646,23 @@ export const generateDrillPdf = async (
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       if (drillData.description) {
-        const normalizedDescription = normalizeDrillDescription(drillData.description);
-        const descriptionLines = doc.splitTextToSize(normalizedDescription, fullWidth);
-        fullWidthY = ensureSpaceForPass(fullWidthY, descriptionLines.length * mainLineHeight);
-        drawText(descriptionLines, margin, fullWidthY);
-        fullWidthY += descriptionLines.length * mainLineHeight + 2.5;
+        fullWidthY = drawMarkdownBlocks(
+          parseDrillMarkdown(drillData.description),
+          margin,
+          fullWidthY,
+          fullWidth,
+          mainLineHeight
+        );
+        fullWidthY += 2.5;
       }
 
-      for (const [index, step] of drillData.drill_steps.entries()) {
-        const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, fullWidth - 5);
-        fullWidthY = ensureSpaceForPass(fullWidthY, stepLines.length * mainLineHeight + 1);
-        drawText(stepLines, margin + 3, fullWidthY);
-        fullWidthY += stepLines.length * mainLineHeight + 1;
-      }
+      fullWidthY = drawMarkdownBlocks(
+        parseDrillStepsMarkdown(drillData.drill_steps),
+        margin + 3,
+        fullWidthY,
+        fullWidth - 5,
+        mainLineHeight
+      );
       fullWidthY += 1.5;
 
       sectionY = fullWidthY + 3;
@@ -609,19 +704,23 @@ export const generateDrillPdf = async (
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       if (drillData.description) {
-        const normalizedDescription = normalizeDrillDescription(drillData.description);
-        const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
-        leftY = ensureSpaceForPass(leftY, descriptionLines.length * mainLineHeight);
-        drawText(descriptionLines, margin, leftY);
-        leftY += descriptionLines.length * mainLineHeight + 2.5;
+        leftY = drawMarkdownBlocks(
+          parseDrillMarkdown(drillData.description),
+          margin,
+          leftY,
+          leftColumnWidth,
+          mainLineHeight
+        );
+        leftY += 2.5;
       }
 
-      for (const [index, step] of drillData.drill_steps.entries()) {
-        const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-        leftY = ensureSpaceForPass(leftY, stepLines.length * mainLineHeight + 1);
-        drawText(stepLines, margin + 3, leftY);
-        leftY += stepLines.length * mainLineHeight + 1;
-      }
+      leftY = drawMarkdownBlocks(
+        parseDrillStepsMarkdown(drillData.drill_steps),
+        margin + 3,
+        leftY,
+        leftColumnWidth - 5,
+        mainLineHeight
+      );
       leftY += 1.5;
 
       const pageNumForPass = draw ? currentPageNum : simulatedPageNum;
@@ -642,27 +741,15 @@ export const generateDrillPdf = async (
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
-      for (const block of normalizeCoachingFocusPoints(drillData.coaching_focus_points)) {
-        if (block.heading) {
-          doc.setFont("helvetica", "bold");
-          const headingLines = doc.splitTextToSize(block.heading, fullWidth - 5);
-          sectionY = ensureSpaceForPass(sectionY, headingLines.length * mainLineHeight + 1);
-          drawText(headingLines, margin + 3, sectionY);
-          sectionY += headingLines.length * mainLineHeight + 1;
-        }
+    sectionY = drawMarkdownBlocks(
+      parseDrillMarkdown(drillData.coaching_focus_points),
+      margin + 3,
+      sectionY,
+      fullWidth - 5,
+      mainLineHeight
+    );
 
-        doc.setFont("helvetica", "normal");
-        for (const point of block.bullets) {
-          const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-          sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
-          drawText(pointLines, margin + 3, sectionY);
-          sectionY += pointLines.length * mainLineHeight + 1;
-        }
-      }
-    }
-
-    if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
+    if (drillData.shooter_focus_points) {
       sectionY += 1.5;
       sectionY = ensureSpaceForPass(sectionY, 12);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
@@ -674,12 +761,13 @@ export const generateDrillPdf = async (
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
-      for (const point of drillData.shooter_focus_points) {
-        const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-        sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
-        drawText(pointLines, margin + 3, sectionY);
-        sectionY += pointLines.length * mainLineHeight + 1;
-      }
+      sectionY = drawMarkdownBlocks(
+        parseDrillMarkdown(drillData.shooter_focus_points),
+        margin + 3,
+        sectionY,
+        fullWidth - 5,
+        mainLineHeight
+      );
     }
 
     if (progressions.length > 0 && !shouldMoveProgressionsToSecondPage) {
@@ -694,7 +782,7 @@ export const generateDrillPdf = async (
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
       for (const [index, progression] of progressions.entries()) {
-        const progressionName = `• ${progression.progression_name}:`;
+        const progressionName = `• ${drillMarkdownToPlainLines(progression.progression_name).join(" ")}:`;
         const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
         sectionY = ensureSpaceForPass(
           sectionY,
@@ -724,17 +812,14 @@ export const generateDrillPdf = async (
           sectionY += imgHeight + PROGRESSION_IMAGE_TEXT_GAP;
         }
 
-        const descriptionLines = doc.splitTextToSize(
-          progression.progression_description,
-          fullWidth - 5
-        );
-        sectionY = ensureSpaceForPass(
-          sectionY,
-          descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1
-        );
         doc.setFont("helvetica", "normal");
-        drawText(descriptionLines, margin + 6, sectionY);
-        sectionY += descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1;
+        sectionY = drawMarkdownBlocks(
+          parseDrillMarkdown(progression.progression_description),
+          margin + 6,
+          sectionY,
+          fullWidth - 5,
+          PROGRESSION_TEXT_LINE_HEIGHT
+        );
       }
     }
 
@@ -802,7 +887,7 @@ export const generateDrillPdf = async (
       sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
       const videoUrl = drillData.video.trim();
       const maxVideoLineWidth = pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
-      const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth);
+      const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth) as string[];
       sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT);
 
       doc.setDrawColor(150, 150, 150);
@@ -876,9 +961,12 @@ export const generateDrillPdf = async (
     const progressionLayouts = progressions.map((progression, index) => {
       const progressionImageInfo = progressionImageInfoByIndex.get(index);
       const buildLayout = (includeImage: boolean): ProgressionCardLayout => {
-        const nameLines = doc.splitTextToSize(progression.progression_name, cardContentWidth);
+        const nameLines = doc.splitTextToSize(
+          drillMarkdownToPlainLines(progression.progression_name).join(" "),
+          cardContentWidth
+        );
         const descriptionLines = doc.splitTextToSize(
-          progression.progression_description,
+          drillMarkdownToPlainLines(progression.progression_description).join("\n"),
           cardContentWidth
         );
         let imageDataURL: string | undefined;

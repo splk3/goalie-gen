@@ -15,6 +15,8 @@ body:
 
         - Fill out the drill information by answering the questions below.
         - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one.
+        - Drill text fields support markdown paragraphs/lists, including nested list indentation up to 3 levels. Use that formatting directly when needed.
+        - Use `YYYY-MM-DD` date format for all drill date values (for example, `2026-01-15`). This applies to both `drill_creation_date` and `drill_updated_date` when an updated date is used.
         - If you have any trouble with the drill submission process, email us at 
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
@@ -38,7 +40,7 @@ body:
     id: drill_description
     attributes:
       label: Description (Optional)
-      description: Provide a brief overview and purpose of the drill. Leave blank if the drill steps are sufficient.
+      description: Provide a brief overview and purpose of the drill using markdown text. Paragraphs and nested lists are supported (up to 3 levels). Leave blank if drill steps are sufficient.
       placeholder: |
         A brief description of the drill. This can be multiple lines and should provide
         an overview of what the drill is about, its purpose, and any key details.
@@ -47,10 +49,11 @@ body:
     id: drill_steps
     attributes:
       label: Drill Steps
-      description: Enter one drill step per line.
+      description: Enter markdown list content. Use a single-tier list for ordered steps. Use nested/indented list items for bullet-point sub-details.
       placeholder: |
-        Drill step 1
-        Drill step 2
+        1. Drill step 1
+        2. Drill step 2
+           - Optional sub-detail as a bullet
     validations:
       required: true
 
@@ -58,12 +61,12 @@ body:
     id: coaching_focus_points
     attributes:
       label: Coaching Focus Points
-      description: Enter either one focus point per line, or sectioned focus points using heading lines with indented bullet sub-items.
+      description: Enter markdown bullet content. Nested/indented bullets are supported.
       placeholder: |
-        - Movement Quality:
+        - Movement Quality
           - Explode on the first push
           - Arrive set at each point
-        - Body Positioning:
+        - Body Positioning
           - Hands in front
           - Stick centered on the ice
         - Track puck into body
@@ -74,7 +77,7 @@ body:
     id: shooter_focus_points
     attributes:
       label: Shooter Focus Points (Optional)
-      description: Enter one shooter focus point per line. Leave blank if not applicable.
+      description: Enter markdown bullet/list content. Nested/indented lists are supported up to 3 levels. Leave blank if not applicable.
       placeholder: |
         - Shooter focus point 1
         - Shooter focus point 2
@@ -236,7 +239,7 @@ body:
     id: progression_1_description
     attributes:
       label: Progression 1 Description and Diagram (Optional)
-      description: Enter the progression 1 details here. Attach a progression image file here if applicable.
+      description: Enter progression 1 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 1 here. Attach a progression image file here if needed.
 
   - type: input
@@ -250,7 +253,7 @@ body:
     id: progression_2_description
     attributes:
       label: Progression 2 Description and Diagram (Optional)
-      description: Enter the progression 2 details here. Attach a progression image file here if applicable.
+      description: Enter progression 2 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 2 here. Attach a progression image file here if needed.
 
   - type: input
@@ -264,7 +267,7 @@ body:
     id: progression_3_description
     attributes:
       label: Progression 3 Description and Diagram (Optional)
-      description: Enter the progression 3 details here. Attach a progression image file here if applicable.
+      description: Enter progression 3 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 3 here. Attach a progression image file here if needed.
 
   - type: input
@@ -278,7 +281,7 @@ body:
     id: progression_4_description
     attributes:
       label: Progression 4 Description and Diagram (Optional)
-      description: Enter the progression 4 details here. Attach a progression image file here if applicable.
+      description: Enter progression 4 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 4 here. Attach a progression image file here if needed.
 
   - type: input
@@ -292,7 +295,7 @@ body:
     id: progression_5_description
     attributes:
       label: Progression 5 Description and Diagram (Optional)
-      description: Enter the progression 5 details here. Attach a progression image file here if applicable.
+      description: Enter progression 5 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 5 here. Attach a progression image file here if needed.
 
   - type: input
@@ -306,7 +309,7 @@ body:
     id: progression_6_description
     attributes:
       label: Progression 6 Description and Diagram (Optional)
-      description: Enter the progression 6 details here. Attach a progression image file here if applicable.
+      description: Enter progression 6 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 6 here. Attach a progression image file here if needed.
 
   - type: input
@@ -320,7 +323,7 @@ body:
     id: progression_7_description
     attributes:
       label: Progression 7 Description and Diagram (Optional)
-      description: Enter the progression 7 details here. Attach a progression image file here if applicable.
+      description: Enter progression 7 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 7 here. Attach a progression image file here if needed.
 
   - type: input
@@ -334,7 +337,7 @@ body:
     id: progression_8_description
     attributes:
       label: Progression 8 Description and Diagram (Optional)
-      description: Enter the progression 8 details here. Attach a progression image file here if applicable.
+      description: Enter progression 8 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 8 here. Attach a progression image file here if needed.
 
   - type: markdown
@@ -351,32 +354,31 @@ body:
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
         - Convert all non-ascii characters to ascii equivalents, as needed
-        - For `drill_steps` and `shooter_focus_points`, format YAML as arrays of strings, with each item on a new line and a dash in front.
-        - For `coaching_focus_points`, support both:
-          - flat string items (`- Keep chest square`)
-          - one-level section objects (`- Movement Quality:` with nested `- sub-item` bullets)
-          Keep mixed entries in the same order if both formats are present.
-        - If the user enters multiple lines in a text area, split into array items. If they enter a single line, make it an array with one item.
-        - If they enter multiple lines but some are blank, ignore blank lines and only include non-blank lines.
-        - If they do not add YAML dashes, add the dashes and format as valid YAML arrays.
+        - Store drill text areas as markdown strings in YAML block scalars (`|-`), not arrays.
+        - Preserve markdown structure from issue text directly when possible for all drill text fields (`description`, `drill_steps`, `coaching_focus_points`, `shooter_focus_points`, and progression text).
+        - Preserve submitted markdown list structure up to 3 nesting levels:
+          - single-tier list => ordered step/list rendering
+          - nested/indented sub-list => nested bullet/list rendering
+        - If users include blank lines, keep meaningful paragraph/list spacing and remove trailing empty lines.
           For example, if the user entered the following in the "Drill Steps" text area:
           ```
-          Drill starting instruction
-          Next instruction
-          Another Instruction
+          1. Drill starting instruction
+          2. Next instruction
+             - Another instruction detail
           ```
           Then the YAML should include:
           ```
-          drill_steps:
-            - Drill starting instruction
-            - Next instruction
-            - Another Instruction
+          drill_steps: |-
+            1. Drill starting instruction
+            2. Next instruction
+               - Another instruction detail
           ```
         - If they leave an optional field blank, omit that field entirely from the YAML (do not include a commented-out placeholder).
         - If "Description" was provided, add the `description` field as a string.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
-        - Add the `drill_steps` field as an array of strings directly below `description` (if present) in the YAML.
-        - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
+        - Add the `drill_steps` markdown string directly below `description` (if present) in the YAML.
+        - Add `coaching_focus_points` as a markdown string.
+        - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as a markdown string.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - Build `drill_progressions` from the progression inputs (`Progression [#] Name`,
           `Progression [#] Description and Diagram`) using up to 8 progression objects.
@@ -407,6 +409,7 @@ body:
           match the drill folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
           If no drill image was provided, omit `drill_image`.
         - Confirm any saved image file is an actual image, and that video links are real YouTube or Vimeo links.
+        - Keep date fields in `YYYY-MM-DD` format (`drill_creation_date` required; `drill_updated_date` optional).
         - Make sure the new drill passes build validation and that the site builds properly.
         - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description and an attached PDF of the drill printout
         - Link the PR in this issue.

@@ -7,14 +7,15 @@ import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
+import { drillMarkdownToSearchText } from "../utils/drillMarkdown";
 
 interface DrillNode {
   slug: string;
   name: string;
   description?: string;
-  drill_steps: string[];
-  coaching_focus_points: string[];
-  shooter_focus_points?: string[];
+  drill_steps: string | string[];
+  coaching_focus_points: string | string[];
+  shooter_focus_points?: string | string[];
   drill_image?: string;
   drill_creation_date: string;
   drill_updated_date?: string;
@@ -149,10 +150,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
         const searchableText = [
           node.name,
-          node.description || "",
-          ...node.drill_steps,
-          ...node.coaching_focus_points,
-          ...(node.shooter_focus_points || []),
+          drillMarkdownToSearchText(node.description || ""),
+          drillMarkdownToSearchText(node.drill_steps),
+          drillMarkdownToSearchText(node.coaching_focus_points),
+          drillMarkdownToSearchText(node.shooter_focus_points || ""),
         ]
           .join(" ")
           .toLowerCase();
