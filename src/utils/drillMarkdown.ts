@@ -1,3 +1,5 @@
+import type { LegacyCoachingFocusPoint } from "../types/drill";
+
 export interface DrillMarkdownHeadingBlock {
   type: "heading";
   level: 1 | 2 | 3;
@@ -367,4 +369,3 @@ export function drillMarkdownToPlainLines(
 export function drillMarkdownToSearchText(markdownInput: DrillMarkdownInput): string {
   return drillMarkdownToPlainLines(markdownInput).join(" ").toLowerCase();
 }
-import type { LegacyCoachingFocusPoint } from "../types/drill";

@@ -9,9 +9,9 @@ export type LegacyCoachingFocusPoint = string | Record<string, string[]>;
 export interface DrillData {
   name: string;
   description?: string;
-  drill_steps: string | string[];
-  coaching_focus_points: string | LegacyCoachingFocusPoint[];
-  shooter_focus_points?: string | string[];
+  drill_steps: string;
+  coaching_focus_points: string;
+  shooter_focus_points?: string;
   drill_progressions?: DrillProgression[];
   drill_image?: string;
   video?: string;

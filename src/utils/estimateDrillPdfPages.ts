@@ -340,11 +340,7 @@ function estimateFirstPageSegmentHeight(
   preProgressionHeight += HEADING_HEIGHT;
   const coachingLines = drillMarkdownToPlainLines(drillData.coaching_focus_points);
   for (const line of coachingLines) {
-    if (line.trim().startsWith("•")) {
-      preProgressionHeight += estimateTextHeight(line, CHARS_PER_LINE_FULL);
-    } else {
-      preProgressionHeight += estimateTextHeight(line, CHARS_PER_LINE_FULL);
-    }
+    preProgressionHeight += estimateTextHeight(line, CHARS_PER_LINE_FULL);
   }
 
   if (drillData.shooter_focus_points) {
