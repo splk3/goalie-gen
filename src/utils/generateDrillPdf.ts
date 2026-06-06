@@ -588,7 +588,13 @@ export const generateDrillPdf = async (
       for (const stepLine of drillMarkdownToPlainLines(drillData.drill_steps, {
         treatAsDrillSteps: true,
       })) {
-        fullWidthY = drawNestedMarkdownLine(stepLine, margin + 3, fullWidthY, fullWidth - 5, mainLineHeight);
+        fullWidthY = drawNestedMarkdownLine(
+          stepLine,
+          margin + 3,
+          fullWidthY,
+          fullWidth - 5,
+          mainLineHeight
+        );
       }
       fullWidthY += 1.5;
 
@@ -644,7 +650,13 @@ export const generateDrillPdf = async (
       for (const stepLine of drillMarkdownToPlainLines(drillData.drill_steps, {
         treatAsDrillSteps: true,
       })) {
-        leftY = drawNestedMarkdownLine(stepLine, margin + 3, leftY, leftColumnWidth - 5, mainLineHeight);
+        leftY = drawNestedMarkdownLine(
+          stepLine,
+          margin + 3,
+          leftY,
+          leftColumnWidth - 5,
+          mainLineHeight
+        );
       }
       leftY += 1.5;
 
