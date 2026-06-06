@@ -213,6 +213,7 @@ Required fields in drill.yml:
 - `drill_creation_date`
 
 `drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
+When present, `drill_updated_date` must use the same `YYYY-MM-DD` format.
 All other fields are optional. Known optional fields include:
 
 - `description` — optional string shown above drill steps

@@ -15,6 +15,7 @@ body:
 
         - Fill out the drill information by answering the questions below.
         - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one.
+        - Use `YYYY-MM-DD` date format for all drill date values (for example, `2026-01-15`). This applies to both `drill_creation_date` and `drill_updated_date` when an updated date is used.
         - If you have any trouble with the drill submission process, email us at 
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
@@ -407,6 +408,7 @@ body:
           match the drill folder name before saving. Set `drill_image` to the derived filename (e.g. `rim-stop-cut-across.png`).
           If no drill image was provided, omit `drill_image`.
         - Confirm any saved image file is an actual image, and that video links are real YouTube or Vimeo links.
+        - Keep date fields in `YYYY-MM-DD` format (`drill_creation_date` required; `drill_updated_date` optional).
         - Make sure the new drill passes build validation and that the site builds properly.
         - Submit the proposed changes as a PR, with a screenshot of the drill page in the PR description and an attached PDF of the drill printout
         - Link the PR in this issue.

@@ -81,6 +81,7 @@ drill_progressions:
 
 - Use `yaml.FAILSAFE_SCHEMA` compatibility: **quote any string value that contains a colon** to prevent parse errors
 - `drill_image` is a **single filename string**, not an array
+- Date fields must use `YYYY-MM-DD` format (`drill_creation_date` required; `drill_updated_date` optional)
 - Omit optional fields entirely when blank — do not leave commented-out placeholders
 - Do not add `drill_updated_date` for new drills
 
@@ -119,6 +120,7 @@ Before building:
   - `https://youtu.be/VIDEO_ID`
   - `https://vimeo.com/NUMERIC_ID`
 - Confirm `drill_creation_date` is a valid YYYY-MM-DD calendar date
+- If `drill_updated_date` is present, confirm it is a valid YYYY-MM-DD calendar date and not earlier than `drill_creation_date`
 - Confirm `team_drill` is a plain string (`yes` or `no`), not a list
 - Confirm all tag values are from the allowed values listed above
 - Confirm no required fields are missing (`name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`)

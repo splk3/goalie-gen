@@ -1,0 +1,91 @@
+---
+name: Wall Entry Attack Zones
+
+description: |-
+  A shooter attacks down the wall and enters one of seven designated attack zones.
+  The shooter releases a shot from that zone.
+  The goalie reads the shooter's lane, identifies the correct zone, and adjusts angle, depth, and post integration accordingly.
+
+drill_steps:
+  - "Goalie: track the puck carrier from the top of the crease."
+  - "Goalie: identify the zone early."
+  - "Goalie: move into the correct angle, depth, and post-integration technique."
+  - "Goalie: execute the appropriate save selection for that zone."
+  - "Shooter: skate down the wall with controlled speed."
+  - "Shooter: enter one of the seven zones."
+  - "Shooter: release a shot or attempt a tight-angle attack depending on the zone."
+
+coaching_focus_points:
+  - Zone 1 - High Wall Shot (Angle & Depth Control):
+      - "Goalie Focus: strong angle with chest square to puck."
+      - "Goalie Focus: maintain optimal depth (1-2 feet above top of crease)."
+      - "Goalie Focus: hands active and in front."
+      - "Goalie Focus: avoid drifting backward as shooter releases."
+      - "Shooter Coaching: shoot in stride."
+  - Zone 2 - MidWall Shot (Overlap Positioning):
+      - "Goalie Focus: use overlap technique with skate blade outside post."
+      - "Goalie Focus: keep hands tight with no reaching."
+      - "Goalie Focus: stay tall and do not drift too far out."
+      - "Goalie Focus: maintain short-side seal while staying square."
+      - "Shooter Coaching: release quickly off the wall."
+      - "Shooter Coaching: aim for short side high or far-side pad."
+  - Zone 3 - Low Wall, Tight Angle (Foot on Post):
+      - "Goalie Focus: inside skate on the post."
+      - "Goalie Focus: stay tall and do not drop early."
+      - "Shooter Coaching: attack downhill with speed."
+  - Zone 4 - Low Corner Entry (Foot on Post):
+      - "Goalie Focus: use the same mechanics as Zone 3."
+      - "Goalie Focus: avoid leaning off the post."
+      - "Goalie Focus: prepare for jam, sharp-angle shot, or pass below goal line."
+      - "Shooter Coaching: drive hard to the goal line."
+  - Zone 5 - Tight-Angle Threat (RVH When Shot Threat Exists):
+      - "Goalie Focus: enter RVH only when shooter is below the dot line and shot threat is real."
+      - "Goalie Focus: maintain a strong short-side seal."
+      - "Goalie Focus: be ready to push out if shooter passes puck up ice."
+      - "Shooter Coaching: sell shot to force RVH."
+  - Zone 6 - Below the Hashmarks (RVH):
+      - "Goalie Focus: full RVH integration."
+      - "Goalie Focus: stick blade seals ice."
+      - "Goalie Focus: watch for walk-out attempts."
+      - "Goalie Focus: maintain ability to push up and out if shooter climbs the wall."
+      - "Shooter Coaching: look for far-side openings if goalie over leans."
+  - Zone 7 - Goal Line / Below Goal Line (RVH):
+      - "Goalie Focus: strong RVH seal."
+      - "Goalie Focus: prepare for jam, walkout, or pass to slot."
+      - "Goalie Focus: avoid over-rotation."
+      - "Shooter Coaching: look for goalie leaning off post."
+
+drill_image: wall-entry-attack-zones.png
+
+drill_progressions:
+  - progression_name: Progression 1 - Random Zone Activation
+    progression_description: Coach calls out a zone number as the shooter enters the zone to force late goalie reaction and build reading and adjustment speed.
+  - progression_name: Progression 2 - Shooter Deception Layer
+    progression_description: Shooter fakes entering one zone, then cuts into another. Goalie must read hips instead of the stick to build discipline and patience.
+    progression_image: progression-2.png
+  - progression_name: Progression 3 - Add a Second Shooter
+    progression_description: Add a second attacker in the slot or weak side to force goalie management of shot versus pass threat and teach proper RVH exit mechanics.
+    progression_image: progression-3.png
+  - progression_name: Progression 4 - Screen
+    progression_description: Add a player or barrier as a screen to force goalie tracking through traffic while the shooter learns to use the screen effectively.
+    progression_image: progression-4.png
+
+drill_creation_date: 2026-06-05
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: no
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+  skating_skill: []
+  equipment: []
+  space_required:
+    - whole_zone

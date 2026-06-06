@@ -76,6 +76,8 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
   dependencies (no Gatsby `getServerData`, no server API routes).
 - Drill YAML schema is strict and validated at build time:
   - required: `name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`
+  - `drill_creation_date` must be a valid `YYYY-MM-DD` date string
+  - optional `drill_updated_date`, when present, must be `YYYY-MM-DD` and not earlier than `drill_creation_date`
   - `coaching_focus_points` supports flat string bullets and one-level section objects
     (`Section Title` -> array of string bullets). Mixed entries are allowed in order.
   - `description` is optional
