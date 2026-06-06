@@ -1,0 +1,42 @@
+name: Cross Ice 2v2 Breakout Game
+description: Players play 2v2 in an offense-defense transition game.
+drill_steps: |-
+  1. O's are trying to score while X's are defending trying to get the puck to their teammates behind the net.
+  2. Once that happens the X's behind the net have to make a D to D pass or scissor pass to then go attack.
+  3. O's are defending until they make a clean pass to their teammates.
+coaching_focus_points: |-
+  - Track play behind the net.
+  - Be engaged the entirety of the drill.
+  - Recognize passing lanes.
+shooter_focus_points: |-
+  - Quick accurate passes.
+  - Create passing lanes.
+  - Get up the ice as quick as possible.
+drill_creation_date: 2026-06-06
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - whole_zone
+  game_situations:
+    - small_sided_game
