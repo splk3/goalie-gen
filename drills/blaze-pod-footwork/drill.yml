@@ -1,34 +1,27 @@
----
 name: Blaze Pod Footwork
-
 description: |-
   4-6 light pods arranged in a wide arc around the crease.
   Pods are placed just outside the crease.
   Goalie starts in a ready stance centered at the top of the crease.
   Duration: 20-40 seconds per rep (adjustable).
   "Lights out" setting determines how quickly a pod deactivates after being reached.
-
-drill_steps:
-  - Start in ready position at the top of the crease.
-  - First light activates; goalie immediately shuffles to that pod, staying square and maintaining stance height.
-  - As soon as the goalie arrives, the next light activates somewhere along the arc.
-  - Goalie shuffles in an arc pattern, never crossing feet and never turning hips away from the imaginary puck.
-  - Continue reacting to each new light for the full duration.
-  - Reset between reps with a short rest (20-30 seconds).
-  - See the progressions section for sample BlazePods configurations.
-
-coaching_focus_points:
+drill_steps: |-
+  1. Start in ready position at the top of the crease.
+  2. First light activates; goalie immediately shuffles to that pod, staying square and maintaining stance height.
+  3. As soon as the goalie arrives, the next light activates somewhere along the arc.
+  4. Goalie shuffles in an arc pattern, never crossing feet and never turning hips away from the imaginary puck.
+  5. Continue reacting to each new light for the full duration.
+  6. Reset between reps with a short rest (20-30 seconds).
+  7. See the progressions section for sample BlazePods configurations.
+coaching_focus_points: |-
   - Stay loaded - knees flexed, chest tall, hands active.
   - Head first - eyes snap to the next light before the feet move.
   - Short, powerful shuffles - avoid drifting or over shuffling.
-
-shooter_focus_points:
+shooter_focus_points: |-
   - Vary the timing between lights to prevent anticipation.
-  - "Reinforce posture: if the goalie rises too tall, slow the drill and reset technique."
+  - Reinforce posture: if the goalie rises too tall, slow the drill and reset technique.
   - Keep verbal cues minimal; let the lights be the stimulus.
-
 drill_image: blaze-pod-footwork.png
-
 drill_progressions:
   - progression_name: Progression 1 - T-Push
     progression_description: Goalie starts in ready stance centered on the goal line. Goalie performs a series of T-pushes, always pushing off the correct edge, rotating hips first, and arriving square. Lead with the eyes - head snaps to the next light before the push; hip rotation first - point the toe, open the hip, then drive; explosive first push with a controlled stop. Reinforce clean stops with no drifting past the pod.
@@ -42,15 +35,13 @@ drill_progressions:
   - progression_name: Sample Program
     progression_description: This image shows a sample blazepods configuration for this drill with 6 pods, 1 goalie, single color that lights up, 30 seconds total drill time, and 2 seconds between each light change. Adjust as desired for your goalie.
     progression_image: progression-4.png
-
 drill_creation_date: 2026-06-05
-
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  team_drill: no
+  team_drill: "no"
   age_level:
     - all
   fundamental_skill:

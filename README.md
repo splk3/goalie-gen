@@ -216,26 +216,22 @@ Required fields in drill.yml:
 When present, `drill_updated_date` must use the same `YYYY-MM-DD` format.
 All other fields are optional. Known optional fields include:
 
-- `description` — optional string shown above drill steps
+- `description` — optional markdown string shown above drill steps
 - `drill_image` — optional main drill diagram filename
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
 - `drill_progressions` — array of up to 8 progression objects. Each progression object requires:
-  - `progression_name` (string)
-  - `progression_description` (string)
+  - `progression_name` (markdown string)
+  - `progression_description` (markdown string)
   - `progression_image` (optional string filename)
 
-`coaching_focus_points` supports two formats (and they can be mixed in order):
+Drill text fields use markdown strings:
 
-- Flat bullets:
-  - `- Keep chest square`
-- Sectioned bullets:
-  - `- Movement Quality:`
-    - `- Explode on first push`
-    - `- Arrive set at each point`
-
-Sectioned entries must be one-level objects: exactly one section title mapped to an array of
-string bullet items.
+- `drill_steps` should be authored as a markdown list.
+  - Ordered (`1.`) and unordered (`-`, `*`) list styles are preserved.
+  - Nested lists are supported up to 3 levels deep.
+- `coaching_focus_points` and `shooter_focus_points` should be authored as markdown bullets/lists (ordered and nested lists are supported up to 3 levels).
+- `description` and progression text fields render markdown paragraphs/lists.
 
 The `tags` field is required. Most sub-fields are optional and accept an **array** of
 values from an allowed list and are validated during build time (in `gatsby-node.ts`).

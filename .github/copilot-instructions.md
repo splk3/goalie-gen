@@ -78,8 +78,14 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
   - required: `name`, `drill_steps`, `coaching_focus_points`, `tags`, `drill_creation_date`
   - `drill_creation_date` must be a valid `YYYY-MM-DD` date string
   - optional `drill_updated_date`, when present, must be `YYYY-MM-DD` and not earlier than `drill_creation_date`
-  - `coaching_focus_points` supports flat string bullets and one-level section objects
-    (`Section Title` -> array of string bullets). Mixed entries are allowed in order.
+  - drill text fields are markdown strings:
+    - `drill_steps` is required and authored as markdown list text
+    - `coaching_focus_points` is required markdown text
+    - optional `description` and `shooter_focus_points` are markdown text when present
+    - `drill_progressions[*].progression_name` and `progression_description` are markdown text
+  - drill step rendering rule:
+    - single-tier lists render as ordered steps
+    - nested/indented sub-items render as bullet points
   - `description` is optional
   - `drill_image` is optional and must be a single filename string when provided (not an array)
   - `drill_progressions` supports up to 8 objects with required
@@ -98,7 +104,7 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
 - Use `buildCacheBustedAssetPath()` for static asset URLs and
   `OBJECT_URL_REVOKE_DELAY_MS` when creating object URLs for downloads/previews.
 - Prefer reusing shared utilities/hook patterns already in use:
-  `useDrillFilters`, `loadExportModules`, `normalizeDrillDescription`, `parseMarkdown`.
+  `useDrillFilters`, `loadExportModules`, `parseMarkdown`, `drillMarkdownToPlainLines`.
 - Lint/style conventions enforced by repo config:
   - Prettier: double quotes, semicolons, 2-space indent, trailing commas (es5)
   - TypeScript unused args/vars should be removed or prefixed with `_`

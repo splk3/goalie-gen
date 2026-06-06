@@ -11,7 +11,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
-const mockQrCodeToDataURL = jest.fn(async () => "data:image/png;base64,MOCK");
+const mockQrCodeToDataURL = jest.fn<Promise<string>, unknown[]>(
+  async () => "data:image/png;base64,MOCK"
+);
 jest.mock("qrcode", () => ({
   toDataURL: (...args: unknown[]) => mockQrCodeToDataURL(...args),
 }));
@@ -414,6 +416,7 @@ describe("generateDrillPdf layout selection", () => {
       team_drill: "no",
       fundamental_skill: ["angles"],
       skating_skill: ["t-push"],
+      space_required: ["flexible"],
     },
     drill_creation_date: "2026-01-01",
   };
@@ -515,7 +518,7 @@ describe("generateDrillPdf layout selection", () => {
     );
 
     const splitValues = splitTextSpy.mock.calls.map((call) => call[0]);
-    expect(splitValues).toContain("Movement Quality:");
+    expect(splitValues).toContain("• Movement Quality:");
     expect(splitValues).toContain("• Explode on the first push");
     expect(splitValues).toContain("• Arrive set at each point");
     expect(splitValues).toContain("• Track puck into body");
@@ -664,6 +667,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: Array.from({ length: 8 }, (_, index) => ({
@@ -691,6 +695,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: [
@@ -793,6 +798,7 @@ describe("generateDrillPdf overflow handling", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: [

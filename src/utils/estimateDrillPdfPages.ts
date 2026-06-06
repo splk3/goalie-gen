@@ -1,7 +1,6 @@
 import type { DrillData } from "../types/drill";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
-import { normalizeDrillDescription } from "./normalizeDrillDescription";
-import { normalizeCoachingFocusPoints } from "./coachingFocusPoints";
+import { drillMarkdownToPlainLines } from "./drillMarkdown";
 
 // Approximate characters per line at fontSize 9 (Helvetica):
 //   - Left column (~95 mm after gap reduction + text-priority split): ~68 chars/line
@@ -95,20 +94,8 @@ function estimateLines(text: string, charsPerLine = CHARS_PER_LINE_COL): number 
     .reduce((acc, line) => acc + Math.max(1, Math.ceil(line.length / charsPerLine)), 0);
 }
 
-function estimateBulletHeight(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
-  return estimateLines(`• ${text}`, charsPerLine) * LINE_HEIGHT + 1;
-}
-
 function estimateTextHeight(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
   return estimateLines(text, charsPerLine) * LINE_HEIGHT + 1;
-}
-
-function estimateNumberedHeight(
-  text: string,
-  index: number,
-  charsPerLine = CHARS_PER_LINE_COL
-): number {
-  return estimateLines(`${index + 1}. ${text}`, charsPerLine) * LINE_HEIGHT + 1;
 }
 
 function estimateProgressionHeight(
@@ -290,10 +277,13 @@ function estimateTopPhaseHeight(
       topPhaseHeight += estimateLines(normalizedDescription, CHARS_PER_LINE_COL) * LINE_HEIGHT;
     }
 
-    if (drillData.drill_steps.length > 0) {
+    const drillStepLines = drillMarkdownToPlainLines(drillData.drill_steps, {
+      treatAsDrillSteps: true,
+    });
+    if (drillStepLines.length > 0) {
       topPhaseHeight += SECTION_GAP;
-      for (const [index, step] of drillData.drill_steps.entries()) {
-        topPhaseHeight += estimateNumberedHeight(step, index, CHARS_PER_LINE_COL);
+      for (const stepLine of drillStepLines) {
+        topPhaseHeight += estimateTextHeight(stepLine, CHARS_PER_LINE_COL);
       }
       topPhaseHeight += 1.5;
     } else {
@@ -306,10 +296,13 @@ function estimateTopPhaseHeight(
       topPhaseHeight += estimateLines(normalizedDescription, CHARS_PER_LINE_FULL) * LINE_HEIGHT;
     }
 
-    if (drillData.drill_steps.length > 0) {
+    const drillStepLines = drillMarkdownToPlainLines(drillData.drill_steps, {
+      treatAsDrillSteps: true,
+    });
+    if (drillStepLines.length > 0) {
       topPhaseHeight += SECTION_GAP;
-      for (const [index, step] of drillData.drill_steps.entries()) {
-        topPhaseHeight += estimateNumberedHeight(step, index, CHARS_PER_LINE_FULL);
+      for (const stepLine of drillStepLines) {
+        topPhaseHeight += estimateTextHeight(stepLine, CHARS_PER_LINE_FULL);
       }
       topPhaseHeight += 1.5;
     } else {
@@ -345,19 +338,20 @@ function estimateFirstPageSegmentHeight(
   // --- Full-width sections before progressions: coaching + shooter ---
   let preProgressionHeight = 0;
   preProgressionHeight += HEADING_HEIGHT;
-  for (const block of normalizeCoachingFocusPoints(drillData.coaching_focus_points)) {
-    if (block.heading) {
-      preProgressionHeight += estimateTextHeight(block.heading, CHARS_PER_LINE_FULL);
-    }
-    for (const point of block.bullets) {
-      preProgressionHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
+  const coachingLines = drillMarkdownToPlainLines(drillData.coaching_focus_points);
+  for (const line of coachingLines) {
+    if (line.trim().startsWith("•")) {
+      preProgressionHeight += estimateTextHeight(line, CHARS_PER_LINE_FULL);
+    } else {
+      preProgressionHeight += estimateTextHeight(line, CHARS_PER_LINE_FULL);
     }
   }
 
-  if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
+  if (drillData.shooter_focus_points) {
+    const shooterLines = drillMarkdownToPlainLines(drillData.shooter_focus_points);
     preProgressionHeight += SECTION_GAP + HEADING_HEIGHT;
-    for (const point of drillData.shooter_focus_points) {
-      preProgressionHeight += estimateBulletHeight(point, CHARS_PER_LINE_FULL);
+    for (const line of shooterLines) {
+      preProgressionHeight += estimateTextHeight(line, CHARS_PER_LINE_FULL);
     }
   }
 
@@ -372,8 +366,8 @@ function estimateFirstPageSegmentHeight(
     for (const progression of progressions) {
       const hasInlineImage = options.forceInlineProgressions && !!progression.progression_image;
       progressionHeight += estimateProgressionHeight(
-        progression.progression_name,
-        progression.progression_description,
+        drillMarkdownToPlainLines(progression.progression_name).join(" "),
+        drillMarkdownToPlainLines(progression.progression_description).join(" "),
         undefined,
         hasInlineImage
       );
@@ -396,7 +390,7 @@ export function shouldUseFullWidthFirstPageDiagram(
 ): boolean {
   const { availableFirstPage } = getFirstPageLayoutMetrics(drillData.name);
   const normalizedDescription = drillData.description
-    ? normalizeDrillDescription(drillData.description)
+    ? drillMarkdownToPlainLines(drillData.description).join("\n")
     : "";
   const placeProgressionsOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
   if (placeProgressionsOnSecondPage && isProgressionHeavy(drillData)) {
@@ -425,7 +419,7 @@ export function shouldUseFullWidthFirstPageDiagram(
 function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOptions): number {
   const { availableFirstPage, availableOtherPages } = getFirstPageLayoutMetrics(drillData.name);
   const normalizedDescription = drillData.description
-    ? normalizeDrillDescription(drillData.description)
+    ? drillMarkdownToPlainLines(drillData.description).join("\n")
     : "";
   const progressions = drillData.drill_progressions || [];
   const hasProgressions = progressions.length > 0;
@@ -535,7 +529,7 @@ export function estimateDrillPdfPages(drillData: DrillData): DrillPageEstimate {
   }
 
   const normalizedDescription = drillData.description
-    ? normalizeDrillDescription(drillData.description)
+    ? drillMarkdownToPlainLines(drillData.description).join("\n")
     : "";
   const { availableFirstPage, availableOtherPages } = getFirstPageLayoutMetrics(drillData.name);
 

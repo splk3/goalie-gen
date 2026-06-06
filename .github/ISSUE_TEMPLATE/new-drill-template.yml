@@ -48,10 +48,11 @@ body:
     id: drill_steps
     attributes:
       label: Drill Steps
-      description: Enter one drill step per line.
+      description: Enter markdown list content. Use a single-tier list for ordered steps. Use nested/indented list items for bullet-point sub-details.
       placeholder: |
-        Drill step 1
-        Drill step 2
+        1. Drill step 1
+        2. Drill step 2
+           - Optional sub-detail as a bullet
     validations:
       required: true
 
@@ -59,12 +60,12 @@ body:
     id: coaching_focus_points
     attributes:
       label: Coaching Focus Points
-      description: Enter either one focus point per line, or sectioned focus points using heading lines with indented bullet sub-items.
+      description: Enter markdown bullet content. Nested/indented bullets are supported.
       placeholder: |
-        - Movement Quality:
+        - Movement Quality
           - Explode on the first push
           - Arrive set at each point
-        - Body Positioning:
+        - Body Positioning
           - Hands in front
           - Stick centered on the ice
         - Track puck into body
@@ -75,7 +76,7 @@ body:
     id: shooter_focus_points
     attributes:
       label: Shooter Focus Points (Optional)
-      description: Enter one shooter focus point per line. Leave blank if not applicable.
+      description: Enter markdown bullet content. Leave blank if not applicable.
       placeholder: |
         - Shooter focus point 1
         - Shooter focus point 2
@@ -352,32 +353,31 @@ body:
         - Use the remaining fields to populate the drill YAML file, following the
           structure of existing drill YAML files and drills_samples as a guide.
         - Convert all non-ascii characters to ascii equivalents, as needed
-        - For `drill_steps` and `shooter_focus_points`, format YAML as arrays of strings, with each item on a new line and a dash in front.
-        - For `coaching_focus_points`, support both:
-          - flat string items (`- Keep chest square`)
-          - one-level section objects (`- Movement Quality:` with nested `- sub-item` bullets)
-          Keep mixed entries in the same order if both formats are present.
-        - If the user enters multiple lines in a text area, split into array items. If they enter a single line, make it an array with one item.
-        - If they enter multiple lines but some are blank, ignore blank lines and only include non-blank lines.
-        - If they do not add YAML dashes, add the dashes and format as valid YAML arrays.
+        - Store drill text areas as markdown strings in YAML block scalars (`|-`), not arrays.
+        - Preserve markdown structure from issue text directly when possible.
+        - For `drill_steps`, preserve the submitted list structure:
+          - single-tier list => ordered step rendering
+          - nested/indented sub-list => bullet rendering for sub-items
+        - If users include blank lines, keep meaningful paragraph/list spacing and remove trailing empty lines.
           For example, if the user entered the following in the "Drill Steps" text area:
           ```
-          Drill starting instruction
-          Next instruction
-          Another Instruction
+          1. Drill starting instruction
+          2. Next instruction
+             - Another instruction detail
           ```
           Then the YAML should include:
           ```
-          drill_steps:
-            - Drill starting instruction
-            - Next instruction
-            - Another Instruction
+          drill_steps: |-
+            1. Drill starting instruction
+            2. Next instruction
+               - Another instruction detail
           ```
         - If they leave an optional field blank, omit that field entirely from the YAML (do not include a commented-out placeholder).
         - If "Description" was provided, add the `description` field as a string.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
-        - Add the `drill_steps` field as an array of strings directly below `description` (if present) in the YAML.
-        - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as an array.
+        - Add the `drill_steps` markdown string directly below `description` (if present) in the YAML.
+        - Add `coaching_focus_points` as a markdown string.
+        - If "Shooter Focus Points" was provided, add the `shooter_focus_points` field as a markdown string.
           Otherwise, leave it out entirely (do not include a commented-out placeholder).
         - Build `drill_progressions` from the progression inputs (`Progression [#] Name`,
           `Progression [#] Description and Diagram`) using up to 8 progression objects.

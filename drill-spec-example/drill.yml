@@ -1,50 +1,29 @@
----
 name: Drill Name
-
-# optional brief description of the drill
 description: |-
   A brief description of the drill.  This can be multiple lines and should provide
   an overview of what the drill is about, its purpose, and any key details that
   would help someone understand what the drill entails.
-
-# ordered drill execution steps shown directly under description
-drill_steps:
-  - Drill step 1
-  - Drill step 2
-
-coaching_focus_points:
-  - Movement Quality:
-      - Coaching point 1
-      - Coaching point 2
-  - Body Positioning:
-      - Coaching point 3
+drill_steps: |-
+  1. Drill step 1
+  2. Drill step 2
+coaching_focus_points: |-
+  - Movement Quality
+    - Coaching point 1
+    - Coaching point 2
+  - Body Positioning
+    - Coaching point 3
   - Coaching point 4
-
-# optional - add shooter-specific cues
-# shooter_focus_points:
-#   - Shooter focus point 1
-
-# must be a list
 images:
   - test-drill-image.png
-
-# youtube or vimeo only
 video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-
-# must be a valid calendar date in YYYY-MM-DD format
 drill_creation_date: 2024-01-01
-
-# optional - use if updating existing drill
 drill_updated_date: 2024-06-15
-
-# remove irrelevant tags
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  # allowed values: yes or no (exactly one value)
-  team_drill: yes
+  team_drill: "yes"
   age_level:
     - all
     - 10U_below
@@ -70,15 +49,5 @@ tags:
     - ice_marker
     - bumpers
     - none
-  # required: at least one value
-  # allowed values: full_ice, half_ice, whole_zone, half_zone, crease_only, flexible
   space_required:
     - flexible
-
-# optional
-# drill_progressions:
-#   - progression_name: Progression 1
-#     progression_description: Add first progression step here.
-#   - progression_name: Progression 2
-#     progression_description: Add second progression step here.
-#     progression_image: progression-2.png

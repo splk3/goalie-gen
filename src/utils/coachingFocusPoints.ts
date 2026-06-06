@@ -1,34 +1,18 @@
-import type { CoachingFocusPoint } from "../types/drill";
-
 export interface NormalizedCoachingFocusBlock {
   heading?: string;
   bullets: string[];
 }
 
-export function normalizeCoachingFocusPoints(
-  points: CoachingFocusPoint[] = []
-): NormalizedCoachingFocusBlock[] {
-  return points.flatMap((point) => {
-    if (typeof point === "string") {
-      return [{ bullets: [point] }];
-    }
-
-    const entries = Object.entries(point);
-    if (entries.length !== 1) {
-      return [];
-    }
-
-    const [heading, bullets] = entries[0];
-    if (!Array.isArray(bullets) || bullets.length === 0) {
-      return [];
-    }
-
-    return [{ heading, bullets }];
-  });
+export function normalizeCoachingFocusPoints(markdown = ""): NormalizedCoachingFocusBlock[] {
+  return markdown
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => ({
+      bullets: [line.replace(/^[-*]\s+/, "")],
+    }));
 }
 
-export function flattenCoachingFocusPoints(points: CoachingFocusPoint[] = []): string[] {
-  return normalizeCoachingFocusPoints(points).flatMap((block) =>
-    block.heading ? [block.heading, ...block.bullets] : block.bullets
-  );
+export function flattenCoachingFocusPoints(markdown = ""): string[] {
+  return normalizeCoachingFocusPoints(markdown).flatMap((block) => block.bullets);
 }

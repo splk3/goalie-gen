@@ -1,48 +1,42 @@
----
 name: Breakaway Drill
-
-drill_steps:
-  - "Shooter: starts at center ice or the top of the circles and skates in under control."
-  - "Shooter: makes a lateral move left or right just past the hashmarks."
-  - "Shooter: finishes with a shot to the near-side post."
-  - "Goalie: begins at the top of the crease in a ready stance."
-  - "Goalie: backs up as the shooter approaches while maintaining angle."
-  - "Goalie: reads the shooter's lateral move."
-  - "Goalie: executes a controlled butterfly slide into the correct post."
-
-coaching_focus_points:
-  - "Depth & Patience":
-      - Maintain a strong angle while backing in and do not retreat too early.
-      - Stay patient and force the shooter to make the first move.
-      - Keep chest tall and hands active.
-  - Movement Mechanics:
-      - Backward C-cuts should be smooth and controlled.
-      - When the shooter commits, rotate hips first, then push.
-      - Slide with a strong edge load and avoid drifting past the post.
-
-shooter_focus_points:
+drill_steps: |-
+  Shooter
+    1. Starts at center ice or the top of the circles and skates in under control.
+    2. Makes a lateral move left or right just past the hashmarks.
+    3. Finishes with a shot to the near-side post.
+  Goalie:
+    1. Begins at the top of the crease in a ready stance.
+    2. Backs up as the shooter approaches while maintaining angle.
+    3. Reads the shooter's lateral move.
+    4. Executes a controlled butterfly slide into the correct post.
+coaching_focus_points: |-
+  - Depth & Patience
+    - Maintain a strong angle while backing in and do not retreat too early.
+    - Stay patient and force the shooter to make the first move.
+    - Keep chest tall and hands active.
+  - Movement Mechanics
+    - Backward C-cuts should be smooth and controlled.
+    - When the shooter commits, rotate hips first, then push.
+    - Slide with a strong edge load and avoid drifting past the post.
+shooter_focus_points: |-
   - Approach with realistic speed.
   - Make a decisive lateral move.
-
 drill_image: breakaway-drill.png
-
 drill_progressions:
   - progression_name: Progression 1 - Angle Variation
-    "progression_description": "Shooter starts from wide left, wide right, or the middle lane."
+    progression_description: Shooter starts from wide left, wide right, or the middle lane.
     progression_image: progression-1.png
   - progression_name: Progression 2 - Delay Move
     progression_description: Shooter slows down at the hashmarks to force the goalie to hold edges longer and stay patient.
   - progression_name: Progression 3 - Add multiple dekes
-    "progression_description": "Shooter executes a series of fakes (forehand fake, backhand fake, slapshot fake, shot fake). Goalie maintains angle while backing in, holds edges through each fake, avoids dropping early, and reacts only when the shooter commits."
-
+    progression_description: Shooter executes a series of fakes (forehand fake, backhand fake, slapshot fake, shot fake). Goalie maintains angle while backing in, holds edges through each fake, avoids dropping early, and reacts only when the shooter commits.
 drill_creation_date: 2026-06-05
-
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  team_drill: no
+  team_drill: "no"
   age_level:
     - 12U
     - 14U

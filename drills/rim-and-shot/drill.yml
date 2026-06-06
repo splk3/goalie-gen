@@ -1,35 +1,29 @@
----
 name: Rim and Shot
-
-drill_steps:
-  - Shooter 1 rims the puck hard around the boards.
-  - Goalie leaves the crease, sets their angle, and stops the rim behind the net.
-  - Shooter 2 skates to the opposite corner to present as an outlet.
-  - Goalie retrieves the puck and makes a pass to Shooter 2.
-  - After the pass, the goalie moves across the crease, re-establishes positioning on the new puck side, and returns to the front of the net.
-  - Shooter 2 passes to Shooter 1, who has skated into a scoring area.
-  - Shooter 1 receives and shoots in stride.
-
-coaching_focus_points:
+drill_steps: |-
+  1. Shooter 1 rims the puck hard around the boards.
+  2. Goalie leaves the crease, sets their angle, and stops the rim behind the net.
+  3. Shooter 2 skates to the opposite corner to present as an outlet.
+  4. Goalie retrieves the puck and makes a pass to Shooter 2.
+  5. After the pass, the goalie moves across the crease, re-establishes positioning on the new puck side, and returns to the front of the net.
+  6. Shooter 2 passes to Shooter 1, who has skated into a scoring area.
+  7. Shooter 1 receives and shoots in stride.
+coaching_focus_points: |-
   - Read the rim early - shoulder check before leaving the crease.
   - Beat the puck to the stop point; arrive set, not sliding.
   - Hands out in front when handling the puck to stay balanced and control the blade.
   - After the pass, explode laterally to the new puck side and arrive on angle.
   - Set feet before the shot - no drifting.
   - Track the puck through the pass sequence to maintain visual connection.
-
-shooter_focus_points:
-  - "Shooter 1: Time the entry - do not arrive too early."
-  - "Shooter 1: Shoot in stride to maintain deception."
-  - "Shooter 1: Aim for purposeful locations (low far pad, high short side, etc.)."
-  - "Shooter 1: Stay inside the dots to create a realistic scoring threat."
-  - "Shooter 2: Arrive with speed to be a viable outlet for the goalie."
-  - "Shooter 2: Open up to the puck - hips facing the goalie for a clean catch-and-release pass."
-  - "Shooter 2: Scan before receiving to locate Shooter 1."
-  - "Shooter 2: Deliver a firm, flat pass into Shooter 1's shooting lane."
-
+shooter_focus_points: |-
+  - Shooter 1: Time the entry - do not arrive too early.
+  - Shooter 1: Shoot in stride to maintain deception.
+  - Shooter 1: Aim for purposeful locations (low far pad, high short side, etc.).
+  - Shooter 1: Stay inside the dots to create a realistic scoring threat.
+  - Shooter 2: Arrive with speed to be a viable outlet for the goalie.
+  - Shooter 2: Open up to the puck - hips facing the goalie for a clean catch-and-release pass.
+  - Shooter 2: Scan before receiving to locate Shooter 1.
+  - Shooter 2: Deliver a firm, flat pass into Shooter 1's shooting lane.
 drill_image: rim-and-shot.png
-
 drill_progressions:
   - progression_name: Progression 1 - Add Shot Options
     progression_description: Shooter 2 may shoot or pass. Goalie must read body language and react accordingly.
@@ -45,15 +39,13 @@ drill_progressions:
     progression_image: progression-4.png
   - progression_name: Progression 5 - Combine All Four Previous Progressions
     progression_description: Combine Shooter 2's shoot option, coach pressure, random corner, and screen. Goalie works on puck handling, decision-making, scanning, and puck tracking.
-
 drill_creation_date: 2026-05-25
-
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  team_drill: no
+  team_drill: "no"
   age_level:
     - all
   fundamental_skill:
