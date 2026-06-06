@@ -38,19 +38,17 @@ drill_image: rim-stop-cut-across.png
 drill_progressions:
   - progression_name: Variable Rim Locations
     progression_description: "Shooter varies rim height, speed, and angle while the goalie adjusts footwork and stick angle."
-    progression_image: variable-rim-locations.png
   - progression_name: Shooter Delay Options
     progression_description: "Shooter may cut immediately, delay at the wall, or take a quick shot from the wall."
-    progression_image: shooter-delay-options.png
   - progression_name: Coach Pressure
     progression_description: "Coach applies light forecheck pressure after the rim, and the goalie shoulder checks, protects the puck, and makes a decision."
-    progression_image: coach-pressure.png
+    progression_image: rim-stop-cut-across-progression-3.png
   - progression_name: Second Shooter Option
     progression_description: "Add a second shooter in the slot so the primary shooter can pass or shoot."
-    progression_image: second-shooter-option.png
+    progression_image: rim-stop-cut-across-progression-4.png
   - progression_name: Net Front Screen
     progression_description: "Add an extra goaltender or obstacle in the high slot so the goalie must track the puck through a screen."
-    progression_image: net-front-screen.png
+    progression_image: rim-stop-cut-across-progression-5.png
 
 drill_creation_date: 2026-05-13
 
