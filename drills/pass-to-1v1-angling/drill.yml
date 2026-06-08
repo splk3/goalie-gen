@@ -4,7 +4,10 @@ name: Pass to 1v1 Angling
 description: 1v1 angling starting with a pass.
 
 drill_steps: |-
-  Drill starts with X passing to O. O takes off and X skates to opposite player to angle. O is trying to score and X is trying to get the puck to designated area coach decides in the middle of the ice.
+  1. X passes to O.
+  2. O takes off with the puck.
+  3. X skates to the opposite player to angle.
+  4. O is trying to score while X tries to get the puck to the designated area in the middle of the ice (as decided by the coach).
 
 coaching_focus_points: |-
   - Stay on stick angle.
