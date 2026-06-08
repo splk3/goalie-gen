@@ -1,0 +1,54 @@
+name: Finland 2v1 to 2v3 Backcheck
+
+description: 2v1 turns into 2v3 back check the other way.
+
+drill_steps: |-
+  1. Start with 2 X's on the blue line and 1 O on the red line.
+  2. Go in and play 2v1.
+  3. Once the offensive X's cross the red line, two O's jump in to simulate a hard defensive back check.
+  4. They help break out with the O playing defense.
+  5. Once there is a change of possession, go the other way 3v2.
+  6. Once they reach the red line, two new X's jump in to start the continuous flow.
+
+coaching_focus_points: |-
+  - Communicate defensive options.
+  - Recognize passing lanes and hand of stick.
+  - Keep a good depth.
+
+shooter_focus_points: |-
+  - Create turn overs.
+  - Take advantage of the odd man rush.
+  - Emphasize zone entry.
+
+drill_creation_date: 2026-06-07
+
+drill_image: finland-2v1-to-2v3-backcheck.png
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - odd_man_rush
+    - small_sided_game
+  equipment:
+    - bumpers
+  space_required:
+    - full_ice
