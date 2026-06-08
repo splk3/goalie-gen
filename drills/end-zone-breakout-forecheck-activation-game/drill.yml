@@ -1,0 +1,46 @@
+name: End Zone Breakout/Forecheck Activation Game
+description: |-
+  O's break out while X's forecheck in an end-zone activation game that starts with a dumped puck and scales from small numbers up to 5v5.
+drill_steps: |-
+  1. Set O's as breakout players and X's as forecheckers.
+  2. Start O2 and O3 on the hash marks as breakout wingers.
+  3. Start X2 and X3 as the defense trying to hold the puck in.
+  4. Dump a puck into the zone to start the rep.
+  5. Keep O's inactive until they receive a pass; activate the corresponding X at the same time.
+  6. Have the coach call how many O's and X's start each rep.
+  7. Progress the game up to full 5v5 play.
+coaching_focus_points: |-
+  - Communicate threats to teammates.
+  - Recognize passing options.
+  - Stay on stick angle.
+shooter_focus_points: |-
+  - Make clean breakout passes.
+  - Communicate available options.
+  - Stay on the defensive side of the puck.
+  - Use clean body contact.
+drill_creation_date: 2026-06-06
+drill_image: end-zone-breakout-forecheck-activation-game.png
+tags:
+  skill_level:
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment: []
+  space_required:
+    - whole_zone
+  game_situations:
+    - macro_game
