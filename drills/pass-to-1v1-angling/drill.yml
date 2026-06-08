@@ -1,0 +1,51 @@
+---
+name: Pass to 1v1 Angling
+
+description: 1v1 angling starting with a pass.
+
+drill_steps: |-
+  Drill starts with X passing to O. O takes off and X skates to opposite player to angle. O is trying to score and X is trying to get the puck to designated area coach decides in the middle of the ice.
+
+coaching_focus_points: |-
+  - Stay on stick angle.
+  - Have a competitive depth.
+  - Small adjustment with shooter.
+  - Start on near post then come out to challenge.
+
+shooter_focus_points: |-
+  - Take off quick.
+  - Clean passes.
+  - Go through hands.
+
+drill_image: pass-to-1v1-angling.png
+
+drill_creation_date: 2026-06-08
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "no"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - opposed_practice
+  equipment:
+    - none
+  space_required:
+    - whole_zone
