@@ -110,13 +110,22 @@ The main drill image comes from the **Drill Diagram** field of the issue.
    - Save it to `drills/{folder-name}/{folder-name}.{original-extension}` (e.g. `rim-stop-cut-across.png`)
    - Set `drill_image: {folder-name}.{ext}` in `drill.yml`
    - Verify the saved file is a real image
-2. If the **Drill Diagram** field is blank or contains no image, **omit `drill_image` from `drill.yml` entirely** and continue — drill images are optional.
+2. If the **Drill Diagram** field contains a PDF attachment instead of a direct image:
+   - Open the PDF and capture a screenshot of the rink/drill diagram shown in it
+   - Include the rink area and drill diagram content only - exclude the title/header, notes, and any extraneous content outside the rink diagram
+   - Save that screenshot to `drills/{folder-name}/{folder-name}.{original-extension}` (use an image extension such as `.png`)
+   - Set `drill_image: {folder-name}.{ext}` in `drill.yml`
+   - Verify the saved file is a real image
+   - Treat the PDF itself as source material only; do not set `drill_image` to the PDF file
+   - Issue `#449` (`Cross Ice 2v2 Breakout Game`) is the reference example for this workflow
+3. If the **Drill Diagram** field is blank or contains no usable diagram, **omit `drill_image` from `drill.yml` entirely** and continue — drill images are optional.
 
 ## Step 5 — Validate
 
 Before building:
 
 - If `drill_image` is set, confirm the filename matches the actual file in the drill folder
+- If the source diagram was a PDF, confirm the saved drill image is the screenshot extracted from the rink/drill diagram, not the PDF itself
 - If `progression_image` is set on any progression, confirm each file exists in the drill folder
 - Confirm `video` (if present) is a valid HTTPS YouTube or Vimeo URL matching accepted formats:
   - `https://www.youtube.com/watch?v=VIDEO_ID`

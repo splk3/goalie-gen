@@ -88,6 +88,7 @@ The goalie drills page also syncs filter/sort/page state to query params for sha
     - nested/indented sub-items render as bullet points
   - `description` is optional
   - `drill_image` is optional and must be a single filename string when provided (not an array)
+  - If the source drill diagram is a PDF, capture a screenshot of the rink/drill diagram from the PDF and use that screenshot as `drill_image` instead of the PDF file itself; issue `#449` (`Cross Ice 2v2 Breakout Game`) is the reference example
   - `drill_progressions` supports up to 8 objects with required
     `progression_name`/`progression_description` and optional `progression_image`
   - `tags.game_situations` is optional and supports:
