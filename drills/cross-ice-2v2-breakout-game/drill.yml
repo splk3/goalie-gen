@@ -13,6 +13,7 @@ shooter_focus_points: |-
   - Create passing lanes.
   - Get up the ice as quick as possible.
 drill_creation_date: 2026-06-06
+drill_image: cross-ice-2v2-breakout-game.png
 tags:
   skill_level:
     - intermediate
