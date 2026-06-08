@@ -14,7 +14,7 @@ body:
         ## Submitter Instructions
 
         - Fill out the drill information by answering the questions below.
-        - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one.
+        - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one. If the diagram is only available as a PDF, attach the PDF and the drill-processing workflow will use a screenshot of the rink/drill diagram as the final drill image.
         - Drill text fields support markdown paragraphs/lists, including nested list indentation up to 3 levels. Use that formatting directly when needed.
         - Use `YYYY-MM-DD` date format for all drill date values (for example, `2026-01-15`). This applies to both `drill_creation_date` and `drill_updated_date` when an updated date is used.
         - If you have any trouble with the drill submission process, email us at 
@@ -218,8 +218,8 @@ body:
     attributes:
       label: Drill Diagram (Optional)
       description: |
-        Attach the drill diagram or a screenshot of the drill here if one is available.
-      placeholder: Attach the drill diagram or a screenshot of the drill here if available.
+        Attach the drill diagram or a screenshot of the drill here if one is available. If you only have a PDF, attach it here and the processing workflow will use a screenshot of the rink/drill diagram from the PDF.
+      placeholder: Attach the drill diagram, screenshot, or PDF here if available.
 
   - type: markdown
     attributes:
@@ -345,7 +345,7 @@ body:
       value: |
         ## GitHub Copilot Instructions - Users can ignore this section
 
-        - If running in VS Code chat or Copilot CLI, explicitly use the "Goalie Drill Presentation Expert" agent for this issue.
+        - Use the "new-drill-from-issue" skill for this issue.
         - If this issue is assigned to the GitHub Copilot coding agent, do not assume custom sub-agent auto-selection is available.
           In that mode, still follow these drill-specific instructions exactly, including schema, image naming, web/mobile rendering checks, and print/PDF parity checks.
         - Use the information in the fields above to create a new drill YAML file in the `drills` folder.
@@ -396,6 +396,9 @@ body:
         - If the progression description includes a pasted or attached image, download that image into
           the drill folder, set `progression_image` to the saved filename, and remove the raw image URL
           from `progression_description`.
+        - If the main Drill Diagram is provided as a PDF, open the PDF and capture a screenshot of the rink/drill diagram
+          shown in it. Save that screenshot as the drill image and use the screenshot filename for `drill_image`.
+          Do not use the PDF file itself as `drill_image`.
         - Set `team_drill` under `tags` to the value selected in the "Tags - Team Drill" dropdown as a plain string
           (e.g. `team_drill: no` or `team_drill: yes`), not as a YAML list.
         - If "Tags - Game Situations" checkboxes are checked,
