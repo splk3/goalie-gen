@@ -134,6 +134,12 @@ describe("GoalieDrills page", () => {
     render(<GoalieDrills data={dataWithMissingUpdatedDate} />);
 
     const teamDrillCard = screen.getByRole("link", { name: "Team Drill" });
+    expect(within(teamDrillCard).getByText("Team Drill!")).toBeInTheDocument();
+    const teamDrillBadge = within(teamDrillCard).getByText("Team Drill!").closest("p");
+    expect(teamDrillBadge?.querySelector("img")).toHaveAttribute(
+      "src",
+      expect.stringContaining("/images/fire.svg")
+    );
     expect(within(teamDrillCard).getByText("Created:")).toBeInTheDocument();
     expect(within(teamDrillCard).getByText("Updated:")).toBeInTheDocument();
     expect(within(teamDrillCard).getByText("Created:").parentElement).toHaveTextContent(
@@ -149,6 +155,7 @@ describe("GoalieDrills page", () => {
       "Created: 2026-01-01"
     );
     expect(within(goalieDrillCard).queryByText("Updated:")).not.toBeInTheDocument();
+    expect(within(goalieDrillCard).queryByText("Team Drill!")).not.toBeInTheDocument();
   });
 
   it("syncs filters when location.search changes while mounted", async () => {

@@ -606,6 +606,19 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                   View Drill
                 </span>
                 <div className="text-right text-sm text-gray-700 dark:text-gray-300">
+                  {drill.tags.team_drill === "yes" && (
+                    <p className="flex items-center justify-end gap-1 font-semibold">
+                      <img
+                        src={buildCacheBustedAssetPath("/images/trophy.svg")}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-4 h-4"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      Team Drill!
+                    </p>
+                  )}
                   {drill.drill_updated_date && (
                     <p>
                       <span className="font-semibold">Updated:</span> {drill.drill_updated_date}
