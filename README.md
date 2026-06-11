@@ -218,6 +218,7 @@ When present, `drill_updated_date` must use the same `YYYY-MM-DD` format.
 All other fields are optional. Known optional fields include:
 
 - `description` — optional markdown string shown above drill steps
+- `shooter_focus_points` — optional markdown string shown in the shooter focus section
 - `drill_image` — optional main drill diagram filename
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
@@ -266,7 +267,6 @@ The exceptions are `team_drill`, which is a single string value (`yes` or `no`),
   - `blaze_pods`
   - `bumpers`
   - `cones`
-  - `goal`
   - `ice_marker`
   - `none`
 
@@ -283,7 +283,7 @@ The exceptions are `team_drill`, which is a single string value (`yes` or `no`),
   - `yes`
   - `no`
 
-- `game_situations`: Optional. Allowed values are:
+- `game_situations`: Optional (for team and non-team drills). Allowed values are:
   - `power_play`
   - `penalty_kill`
   - `net_front_traffic`
@@ -302,6 +302,9 @@ For media fields, `drill_image` should be a single image filename string when pr
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`
 
 The build will fail if a `video` field contains a URL from any other domain or in an unrecognized format.
+If the source diagram is a PDF, capture and save a screenshot of the rink/drill diagram, then use that screenshot filename as `drill_image` (do not use a PDF file as `drill_image`).
+
+Because drill YAML is parsed with `yaml.FAILSAFE_SCHEMA`, any list item text containing `:` should be quoted so it stays a string (especially in progression/shooter/coaching text lists).
 
 ### How Drill Pages Are Generated
 
