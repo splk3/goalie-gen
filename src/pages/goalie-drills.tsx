@@ -47,6 +47,7 @@ interface DrillCardData extends DrillNode {
   imageUrl: string;
   creationTimestamp: number | null;
   updatedTimestamp: number | null;
+  isFreshContent: boolean;
   searchableText: string;
 }
 
@@ -75,6 +76,16 @@ const parseTimestamp = (value?: string): number | null => {
 
   const timestamp = new Date(value).getTime();
   return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+const FRESH_CONTENT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+
+const isTimestampWithinLast30Days = (timestamp: number | null, nowTimestamp: number): boolean => {
+  if (timestamp === null || timestamp > nowTimestamp) {
+    return false;
+  }
+
+  return nowTimestamp - timestamp <= FRESH_CONTENT_WINDOW_MS;
 };
 
 const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterState => {
@@ -143,11 +154,13 @@ const URL_QUERY_DEBOUNCE_MS = 300;
 export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const search = location?.search || "";
   const initialSearchParams = React.useMemo(() => new URLSearchParams(search), [search]);
+  const browseTimestamp = React.useMemo(() => Date.now(), []);
   const drills = React.useMemo<DrillCardData[]>(
     () =>
       data.allDrill.nodes.map((node) => {
         const image = node.drill_image || "placeholder.png";
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
+        const explicitUpdatedTimestamp = parseTimestamp(node.drill_updated_date);
         const searchableText = [
           node.name,
           drillMarkdownToSearchText(node.description || ""),
@@ -161,11 +174,14 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           ...node,
           imageUrl: buildCacheBustedAssetPath(`/drills/${node.slug}/${image}`),
           creationTimestamp,
-          updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? creationTimestamp,
+          updatedTimestamp: explicitUpdatedTimestamp ?? creationTimestamp,
+          isFreshContent:
+            isTimestampWithinLast30Days(creationTimestamp, browseTimestamp) ||
+            isTimestampWithinLast30Days(explicitUpdatedTimestamp, browseTimestamp),
           searchableText,
         };
       }),
-    [data.allDrill.nodes]
+    [browseTimestamp, data.allDrill.nodes]
   );
 
   const initialFilters = React.useMemo<FilterState>(
@@ -606,6 +622,19 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                   View Drill
                 </span>
                 <div className="text-right text-sm text-gray-700 dark:text-gray-300">
+                  {drill.isFreshContent && (
+                    <p className="flex items-center justify-end gap-1 font-semibold">
+                      <img
+                        src={buildCacheBustedAssetPath("/images/fire.svg")}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-4 h-4"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      Fresh Content!
+                    </p>
+                  )}
                   {drill.tags.team_drill === "yes" && (
                     <p className="flex items-center justify-end gap-1 font-semibold">
                       <img
