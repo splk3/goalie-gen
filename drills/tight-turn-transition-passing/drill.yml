@@ -1,0 +1,47 @@
+name: Tight Turn Transition Passing
+description: Transitions around pads with passing.
+drill_steps: |-
+  1. Drill starts with X carrying the puck.
+  2. Skate above the first pad, then pass to the coach.
+  3. Transition around the pad to skate backwards while facing the puck and receive the return pass.
+  4. Carry the puck above the second pad and pass to the coach again.
+  5. Transition around while facing the puck, receive the pass back, and carry above the final pad.
+  6. Receive a touch pass from the coach and finish with a shot.
+coaching_focus_points: |-
+  - Follow the puck through all of the passes.
+  - Challenge the shooter.
+  - Stay on stick angle and track all of the way into your body.
+shooter_focus_points: |-
+  - Catch and give passes on backhand when appropriate.
+  - Transition at proper timing.
+  - Present a passing target.
+drill_image: tight-turn-transition-passing.png
+drill_creation_date: 2026-06-09
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - half_zone
+  game_situations:
+    - unopposed_practice
