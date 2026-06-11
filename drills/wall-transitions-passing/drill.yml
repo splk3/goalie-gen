@@ -1,0 +1,45 @@
+name: Wall Transitions Passing
+description: Transitions facing inside the ice for an open up shot.
+drill_steps: |-
+  1. The first skater in line takes a couple strides and passes to the player at the blue line.
+  2. Skate up, transition above the circle, and go back toward the corner to receive the return pass.
+  3. Pass to the corner player, transition back up-ice, and receive the pass back.
+  4. Pass to the blue-line player again and drive toward the net for a shot.
+  5. The shooter rotates to the blue-line spot, and the blue-line player goes to the back of the line.
+coaching_focus_points: |-
+  - Follow passes.
+  - Challenge and take depth.
+  - Set to stick angle for shot.
+shooter_focus_points: |-
+  - Shoot at the dot or higher.
+  - Transition toward the boards while facing inside the ice.
+  - Receive and release passes on the backhand.
+drill_image: wall-transitions-passing.png
+drill_creation_date: 2026-06-09
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - half_zone
+  game_situations:
+    - unopposed_practice
