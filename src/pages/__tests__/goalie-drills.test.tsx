@@ -158,7 +158,7 @@ describe("GoalieDrills page", () => {
     expect(within(goalieDrillCard).queryByText("Team Drill!")).not.toBeInTheDocument();
   });
 
-  it("shows Fresh Content! only when created or updated is within the last 30 days", () => {
+  it("shows New Content! or Updated Content! based on dates within the last 30 days", () => {
     jest.useFakeTimers();
     try {
       jest.setSystemTime(new Date("2026-01-20T12:00:00.000Z"));
@@ -191,17 +191,18 @@ describe("GoalieDrills page", () => {
       render(<GoalieDrills data={freshnessData} />);
 
       const freshUpdatedCard = screen.getByRole("link", { name: "Fresh Updated" });
-      const freshUpdatedBadge = within(freshUpdatedCard).getByText("Fresh Content!").closest("p");
+      const freshUpdatedBadge = within(freshUpdatedCard).getByText("Updated Content!").closest("p");
       expect(freshUpdatedBadge?.querySelector("img")).toHaveAttribute(
         "src",
         expect.stringContaining("/images/fire.svg")
       );
 
       const freshCreatedCard = screen.getByRole("link", { name: "Fresh Created" });
-      expect(within(freshCreatedCard).getByText("Fresh Content!")).toBeInTheDocument();
+      expect(within(freshCreatedCard).getByText("New Content!")).toBeInTheDocument();
 
       const staleCard = screen.getByRole("link", { name: "Stale Drill" });
-      expect(within(staleCard).queryByText("Fresh Content!")).not.toBeInTheDocument();
+      expect(within(staleCard).queryByText("Updated Content!")).not.toBeInTheDocument();
+      expect(within(staleCard).queryByText("New Content!")).not.toBeInTheDocument();
     } finally {
       jest.useRealTimers();
     }
