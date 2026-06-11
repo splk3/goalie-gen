@@ -1,0 +1,45 @@
+name: Andy Murray 3v2
+description: 3v2 full ice continuous.
+drill_steps: |-
+  1. Drill starts with X's on blue line and O's on opposite blue line.
+  2. Coach passes puck to an X and they break in.
+  3. After they cross the top of the circle, coach releases 3 O's to help break out and 2 X's to defend them going the opposite way.
+  4. This starts the continuation.
+coaching_focus_points: |-
+  - Communicate outlet passes.
+  - Recognize passing options.
+  - Set to feet when possible.
+shooter_focus_points: |-
+  - Communicate outlet passes.
+  - Get low for breakout.
+  - Sticks in passing lanes.
+  - Control rebounds.
+drill_image: andy-murray-3v2.png
+drill_creation_date: 2026-06-09
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - full_ice
+  game_situations:
+    - small_unit_play
