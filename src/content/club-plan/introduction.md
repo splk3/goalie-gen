@@ -29,7 +29,9 @@ This manual communicates our shared goals and expectations so that players can t
 
 ### Option 4
 
-Goaltending is the most exciting position in all of sports, but it requires specialized training and a supportive culture to truly enjoy. The purpose of this Goalie Development Plan is to grow the number of goalies in our club by providing opportunities for players to try the position in a fun, pressure-free environment. For our dedicated goalies, this plan provides a roadmap for advanced skill refinement. Our goal is to clearly communicate our shared responsibilities, ensuring that every goalie experiences the thrill of the net while developing essential athletic skills.
+Goaltending is the most exciting position in all of sports, but it requires specialized training and a supportive culture to truly enjoy.
+The purpose of this Goalie Development Plan is to grow the number of goalies in our club by providing opportunities for players to try the position in a fun, pressure-free environment. For our dedicated goalies, this plan provides a roadmap for advanced skill refinement.
+Our goal is to clearly communicate our shared responsibilities, ensuring that every goalie experiences the thrill of the net while developing essential athletic skills.
 
 ### Option 5
 

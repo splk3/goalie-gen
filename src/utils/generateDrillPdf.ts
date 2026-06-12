@@ -245,15 +245,16 @@ export const generateDrillPdf = async (
       : "https://goaliegen.com";
   const drillUrl = `${siteUrl.replace(/\/$/, "")}/drills/${drillFolder}`;
 
-  const [leftLogoResult, rightLogoResult, ggLogoResult, ctLogoResult, drillQrResult] = await Promise.allSettled([
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
-    loadImageAsDataURL(
-      buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
-    ),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
-    getQrCodeDataURL(drillUrl),
-  ]);
+  const [leftLogoResult, rightLogoResult, ggLogoResult, ctLogoResult, drillQrResult] =
+    await Promise.allSettled([
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
+      loadImageAsDataURL(
+        buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
+      ),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
+      getQrCodeDataURL(drillUrl),
+    ]);
 
   const ggLogoInfo = ggLogoResult.status === "fulfilled" ? ggLogoResult.value : null;
   const ctLogoInfo = ctLogoResult.status === "fulfilled" ? ctLogoResult.value : null;

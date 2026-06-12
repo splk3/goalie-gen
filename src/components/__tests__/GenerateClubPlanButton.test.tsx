@@ -3,8 +3,21 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GenerateClubPlanButton from "../GenerateClubPlanButton";
 
-jest.mock("../Logo", () => () => <div data-testid="logo" />);
-jest.mock("../ImageUploader", () => () => <div data-testid="image-uploader" />);
+jest.mock("../Logo", () => {
+  function MockLogo() {
+    return <div data-testid="logo" />;
+  }
+
+  return MockLogo;
+});
+
+jest.mock("../ImageUploader", () => {
+  function MockImageUploader() {
+    return <div data-testid="image-uploader" />;
+  }
+
+  return MockImageUploader;
+});
 
 describe("GenerateClubPlanButton", () => {
   it("shows club naming fields and no format selector options", async () => {
