@@ -36,6 +36,7 @@ drill_progressions:
     progression_description: This image shows a sample blazepods configuration for this drill with 6 pods, 1 goalie, single color that lights up, 30 seconds total drill time, and 2 seconds between each light change. Adjust as desired for your goalie.
     progression_image: progression-4.png
 drill_creation_date: 2026-06-05
+drill_updated_date: 2026-06-11
 tags:
   skill_level:
     - beginner
@@ -53,6 +54,5 @@ tags:
     - power_push
   equipment:
     - blaze_pods
-    - bumpers
   space_required:
     - crease_only

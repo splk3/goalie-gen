@@ -235,20 +235,30 @@ export const generateDrillPdf = async (
   // Content must not exceed this Y value on any page
   const contentBottomLimit = footerSeparatorY - 8;
 
-  // Pre-load all static header/footer images in parallel so none of the
-  // network round-trips blocks the others.
+  // Pre-load all static header/footer images and the drill QR code in parallel so none
+  // of the network round-trips blocks the others.
   onProgress?.("Loading images...");
-  const [leftLogoResult, rightLogoResult, ggLogoResult, ctLogoResult] = await Promise.allSettled([
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
-    loadImageAsDataURL(
-      buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
-    ),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
-  ]);
+
+  const siteUrl =
+    typeof process !== "undefined" && process.env.GATSBY_SITE_URL
+      ? process.env.GATSBY_SITE_URL
+      : "https://goaliegen.com";
+  const drillUrl = `${siteUrl.replace(/\/$/, "")}/drills/${drillFolder}`;
+
+  const [leftLogoResult, rightLogoResult, ggLogoResult, ctLogoResult, drillQrResult] =
+    await Promise.allSettled([
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
+      loadImageAsDataURL(
+        buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
+      ),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
+      getQrCodeDataURL(drillUrl),
+    ]);
 
   const ggLogoInfo = ggLogoResult.status === "fulfilled" ? ggLogoResult.value : null;
   const ctLogoInfo = ctLogoResult.status === "fulfilled" ? ctLogoResult.value : null;
+  const drillQrCodeDataURL = drillQrResult.status === "fulfilled" ? drillQrResult.value : null;
 
   const goldText =
     "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com.  All drills created and organized in CoachThem.";
@@ -384,45 +394,62 @@ export const generateDrillPdf = async (
   };
 
   let currentY = drawPageHeader(drillData.name);
+  const startOfTagsY = currentY;
 
-  // Tags section - bold labels, normal values, equipment on separate line
+  // Render QR code and label on the right side if available
+  if (drillQrCodeDataURL) {
+    const qrSize = 10;
+    const qrX = pageWidth - margin - qrSize;
+    const qrY = startOfTagsY;
+    doc.addImage(drillQrCodeDataURL, "PNG", qrX, qrY, qrSize, qrSize);
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+    const textX = qrX - 2;
+    const charHeight = doc.getFontSize() / doc.internal.scaleFactor;
+    const textY = qrY + qrSize / 2 + charHeight / 2 - 0.5;
+    doc.text("Scan to View:", textX, textY, { align: "right" });
+  }
+
+  // Tags section - render Age Group and Skill Level in columns, Equipment below them
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
 
-  let firstLineX = margin;
-
+  // Column 1: Age Group (x = 20)
   if (drillData.tags.age_level && drillData.tags.age_level.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.text("Age Group: ", firstLineX, currentY);
+    doc.text("Age Group: ", margin, startOfTagsY);
     const labelWidth = doc.getTextWidth("Age Group: ");
     doc.setFont("helvetica", "normal");
     const ageValues = drillData.tags.age_level.map(formatTag).join(", ");
-    doc.text(ageValues, firstLineX + labelWidth, currentY);
-    firstLineX += labelWidth + doc.getTextWidth(ageValues) + 5;
+    doc.text(ageValues, margin + labelWidth, startOfTagsY);
   }
 
+  // Column 2: Skill Level (x = 80)
   if (drillData.tags.skill_level && drillData.tags.skill_level.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.text("Skill Level: ", firstLineX, currentY);
+    doc.text("Skill Level: ", 80, startOfTagsY);
     const labelWidth = doc.getTextWidth("Skill Level: ");
     doc.setFont("helvetica", "normal");
     const skillValues = drillData.tags.skill_level.map(formatTag).join(", ");
-    doc.text(skillValues, firstLineX + labelWidth, currentY);
+    doc.text(skillValues, 80 + labelWidth, startOfTagsY);
   }
 
-  currentY += 4;
-
+  // Row 2: Equipment Needed (x = 20, y = startOfTagsY + 5)
   if (drillData.tags.equipment && drillData.tags.equipment.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.text("Equipment Needed: ", margin, currentY);
+    doc.text("Equipment Needed: ", margin, startOfTagsY + 5);
     const labelWidth = doc.getTextWidth("Equipment Needed: ");
     doc.setFont("helvetica", "normal");
     const equipmentValues = drillData.tags.equipment.map(formatTag).join(", ");
-    doc.text(equipmentValues, margin + labelWidth, currentY);
-    currentY += 4;
+    doc.text(equipmentValues, margin + labelWidth, startOfTagsY + 5);
   }
 
-  currentY += 2;
+  // Advance currentY to clear both tags columns and the QR code section.
+  // QR code height is 10mm. Row 2 of tags is at startOfTagsY + 5.
+  // Pushing currentY to startOfTagsY + 12 leaves a clean margin.
+  currentY = startOfTagsY + 12;
 
   const rightColumnStartY = currentY;
   const fullWidth = pageWidth - 2 * margin;
@@ -921,10 +948,14 @@ export const generateDrillPdf = async (
         const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
         const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
         drawImage(videoQrCodeDataURL, "PNG", qrX, qrY, LINK_QR_CODE_SIZE_MM, LINK_QR_CODE_SIZE_MM);
+        // Ensure sectionY clears the bottom of the QR code
+        const qrBottomY = qrY + LINK_QR_CODE_SIZE_MM;
+        sectionY = Math.max(sectionY + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT, qrBottomY);
+      } else {
+        sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
       }
 
       doc.setTextColor(0, 0, 0);
-      sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
     }
 
     return {

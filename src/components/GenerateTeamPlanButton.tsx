@@ -205,6 +205,15 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(notesMd)));
 
     const doc = new Document({
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: "Helvetica",
+            },
+          },
+        },
+      },
       sections: [{ properties: {}, children: documentChildren }],
     });
 

@@ -465,6 +465,15 @@ export default function GoalieJournalButton() {
     });
 
     const doc = new Document({
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: "Helvetica",
+            },
+          },
+        },
+      },
       sections: [{ properties: {}, children: documentChildren }],
     });
 

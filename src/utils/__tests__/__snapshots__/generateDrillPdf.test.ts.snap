@@ -13,7 +13,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 305,
+      "order": 318,
     },
     {
       "args": [
@@ -25,7 +25,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 306,
+      "order": 319,
     },
     {
       "args": [
@@ -33,7 +33,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         114,
       ],
       "op": "splitTextToSize",
-      "order": 307,
+      "order": 320,
     },
     {
       "args": [
@@ -41,7 +41,19 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         114,
       ],
       "op": "splitTextToSize",
-      "order": 308,
+      "order": 321,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        180,
+        43,
+        10,
+        10,
+      ],
+      "op": "addImage",
+      "order": 322,
     },
     {
       "args": [
@@ -49,123 +61,11 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         170,
       ],
       "op": "splitTextToSize",
-      "order": 309,
-    },
-    {
-      "args": [
-        "1. Shooter rims the puck to either side.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 310,
-    },
-    {
-      "args": [
-        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 311,
-    },
-    {
-      "args": [
-        "3. Shooter skates to either wall at the blue line to present a target.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 312,
-    },
-    {
-      "args": [
-        "4. Goalie makes a controlled pass to the shooter.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 313,
-    },
-    {
-      "args": [
-        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 314,
-    },
-    {
-      "args": [
-        "6. Shooter releases a shot back to the original side (against the grain).",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 315,
-    },
-    {
-      "args": [
-        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 316,
-    },
-    {
-      "args": [
-        "• Set early before the rim arrives; read the shooter's body language.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 317,
-    },
-    {
-      "args": [
-        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 318,
-    },
-    {
-      "args": [
-        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 319,
-    },
-    {
-      "args": [
-        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 320,
-    },
-    {
-      "args": [
-        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 321,
-    },
-    {
-      "args": [
-        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 322,
-    },
-    {
-      "args": [
-        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
-        165,
-      ],
-      "op": "splitTextToSize",
       "order": 323,
     },
     {
       "args": [
-        "• Track the change of angle as the shooter cuts across; maintain edge control.",
+        "1. Shooter rims the puck to either side.",
         165,
       ],
       "op": "splitTextToSize",
@@ -173,7 +73,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
+        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -181,7 +81,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Hard, purposeful rim — simulate a game speed dump in.",
+        "3. Shooter skates to either wall at the blue line to present a target.",
         165,
       ],
       "op": "splitTextToSize",
@@ -189,7 +89,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Explode to the wall to present a clean passing target.",
+        "4. Goalie makes a controlled pass to the shooter.",
         165,
       ],
       "op": "splitTextToSize",
@@ -197,7 +97,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Stick available early — show a clear target for the goalie.",
+        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -205,7 +105,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Skate the wall with pace — don't drift or slow down.",
+        "6. Shooter releases a shot back to the original side (against the grain).",
         165,
       ],
       "op": "splitTextToSize",
@@ -213,7 +113,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Cut across with intent — force the goalie to move laterally.",
+        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -221,7 +121,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Shoot against the grain back to the original side.",
+        "• Set early before the rim arrives; read the shooter's body language.",
         165,
       ],
       "op": "splitTextToSize",
@@ -229,7 +129,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -237,103 +137,11 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "data:image/png;base64,MOCK",
-        "PNG",
-        121.12,
-        49,
-        68.88,
-        38.75,
-      ],
-      "op": "addImage",
-      "order": 333,
-    },
-    {
-      "args": [
-        "This drill helps goalies develop stick skills behind the net and practice get...",
-        95.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 334,
-    },
-    {
-      "args": [
-        "1. Shooter rims the puck to either side.",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 335,
-    },
-    {
-      "args": [
-        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 336,
-    },
-    {
-      "args": [
-        "3. Shooter skates to either wall at the blue line to present a target.",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 337,
-    },
-    {
-      "args": [
-        "4. Goalie makes a controlled pass to the shooter.",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 338,
-    },
-    {
-      "args": [
-        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 339,
-    },
-    {
-      "args": [
-        "6. Shooter releases a shot back to the original side (against the grain).",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 340,
-    },
-    {
-      "args": [
-        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 341,
-    },
-    {
-      "args": [
-        "• Set early before the rim arrives; read the shooter's body language.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 342,
-    },
-    {
-      "args": [
-        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 343,
-    },
-    {
-      "args": [
         "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
         165,
       ],
       "op": "splitTextToSize",
-      "order": 344,
+      "order": 333,
     },
     {
       "args": [
@@ -341,7 +149,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 345,
+      "order": 334,
     },
     {
       "args": [
@@ -349,7 +157,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 346,
+      "order": 335,
     },
     {
       "args": [
@@ -357,7 +165,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 347,
+      "order": 336,
     },
     {
       "args": [
@@ -365,7 +173,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 348,
+      "order": 337,
     },
     {
       "args": [
@@ -373,7 +181,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 349,
+      "order": 338,
     },
     {
       "args": [
@@ -381,7 +189,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 350,
+      "order": 339,
     },
     {
       "args": [
@@ -389,7 +197,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 351,
+      "order": 340,
     },
     {
       "args": [
@@ -397,7 +205,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 352,
+      "order": 341,
     },
     {
       "args": [
@@ -405,7 +213,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 353,
+      "order": 342,
     },
     {
       "args": [
@@ -413,7 +221,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 354,
+      "order": 343,
     },
     {
       "args": [
@@ -421,7 +229,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 355,
+      "order": 344,
     },
     {
       "args": [
@@ -429,7 +237,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 356,
+      "order": 345,
     },
     {
       "args": [
@@ -437,123 +245,215 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
+      "order": 346,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        121.12,
+        55,
+        68.88,
+        38.75,
+      ],
+      "op": "addImage",
+      "order": 347,
+    },
+    {
+      "args": [
+        "This drill helps goalies develop stick skills behind the net and practice get...",
+        95.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 348,
+    },
+    {
+      "args": [
+        "1. Shooter rims the puck to either side.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 349,
+    },
+    {
+      "args": [
+        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 350,
+    },
+    {
+      "args": [
+        "3. Shooter skates to either wall at the blue line to present a target.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 351,
+    },
+    {
+      "args": [
+        "4. Goalie makes a controlled pass to the shooter.",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 352,
+    },
+    {
+      "args": [
+        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 353,
+    },
+    {
+      "args": [
+        "6. Shooter releases a shot back to the original side (against the grain).",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 354,
+    },
+    {
+      "args": [
+        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
+        90.12,
+      ],
+      "op": "splitTextToSize",
+      "order": 355,
+    },
+    {
+      "args": [
+        "• Set early before the rim arrives; read the shooter's body language.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 356,
+    },
+    {
+      "args": [
+        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
+        165,
+      ],
+      "op": "splitTextToSize",
       "order": 357,
     },
     {
       "args": [
-        "Variable Rim Locations",
-        75,
+        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 358,
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
-        75,
+        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 359,
     },
     {
       "args": [
-        "Variable Rim Locations",
-        75,
+        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 360,
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
-        75,
+        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 361,
     },
     {
       "args": [
-        "Shooter Delay Options",
-        75,
+        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 362,
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
-        75,
+        "• Track the change of angle as the shooter cuts across; maintain edge control.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 363,
     },
     {
       "args": [
-        "Shooter Delay Options",
-        75,
+        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 364,
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
-        75,
+        "• Hard, purposeful rim — simulate a game speed dump in.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 365,
     },
     {
       "args": [
-        "Coach Pressure",
-        75,
+        "• Explode to the wall to present a clean passing target.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 366,
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
-        75,
+        "• Stick available early — show a clear target for the goalie.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 367,
     },
     {
       "args": [
-        "Coach Pressure",
-        75,
+        "• Skate the wall with pace — don't drift or slow down.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 368,
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
-        75,
+        "• Cut across with intent — force the goalie to move laterally.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 369,
     },
     {
       "args": [
-        "Second Shooter Option",
-        75,
+        "• Shoot against the grain back to the original side.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 370,
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
-        75,
+        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 371,
     },
     {
       "args": [
-        "Second Shooter Option",
+        "Variable Rim Locations",
         75,
       ],
       "op": "splitTextToSize",
@@ -561,7 +461,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -569,7 +469,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
+        "Variable Rim Locations",
         75,
       ],
       "op": "splitTextToSize",
@@ -577,7 +477,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -585,7 +485,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
+        "Shooter Delay Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -593,11 +493,123 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
         75,
       ],
       "op": "splitTextToSize",
       "order": 377,
+    },
+    {
+      "args": [
+        "Shooter Delay Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 378,
+    },
+    {
+      "args": [
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 379,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 380,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 381,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 382,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 383,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 384,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 385,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 386,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 387,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 388,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 389,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 390,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 391,
     },
     {
       "args": [
@@ -609,7 +621,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 378,
+      "order": 392,
     },
     {
       "args": [
@@ -617,7 +629,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 379,
+      "order": 393,
     },
     {
       "args": [
@@ -629,7 +641,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 380,
+      "order": 394,
     },
     {
       "args": [
@@ -641,7 +653,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 381,
+      "order": 395,
     },
     {
       "args": [
@@ -653,7 +665,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 382,
+      "order": 396,
     },
     {
       "args": [
@@ -661,7 +673,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         114,
       ],
       "op": "splitTextToSize",
-      "order": 383,
+      "order": 397,
     },
     {
       "args": [
@@ -669,7 +681,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         114,
       ],
       "op": "splitTextToSize",
-      "order": 384,
+      "order": 398,
     },
     {
       "args": [
@@ -681,7 +693,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 385,
+      "order": 399,
     },
     {
       "args": [
@@ -693,7 +705,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 386,
+      "order": 400,
     },
     {
       "args": [
@@ -705,7 +717,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 387,
+      "order": 401,
     },
     {
       "args": [
@@ -717,7 +729,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 388,
+      "order": 402,
     },
     {
       "args": [
@@ -725,7 +737,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 389,
+      "order": 403,
     },
     {
       "args": [
@@ -737,7 +749,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 390,
+      "order": 404,
     },
   ],
   "lastOps": [
@@ -747,127 +759,11 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         165,
       ],
       "op": "splitTextToSize",
-      "order": 331,
-    },
-    {
-      "args": [
-        "• Change release point (pull and drag, push release, delay) to challenge the ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 332,
-    },
-    {
-      "args": [
-        "data:image/png;base64,MOCK",
-        "PNG",
-        121.12,
-        49,
-        68.88,
-        38.75,
-      ],
-      "op": "addImage",
-      "order": 333,
-    },
-    {
-      "args": [
-        "This drill helps goalies develop stick skills behind the net and practice get...",
-        95.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 334,
-    },
-    {
-      "args": [
-        "1. Shooter rims the puck to either side.",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 335,
-    },
-    {
-      "args": [
-        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 336,
-    },
-    {
-      "args": [
-        "3. Shooter skates to either wall at the blue line to present a target.",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 337,
-    },
-    {
-      "args": [
-        "4. Goalie makes a controlled pass to the shooter.",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 338,
-    },
-    {
-      "args": [
-        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 339,
-    },
-    {
-      "args": [
-        "6. Shooter releases a shot back to the original side (against the grain).",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 340,
-    },
-    {
-      "args": [
-        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
-        90.12,
-      ],
-      "op": "splitTextToSize",
-      "order": 341,
-    },
-    {
-      "args": [
-        "• Set early before the rim arrives; read the shooter's body language.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 342,
-    },
-    {
-      "args": [
-        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 343,
-    },
-    {
-      "args": [
-        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 344,
-    },
-    {
-      "args": [
-        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
-        165,
-      ],
-      "op": "splitTextToSize",
       "order": 345,
     },
     {
       "args": [
-        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
+        "• Change release point (pull and drag, push release, delay) to challenge the ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -875,79 +771,83 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
-        165,
+        "data:image/png;base64,MOCK",
+        "PNG",
+        121.12,
+        55,
+        68.88,
+        38.75,
       ],
-      "op": "splitTextToSize",
+      "op": "addImage",
       "order": 347,
     },
     {
       "args": [
-        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
-        165,
+        "This drill helps goalies develop stick skills behind the net and practice get...",
+        95.12,
       ],
       "op": "splitTextToSize",
       "order": 348,
     },
     {
       "args": [
-        "• Track the change of angle as the shooter cuts across; maintain edge control.",
-        165,
+        "1. Shooter rims the puck to either side.",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 349,
     },
     {
       "args": [
-        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
-        165,
+        "2. Goalie reads the rim, exits the crease, and stops the puck behind the net ...",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 350,
     },
     {
       "args": [
-        "• Hard, purposeful rim — simulate a game speed dump in.",
-        165,
+        "3. Shooter skates to either wall at the blue line to present a target.",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 351,
     },
     {
       "args": [
-        "• Explode to the wall to present a clean passing target.",
-        165,
+        "4. Goalie makes a controlled pass to the shooter.",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 352,
     },
     {
       "args": [
-        "• Stick available early — show a clear target for the goalie.",
-        165,
+        "5. Shooter skates down the wall, enters the zone between the dot and circle, ...",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 353,
     },
     {
       "args": [
-        "• Skate the wall with pace — don't drift or slow down.",
-        165,
+        "6. Shooter releases a shot back to the original side (against the grain).",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 354,
     },
     {
       "args": [
-        "• Cut across with intent — force the goalie to move laterally.",
-        165,
+        "7. Goalie recovers to the crease, tracks the shooter's cut, and sets for the ...",
+        90.12,
       ],
       "op": "splitTextToSize",
       "order": 355,
     },
     {
       "args": [
-        "• Shoot against the grain back to the original side.",
+        "• Set early before the rim arrives; read the shooter's body language.",
         165,
       ],
       "op": "splitTextToSize",
@@ -955,7 +855,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        "• Efficient crease exit — take the shortest route to the rim with controlled ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -963,119 +863,119 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Variable Rim Locations",
-        75,
+        "• Square shoulders to the boards when stopping the rim to absorb and settle t...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 358,
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
-        75,
+        "• Hands out in front to smother or corral the rim cleanly and prevent pop outs.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 359,
     },
     {
       "args": [
-        "Variable Rim Locations",
-        75,
+        "• Scan before passing — shoulder check for forecheck pressure and shooter loc...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 360,
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
-        75,
+        "• Crisp, flat pass to the shooter's stick; avoid floaters or passes into feet.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 361,
     },
     {
       "args": [
-        "Shooter Delay Options",
-        75,
+        "• Recover with urgency — head leads, stay tall, regain middle ice before the ...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 362,
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
-        75,
+        "• Track the change of angle as the shooter cuts across; maintain edge control.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 363,
     },
     {
       "args": [
-        "Shooter Delay Options",
-        75,
+        "• Set feet before the release — keep lead knee on puck; avoid sliding into th...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 364,
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
-        75,
+        "• Hard, purposeful rim — simulate a game speed dump in.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 365,
     },
     {
       "args": [
-        "Coach Pressure",
-        75,
+        "• Explode to the wall to present a clean passing target.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 366,
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
-        75,
+        "• Stick available early — show a clear target for the goalie.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 367,
     },
     {
       "args": [
-        "Coach Pressure",
-        75,
+        "• Skate the wall with pace — don't drift or slow down.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 368,
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
-        75,
+        "• Cut across with intent — force the goalie to move laterally.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 369,
     },
     {
       "args": [
-        "Second Shooter Option",
-        75,
+        "• Shoot against the grain back to the original side.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 370,
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
-        75,
+        "• Change release point (pull and drag, push release, delay) to challenge the ...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 371,
     },
     {
       "args": [
-        "Second Shooter Option",
+        "Variable Rim Locations",
         75,
       ],
       "op": "splitTextToSize",
@@ -1083,7 +983,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1091,7 +991,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
+        "Variable Rim Locations",
         75,
       ],
       "op": "splitTextToSize",
@@ -1099,7 +999,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1107,7 +1007,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Net Front Screen",
+        "Shooter Delay Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -1115,11 +1015,123 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
         75,
       ],
       "op": "splitTextToSize",
       "order": 377,
+    },
+    {
+      "args": [
+        "Shooter Delay Options",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 378,
+    },
+    {
+      "args": [
+        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 379,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 380,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 381,
+    },
+    {
+      "args": [
+        "Coach Pressure",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 382,
+    },
+    {
+      "args": [
+        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 383,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 384,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 385,
+    },
+    {
+      "args": [
+        "Second Shooter Option",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 386,
+    },
+    {
+      "args": [
+        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 387,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 388,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 389,
+    },
+    {
+      "args": [
+        "Net Front Screen",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 390,
+    },
+    {
+      "args": [
+        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 391,
     },
     {
       "args": [
@@ -1131,7 +1143,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 378,
+      "order": 392,
     },
     {
       "args": [
@@ -1139,7 +1151,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 379,
+      "order": 393,
     },
     {
       "args": [
@@ -1151,7 +1163,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 380,
+      "order": 394,
     },
     {
       "args": [
@@ -1163,7 +1175,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 381,
+      "order": 395,
     },
     {
       "args": [
@@ -1175,7 +1187,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 382,
+      "order": 396,
     },
     {
       "args": [
@@ -1183,7 +1195,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         114,
       ],
       "op": "splitTextToSize",
-      "order": 383,
+      "order": 397,
     },
     {
       "args": [
@@ -1191,7 +1203,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         114,
       ],
       "op": "splitTextToSize",
-      "order": 384,
+      "order": 398,
     },
     {
       "args": [
@@ -1203,7 +1215,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 385,
+      "order": 399,
     },
     {
       "args": [
@@ -1215,7 +1227,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 386,
+      "order": 400,
     },
     {
       "args": [
@@ -1227,7 +1239,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         30,
       ],
       "op": "addImage",
-      "order": 387,
+      "order": 401,
     },
     {
       "args": [
@@ -1239,7 +1251,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         16,
       ],
       "op": "addImage",
-      "order": 388,
+      "order": 402,
     },
     {
       "args": [
@@ -1247,7 +1259,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 389,
+      "order": 403,
     },
     {
       "args": [
@@ -1259,10 +1271,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         37.78,
       ],
       "op": "addImage",
-      "order": 390,
+      "order": 404,
     },
   ],
-  "totalOps": 86,
+  "totalOps": 87,
 }
 `;
 
@@ -1279,7 +1291,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 391,
+      "order": 406,
     },
     {
       "args": [
@@ -1291,159 +1303,39 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 392,
-    },
-    {
-      "args": [
-        "Two Shot",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 393,
-    },
-    {
-      "args": [
-        "Two Shot",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 394,
-    },
-    {
-      "args": [
-        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
-        165,
-      ],
-      "op": "splitTextToSize",
       "order": 407,
     },
     {
       "args": [
-        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
-        165,
+        "Two Shot",
+        114,
       ],
       "op": "splitTextToSize",
       "order": 408,
     },
     {
       "args": [
-        "• Set early — beat the shooter to the first puck with feet set and chest square.",
-        165,
+        "Two Shot",
+        114,
       ],
       "op": "splitTextToSize",
       "order": 409,
     },
     {
       "args": [
-        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
-        165,
+        "data:image/png;base64,MOCK",
+        "PNG",
+        180,
+        43,
+        10,
+        10,
       ],
-      "op": "splitTextToSize",
+      "op": "addImage",
       "order": 410,
     },
     {
       "args": [
-        "• Efficient recovery — after the first save, recover using the shortest path ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 411,
-    },
-    {
-      "args": [
-        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 412,
-    },
-    {
-      "args": [
-        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 413,
-    },
-    {
-      "args": [
-        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 414,
-    },
-    {
-      "args": [
-        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 415,
-    },
-    {
-      "args": [
-        "• Quick release — the drill only works if the second shot comes fast; no stic...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 416,
-    },
-    {
-      "args": [
-        "• Accuracy over power — two precise shots are more valuable than two hard but...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 417,
-    },
-    {
-      "args": [
-        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 418,
-    },
-    {
-      "args": [
-        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 419,
-    },
-    {
-      "args": [
-        "data:image/png;base64,MOCK",
-        "PNG",
-        41.25,
-        49,
-        127.5,
-        71.72,
-      ],
-      "op": "addImage",
-      "order": 420,
-    },
-    {
-      "args": [
         "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 421,
-    },
-    {
-      "args": [
-        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 422,
-    },
-    {
-      "args": [
-        "• Set early — beat the shooter to the first puck with feet set and chest square.",
         165,
       ],
       "op": "splitTextToSize",
@@ -1451,7 +1343,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1459,7 +1351,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
         165,
       ],
       "op": "splitTextToSize",
@@ -1467,7 +1359,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1475,7 +1367,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1483,7 +1375,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1491,7 +1383,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1499,7 +1391,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1507,7 +1399,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1515,7 +1407,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1523,7 +1415,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1531,19 +1423,135 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 1 — Increased Distance",
-        75,
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 434,
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
-        75,
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 435,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        41.25,
+        55,
+        127.5,
+        71.72,
+      ],
+      "op": "addImage",
+      "order": 436,
+    },
+    {
+      "args": [
+        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 437,
+    },
+    {
+      "args": [
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 438,
+    },
+    {
+      "args": [
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 439,
+    },
+    {
+      "args": [
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 440,
+    },
+    {
+      "args": [
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 441,
+    },
+    {
+      "args": [
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 442,
+    },
+    {
+      "args": [
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 443,
+    },
+    {
+      "args": [
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 444,
+    },
+    {
+      "args": [
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 445,
+    },
+    {
+      "args": [
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 446,
+    },
+    {
+      "args": [
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 447,
+    },
+    {
+      "args": [
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 448,
+    },
+    {
+      "args": [
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 449,
     },
     {
       "args": [
@@ -1551,7 +1559,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 436,
+      "order": 450,
     },
     {
       "args": [
@@ -1559,7 +1567,23 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 437,
+      "order": 451,
+    },
+    {
+      "args": [
+        "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 452,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 453,
     },
     {
       "args": [
@@ -1567,7 +1591,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 438,
+      "order": 454,
     },
     {
       "args": [
@@ -1575,7 +1599,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 439,
+      "order": 455,
     },
     {
       "args": [
@@ -1583,7 +1607,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 440,
+      "order": 456,
     },
     {
       "args": [
@@ -1591,7 +1615,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 441,
+      "order": 457,
     },
     {
       "args": [
@@ -1599,7 +1623,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 442,
+      "order": 458,
     },
     {
       "args": [
@@ -1607,7 +1631,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 443,
+      "order": 459,
     },
     {
       "args": [
@@ -1615,7 +1639,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 444,
+      "order": 460,
     },
     {
       "args": [
@@ -1623,7 +1647,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 445,
+      "order": 461,
     },
     {
       "args": [
@@ -1635,7 +1659,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 446,
+      "order": 462,
     },
     {
       "args": [
@@ -1643,7 +1667,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 447,
+      "order": 463,
     },
     {
       "args": [
@@ -1655,7 +1679,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 448,
+      "order": 464,
     },
     {
       "args": [
@@ -1667,7 +1691,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 449,
+      "order": 465,
     },
     {
       "args": [
@@ -1679,7 +1703,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 450,
+      "order": 466,
     },
     {
       "args": [
@@ -1687,7 +1711,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         114,
       ],
       "op": "splitTextToSize",
-      "order": 451,
+      "order": 467,
     },
     {
       "args": [
@@ -1695,7 +1719,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         114,
       ],
       "op": "splitTextToSize",
-      "order": 452,
+      "order": 468,
     },
     {
       "args": [
@@ -1707,7 +1731,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 453,
+      "order": 469,
     },
     {
       "args": [
@@ -1719,7 +1743,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 454,
+      "order": 470,
     },
     {
       "args": [
@@ -1731,7 +1755,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 455,
+      "order": 471,
     },
     {
       "args": [
@@ -1739,7 +1763,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 456,
+      "order": 472,
     },
     {
       "args": [
@@ -1751,7 +1775,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 457,
+      "order": 473,
     },
   ],
   "lastOps": [
@@ -1761,143 +1785,11 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         165,
       ],
       "op": "splitTextToSize",
-      "order": 408,
-    },
-    {
-      "args": [
-        "• Set early — beat the shooter to the first puck with feet set and chest square.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 409,
-    },
-    {
-      "args": [
-        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 410,
-    },
-    {
-      "args": [
-        "• Efficient recovery — after the first save, recover using the shortest path ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 411,
-    },
-    {
-      "args": [
-        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 412,
-    },
-    {
-      "args": [
-        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 413,
-    },
-    {
-      "args": [
-        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 414,
-    },
-    {
-      "args": [
-        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 415,
-    },
-    {
-      "args": [
-        "• Quick release — the drill only works if the second shot comes fast; no stic...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 416,
-    },
-    {
-      "args": [
-        "• Accuracy over power — two precise shots are more valuable than two hard but...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 417,
-    },
-    {
-      "args": [
-        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 418,
-    },
-    {
-      "args": [
-        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 419,
-    },
-    {
-      "args": [
-        "data:image/png;base64,MOCK",
-        "PNG",
-        41.25,
-        49,
-        127.5,
-        71.72,
-      ],
-      "op": "addImage",
-      "order": 420,
-    },
-    {
-      "args": [
-        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 421,
-    },
-    {
-      "args": [
-        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 422,
-    },
-    {
-      "args": [
-        "• Set early — beat the shooter to the first puck with feet set and chest square.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 423,
-    },
-    {
-      "args": [
-        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
-        165,
-      ],
-      "op": "splitTextToSize",
       "order": 424,
     },
     {
       "args": [
-        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
         165,
       ],
       "op": "splitTextToSize",
@@ -1905,7 +1797,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1913,7 +1805,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1921,7 +1813,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1929,7 +1821,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1937,7 +1829,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1945,7 +1837,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1953,7 +1845,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1961,7 +1853,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
         165,
       ],
       "op": "splitTextToSize",
@@ -1969,19 +1861,135 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Progression 1 — Increased Distance",
-        75,
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 434,
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
-        75,
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 435,
+    },
+    {
+      "args": [
+        "data:image/png;base64,MOCK",
+        "PNG",
+        41.25,
+        55,
+        127.5,
+        71.72,
+      ],
+      "op": "addImage",
+      "order": 436,
+    },
+    {
+      "args": [
+        "1. Pucks are placed a set distance apart just above the crease. Increasing th...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 437,
+    },
+    {
+      "args": [
+        "2. The shooter skates in, takes the first shot, immediately adjusts their ang...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 438,
+    },
+    {
+      "args": [
+        "• Set early — beat the shooter to the first puck with feet set and chest square.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 439,
+    },
+    {
+      "args": [
+        "• Controlled save and rebound awareness — track the puck off the blade and ma...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 440,
+    },
+    {
+      "args": [
+        "• Efficient recovery — after the first save, recover using the shortest path ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 441,
+    },
+    {
+      "args": [
+        "• Head leads the body — eyes snap to the second puck immediately after the fi...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 442,
+    },
+    {
+      "args": [
+        "• Stay tall on recovery — maintain posture so you arrive balanced for the sec...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 443,
+    },
+    {
+      "args": [
+        "• Edge discipline — push with power but stop under control; avoid sliding pas...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 444,
+    },
+    {
+      "args": [
+        "• Hands out in front — keep gloves active and forward to smother pucks, seal ...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 445,
+    },
+    {
+      "args": [
+        "• Quick release — the drill only works if the second shot comes fast; no stic...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 446,
+    },
+    {
+      "args": [
+        "• Accuracy over power — two precise shots are more valuable than two hard but...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 447,
+    },
+    {
+      "args": [
+        "• Consistent approach speed — don't slow down between pucks; maintain flow.",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 448,
+    },
+    {
+      "args": [
+        "• Repetition with purpose — vary shot types: first low, second high; first bl...",
+        165,
+      ],
+      "op": "splitTextToSize",
+      "order": 449,
     },
     {
       "args": [
@@ -1989,7 +1997,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 436,
+      "order": 450,
     },
     {
       "args": [
@@ -1997,7 +2005,23 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 437,
+      "order": 451,
+    },
+    {
+      "args": [
+        "Progression 1 — Increased Distance",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 452,
+    },
+    {
+      "args": [
+        "Move pucks farther apart to force longer goalie recoveries.",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 453,
     },
     {
       "args": [
@@ -2005,7 +2029,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 438,
+      "order": 454,
     },
     {
       "args": [
@@ -2013,7 +2037,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 439,
+      "order": 455,
     },
     {
       "args": [
@@ -2021,7 +2045,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 440,
+      "order": 456,
     },
     {
       "args": [
@@ -2029,7 +2053,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 441,
+      "order": 457,
     },
     {
       "args": [
@@ -2037,7 +2061,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 442,
+      "order": 458,
     },
     {
       "args": [
@@ -2045,7 +2069,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 443,
+      "order": 459,
     },
     {
       "args": [
@@ -2053,7 +2077,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 444,
+      "order": 460,
     },
     {
       "args": [
@@ -2061,7 +2085,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         75,
       ],
       "op": "splitTextToSize",
-      "order": 445,
+      "order": 461,
     },
     {
       "args": [
@@ -2073,7 +2097,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 446,
+      "order": 462,
     },
     {
       "args": [
@@ -2081,7 +2105,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 447,
+      "order": 463,
     },
     {
       "args": [
@@ -2093,7 +2117,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 448,
+      "order": 464,
     },
     {
       "args": [
@@ -2105,7 +2129,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 449,
+      "order": 465,
     },
     {
       "args": [
@@ -2117,7 +2141,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 450,
+      "order": 466,
     },
     {
       "args": [
@@ -2125,7 +2149,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         114,
       ],
       "op": "splitTextToSize",
-      "order": 451,
+      "order": 467,
     },
     {
       "args": [
@@ -2133,7 +2157,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         114,
       ],
       "op": "splitTextToSize",
-      "order": 452,
+      "order": 468,
     },
     {
       "args": [
@@ -2145,7 +2169,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 453,
+      "order": 469,
     },
     {
       "args": [
@@ -2157,7 +2181,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         30,
       ],
       "op": "addImage",
-      "order": 454,
+      "order": 470,
     },
     {
       "args": [
@@ -2169,7 +2193,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         16,
       ],
       "op": "addImage",
-      "order": 455,
+      "order": 471,
     },
     {
       "args": [
@@ -2177,7 +2201,7 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 456,
+      "order": 472,
     },
     {
       "args": [
@@ -2189,10 +2213,10 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
         37.78,
       ],
       "op": "addImage",
-      "order": 457,
+      "order": 473,
     },
   ],
-  "totalOps": 55,
+  "totalOps": 56,
 }
 `;
 
@@ -2209,7 +2233,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 248,
+      "order": 260,
     },
     {
       "args": [
@@ -2221,135 +2245,39 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 249,
-    },
-    {
-      "args": [
-        "Shot Rebound Recovery",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 250,
-    },
-    {
-      "args": [
-        "Shot Rebound Recovery",
-        114,
-      ],
-      "op": "splitTextToSize",
-      "order": 251,
-    },
-    {
-      "args": [
-        "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 252,
-    },
-    {
-      "args": [
-        "2. The goalie starts on the post in RVH, then releases off the post to establ...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 253,
-    },
-    {
-      "args": [
-        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 254,
-    },
-    {
-      "args": [
-        "4. The goalie executes a controlled butterfly slide across the crease to make...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 255,
-    },
-    {
-      "args": [
-        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 256,
-    },
-    {
-      "args": [
-        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 257,
-    },
-    {
-      "args": [
-        "• Track the initial shot into the save and recover quickly to locate the rebo...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 258,
-    },
-    {
-      "args": [
-        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 259,
-    },
-    {
-      "args": [
-        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
-        165,
-      ],
-      "op": "splitTextToSize",
-      "order": 260,
-    },
-    {
-      "args": [
-        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
-        165,
-      ],
-      "op": "splitTextToSize",
       "order": 261,
     },
     {
       "args": [
-        "data:image/png;base64,MOCK",
-        "PNG",
-        41.25,
-        53,
-        127.5,
-        85,
+        "Shot Rebound Recovery",
+        114,
       ],
-      "op": "addImage",
+      "op": "splitTextToSize",
       "order": 262,
     },
     {
       "args": [
-        "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
-        165,
+        "Shot Rebound Recovery",
+        114,
       ],
       "op": "splitTextToSize",
       "order": 263,
     },
     {
       "args": [
-        "2. The goalie starts on the post in RVH, then releases off the post to establ...",
-        165,
+        "data:image/png;base64,MOCK",
+        "PNG",
+        180,
+        43,
+        10,
+        10,
       ],
-      "op": "splitTextToSize",
+      "op": "addImage",
       "order": 264,
     },
     {
       "args": [
-        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
+        "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
         165,
       ],
       "op": "splitTextToSize",
@@ -2357,7 +2285,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "4. The goalie executes a controlled butterfly slide across the crease to make...",
+        "2. The goalie starts on the post in RVH, then releases off the post to establ...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2365,7 +2293,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2373,7 +2301,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
+        "4. The goalie executes a controlled butterfly slide across the crease to make...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2381,7 +2309,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "• Track the initial shot into the save and recover quickly to locate the rebo...",
+        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2389,7 +2317,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
+        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2397,7 +2325,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
+        "• Track the initial shot into the save and recover quickly to locate the rebo...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2405,7 +2333,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
+        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
         165,
       ],
       "op": "splitTextToSize",
@@ -2413,111 +2341,115 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 1 - Variable Rebound Location",
-        75,
+        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 273,
     },
     {
       "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
-        75,
+        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 274,
     },
     {
       "args": [
-        "Progression 1 - Variable Rebound Location",
-        75,
+        "data:image/png;base64,MOCK",
+        "PNG",
+        41.25,
+        55,
+        127.5,
+        85,
       ],
-      "op": "splitTextToSize",
+      "op": "addImage",
       "order": 275,
     },
     {
       "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
-        75,
+        "1. Coach begins with a puck below the goal line and passes to Shooter 1.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 276,
     },
     {
       "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
-        75,
+        "2. The goalie starts on the post in RVH, then releases off the post to establ...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 277,
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
-        75,
+        "3. The shooter takes a controlled low shot aimed at the goalie's far pad to g...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 278,
     },
     {
       "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
-        75,
+        "4. The goalie executes a controlled butterfly slide across the crease to make...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 279,
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
-        75,
+        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 280,
     },
     {
       "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
-        75,
+        "• Release cleanly from RVH and square up to Shooter 1 with proper angle and d...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 281,
     },
     {
       "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
-        75,
+        "• Track the initial shot into the save and recover quickly to locate the rebo...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 282,
     },
     {
       "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
-        75,
+        "• Execute a controlled butterfly slide to Shooter 2, keeping weight centered,...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 283,
     },
     {
       "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
-        75,
+        "• Shooter 1: Deliver a purposeful low shot to the far pad to create a predict...",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 284,
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
-        75,
+        "• Shooter 2: Attack the rebound immediately with a quick, decisive shot.",
+        165,
       ],
       "op": "splitTextToSize",
       "order": 285,
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 1 - Variable Rebound Location",
         75,
       ],
       "op": "splitTextToSize",
@@ -2525,7 +2457,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2533,7 +2465,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 1 - Variable Rebound Location",
         75,
       ],
       "op": "splitTextToSize",
@@ -2541,7 +2473,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2549,7 +2481,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -2557,7 +2489,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2565,11 +2497,115 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
       "order": 292,
+    },
+    {
+      "args": [
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 293,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 294,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 295,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 296,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 297,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 298,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 299,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 300,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 301,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 302,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 303,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 304,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 305,
     },
     {
       "args": [
@@ -2581,7 +2617,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 293,
+      "order": 306,
     },
     {
       "args": [
@@ -2589,7 +2625,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 294,
+      "order": 307,
     },
     {
       "args": [
@@ -2601,7 +2637,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 295,
+      "order": 308,
     },
     {
       "args": [
@@ -2613,7 +2649,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 296,
+      "order": 309,
     },
     {
       "args": [
@@ -2625,7 +2661,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 297,
+      "order": 310,
     },
     {
       "args": [
@@ -2633,7 +2669,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         114,
       ],
       "op": "splitTextToSize",
-      "order": 298,
+      "order": 311,
     },
     {
       "args": [
@@ -2641,7 +2677,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         114,
       ],
       "op": "splitTextToSize",
-      "order": 299,
+      "order": 312,
     },
     {
       "args": [
@@ -2653,7 +2689,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 300,
+      "order": 313,
     },
     {
       "args": [
@@ -2665,7 +2701,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 301,
+      "order": 314,
     },
     {
       "args": [
@@ -2677,7 +2713,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 302,
+      "order": 315,
     },
     {
       "args": [
@@ -2685,7 +2721,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 303,
+      "order": 316,
     },
     {
       "args": [
@@ -2697,7 +2733,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 304,
+      "order": 317,
     },
   ],
   "lastOps": [
@@ -2707,7 +2743,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 265,
+      "order": 278,
     },
     {
       "args": [
@@ -2715,7 +2751,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 266,
+      "order": 279,
     },
     {
       "args": [
@@ -2723,7 +2759,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 267,
+      "order": 280,
     },
     {
       "args": [
@@ -2731,7 +2767,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 268,
+      "order": 281,
     },
     {
       "args": [
@@ -2739,7 +2775,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 269,
+      "order": 282,
     },
     {
       "args": [
@@ -2747,7 +2783,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 270,
+      "order": 283,
     },
     {
       "args": [
@@ -2755,7 +2791,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 271,
+      "order": 284,
     },
     {
       "args": [
@@ -2763,115 +2799,11 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         165,
       ],
       "op": "splitTextToSize",
-      "order": 272,
-    },
-    {
-      "args": [
-        "Progression 1 - Variable Rebound Location",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 273,
-    },
-    {
-      "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 274,
-    },
-    {
-      "args": [
-        "Progression 1 - Variable Rebound Location",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 275,
-    },
-    {
-      "args": [
-        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 276,
-    },
-    {
-      "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 277,
-    },
-    {
-      "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 278,
-    },
-    {
-      "args": [
-        "Progression 2 - Shooter 2 Delay or Quick Release Options",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 279,
-    },
-    {
-      "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 280,
-    },
-    {
-      "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 281,
-    },
-    {
-      "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 282,
-    },
-    {
-      "args": [
-        "Progression 3 - Coach Shot Fake Before Pass",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 283,
-    },
-    {
-      "args": [
-        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 284,
-    },
-    {
-      "args": [
-        "Progression 4 - Third Shot Recovery",
-        75,
-      ],
-      "op": "splitTextToSize",
       "order": 285,
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 1 - Variable Rebound Location",
         75,
       ],
       "op": "splitTextToSize",
@@ -2879,7 +2811,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 4 - Third Shot Recovery",
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2887,7 +2819,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        "Progression 1 - Variable Rebound Location",
         75,
       ],
       "op": "splitTextToSize",
@@ -2895,7 +2827,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
+        "Purpose: Force the goalie to read and react instead of sliding to a pre-plann...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2903,7 +2835,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
@@ -2911,7 +2843,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Progression 5 - Traffic / Screen Layer",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2919,11 +2851,115 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Progression 2 - Shooter 2 Delay or Quick Release Options",
         75,
       ],
       "op": "splitTextToSize",
       "order": 292,
+    },
+    {
+      "args": [
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 293,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 294,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 295,
+    },
+    {
+      "args": [
+        "Progression 3 - Coach Shot Fake Before Pass",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 296,
+    },
+    {
+      "args": [
+        "Purpose: Add deception and force the goalie to manage visual cues. Coach give...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 297,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 298,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 299,
+    },
+    {
+      "args": [
+        "Progression 4 - Third Shot Recovery",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 300,
+    },
+    {
+      "args": [
+        "Purpose: Build endurance and post-save recovery habits. After Shooter 2's reb...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 301,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 302,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 303,
+    },
+    {
+      "args": [
+        "Progression 5 - Traffic / Screen Layer",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 304,
+    },
+    {
+      "args": [
+        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        75,
+      ],
+      "op": "splitTextToSize",
+      "order": 305,
     },
     {
       "args": [
@@ -2935,7 +2971,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 293,
+      "order": 306,
     },
     {
       "args": [
@@ -2943,7 +2979,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 294,
+      "order": 307,
     },
     {
       "args": [
@@ -2955,7 +2991,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 295,
+      "order": 308,
     },
     {
       "args": [
@@ -2967,7 +3003,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 296,
+      "order": 309,
     },
     {
       "args": [
@@ -2979,7 +3015,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 297,
+      "order": 310,
     },
     {
       "args": [
@@ -2987,7 +3023,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         114,
       ],
       "op": "splitTextToSize",
-      "order": 298,
+      "order": 311,
     },
     {
       "args": [
@@ -2995,7 +3031,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         114,
       ],
       "op": "splitTextToSize",
-      "order": 299,
+      "order": 312,
     },
     {
       "args": [
@@ -3007,7 +3043,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 300,
+      "order": 313,
     },
     {
       "args": [
@@ -3019,7 +3055,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         30,
       ],
       "op": "addImage",
-      "order": 301,
+      "order": 314,
     },
     {
       "args": [
@@ -3031,7 +3067,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         16,
       ],
       "op": "addImage",
-      "order": 302,
+      "order": 315,
     },
     {
       "args": [
@@ -3039,7 +3075,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         81.33,
       ],
       "op": "splitTextToSize",
-      "order": 303,
+      "order": 316,
     },
     {
       "args": [
@@ -3051,9 +3087,9 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         37.78,
       ],
       "op": "addImage",
-      "order": 304,
+      "order": 317,
     },
   ],
-  "totalOps": 57,
+  "totalOps": 58,
 }
 `;

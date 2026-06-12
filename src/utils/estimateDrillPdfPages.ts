@@ -44,7 +44,8 @@ const TITLE_CHARS_PER_LINE = 40;
 //   initial Y offset + gap after logos + red separator gap + tags rows.
 // HEADER_AND_TAGS_BASE = LOGO_HEIGHT_MM (16) contributes the minimum title area height,
 // so the overhead is the former fixed constant (52) minus that minimum (16) = 36.
-const HEADER_AND_TAGS_BASE = 36;
+// Note: Increased by 2mm (from 36 to 38) to account for the inline QR code and column tags on page 1.
+const HEADER_AND_TAGS_BASE = 38;
 
 /**
  * Estimates the height in mm of the PDF title header area for the given drill name.

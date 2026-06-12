@@ -2,11 +2,15 @@
 
 ## Skill Development Areas
 
-[Detail the specific skills to focus on, such as:]
+**The Goaltending Fundamental Skills Cycle**
 
-- Positioning and angles
-- Butterfly technique
-- Glove and blocker work
-- Rebound control
-- Communication
-- Mental preparation
+These are the 6 core fundamentals of goaltending as established by USA Hockey:
+
+- Stance
+- Skating
+- Positioning
+- Save Selection
+- Rebound Control
+- Recovery
+
+Also include individual and skating skills from fundamentals diagrams.
