@@ -8,7 +8,7 @@ All goalies will need the following equipment:
 - leg pads
 - knee pads (if not integrated into younger player leg pads)
 - hockey pants (goalie pants recommended for goalies 12U+)
-- cup (goalie cup recommended for 10u+)
+- cup (goalie cup recommended for 10U+)
 - chest protector
 - goalie glove
 - goalie blocker
