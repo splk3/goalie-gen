@@ -947,7 +947,6 @@ export const generateDrillPdf = async (
         const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
         const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
         drawImage(videoQrCodeDataURL, "PNG", qrX, qrY, LINK_QR_CODE_SIZE_MM, LINK_QR_CODE_SIZE_MM);
-        
         // Ensure sectionY clears the bottom of the QR code
         const qrBottomY = qrY + LINK_QR_CODE_SIZE_MM;
         sectionY = Math.max(sectionY + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT, qrBottomY);
