@@ -158,7 +158,7 @@ function Input({ id, label, value, onChange, placeholder, disabled }: InputProps
 }
 
 function extractLevel3Section(markdown: string, heading: string): string {
-  const lines = markdown.split("\n");
+  const lines = markdown.split(/\r?\n/);
   const sectionLines: string[] = [];
   let collecting = false;
 
