@@ -16,7 +16,7 @@ Ultimately, our club's goal is to create a fun, positive experience that builds 
 At the team level, our goals blend competitive success with player advancement. Teams should aim to compete at the highest level while actively preparing players for advancement to the next age group and/or competition level.
 
 For our individual netminders, goals are focused on technical mastery, athleticism, and character.
-Goalies should aim to master basic crease movements, proper depth, positioning, an save execution.
+Goalies should aim to master basic crease movements, proper depth, positioning, and save execution.
 Goals should also include improving rebound control, puck handling, and the ability to read plays during game situations like odd-man rushes or breakaways.
 
 We want our athletes to set goals around improving their flexibility, agility, endurance, and quick reflexes.
