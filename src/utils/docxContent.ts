@@ -47,7 +47,7 @@ export function parseRunData(text: string): RunData[] {
  */
 export function textToRuns(text: string): TextRun[] {
   return parseRunData(text).map(
-    (run) => new TextRun({ text: run.text, italics: run.italics || undefined })
+    (run) => new TextRun({ text: run.text, italics: run.italics || undefined, color: "000000" })
   );
 }
 
@@ -69,7 +69,7 @@ export function blocksToDocxParagraphs(blocks: MarkdownBlock[]): Paragraph[] {
               : HeadingLevel.HEADING_3;
         return [
           new Paragraph({
-            text: block.text,
+            children: [new TextRun({ text: block.text, color: "000000" })],
             heading: level,
             spacing: { before: 400, after: 200 },
           }),

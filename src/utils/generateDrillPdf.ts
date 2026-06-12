@@ -408,7 +408,7 @@ export const generateDrillPdf = async (
     const textX = qrX - 2;
     const charHeight = doc.getFontSize() / doc.internal.scaleFactor;
     const textY = qrY + qrSize / 2 + charHeight / 2 - 0.5;
-    doc.text("View Drill on GoalieGen.com:", textX, textY, { align: "right" });
+    doc.text("Scan to View:", textX, textY, { align: "right" });
   }
 
   // Tags section - render Age Group and Skill Level in columns, Equipment below them
@@ -947,10 +947,15 @@ export const generateDrillPdf = async (
         const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
         const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
         drawImage(videoQrCodeDataURL, "PNG", qrX, qrY, LINK_QR_CODE_SIZE_MM, LINK_QR_CODE_SIZE_MM);
+        
+        // Ensure sectionY clears the bottom of the QR code
+        const qrBottomY = qrY + LINK_QR_CODE_SIZE_MM;
+        sectionY = Math.max(sectionY + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT, qrBottomY);
+      } else {
+        sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
       }
 
       doc.setTextColor(0, 0, 0);
-      sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
     }
 
     return {
