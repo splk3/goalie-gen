@@ -1,23 +1,23 @@
 updates:
-- cooldown:
-    default-days: 7
-  directory: /
-  groups:
-    npm-all:
-      patterns:
-      - "*"
-  open-pull-requests-limit: 10
-  package-ecosystem: npm
-  schedule:
-    interval: weekly
-  versioning-strategy: increase-if-necessary
-- cooldown:
-    default-days: 7
-  directory: /
-  ignore:
-  - dependency-name: "github/gh-aw-actions" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
-  open-pull-requests-limit: 10
-  package-ecosystem: github-actions
-  schedule:
-    interval: weekly
+  - cooldown:
+      default-days: 7
+    directory: /
+    groups:
+      npm-all:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+    package-ecosystem: npm
+    schedule:
+      interval: weekly
+    versioning-strategy: increase-if-necessary
+  - cooldown:
+      default-days: 7
+    directory: /
+    ignore:
+      - dependency-name: "github/gh-aw-actions" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
+    open-pull-requests-limit: 10
+    package-ecosystem: github-actions
+    schedule:
+      interval: weekly
 version: 2
