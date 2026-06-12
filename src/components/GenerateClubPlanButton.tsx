@@ -519,7 +519,7 @@ export default function GenerateClubPlanButton() {
     setGeneratedFileName("");
 
     setIsEquipmentProvided(false);
-    setEquipmentProvidedAgeGroups("");
+    setEquipmentProvidedAgeGroups(DEFAULT_PROVIDED_EQUIPMENT_AGE_GROUPS);
     setHasTeamPracticeGoalieTraining(false);
     setHasGoalieCoachPerTeam(false);
     setHasYoungerGoalieMentors(false);
