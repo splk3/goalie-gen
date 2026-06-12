@@ -13,8 +13,10 @@ coaching_focus_points: |-
   - Body Positioning
     - Coaching point 3
   - Coaching point 4
-images:
-  - test-drill-image.png
+shooter_focus_points: |-
+  - Shot selection and release cues
+  - Screen and net-front timing
+drill_image: test-drill-image.png
 video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 drill_creation_date: 2024-01-01
 drill_updated_date: 2024-06-15
@@ -49,5 +51,8 @@ tags:
     - ice_marker
     - bumpers
     - none
+  game_situations:
+    - net_front_traffic
+    - odd_man_rush
   space_required:
     - flexible

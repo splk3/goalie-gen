@@ -134,6 +134,12 @@ describe("GoalieDrills page", () => {
     render(<GoalieDrills data={dataWithMissingUpdatedDate} />);
 
     const teamDrillCard = screen.getByRole("link", { name: "Team Drill" });
+    expect(within(teamDrillCard).getByText("Team Drill!")).toBeInTheDocument();
+    const teamDrillBadge = within(teamDrillCard).getByText("Team Drill!").closest("p");
+    expect(teamDrillBadge?.querySelector("img")).toHaveAttribute(
+      "src",
+      expect.stringContaining("/images/trophy.svg")
+    );
     expect(within(teamDrillCard).getByText("Created:")).toBeInTheDocument();
     expect(within(teamDrillCard).getByText("Updated:")).toBeInTheDocument();
     expect(within(teamDrillCard).getByText("Created:").parentElement).toHaveTextContent(
@@ -149,6 +155,57 @@ describe("GoalieDrills page", () => {
       "Created: 2026-01-01"
     );
     expect(within(goalieDrillCard).queryByText("Updated:")).not.toBeInTheDocument();
+    expect(within(goalieDrillCard).queryByText("Team Drill!")).not.toBeInTheDocument();
+  });
+
+  it("shows New Content! or Updated Content! based on dates within the last 30 days", () => {
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(new Date("2026-01-20T12:00:00.000Z"));
+
+      const freshnessData = {
+        allDrill: {
+          nodes: [
+            createDrill(1, {
+              slug: "fresh-updated",
+              name: "Fresh Updated",
+              drill_creation_date: "2025-11-01",
+              drill_updated_date: "2026-01-10",
+            }),
+            createDrill(2, {
+              slug: "fresh-created",
+              name: "Fresh Created",
+              drill_creation_date: "2026-01-05",
+              drill_updated_date: undefined,
+            }),
+            createDrill(3, {
+              slug: "stale-drill",
+              name: "Stale Drill",
+              drill_creation_date: "2025-11-01",
+              drill_updated_date: "2025-12-01",
+            }),
+          ],
+        },
+      };
+
+      render(<GoalieDrills data={freshnessData} />);
+
+      const freshUpdatedCard = screen.getByRole("link", { name: "Fresh Updated" });
+      const freshUpdatedBadge = within(freshUpdatedCard).getByText("Updated Content!").closest("p");
+      expect(freshUpdatedBadge?.querySelector("img")).toHaveAttribute(
+        "src",
+        expect.stringContaining("/images/fire.svg")
+      );
+
+      const freshCreatedCard = screen.getByRole("link", { name: "Fresh Created" });
+      expect(within(freshCreatedCard).getByText("New Content!")).toBeInTheDocument();
+
+      const staleCard = screen.getByRole("link", { name: "Stale Drill" });
+      expect(within(staleCard).queryByText("Updated Content!")).not.toBeInTheDocument();
+      expect(within(staleCard).queryByText("New Content!")).not.toBeInTheDocument();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("syncs filters when location.search changes while mounted", async () => {
