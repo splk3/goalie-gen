@@ -1,8 +1,15 @@
 <!-- markdownlint-disable MD041 -->
 
-## Additional Resources and Notes
+## Goalie Evaluations
 
-### Progress Tracking
+### Evaluation Notes Placeholder
 
-Monitor goaltender development throughout the season. Regular feedback and positive
-reinforcement are crucial for youth player development.
+[GOALIE_EVALUATION_NOTES]
+
+### Evaluation Criteria Placeholder
+
+[GOALIE_EVALUATION_CRITERIA]
+
+### Follow-Up Action Items Placeholder
+
+[GOALIE_EVALUATION_FOLLOW_UP_ACTION_ITEMS]
