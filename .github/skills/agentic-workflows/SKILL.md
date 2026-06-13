@@ -11,6 +11,7 @@ This skill is a dispatcher: identify the task type, load the matching workflow p
 
 Read only the files you need:
 Load these files from `github/gh-aw` (they are not available locally).
+
 - `.github/aw/agentic-chat.md`
 - `.github/aw/agentic-workflows-mcp.md`
 - `.github/aw/asciicharts.md`
@@ -61,7 +62,7 @@ Load these files from `github/gh-aw` (they are not available locally).
 - `.github/aw/workflow-patterns.md`
 
 - `.github/skills/agentic-workflow-designer/SKILL.md`
-After loading the matching workflow prompt or skill, follow it directly:
+  After loading the matching workflow prompt or skill, follow it directly:
 - Design workflows from scratch via interview: `skills/agentic-workflow-designer/SKILL.md`
 - Create new workflows: `.github/aw/create-agentic-workflow.md`
 - Update existing workflows: `.github/aw/update-agentic-workflow.md`
