@@ -8,6 +8,7 @@ on:
   #   - cron: "weekly on saturday"
 
 permissions:
+  copilot-requests: write
   contents: read
   issues: read
   pull-requests: read
