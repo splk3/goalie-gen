@@ -44,7 +44,7 @@ export default function UsaHockeyGoldBanner({
           <p className={textClassName}>
             This website was developed as part of the{" "}
             <a
-              href="https://lms.usahockeylearningcenter.com/pages/36/goalie-development"
+              href="https://www.usahockey.com/goaltendingcoachdevelopment"
               target="_blank"
               rel="noopener noreferrer"
               className="underline font-semibold hover:opacity-80"
@@ -55,7 +55,17 @@ export default function UsaHockeyGoldBanner({
             produce a resource that will be shared and can be repeated by all coaches across the
             country. The goal of this website is to inform and equip clubs and coaches to best
             develop their goalies, and to help all goalies reach their full potential. This website
-            lowers the barriers to all coaches becoming goalie coaches!
+            lowers the barriers to all coaches becoming goalie coaches! Sign up for a Goaltending
+            certification course on the{" "}
+            <a
+              href="https://lms.usahockeylearningcenter.com/pages/36/goalie-development"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-semibold hover:opacity-80"
+            >
+              USA Hockey Learning Center
+            </a>
+            {". "}
           </p>
         </div>
       </div>

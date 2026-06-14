@@ -1,11 +1,16 @@
 import * as React from "react";
+import * as yaml from "js-yaml";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
-import ExternalLinkButton from "../components/ExternalLinkButton";
+import ResourceList from "../components/ResourceList";
 import DownloadMaterialButton from "../components/DownloadMaterialButton";
 import GoalieJournalButton from "../components/GoalieJournalButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
+import rawResourceList from "../data/coach-resources-list.yml";
+import type { ResourceListData } from "../types/resources";
+
+const resourceData = yaml.load(rawResourceList, { schema: yaml.FAILSAFE_SCHEMA }) as ResourceListData;
 
 export default function CoachResources() {
   return (
@@ -28,19 +33,7 @@ export default function CoachResources() {
       </div>
 
       <div className="max-w-3xl mx-auto space-y-8">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">
-            External Resources
-          </h2>
-          <div className="space-y-4">
-            <ExternalLinkButton
-              href="https://www.usahockey.com/goaltendingplans"
-              trackingLabel="USA Hockey Goalie Plans"
-            >
-              USA Hockey Goalie Plans
-            </ExternalLinkButton>
-          </div>
-        </div>
+        <ResourceList items={resourceData["resource-list"]} />
 
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">

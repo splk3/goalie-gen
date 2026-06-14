@@ -3,6 +3,7 @@ import type { Paragraph } from "docx";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import Modal from "./Modal";
+import SliderToggle from "./SliderToggle";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import { parseMarkdown } from "../utils/markdownParser";
@@ -40,14 +41,6 @@ type ToggleProps = {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  disabled: boolean;
-};
-
-type SliderToggleProps = {
-  id: string;
-  label: string;
-  enabled: boolean;
-  onChange: (enabled: boolean) => void;
   disabled: boolean;
 };
 
@@ -104,37 +97,6 @@ function Toggle({ id, label, checked, onChange, disabled }: ToggleProps) {
       />
       <span className="text-gray-700 dark:text-gray-300">{label}</span>
     </label>
-  );
-}
-
-function SliderToggle({ id, label, enabled, onChange, disabled }: SliderToggleProps) {
-  return (
-    <div className="mb-3 flex items-center justify-between gap-4">
-      <span id={`${id}-label`} className="text-gray-700 dark:text-gray-300">
-        {label}
-      </span>
-      <button
-        id={id}
-        type="button"
-        role="switch"
-        aria-checked={enabled}
-        aria-labelledby={`${id}-label`}
-        aria-label={label}
-        onClick={() => onChange(!enabled)}
-        disabled={disabled}
-        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-usa-blue ${
-          enabled
-            ? "bg-usa-blue dark:bg-blue-500"
-            : "bg-gray-400 dark:bg-gray-600 disabled:bg-gray-300 dark:disabled:bg-gray-700"
-        } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-      >
-        <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-            enabled ? "translate-x-6" : "translate-x-0.5"
-          }`}
-        />
-      </button>
-    </div>
   );
 }
 
