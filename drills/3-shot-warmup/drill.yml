@@ -1,0 +1,54 @@
+---
+name: 3 Shot Warmup
+
+description: |-
+  3 player full ice skating warmup with shots and screens.
+
+drill_steps: |-
+  1. Drill starts on whistle. Both sides go at the same time.
+  2. First player skates down dot lane and takes shot, then posts up for tip/screen.
+  3. Second player skates down and starts touch passing with coach and transitioning around the circle. They are the last to shoot.
+  4. Third player skates down dot lanes, then cuts to the blue line. They also post up for tip/screen.
+  5. Second player skates down and shoots.
+
+coaching_focus_points: |-
+  - Fight for sight line through screens.
+  - Seal on tips.
+  - Challenge on direct shots.
+
+shooter_focus_points: |-
+  - Shoot by the top of circle.
+  - Get in front of goalie's eyes.
+  - Touch passes with giving a good target.
+
+drill_image: 3-shot-warmup.png
+
+drill_creation_date: 2026-06-12
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - none
+  space_required:
+    - full_ice
