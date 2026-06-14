@@ -1,0 +1,53 @@
+---
+name: Neutral Zone Race with Backcheck
+
+description: Neutral zone race to an odd man rush offensive option with back checkers.
+
+drill_steps: |-
+  1. X and O start near the coach in the neutral zone and race for the puck.
+  2. Whoever wins the race passes to their teammates to start the offensive zone entry and rush.
+  3. The opposite team back checks hard to gain possession.
+  4. If possession is gained, the team transitions and goes back the other way.
+  5. Drill stops at a goal, save, or whistle.
+
+coaching_focus_points: |-
+  - Recognize passing options quickly after winning the race.
+  - Communicate with back checkers throughout the play.
+  - Set feet on the shooter when possible.
+
+shooter_focus_points: |-
+  - Set up the play or use the odd man rush for a scoring attempt.
+  - Head check back checkers to maintain awareness.
+  - Give passing targets to support the puck carrier.
+
+drill_image: neutral-zone-race-with-backcheck.png
+
+drill_creation_date: 2026-06-12
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_sided_game
+  equipment:
+    - none
+  space_required:
+    - full_ice
