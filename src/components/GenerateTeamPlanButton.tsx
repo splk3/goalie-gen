@@ -2,6 +2,7 @@ import * as React from "react";
 import type { FileChild, IRunOptions } from "docx";
 import Logo from "./Logo";
 import Modal from "./Modal";
+import SliderToggle from "./SliderToggle";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import { parseMarkdown } from "../utils/markdownParser";
@@ -37,51 +38,6 @@ interface EventSelection {
 
 interface GenerateTeamPlanButtonProps {
   variant?: "blue" | "red";
-}
-
-type SliderToggleProps = {
-  id: string;
-  label: string;
-  enabled: boolean;
-  onChange: (enabled: boolean) => void;
-  disabled: boolean;
-};
-
-function SliderToggle({ id, label, enabled, onChange, disabled }: SliderToggleProps) {
-  const trackClasses = enabled
-    ? disabled
-      ? "bg-blue-300 dark:bg-blue-700"
-      : "bg-usa-blue dark:bg-blue-500"
-    : disabled
-      ? "bg-gray-300 dark:bg-gray-700"
-      : "bg-gray-400 dark:bg-gray-600";
-
-  return (
-    <div className="mb-3 flex items-center justify-between gap-4">
-      <span id={`${id}-label`} className="text-gray-700 dark:text-gray-300">
-        {label}
-      </span>
-      <button
-        id={id}
-        type="button"
-        role="switch"
-        aria-checked={enabled}
-        aria-labelledby={`${id}-label`}
-        aria-label={label}
-        onClick={() => onChange(!enabled)}
-        disabled={disabled}
-        className={`relative inline-flex h-6 w-11 shrink-0 items-center overflow-hidden rounded-full p-0.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-usa-blue focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 ${trackClasses} ${
-          disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
-        }`}
-      >
-        <span
-          className={`pointer-events-none block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
-            enabled ? "translate-x-5" : "translate-x-0"
-          }`}
-        />
-      </button>
-    </div>
-  );
 }
 
 const CONFIGURABLE_EVENT_TYPES: ConfigurableEventType[] = [
@@ -342,7 +298,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     if (!datePendingDeletion) {
       return;
     }
-    setSelectedEventDates((previous) => previous.filter((entry) => entry.date !== datePendingDeletion));
+    setSelectedEventDates((previous) =>
+      previous.filter((entry) => entry.date !== datePendingDeletion)
+    );
     setDatePendingDeletion(null);
     requestAnimationFrame(() => {
       addEventDatesButtonRef.current?.focus();
@@ -808,7 +766,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               rows: tableRows,
             })
           );
-          documentChildren.push(new Paragraph({ children: [toBlackRun("")], spacing: { after: 120 } }));
+          documentChildren.push(
+            new Paragraph({ children: [toBlackRun("")], spacing: { after: 120 } })
+          );
         });
       }
 
@@ -991,7 +951,11 @@ ${getEventStarterMarkdown(event.eventType)}`)
     setSelectedEventDates((previous) =>
       previous.map((entry) => ({
         ...entry,
-        eventTypes: reconcileEventTypes(entry.eventTypes, availableEventTypeOptions, defaultEventType),
+        eventTypes: reconcileEventTypes(
+          entry.eventTypes,
+          availableEventTypeOptions,
+          defaultEventType
+        ),
       }))
     );
   }, [availableEventTypeOptions, getDefaultEventType]);
@@ -1325,7 +1289,10 @@ ${getEventStarterMarkdown(event.eventType)}`)
                   </p>
                   <div className="space-y-3">
                     {selectedEventDates.map((selection) => (
-                      <div key={selection.date} className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+                      <div
+                        key={selection.date}
+                        className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                      >
                         <div className="flex items-start gap-3">
                           <button
                             type="button"
@@ -1421,7 +1388,9 @@ ${getEventStarterMarkdown(event.eventType)}`)
                                       type="button"
                                       onClick={() =>
                                         updateSelectionEventTypes(selection.date, (eventTypes) =>
-                                          eventTypes.filter((_, valueIndex) => valueIndex !== index + 1)
+                                          eventTypes.filter(
+                                            (_, valueIndex) => valueIndex !== index + 1
+                                          )
                                         )
                                       }
                                       disabled={!canEditEventPlanning}
@@ -1646,7 +1615,10 @@ ${getEventStarterMarkdown(event.eventType)}`)
               >
                 Delete event date?
               </h3>
-              <p id="delete-event-date-description" className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+              <p
+                id="delete-event-date-description"
+                className="mb-4 text-sm text-gray-700 dark:text-gray-300"
+              >
                 Remove {formatDisplayDate(datePendingDeletion)} and all event types assigned to this
                 date?
               </p>
