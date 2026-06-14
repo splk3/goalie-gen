@@ -101,7 +101,10 @@ function valueOrPlaceholder(value: string, placeholderName: string): string {
   return trimmed || `[${placeholderName}]`;
 }
 
-function normalizeUrl(url: string): string {
+function normalizeUrl(url: string | null | undefined): string {
+  if (!url) {
+    return "";
+  }
   const trimmed = url.trim();
   if (!trimmed) {
     return "";
@@ -188,7 +191,7 @@ async function getQrCodePngData(url: string): Promise<Uint8Array | null> {
     if (!base64) {
       return null;
     }
-    const binaryString = window.atob(base64);
+    const binaryString = atob(base64);
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i += 1) {
       bytes[i] = binaryString.charCodeAt(i);
@@ -276,6 +279,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const closeDatePickerWithoutSaving = React.useCallback(() => {
     setIsDatePickerOpen(false);
     setDraftSelectedDateKeys([]);
+    requestAnimationFrame(() => {
+      addEventDatesButtonRef.current?.focus();
+    });
   }, []);
 
   const openDeleteDateConfirmation = React.useCallback(
@@ -484,7 +490,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     );
 
     if (arrayBuffer && imagePreview) {
-      const docxImageType = toDocxImageTypeFromMime(selectedImage?.type);
+      const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
       let imgWidth = 400;
       let imgHeight = 400;
 
@@ -1566,6 +1572,12 @@ ${getEventStarterMarkdown(event.eventType)}`)
                       type="button"
                       onClick={() => toggleDraftDate(dateKey)}
                       aria-pressed={isSelected}
+                      aria-label={date.toLocaleDateString(undefined, {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
                       className={`rounded px-2 py-1 text-sm transition-colors ${
                         isSelected
                           ? "bg-usa-blue text-white dark:bg-blue-600"

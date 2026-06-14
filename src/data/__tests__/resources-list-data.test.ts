@@ -27,7 +27,7 @@ const DATA_DIR = path.resolve(__dirname, "../../../src/data");
 function loadResourceList(fileName: string): ResourceListData {
   const filePath = path.join(DATA_DIR, fileName);
   const raw = fs.readFileSync(filePath, "utf8");
-  return yaml.load(raw) as ResourceListData;
+  return yaml.load(raw, { schema: yaml.FAILSAFE_SCHEMA }) as ResourceListData;
 }
 
 /**

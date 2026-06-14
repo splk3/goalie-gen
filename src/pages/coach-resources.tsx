@@ -10,7 +10,7 @@ import BackLinkButton from "../components/BackLinkButton";
 import rawResourceList from "../data/coach-resources-list.yml";
 import type { ResourceListData } from "../types/resources";
 
-const resourceData = yaml.load(rawResourceList) as ResourceListData;
+const resourceData = yaml.load(rawResourceList, { schema: yaml.FAILSAFE_SCHEMA }) as ResourceListData;
 
 export default function CoachResources() {
   return (

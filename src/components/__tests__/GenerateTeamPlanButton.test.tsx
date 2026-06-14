@@ -279,7 +279,7 @@ describe("GenerateTeamPlanButton", () => {
     await fillRequiredFields(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "1" }));
+    await user.click(screen.getByRole("button", { name: / 1,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("button", { name: "Generate" }));
 
@@ -322,7 +322,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "1" }));
+    await user.click(screen.getByRole("button", { name: / 1,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
     const eventTypeSelect = screen.getByRole("combobox", { name: /event type for/i });
@@ -351,7 +351,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "2" }));
+    await user.click(screen.getByRole("button", { name: / 2,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
 
@@ -384,7 +384,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "3" }));
+    await user.click(screen.getByRole("button", { name: / 3,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
     expect(screen.queryByRole("combobox", { name: /additional event type 2 for/i })).not.toBeInTheDocument();
@@ -406,7 +406,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "4" }));
+    await user.click(screen.getByRole("button", { name: / 4,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
     await user.click(screen.getByRole("button", { name: /add another event type for/i }));
@@ -444,8 +444,8 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "5" }));
-    await user.click(screen.getByRole("button", { name: "6" }));
+    await user.click(screen.getByRole("button", { name: / 5,/ }));
+    await user.click(screen.getByRole("button", { name: / 6,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
     const moreThanOneCheckboxes = screen.getAllByRole("checkbox", {
@@ -478,7 +478,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
     await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
-    await user.click(screen.getByRole("button", { name: "7" }));
+    await user.click(screen.getByRole("button", { name: / 7,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
     const deleteDateButton = screen.getByRole("button", { name: /delete all events for/i });
