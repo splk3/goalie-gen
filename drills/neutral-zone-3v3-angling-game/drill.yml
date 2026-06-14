@@ -1,0 +1,50 @@
+name: Neutral Zone 3v3 Angling Game
+
+description: 3v3 neutral zone angling.
+
+drill_steps: |-
+  1. On the whistle, X's start with possession and the first 3 players take off from behind the far net.
+  2. O's start at the same time, gap up, and angle the rush.
+  3. Play 3v3 for 30-45 seconds.
+
+coaching_focus_points: |-
+  - Get up ice quickly and force players to the outside.
+  - Use speed to beat the other team.
+
+shooter_focus_points: |-
+  - Recognize passing options.
+  - Communicate with teammates.
+  - Recover to feet when possible.
+
+drill_image: neutral-zone-3v3-angling-game.png
+
+drill_creation_date: 2026-06-08
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_sided_game
+  equipment:
+    - none
+  space_required:
+    - full_ice

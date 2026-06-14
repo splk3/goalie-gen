@@ -1,0 +1,44 @@
+name: Neutral Zone Support 4v3
+description: Players play 3v3 with additional 1 player able to join.
+drill_steps: |-
+  1. Drill starts with a 3v3 played between the blue line.
+  2. Once a team gains possession, they must pass back to their defense behind the net and complete a D to D pass.
+  3. The initial defenseman who received the puck goes up with the play to create a 4v3; once possession is lost, they must go back below the blue line.
+coaching_focus_points: |-
+  - Communicate with teammates.
+  - Recognize passing lanes.
+  - Get there on your feet when possible.
+  - Control rebounds.
+shooter_focus_points: |-
+  - Accurate clean passes.
+  - Create passing lanes.
+  - Force turn overs.
+drill_creation_date: 2026-06-07
+drill_image: neutral-zone-support-4v3.png
+tags:
+  skill_level:
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - full_ice
+  game_situations:
+    - odd_man_rush
+    - small_sided_game

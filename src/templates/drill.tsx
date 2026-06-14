@@ -8,40 +8,15 @@ import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
-import { normalizeDrillDescription } from "../utils/normalizeDrillDescription";
 import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
-
-interface DrillProgression {
-  progression_name: string;
-  progression_description: string;
-  progression_image?: string;
-}
+import type { DrillData } from "../types/drill";
+import DrillMarkdown from "../components/DrillMarkdown";
 
 interface DrillPageContext {
   slug: string;
-  drillData: {
-    name: string;
-    description?: string;
-    drill_steps: string[];
-    coaching_focus_points: string[];
-    shooter_focus_points?: string[];
-    drill_progressions?: DrillProgression[];
-    drill_image?: string;
-    video?: string;
-    drill_creation_date: string;
-    drill_updated_date?: string;
-    tags: {
-      skill_level?: string[];
-      team_drill?: string;
-      age_level?: string[];
-      fundamental_skill?: string[];
-      skating_skill?: string[];
-      equipment?: string[];
-      game_situations?: string[];
-    };
-  };
+  drillData: DrillData;
   drillFolder: string;
 }
 
@@ -98,9 +73,6 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const embedUrl = drillData.video ? getEmbedUrl(drillData.video) : "";
   const videoThumbnail = drillData.video ? getVideoThumbnail(drillData.video) : "";
-  const normalizedDescription = drillData.description
-    ? normalizeDrillDescription(drillData.description)
-    : "";
   const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
   const actionButtonClasses =
     "inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-bold text-white transition-colors sm:w-auto sm:px-6";
@@ -140,8 +112,8 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           />
           <h1 className="text-3xl font-bold text-usa-blue text-center">DRILLS</h1>
           <img
-            src={buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")}
-            alt="51 in 30 USA Hockey Goaltending"
+            src={buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")}
+            alt="USA Hockey Goaltending Gold Certification"
             className="object-contain print-header-logo"
             style={{ maxHeight: "0.4in", width: "auto", height: "auto" }}
             loading="eager"
@@ -222,6 +194,14 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 </span>
               </div>
             )}
+            {drillData.tags.space_required && drillData.tags.space_required.length > 0 && (
+              <div className="print:hidden">
+                <span className="font-bold text-gray-700 dark:text-gray-300">Space Required: </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {drillData.tags.space_required.map(formatTag).join(", ")}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -232,16 +212,17 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
               Drill Information
             </h2>
-            {normalizedDescription && (
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-sm print:text-gray-900">
-                {normalizedDescription}
-              </p>
+            {drillData.description && (
+              <DrillMarkdown
+                markdown={drillData.description}
+                className="text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900 space-y-2"
+              />
             )}
-            <ol className="mt-4 list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-              {drillData.drill_steps.map((step, index) => (
-                <li key={index}>{step}</li>
-              ))}
-            </ol>
+            <DrillMarkdown
+              markdown={drillData.drill_steps}
+              treatAsDrillSteps
+              className="mt-4 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900 space-y-2"
+            />
           </div>
 
           {/* Right Column: Image */}
@@ -265,23 +246,21 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
             Coaching Focus Points
           </h2>
-          <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-            {(drillData.coaching_focus_points || []).map((point, index) => (
-              <li key={index}>{point}</li>
-            ))}
-          </ul>
+          <DrillMarkdown
+            markdown={drillData.coaching_focus_points}
+            className="text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900 space-y-2"
+          />
         </div>
 
-        {drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0 && (
+        {drillData.shooter_focus_points && (
           <div className="mb-6 print:mb-3">
             <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
               Shooter Focus Points
             </h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900">
-              {drillData.shooter_focus_points.map((point, index) => (
-                <li key={index}>{point}</li>
-              ))}
-            </ul>
+            <DrillMarkdown
+              markdown={drillData.shooter_focus_points}
+              className="text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900 space-y-2"
+            />
           </div>
         )}
 
@@ -298,14 +277,16 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 const hasProgressionImage = progressionImageUrl.length > 0;
                 return (
                   <div key={`${progression.progression_name}-${index}`}>
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 print:text-base print:text-gray-900">
-                      {progression.progression_name}
-                    </h3>
+                    <DrillMarkdown
+                      markdown={progression.progression_name}
+                      className="text-lg font-bold text-gray-800 dark:text-gray-200 print:text-base print:text-gray-900 space-y-1"
+                    />
                     {hasProgressionImage ? (
                       <div className="grid md:grid-cols-2 gap-4 mt-2 items-start print:grid-cols-2">
-                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-[9pt] print:text-gray-900">
-                          {progression.progression_description}
-                        </p>
+                        <DrillMarkdown
+                          markdown={progression.progression_description}
+                          className="text-gray-700 dark:text-gray-300 print:text-[9pt] print:text-gray-900 space-y-2"
+                        />
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
                           <img
                             src={progressionImageUrl}
@@ -317,9 +298,10 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                         </div>
                       </div>
                     ) : (
-                      <p className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line print:text-[9pt] print:text-gray-900">
-                        {progression.progression_description}
-                      </p>
+                      <DrillMarkdown
+                        markdown={progression.progression_description}
+                        className="mt-2 text-gray-700 dark:text-gray-300 print:text-[9pt] print:text-gray-900 space-y-2"
+                      />
                     )}
                   </div>
                 );
@@ -449,7 +431,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <p className="text-[10px] text-gray-700">
               This drill and the website on which it is hosted were developed as part of USA
               Hockey&apos;s Goaltending Gold certification program. For more drills and goaltending
-              content, visit GoalieGen.com
+              content, visit GoalieGen.com. All drills created and organized in CoachThem.
             </p>
           </div>
         </div>
@@ -477,6 +459,16 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
           />
           <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
+        </div>
+
+        <div className="mt-8 print:hidden">
+          <a
+            href="https://coachthem.com/sports/ice-hockey"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto" />
+          </a>
         </div>
       </main>
 

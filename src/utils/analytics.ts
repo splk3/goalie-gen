@@ -27,7 +27,6 @@ interface GeneratePlanParams {
   team_name_provided?: boolean;
   age_group?: string;
   skill_level?: string;
-  practices_count?: number;
 }
 
 interface GenerateJournalParams {

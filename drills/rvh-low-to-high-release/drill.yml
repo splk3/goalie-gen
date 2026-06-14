@@ -1,14 +1,11 @@
----
 name: RVH Low To High Release
-
-drill_steps:
-  - Coach begins with a puck on one side of the net. The goalie starts in RVH on the strong-side post.
-  - Coach rims or passes the puck behind the net to a player positioned on the opposite side.
-  - As the puck travels, the goalie slides to the far post in RVH and sets their seal.
-  - The player then makes a low-to-high pass to the high slot for a catch-and-shoot.
-  - The goalie must release from RVH, establish angle and depth, and square up to the shot.
-
-coaching_focus_points:
+drill_steps: |-
+  1. Coach begins with a puck on one side of the net. The goalie starts in RVH on the strong-side post.
+  2. Coach rims or passes the puck behind the net to a player positioned on the opposite side.
+  3. As the puck travels, the goalie slides to the far post in RVH and sets their seal.
+  4. The player then makes a low-to-high pass to the high slot for a catch-and-shoot.
+  5. The goalie must release from RVH, establish angle and depth, and square up to the shot.
+coaching_focus_points: |-
   - Beat the pass with your eyes — head snaps behind the net before the body moves.
   - Efficient post-to-post movement — rotate first, then push; avoid drifting or sliding past the post.
   - Arrive in RVH early — seal the post with pad toe, shoulder seal, and active stick.
@@ -18,38 +15,33 @@ coaching_focus_points:
   - Hands out in front — active gloves to track the puck and control rebounds.
   - Track the puck through the pass — eyes stay locked on the puck as it moves low-to-high.
   - Stop on balance — no sliding into the shot; arrive set.
-
-shooter_focus_points:
+shooter_focus_points: |-
   - Shoot off the pass — force the goalie to move and set under time pressure.
   - Change the release angle — pull, push, or drag the puck to create lateral deception.
   - Hit the net — prioritize accuracy over power to create realistic rebound scenarios.
-
 drill_image: rvh-low-to-high-release.png
-
 drill_progressions:
-  - progression_name: "Progression 1 — Passer Walkout Threat"
-    progression_description: "Low player can either pass to the slot, or walk out short-side for a jam attempt."
+  - progression_name: Progression 1 — Passer Walkout Threat
+    progression_description: Low player can either pass to the slot, or walk out short-side for a jam attempt.
     progression_image: progression-1-passer-walkout-threat.png
-  - progression_name: "Progression 2 — High Slot Movement"
+  - progression_name: Progression 2 — High Slot Movement
     progression_description: Shooter starts high, then times a downhill cut into the slot.
     progression_image: progression-2-high-slot-movement.png
-  - progression_name: "Progression 3 — Second Shooter Option"
-    progression_description: "Add a second shooter on the weak-side flank. Low player can pass to the high slot (original) or the weak-side flank for a catch-and-shoot."
+  - progression_name: Progression 3 — Second Shooter Option
+    progression_description: Add a second shooter on the weak-side flank. Low player can pass to the high slot (original) or the weak-side flank for a catch-and-shoot.
     progression_image: progression-3-second-shooter-option.png
-  - progression_name: "Progression 4 — Rebound Live"
+  - progression_name: Progression 4 — Rebound Live
     progression_description: After the initial shot, the puck is live for 2-3 seconds.
-  - progression_name: "Progression 5 — High Slot Screen"
+  - progression_name: Progression 5 — High Slot Screen
     progression_description: Add a second goalie or skater in the high slot as a screen.
     progression_image: progression-5-high-slot-screen.png
-
 drill_creation_date: 2026-05-22
-
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  team_drill: no
+  team_drill: "no"
   age_level:
     - all
   fundamental_skill:
@@ -62,4 +54,6 @@ tags:
   skating_skill:
     - t_push
   equipment: []
+  space_required:
+    - whole_zone
   game_situations: []

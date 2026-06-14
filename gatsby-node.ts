@@ -30,6 +30,15 @@ const ALLOWED_SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
 const ALLOWED_EQUIPMENT = ["blaze_pods", "bumpers", "cones", "ice_marker", "none"];
 
+const ALLOWED_SPACE_REQUIRED = [
+  "full_ice",
+  "half_ice",
+  "whole_zone",
+  "half_zone",
+  "crease_only",
+  "flexible",
+];
+
 const ALLOWED_TEAM_DRILL = ["yes", "no"];
 
 const ALLOWED_GAME_SITUATIONS = [
@@ -38,6 +47,12 @@ const ALLOWED_GAME_SITUATIONS = [
   "net_front_traffic",
   "dump_in",
   "stick_handling",
+  "odd_man_rush",
+  "macro_game",
+  "small_sided_game",
+  "small_unit_play",
+  "opposed_practice",
+  "unopposed_practice",
 ];
 
 // Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
@@ -65,33 +80,26 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
     throw new Error(`[${drillFolder}] drill.yml field 'description' must be a string`);
   }
 
-  if (!Array.isArray(d.drill_steps) || d.drill_steps.length === 0) {
+  if (typeof d.drill_steps !== "string" || d.drill_steps.trim().length === 0) {
     throw new Error(
-      `[${drillFolder}] drill.yml missing required field 'drill_steps' (non-empty array)`
+      `[${drillFolder}] drill.yml missing required field 'drill_steps' (non-empty markdown string)`
     );
   }
-  for (const step of d.drill_steps) {
-    if (typeof step !== "string") {
-      throw new Error(`[${drillFolder}] drill.yml field 'drill_steps' must contain only strings`);
-    }
-  }
 
-  if (!Array.isArray(d.coaching_focus_points)) {
+  if (typeof d.coaching_focus_points !== "string" || d.coaching_focus_points.trim().length === 0) {
     throw new Error(
-      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (array)`
+      `[${drillFolder}] drill.yml missing required field 'coaching_focus_points' (non-empty markdown string)`
     );
   }
-  for (const point of d.coaching_focus_points) {
-    if (typeof point !== "string") {
-      throw new Error(
-        `[${drillFolder}] drill.yml field 'coaching_focus_points' must contain only strings`
-      );
-    }
-  }
 
-  if (typeof d.shooter_focus_points !== "undefined" && !Array.isArray(d.shooter_focus_points)) {
+  if (typeof d.shooter_focus_points !== "undefined" && typeof d.shooter_focus_points !== "string") {
     throw new Error(
-      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be an array of strings`
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be a markdown string when provided`
+    );
+  }
+  if (typeof d.shooter_focus_points === "string" && d.shooter_focus_points.trim().length === 0) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'shooter_focus_points' must be non-empty when provided`
     );
   }
   if (Array.isArray(d.shooter_focus_points)) {
@@ -166,7 +174,7 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
 
   const tags = d.tags as Record<string, unknown>;
 
-  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment, team_drill)
+  // Validate tag fields against allowed lists (fundamental_skill, skating_skill, age_level, skill_level, equipment, space_required, team_drill)
   if (typeof tags.fundamental_skill !== "undefined" && !Array.isArray(tags.fundamental_skill)) {
     throw new Error(
       `[${drillFolder}] drill.yml field 'tags.fundamental_skill' must be an array of strings`
@@ -264,6 +272,26 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
           `[${drillFolder}] invalid equipment '${eq}'. Allowed values: ${ALLOWED_EQUIPMENT.join(", ")}`
         );
       }
+    }
+  }
+
+  // space_required is required: every drill must declare at least one value.
+  if (!Array.isArray(tags.space_required) || tags.space_required.length === 0) {
+    throw new Error(
+      `[${drillFolder}] drill.yml field 'tags.space_required' is required and must be a non-empty array of strings. ` +
+        `Use 'flexible' when no specific space is required. Allowed values: ${ALLOWED_SPACE_REQUIRED.join(", ")}`
+    );
+  }
+  for (const space of tags.space_required) {
+    if (typeof space !== "string") {
+      throw new Error(
+        `[${drillFolder}] drill.yml field 'tags.space_required' must contain only strings`
+      );
+    }
+    if (!ALLOWED_SPACE_REQUIRED.includes(space)) {
+      throw new Error(
+        `[${drillFolder}] invalid space_required '${space}'. Allowed values: ${ALLOWED_SPACE_REQUIRED.join(", ")}`
+      );
     }
   }
 

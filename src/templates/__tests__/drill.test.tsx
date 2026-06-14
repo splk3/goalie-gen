@@ -62,6 +62,7 @@ const basePageContext = {
     drill_creation_date: "2026-01-01",
     tags: {
       team_drill: "no",
+      space_required: ["flexible"],
     },
   },
 };
@@ -117,11 +118,10 @@ describe("DrillTemplate", () => {
     expect(descParagraph).toBeUndefined();
   });
 
-  it("renders an empty ordered list when drill_steps is an empty array", () => {
+  it("does not render a list when drill_steps is empty", () => {
     const { container } = render(<DrillTemplate pageContext={basePageContext} />);
     const orderedLists = container.querySelectorAll("ol");
-    expect(orderedLists).toHaveLength(1);
-    expect(orderedLists[0].querySelectorAll("li")).toHaveLength(0);
+    expect(orderedLists).toHaveLength(0);
   });
 
   it("renders the page without a main drill image when drill_image is absent", () => {
@@ -213,5 +213,75 @@ describe("DrillTemplate", () => {
 
     const progressionHeading = screen.getByText("Drill Progressions");
     expect(progressionHeading.closest("div")).toHaveClass("print-break-before-page");
+  });
+
+  it("renders sectioned coaching focus points with nested bullets", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            coaching_focus_points: [
+              {
+                "Movement Quality:": ["Explode on the first push", "Arrive set at each point"],
+              },
+              "Track puck into body",
+            ],
+          },
+        }}
+      />
+    );
+
+    expect(screen.getByText("Movement Quality:")).toBeInTheDocument();
+    expect(screen.getByText("Explode on the first push")).toBeInTheDocument();
+    expect(screen.getByText("Arrive set at each point")).toBeInTheDocument();
+    expect(screen.getByText("Track puck into body")).toBeInTheDocument();
+  });
+
+  it("renders Space Required after Equipment Needed and hides it from print", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            tags: {
+              team_drill: "no",
+              equipment: ["cones"],
+              space_required: ["full_ice", "crease_only"],
+            },
+          },
+        }}
+      />
+    );
+
+    const spaceLabel = screen.getByText("Space Required:");
+    expect(spaceLabel).toBeInTheDocument();
+    expect(screen.getByText("Full Ice, Crease Only")).toBeInTheDocument();
+
+    // The Space Required block must be hidden in print/PDF output.
+    const spaceContainer = spaceLabel.closest("div");
+    expect(spaceContainer).not.toBeNull();
+    expect(spaceContainer).toHaveClass("print:hidden");
+  });
+
+  it("does not render Space Required when the tag is absent", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            tags: {
+              team_drill: "no",
+              space_required: [],
+            },
+          },
+        }}
+      />
+    );
+
+    expect(screen.queryByText("Space Required:")).not.toBeInTheDocument();
   });
 });

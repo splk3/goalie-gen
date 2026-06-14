@@ -1,22 +1,17 @@
----
 name: Shot Rebound Recovery
-
-drill_steps:
-  - Coach begins with a puck below the goal line and passes to Shooter 1.
-  - The goalie starts on the post in RVH, then releases off the post to establish angle and depth on Shooter 1 as the pass arrives.
-  - The shooter takes a controlled low shot aimed at the goalie's far pad to generate a rebound toward Shooter 2.
-  - The goalie executes a controlled butterfly slide across the crease to make the rebound save on Shooter 2.
-  - Run the drill from both sides of the net to work forehand and backhand retrieval angles.
-
-coaching_focus_points:
+drill_steps: |-
+  1. Coach begins with a puck below the goal line and passes to Shooter 1.
+  2. The goalie starts on the post in RVH, then releases off the post to establish angle and depth on Shooter 1 as the pass arrives.
+  3. The shooter takes a controlled low shot aimed at the goalie's far pad to generate a rebound toward Shooter 2.
+  4. The goalie executes a controlled butterfly slide across the crease to make the rebound save on Shooter 2.
+  5. Run the drill from both sides of the net to work forehand and backhand retrieval angles.
+coaching_focus_points: |-
   - Release cleanly from RVH and square up to Shooter 1 with proper angle and depth.
   - Track the initial shot into the save and recover quickly to locate the rebound.
   - Execute a controlled butterfly slide to Shooter 2, keeping weight centered, gloves presented, and upper body tall through the movement.
-
-shooter_focus_points:
-  - "Shooter 1: Deliver a purposeful low shot to the far pad to create a predictable rebound."
-  - "Shooter 2: Attack the rebound immediately with a quick, decisive shot."
-
+shooter_focus_points: |-
+  - Shooter 1: Deliver a purposeful low shot to the far pad to create a predictable rebound.
+  - Shooter 2: Attack the rebound immediately with a quick, decisive shot.
 drill_progressions:
   - progression_name: Progression 1 - Variable Rebound Location
     progression_description: "Purpose: Force the goalie to read and react instead of sliding to a pre-planned spot. Shooter 1 still shoots low, but may aim slightly wider or closer to the pad. Shooter 2 adjusts to the rebound instead of standing in a fixed spot. Goalie must locate the puck before committing to the slide. Coaching emphasis: Eyes find the puck first, movement second."
@@ -30,17 +25,14 @@ drill_progressions:
   - progression_name: Progression 5 - Traffic / Screen Layer
     progression_description: "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for the first shot. Shooter 1 still aims for far pad; Shooter 2 reacts to rebound. Goalie must track through bodies and maintain discipline on the slide. Coaching emphasis: Head trajectory stays level through traffic."
     progression_image: progression-5-traffic-screen-layer.png
-
 drill_image: shot-rebound-recovery.png
-
 drill_creation_date: 2026-05-22
-
 tags:
   skill_level:
     - beginner
     - intermediate
     - advanced
-  team_drill: no
+  team_drill: "no"
   age_level:
     - all
   fundamental_skill:
@@ -55,4 +47,6 @@ tags:
     - butterfly
   equipment:
     - none
+  space_required:
+    - half_zone
   game_situations: []

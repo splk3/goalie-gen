@@ -63,7 +63,10 @@ const drillExpectations: DrillExpectation[] = [
 const drillsDir = path.resolve(process.cwd(), "drills");
 
 const loadDrillData = (folder: string): DrillData => {
-  const ymlPath = path.join(drillsDir, folder, "drill.yml");
+  let ymlPath = path.join(drillsDir, folder, "drill.yml");
+  if (!fs.existsSync(ymlPath)) {
+    ymlPath = path.join(process.cwd(), "test-drills", folder, "drill.yml");
+  }
   const content = fs.readFileSync(ymlPath, "utf8");
   return yaml.load(content, { schema: yaml.FAILSAFE_SCHEMA }) as DrillData;
 };

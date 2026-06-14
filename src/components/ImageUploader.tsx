@@ -11,9 +11,14 @@ import "react-image-crop/dist/ReactCrop.css";
 interface ImageUploaderProps {
   onImageCropped: (file: File | null, previewUrl: string | null) => void;
   disabled?: boolean;
+  label?: string;
 }
 
-export default function ImageUploader({ onImageCropped, disabled = false }: ImageUploaderProps) {
+export default function ImageUploader({
+  onImageCropped,
+  disabled = false,
+  label = "Image (Optional)",
+}: ImageUploaderProps) {
   const [imgSrc, setImgSrc] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
@@ -144,7 +149,7 @@ export default function ImageUploader({ onImageCropped, disabled = false }: Imag
         htmlFor="image-upload-input"
         className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
       >
-        Image (Optional)
+        {label}
       </label>
       <input
         type="file"
