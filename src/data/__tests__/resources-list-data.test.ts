@@ -22,7 +22,7 @@ const DATA_DIR = path.resolve(__dirname, "../../../src/data");
 
 /**
  * Loads and parses a resources-list YAML file by name.
- * Throws if the file is missing or unparseable.
+ * Throws if the file is missing or unparsable.
  */
 function loadResourceList(fileName: string): ResourceListData {
   const filePath = path.join(DATA_DIR, fileName);
