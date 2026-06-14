@@ -6,10 +6,16 @@ import Modal from "./Modal";
 import SliderToggle from "./SliderToggle";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
+import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
+import {
+  DEFAULT_PRIMARY_TEAM_COLOR,
+  DEFAULT_SECONDARY_TEAM_COLOR,
+  extractPaletteHexColorsFromDataUrl,
+} from "../utils/teamColors";
 import introductionMd from "../content/club-plan/introduction.md";
 import seasonGoalsMd from "../content/club-plan/season-goals.md";
 import benefitsForClubGoaliesMd from "../content/club-plan/benefits-for-club-goalies.md";
@@ -398,6 +404,13 @@ export default function GenerateClubPlanButton() {
   const [clubMotto, setClubMotto] = React.useState<string>("");
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
+    DEFAULT_PRIMARY_TEAM_COLOR
+  );
+  const [secondaryTeamColor, setSecondaryTeamColor] = React.useState<string>(
+    DEFAULT_SECONDARY_TEAM_COLOR
+  );
+  const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
@@ -469,6 +482,36 @@ export default function GenerateClubPlanButton() {
     setImagePreview(previewUrl);
   }, []);
 
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    const syncTeamColorsFromLogo = async () => {
+      if (!imagePreview) {
+        if (!isCancelled) {
+          setLogoPaletteColors([]);
+          setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+          setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+        }
+        return;
+      }
+
+      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 8);
+      if (isCancelled) {
+        return;
+      }
+
+      setLogoPaletteColors(palette);
+      setPrimaryTeamColor(palette[0] ?? DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(palette[1] ?? DEFAULT_SECONDARY_TEAM_COLOR);
+    };
+
+    void syncTeamColorsFromLogo();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [imagePreview]);
+
   const resetForm = React.useCallback(() => {
     setShowModal(false);
     setClubName("");
@@ -476,6 +519,9 @@ export default function GenerateClubPlanButton() {
     setClubMotto("");
     setSelectedImage(null);
     setImagePreview(null);
+    setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+    setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+    setLogoPaletteColors([]);
     setValidationError("");
     setGeneratedBlob(null);
     setGeneratedFileName("");
@@ -883,6 +929,15 @@ export default function GenerateClubPlanButton() {
           <ImageUploader
             onImageCropped={handleImageCropped}
             disabled={!!generatedBlob || isGenerating}
+          />
+
+          <TeamColorPickers
+            primaryColor={primaryTeamColor}
+            secondaryColor={secondaryTeamColor}
+            paletteColors={logoPaletteColors}
+            disabled={!!generatedBlob || isGenerating}
+            onPrimaryColorChange={setPrimaryTeamColor}
+            onSecondaryColorChange={setSecondaryTeamColor}
           />
 
           <Fieldset>

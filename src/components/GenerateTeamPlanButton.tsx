@@ -5,12 +5,18 @@ import Modal from "./Modal";
 import SliderToggle from "./SliderToggle";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
+import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
 import { buildEventCalendarMonths } from "../utils/teamPlanCalendarGrid";
+import {
+  DEFAULT_PRIMARY_TEAM_COLOR,
+  DEFAULT_SECONDARY_TEAM_COLOR,
+  extractPaletteHexColorsFromDataUrl,
+} from "../utils/teamColors";
 import coverMd from "../content/team-plan/cover.md";
 import seasonOverviewMd from "../content/team-plan/season-overview.md";
 import practiceTemplateMd from "../content/team-plan/practice-template.md";
@@ -211,6 +217,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const [teamMotto, setTeamMotto] = React.useState<string>("");
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
+    DEFAULT_PRIMARY_TEAM_COLOR
+  );
+  const [secondaryTeamColor, setSecondaryTeamColor] = React.useState<string>(
+    DEFAULT_SECONDARY_TEAM_COLOR
+  );
+  const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
   const [skillLevel, setSkillLevel] = React.useState<string>("");
   const [addSuggestedDrillEachPractice, setAddSuggestedDrillEachPractice] =
@@ -346,6 +359,36 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setSelectedImage(file);
     setImagePreview(previewUrl);
   };
+
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    const syncTeamColorsFromLogo = async () => {
+      if (!imagePreview) {
+        if (!isCancelled) {
+          setLogoPaletteColors([]);
+          setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+          setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+        }
+        return;
+      }
+
+      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 8);
+      if (isCancelled) {
+        return;
+      }
+
+      setLogoPaletteColors(palette);
+      setPrimaryTeamColor(palette[0] ?? DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(palette[1] ?? DEFAULT_SECONDARY_TEAM_COLOR);
+    };
+
+    void syncTeamColorsFromLogo();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [imagePreview]);
 
   const updateSelectionEventTypes = React.useCallback(
     (selectionDate: string, updater: (eventTypes: EventType[]) => EventType[]) => {
@@ -489,7 +532,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       })
     );
 
-    if (arrayBuffer && imagePreview) {
+    if (arrayBuffer && imagePreview && selectedImage) {
       const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
       let imgWidth = 400;
       let imgHeight = 400;
@@ -890,6 +933,9 @@ ${getEventStarterMarkdown(event.eventType)}`)
       setTeamMotto("");
       setSelectedImage(null);
       setImagePreview(null);
+      setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+      setLogoPaletteColors([]);
       setAgeGroup("");
       setSkillLevel("");
       setAddSuggestedDrillEachPractice(true);
@@ -925,6 +971,9 @@ ${getEventStarterMarkdown(event.eventType)}`)
     setTeamMotto("");
     setSelectedImage(null);
     setImagePreview(null);
+    setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+    setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+    setLogoPaletteColors([]);
     setAgeGroup("");
     setSkillLevel("");
     setAddSuggestedDrillEachPractice(true);
@@ -1065,6 +1114,15 @@ ${getEventStarterMarkdown(event.eventType)}`)
               label="Team Logo (Optional)"
             />
           </div>
+
+          <TeamColorPickers
+            primaryColor={primaryTeamColor}
+            secondaryColor={secondaryTeamColor}
+            paletteColors={logoPaletteColors}
+            disabled={!!generatedBlob || isGenerating}
+            onPrimaryColorChange={setPrimaryTeamColor}
+            onSecondaryColorChange={setSecondaryTeamColor}
+          />
 
           <div className="mb-4">
             <label

@@ -7,10 +7,16 @@ import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import FormatSelector from "./FormatSelector";
+import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { toDocxImageTypeFromDataUrl } from "../utils/docxImageType";
 import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
+import {
+  DEFAULT_PRIMARY_TEAM_COLOR,
+  DEFAULT_SECONDARY_TEAM_COLOR,
+  extractPaletteHexColorsFromDataUrl,
+} from "../utils/teamColors";
 import coverMd from "../content/goalie-journal/cover.md";
 import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
@@ -24,6 +30,13 @@ export default function GoalieJournalButton() {
   const [goalieName, setGoalieName] = React.useState<string>("");
   const [teamName, setTeamName] = React.useState<string>("");
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
+  const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
+    DEFAULT_PRIMARY_TEAM_COLOR
+  );
+  const [secondaryTeamColor, setSecondaryTeamColor] = React.useState<string>(
+    DEFAULT_SECONDARY_TEAM_COLOR
+  );
+  const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [outputFormat, setOutputFormat] = React.useState<"pdf" | "docx">("pdf");
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
@@ -33,6 +46,36 @@ export default function GoalieJournalButton() {
   const handleImageCropped = React.useCallback((_file: File | null, previewUrl: string | null) => {
     setLogoPreview(previewUrl);
   }, []);
+
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    const syncTeamColorsFromLogo = async () => {
+      if (!logoPreview) {
+        if (!isCancelled) {
+          setLogoPaletteColors([]);
+          setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+          setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+        }
+        return;
+      }
+
+      const palette = await extractPaletteHexColorsFromDataUrl(logoPreview, 8);
+      if (isCancelled) {
+        return;
+      }
+
+      setLogoPaletteColors(palette);
+      setPrimaryTeamColor(palette[0] ?? DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(palette[1] ?? DEFAULT_SECONDARY_TEAM_COLOR);
+    };
+
+    void syncTeamColorsFromLogo();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [logoPreview]);
 
   const getLogoAsBase64 = (): Promise<string | null> => {
     return new Promise((resolve) => {
@@ -546,6 +589,9 @@ export default function GoalieJournalButton() {
       setGoalieName("");
       setTeamName("");
       setLogoPreview(null);
+      setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+      setLogoPaletteColors([]);
       setOutputFormat("pdf");
       setValidationError("");
       setGeneratedBlob(null);
@@ -558,6 +604,9 @@ export default function GoalieJournalButton() {
     setGoalieName("");
     setTeamName("");
     setLogoPreview(null);
+    setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+    setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+    setLogoPaletteColors([]);
     setOutputFormat("pdf");
     setValidationError("");
     setGeneratedBlob(null);
@@ -652,6 +701,15 @@ export default function GoalieJournalButton() {
               </p>
             )}
           </div>
+
+          <TeamColorPickers
+            primaryColor={primaryTeamColor}
+            secondaryColor={secondaryTeamColor}
+            paletteColors={logoPaletteColors}
+            disabled={!!generatedBlob || isGenerating}
+            onPrimaryColorChange={setPrimaryTeamColor}
+            onSecondaryColorChange={setSecondaryTeamColor}
+          />
 
           <FormatSelector
             format={outputFormat}

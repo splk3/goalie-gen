@@ -65,6 +65,28 @@ describe("GenerateTeamPlanButton", () => {
     expect(screen.queryByRole("radio", { name: /pdf/i })).not.toBeInTheDocument();
   });
 
+  it("shows primary and secondary team color controls with USA defaults", async () => {
+    const user = userEvent.setup();
+    render(<GenerateTeamPlanButton />);
+
+    await openModal(user);
+
+    const primaryColorPicker = screen.getByLabelText("Primary Team Color");
+    const primaryHexInput = screen.getByLabelText("Primary Team Color Hex");
+    const secondaryColorPicker = screen.getByLabelText("Secondary Team Color");
+    const secondaryHexInput = screen.getByLabelText("Secondary Team Color Hex");
+
+    expect(primaryColorPicker).toHaveValue("#00205b");
+    expect(primaryHexInput).toHaveValue("#00205B");
+    expect(secondaryColorPicker).toHaveValue("#af272f");
+    expect(secondaryHexInput).toHaveValue("#AF272F");
+
+    await user.clear(secondaryHexInput);
+    await user.type(secondaryHexInput, "#654321");
+
+    expect(secondaryColorPicker).toHaveValue("#654321");
+  });
+
   it("renders new team-plan toggles with expected defaults", async () => {
     const user = userEvent.setup();
     render(<GenerateTeamPlanButton />);
