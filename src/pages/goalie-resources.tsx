@@ -1,10 +1,16 @@
 import * as React from "react";
+import * as yaml from "js-yaml";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
+import ResourceList from "../components/ResourceList";
 import DownloadMaterialButton from "../components/DownloadMaterialButton";
 import GoalieJournalButton from "../components/GoalieJournalButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
+import rawResourceList from "../data/goalie-resources-list.yml";
+import type { ResourceListData } from "../types/resources";
+
+const resourceData = yaml.load(rawResourceList) as ResourceListData;
 
 export default function GoalieResources() {
   return (
@@ -27,6 +33,8 @@ export default function GoalieResources() {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-8">
+        <ResourceList items={resourceData["resource-list"]} />
+
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
             About Goalie Resources

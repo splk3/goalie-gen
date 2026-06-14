@@ -95,6 +95,14 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 
 > **Note:** `game_situations` is part of the YAML tag schema and is validated at build time, but it is **not** a filterable category in `useDrillFilters`.
 
+### 5. Static Resources Loading & Rendering
+
+The resource pages ([club-resources.tsx](file:///home/patrick/github/splk3/goalie-gen/src/pages/club-resources.tsx), [coach-resources.tsx](file:///home/patrick/github/splk3/goalie-gen/src/pages/coach-resources.tsx), and [goalie-resources.tsx](file:///home/patrick/github/splk3/goalie-gen/src/pages/goalie-resources.tsx)) load their resource lists from `.yml` files in the `src/data/` directory.
+
+- **Ingestion:** Webpack is configured in `gatsby-node.ts` to load `.yml` files as raw strings (via `asset/source`).
+- **Parsing:** At runtime, page components import these raw strings, parse them using `js-yaml`, and pass the list items to the reusable [ResourceList.tsx](file:///home/patrick/github/splk3/goalie-gen/src/components/ResourceList.tsx) component.
+- **Validation:** A dedicated test suite at `src/data/__tests__/resources-list-data.test.ts` validates that each YAML resource file strictly adheres to the TypeScript schema defined in [src/types/resources.ts](file:///home/patrick/github/splk3/goalie-gen/src/types/resources.ts) (requiring valid HTTPS URLs, non-empty text, and unique link/name properties).
+
 ## 🎨 Development & Styling Conventions
 
 - TypeScript unused arguments/variables should be removed or prefixed with `_`.

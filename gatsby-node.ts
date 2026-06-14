@@ -411,6 +411,12 @@ export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({ act
           test: /\.md$/,
           type: "asset/source",
         },
+        // Load YAML data files (e.g. src/data/*-list.yml) as raw strings
+        // so components can import and parse them with js-yaml at runtime.
+        {
+          test: /\.yml$/,
+          type: "asset/source",
+        },
       ],
     },
   });

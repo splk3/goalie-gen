@@ -109,6 +109,7 @@ The site uses USA national colors:
 │   │   ├── NavigationButton.tsx
 │   │   ├── PageLayout.tsx
 │   │   ├── Pagination.tsx
+│   │   ├── ResourceList.tsx
 │   │   ├── SEO.tsx
 │   │   ├── ShareButton.tsx
 │   │   ├── TermsPopup.tsx
@@ -130,12 +131,17 @@ The site uses USA national colors:
 │   │   ├── useDrillFilters.ts
 │   │   └── __tests__/     # Unit tests for hooks
 │   ├── types/            # TypeScript type definitions
-│   │   └── drill.ts      # DrillData interface
+│   │   ├── drill.ts      # DrillData interface
+│   │   └── resources.ts  # ResourceListData & ResourceItem interfaces
 │   ├── declarations.d.ts # Module declarations (e.g., CSS modules)
 │   ├── content/          # Markdown content for plan and journal generation
 │   │   ├── club-plan/    # Club development plan sections
 │   │   ├── goalie-journal/ # Goalie journal sections
 │   │   └── team-plan/    # Team development plan sections
+│   ├── data/             # YAML lists for resources pages
+│   │   ├── club-resources-list.yml
+│   │   ├── coach-resources-list.yml
+│   │   └── goalie-resources-list.yml
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
 │       ├── coachingFocusPoints.ts

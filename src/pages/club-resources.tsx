@@ -1,9 +1,14 @@
 import * as React from "react";
+import * as yaml from "js-yaml";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
-import ExternalLinkButton from "../components/ExternalLinkButton";
+import ResourceList from "../components/ResourceList";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
+import rawResourceList from "../data/club-resources-list.yml";
+import type { ResourceListData } from "../types/resources";
+
+const resourceData = yaml.load(rawResourceList) as ResourceListData;
 
 export default function ClubResources() {
   return (
@@ -26,19 +31,7 @@ export default function ClubResources() {
       </div>
 
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg mb-8">
-          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">
-            External Resources
-          </h2>
-          <div className="space-y-4">
-            <ExternalLinkButton
-              href="https://www.usahockey.com/goaltending"
-              trackingLabel="USA Hockey Goaltending Resources"
-            >
-              USA Hockey Goaltending Resources
-            </ExternalLinkButton>
-          </div>
-        </div>
+        <ResourceList items={resourceData["resource-list"]} />
 
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
@@ -49,11 +42,6 @@ export default function ClubResources() {
               This page is dedicated to providing resources for hockey clubs managing multiple teams
               and coordinating goaltending development across age groups.
             </p>
-            <p>
-              Additional content and tools will be added here in future updates to help club
-              administrators create comprehensive goaltending programs.
-            </p>
-            <p className="font-semibold">Check back soon for more resources!</p>
           </div>
         </div>
 
