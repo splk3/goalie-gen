@@ -12,17 +12,8 @@ body:
     id: feature_request
     attributes:
       label: What is the feature or resource you would like to see added?
-      description: A clear and concise description of the feature request.
-      placeholder: It would be helpful if...
-    validations:
-      required: true
-
-  - type: textarea
-    id: proposed_solution
-    attributes:
-      label: Describe the solution you'd like
-      description: A clear and concise description of the solution you envision.
-      placeholder: I would like to see this feature implemented by...
+      description: A clear and concise description of the feature request and how you would like it to be implemented.
+      placeholder: It would be helpful if I could...I would implement this by...
     validations:
       required: true
 
