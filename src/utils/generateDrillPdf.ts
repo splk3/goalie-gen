@@ -1,15 +1,16 @@
 import type { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
-import { normalizeDrillDescription } from "./normalizeDrillDescription";
 import {
   PROGRESSION_IMAGE_TEXT_GAP,
   PROGRESSION_SECTION_MAX_PAGES,
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
   SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
+  SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
   SKILLS_FOCUS_TOP_GAP,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
+  shouldUseFullWidthFirstPageDiagram,
 } from "./estimateDrillPdfPages";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
 import {
@@ -17,6 +18,12 @@ import {
   DRILL_EXPORT_IMAGE_CACHE_TTL_MS,
   DRILL_EXPORT_PDF_CACHE_TTL_MS,
 } from "./staticAsset";
+import {
+  drillMarkdownToPlainLines,
+  parseDrillMarkdown,
+  parseDrillStepsMarkdown,
+} from "./drillMarkdown";
+import type { DrillMarkdownBlock, DrillMarkdownListBlock } from "./drillMarkdown";
 
 export type { DrillData };
 
@@ -42,6 +49,13 @@ const PROGRESSION_CARD_TEXT_TOP_OFFSET = 2;
 const PROGRESSION_CARD_NAME_BOTTOM_GAP = 2;
 const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_MAX_IMAGE_HEIGHT = 30;
+const LINK_QR_CODE_SIZE_MM = 9;
+const LINK_QR_CODE_GAP_MM = 2;
+const MAX_QR_CACHE_ENTRIES = 32;
+const qrCodeDataCache = new Map<string, string>();
+let qrCodeModulePromise: Promise<typeof import("qrcode")> | null = null;
+const MARKDOWN_NESTED_INDENT_MM = 4.5;
+const MARKDOWN_INDENT_SPACES_PER_LEVEL = 2;
 
 /**
  * Maximum pixel dimension (width or height) for canvas-encoded images.
@@ -63,6 +77,45 @@ const formatTag = (tag: string): string => {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+};
+
+const getQrCodeDataURL = async (url: string): Promise<string | null> => {
+  const trimmedUrl = url.trim();
+  if (!trimmedUrl) {
+    return null;
+  }
+
+  const cached = qrCodeDataCache.get(trimmedUrl);
+  if (cached) {
+    return cached;
+  }
+
+  try {
+    if (!qrCodeModulePromise) {
+      qrCodeModulePromise = import("qrcode");
+    }
+    const qrCode = await qrCodeModulePromise;
+    const dataURL = await qrCode.toDataURL(trimmedUrl, {
+      margin: 0,
+      errorCorrectionLevel: "M",
+      width: 128,
+      color: {
+        dark: "#000000",
+        light: "#FFFFFF",
+      },
+    });
+    if (qrCodeDataCache.size >= MAX_QR_CACHE_ENTRIES) {
+      const oldestKey = qrCodeDataCache.keys().next().value;
+      if (oldestKey) {
+        qrCodeDataCache.delete(oldestKey);
+      }
+    }
+    qrCodeDataCache.set(trimmedUrl, dataURL);
+    return dataURL;
+  } catch (error) {
+    console.error("Error generating QR code for link:", error);
+    return null;
+  }
 };
 
 export const loadImageAsDataURL = (
@@ -168,6 +221,7 @@ export const generateDrillPdf = async (
 ): Promise<jsPDF> => {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
+
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
   const margin = 20;
@@ -181,51 +235,54 @@ export const generateDrillPdf = async (
   // Content must not exceed this Y value on any page
   const contentBottomLimit = footerSeparatorY - 8;
 
-  // Pre-load all static header/footer images in parallel so none of the
-  // network round-trips blocks the others.
+  // Pre-load all static header/footer images and the drill QR code in parallel so none
+  // of the network round-trips blocks the others.
   onProgress?.("Loading images...");
-  const [goldLogoResult, leftLogoResult, rightLogoResult, ggLogoResult] = await Promise.allSettled([
-    loadImageAsDataURL(
-      buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
-    ),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/51-in-30.jpg")),
-    loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
-  ]);
 
-  const goldLogoInfo = goldLogoResult.status === "fulfilled" ? goldLogoResult.value : null;
-  if (goldLogoResult.status === "rejected") {
-    console.error("Error loading gold certification logo:", goldLogoResult.reason);
-  }
+  const siteUrl =
+    typeof process !== "undefined" && process.env.GATSBY_SITE_URL
+      ? process.env.GATSBY_SITE_URL
+      : "https://goaliegen.com";
+  const drillUrl = `${siteUrl.replace(/\/$/, "")}/drills/${drillFolder}`;
+
+  const [leftLogoResult, rightLogoResult, ggLogoResult, ctLogoResult, drillQrResult] =
+    await Promise.allSettled([
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/usahockey/usahockey-goaltending.jpg")),
+      loadImageAsDataURL(
+        buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
+      ),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
+      getQrCodeDataURL(drillUrl),
+    ]);
 
   const ggLogoInfo = ggLogoResult.status === "fulfilled" ? ggLogoResult.value : null;
+  const ctLogoInfo = ctLogoResult.status === "fulfilled" ? ctLogoResult.value : null;
+  const drillQrCodeDataURL = drillQrResult.status === "fulfilled" ? drillQrResult.value : null;
 
   const goldText =
-    "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com";
+    "This drill and the website on which it is hosted were developed as part of USA Hockey's Goaltending Gold certification program. For more drills and goaltending content, visit GoalieGen.com.  All drills created and organized in CoachThem.";
 
   // Draw the gold certification footer on the current page
   const drawPageFooter = () => {
-    if (!goldLogoInfo) return;
-    const goldLogoWidth = (goldLogoInfo.width / goldLogoInfo.height) * goldLogoHeight;
+    const footerWidth = pageWidth - 2 * margin;
 
-    // GG logo (right side) — sized to the same height as the gold cert logo
+    // GG logo (left side) — sized to goldLogoHeight, with white circular background
     const ggLogoWidth = ggLogoInfo ? (ggLogoInfo.width / ggLogoInfo.height) * goldLogoHeight : 0;
-    const ggLogoX = pageWidth - margin - ggLogoWidth;
+    const ggLogoX = margin;
+
+    // CT logo (right side) — fixed at 1/3 of footer width, height proportional
+    const ctLogoWidth = ctLogoInfo ? footerWidth / 3 : 0;
+    const ctLogoHeight =
+      ctLogoInfo && ctLogoInfo.width > 0 ? ctLogoWidth * (ctLogoInfo.height / ctLogoInfo.width) : 0;
+    const ctLogoY = footerLogoY + (goldLogoHeight - ctLogoHeight) / 2;
+    const ctLogoX = pageWidth - margin - ctLogoWidth;
 
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.5);
     doc.line(margin, footerSeparatorY, pageWidth - margin, footerSeparatorY);
-    doc.addImage(goldLogoInfo.dataURL, "PNG", margin, footerLogoY, goldLogoWidth, goldLogoHeight);
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(7);
-    doc.setFont("helvetica", "normal");
 
-    // Gold text spans between the two logos
-    const textRightEdge = ggLogoInfo ? ggLogoX - 4 : pageWidth - margin;
-    const goldTextLines = doc.splitTextToSize(goldText, textRightEdge - margin - goldLogoWidth - 4);
-    doc.text(goldTextLines, margin + goldLogoWidth + 4, footerLogoY + 5);
-
-    // GG logo with white circular background
+    // GG logo with white circular background (left)
     if (ggLogoInfo) {
       const cx = ggLogoX + ggLogoWidth / 2;
       const cy = footerLogoY + goldLogoHeight / 2;
@@ -233,6 +290,20 @@ export const generateDrillPdf = async (
       doc.setFillColor(255, 255, 255);
       doc.circle(cx, cy, r, "F");
       doc.addImage(ggLogoInfo.dataURL, "PNG", ggLogoX, footerLogoY, ggLogoWidth, goldLogoHeight);
+    }
+
+    // Gold text spans between the GG logo and CT logo
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    const textLeftEdge = ggLogoInfo ? ggLogoX + ggLogoWidth + 4 : margin;
+    const textRightEdge = ctLogoInfo ? ctLogoX - 4 : pageWidth - margin;
+    const goldTextLines = doc.splitTextToSize(goldText, textRightEdge - textLeftEdge);
+    doc.text(goldTextLines, textLeftEdge, footerLogoY + 5);
+
+    // CT logo (right)
+    if (ctLogoInfo) {
+      doc.addImage(ctLogoInfo.dataURL, "PNG", ctLogoX, ctLogoY, ctLogoWidth, ctLogoHeight);
     }
   };
 
@@ -270,7 +341,7 @@ export const generateDrillPdf = async (
       doc.addImage(leftLogoInfo.dataURL, "JPEG", margin, headerY, leftLogoWidth, logoHeight);
       doc.addImage(
         rightLogoInfo.dataURL,
-        "JPEG",
+        "PNG",
         pageWidth - margin - rightLogoWidth,
         headerY,
         rightLogoWidth,
@@ -323,46 +394,64 @@ export const generateDrillPdf = async (
   };
 
   let currentY = drawPageHeader(drillData.name);
-  const rightColumnStartY = currentY;
+  const startOfTagsY = currentY;
 
-  // Tags section - bold labels, normal values, equipment on separate line
+  // Render QR code and label on the right side if available
+  if (drillQrCodeDataURL) {
+    const qrSize = 10;
+    const qrX = pageWidth - margin - qrSize;
+    const qrY = startOfTagsY;
+    doc.addImage(drillQrCodeDataURL, "PNG", qrX, qrY, qrSize, qrSize);
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+    const textX = qrX - 2;
+    const charHeight = doc.getFontSize() / doc.internal.scaleFactor;
+    const textY = qrY + qrSize / 2 + charHeight / 2 - 0.5;
+    doc.text("Scan to View:", textX, textY, { align: "right" });
+  }
+
+  // Tags section - render Age Group and Skill Level in columns, Equipment below them
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
 
-  let firstLineX = margin;
-
+  // Column 1: Age Group (x = 20)
   if (drillData.tags.age_level && drillData.tags.age_level.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.text("Age Group: ", firstLineX, currentY);
+    doc.text("Age Group: ", margin, startOfTagsY);
     const labelWidth = doc.getTextWidth("Age Group: ");
     doc.setFont("helvetica", "normal");
     const ageValues = drillData.tags.age_level.map(formatTag).join(", ");
-    doc.text(ageValues, firstLineX + labelWidth, currentY);
-    firstLineX += labelWidth + doc.getTextWidth(ageValues) + 5;
+    doc.text(ageValues, margin + labelWidth, startOfTagsY);
   }
 
+  // Column 2: Skill Level (x = 80)
   if (drillData.tags.skill_level && drillData.tags.skill_level.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.text("Skill Level: ", firstLineX, currentY);
+    doc.text("Skill Level: ", 80, startOfTagsY);
     const labelWidth = doc.getTextWidth("Skill Level: ");
     doc.setFont("helvetica", "normal");
     const skillValues = drillData.tags.skill_level.map(formatTag).join(", ");
-    doc.text(skillValues, firstLineX + labelWidth, currentY);
+    doc.text(skillValues, 80 + labelWidth, startOfTagsY);
   }
 
-  currentY += 4;
-
+  // Row 2: Equipment Needed (x = 20, y = startOfTagsY + 5)
   if (drillData.tags.equipment && drillData.tags.equipment.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.text("Equipment Needed: ", margin, currentY);
+    doc.text("Equipment Needed: ", margin, startOfTagsY + 5);
     const labelWidth = doc.getTextWidth("Equipment Needed: ");
     doc.setFont("helvetica", "normal");
     const equipmentValues = drillData.tags.equipment.map(formatTag).join(", ");
-    doc.text(equipmentValues, margin + labelWidth, currentY);
-    currentY += 4;
+    doc.text(equipmentValues, margin + labelWidth, startOfTagsY + 5);
   }
 
-  currentY += 2;
+  // Advance currentY to clear both tags columns and the QR code section.
+  // QR code height is 10mm. Row 2 of tags is at startOfTagsY + 5.
+  // Pushing currentY to startOfTagsY + 12 leaves a clean margin.
+  currentY = startOfTagsY + 12;
+
+  const rightColumnStartY = currentY;
   const fullWidth = pageWidth - 2 * margin;
 
   // Column layout: slightly text-prioritized split for better one-page fit.
@@ -431,12 +520,55 @@ export const generateDrillPdf = async (
   onProgress?.("Generating PDF...");
 
   const mainLineHeight = 3.2;
+  const videoQrCodeDataURL = drillData.video ? await getQrCodeDataURL(drillData.video) : null;
   type MainLayoutMode = "single-column" | "two-column";
 
   const renderMainSection = (
     layoutMode: MainLayoutMode,
     draw: boolean
   ): { endPageNum: number; endSectionY: number } => {
+    interface RenderableMarkdownLine {
+      text: string;
+      bold?: boolean;
+      indentLevel?: number;
+    }
+
+    const pushRenderableListLines = (
+      list: DrillMarkdownListBlock,
+      lines: RenderableMarkdownLine[],
+      depth = 0
+    ): void => {
+      list.items.forEach((item, itemIndex) => {
+        lines.push({
+          text: `${list.ordered ? `${itemIndex + 1}. ` : "• "}${item.text}`,
+          indentLevel: depth,
+        });
+        item.children.forEach((child) => pushRenderableListLines(child, lines, depth + 1));
+      });
+    };
+
+    const buildRenderableMarkdownLines = (
+      blocks: DrillMarkdownBlock[]
+    ): RenderableMarkdownLine[] => {
+      const lines: RenderableMarkdownLine[] = [];
+
+      blocks.forEach((block) => {
+        if (block.type === "heading") {
+          lines.push({ text: block.text, bold: true });
+          return;
+        }
+
+        if (block.type === "paragraph") {
+          lines.push({ text: block.text });
+          return;
+        }
+
+        pushRenderableListLines(block, lines);
+      });
+
+      return lines;
+    };
+
     let simulatedPageNum = currentPageNum;
     const startNewPageForPass = (): number => {
       if (draw) {
@@ -460,6 +592,49 @@ export const generateDrillPdf = async (
       if (draw) {
         doc.text(text, x, y);
       }
+    };
+    const getIndentLevel = (line: string): number => {
+      const leadingSpaces = line.match(/^ */)?.[0].length ?? 0;
+      return Math.max(0, Math.floor(leadingSpaces / MARKDOWN_INDENT_SPACES_PER_LEVEL));
+    };
+    const stripLeadingIndent = (line: string): string => line.replace(/^\s+/, "");
+    const drawNestedMarkdownLine = (
+      line: string,
+      baseX: number,
+      currentYForPass: number,
+      maxWidth: number,
+      lineHeight: number,
+      options?: { bold?: boolean; indentLevel?: number }
+    ): number => {
+      const indentLevel = options?.indentLevel ?? getIndentLevel(line);
+      const indentOffset = indentLevel * MARKDOWN_NESTED_INDENT_MM;
+      const availableWidth = Math.max(16, maxWidth - indentOffset);
+      const wrapped = doc.splitTextToSize(stripLeadingIndent(line), availableWidth);
+      const startY = ensureSpaceForPass(currentYForPass, wrapped.length * lineHeight + 1);
+      if (draw) {
+        doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+      }
+      drawText(wrapped, baseX + indentOffset, startY);
+      return startY + wrapped.length * lineHeight + 1;
+    };
+    const drawMarkdownBlocks = (
+      blocks: DrillMarkdownBlock[],
+      baseX: number,
+      currentYForPass: number,
+      maxWidth: number,
+      lineHeight: number
+    ): number => {
+      let nextY = currentYForPass;
+      for (const line of buildRenderableMarkdownLines(blocks)) {
+        nextY = drawNestedMarkdownLine(line.text, baseX, nextY, maxWidth, lineHeight, {
+          bold: line.bold,
+          indentLevel: line.indentLevel,
+        });
+      }
+      if (draw) {
+        doc.setFont("helvetica", "normal");
+      }
+      return nextY;
     };
     const drawImage = (
       dataURL: string,
@@ -498,19 +673,23 @@ export const generateDrillPdf = async (
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       if (drillData.description) {
-        const normalizedDescription = normalizeDrillDescription(drillData.description);
-        const descriptionLines = doc.splitTextToSize(normalizedDescription, fullWidth);
-        fullWidthY = ensureSpaceForPass(fullWidthY, descriptionLines.length * mainLineHeight);
-        drawText(descriptionLines, margin, fullWidthY);
-        fullWidthY += descriptionLines.length * mainLineHeight + 2.5;
+        fullWidthY = drawMarkdownBlocks(
+          parseDrillMarkdown(drillData.description),
+          margin,
+          fullWidthY,
+          fullWidth,
+          mainLineHeight
+        );
+        fullWidthY += 2.5;
       }
 
-      for (const [index, step] of drillData.drill_steps.entries()) {
-        const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, fullWidth - 5);
-        fullWidthY = ensureSpaceForPass(fullWidthY, stepLines.length * mainLineHeight + 1);
-        drawText(stepLines, margin + 3, fullWidthY);
-        fullWidthY += stepLines.length * mainLineHeight + 1;
-      }
+      fullWidthY = drawMarkdownBlocks(
+        parseDrillStepsMarkdown(drillData.drill_steps),
+        margin + 3,
+        fullWidthY,
+        fullWidth - 5,
+        mainLineHeight
+      );
       fullWidthY += 1.5;
 
       sectionY = fullWidthY + 3;
@@ -552,19 +731,23 @@ export const generateDrillPdf = async (
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       if (drillData.description) {
-        const normalizedDescription = normalizeDrillDescription(drillData.description);
-        const descriptionLines = doc.splitTextToSize(normalizedDescription, leftColumnWidth);
-        leftY = ensureSpaceForPass(leftY, descriptionLines.length * mainLineHeight);
-        drawText(descriptionLines, margin, leftY);
-        leftY += descriptionLines.length * mainLineHeight + 2.5;
+        leftY = drawMarkdownBlocks(
+          parseDrillMarkdown(drillData.description),
+          margin,
+          leftY,
+          leftColumnWidth,
+          mainLineHeight
+        );
+        leftY += 2.5;
       }
 
-      for (const [index, step] of drillData.drill_steps.entries()) {
-        const stepLines = doc.splitTextToSize(`${index + 1}. ${step}`, leftColumnWidth - 5);
-        leftY = ensureSpaceForPass(leftY, stepLines.length * mainLineHeight + 1);
-        drawText(stepLines, margin + 3, leftY);
-        leftY += stepLines.length * mainLineHeight + 1;
-      }
+      leftY = drawMarkdownBlocks(
+        parseDrillStepsMarkdown(drillData.drill_steps),
+        margin + 3,
+        leftY,
+        leftColumnWidth - 5,
+        mainLineHeight
+      );
       leftY += 1.5;
 
       const pageNumForPass = draw ? currentPageNum : simulatedPageNum;
@@ -585,16 +768,15 @@ export const generateDrillPdf = async (
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    if (drillData.coaching_focus_points && drillData.coaching_focus_points.length > 0) {
-      for (const point of drillData.coaching_focus_points) {
-        const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-        sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
-        drawText(pointLines, margin + 3, sectionY);
-        sectionY += pointLines.length * mainLineHeight + 1;
-      }
-    }
+    sectionY = drawMarkdownBlocks(
+      parseDrillMarkdown(drillData.coaching_focus_points),
+      margin + 3,
+      sectionY,
+      fullWidth - 5,
+      mainLineHeight
+    );
 
-    if (drillData.shooter_focus_points && drillData.shooter_focus_points.length > 0) {
+    if (drillData.shooter_focus_points) {
       sectionY += 1.5;
       sectionY = ensureSpaceForPass(sectionY, 12);
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
@@ -606,12 +788,13 @@ export const generateDrillPdf = async (
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
-      for (const point of drillData.shooter_focus_points) {
-        const pointLines = doc.splitTextToSize(`• ${point}`, fullWidth - 5);
-        sectionY = ensureSpaceForPass(sectionY, pointLines.length * mainLineHeight + 1);
-        drawText(pointLines, margin + 3, sectionY);
-        sectionY += pointLines.length * mainLineHeight + 1;
-      }
+      sectionY = drawMarkdownBlocks(
+        parseDrillMarkdown(drillData.shooter_focus_points),
+        margin + 3,
+        sectionY,
+        fullWidth - 5,
+        mainLineHeight
+      );
     }
 
     if (progressions.length > 0 && !shouldMoveProgressionsToSecondPage) {
@@ -626,7 +809,7 @@ export const generateDrillPdf = async (
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
       for (const [index, progression] of progressions.entries()) {
-        const progressionName = `• ${progression.progression_name}:`;
+        const progressionName = `• ${drillMarkdownToPlainLines(progression.progression_name).join(" ")}:`;
         const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
         sectionY = ensureSpaceForPass(
           sectionY,
@@ -656,17 +839,14 @@ export const generateDrillPdf = async (
           sectionY += imgHeight + PROGRESSION_IMAGE_TEXT_GAP;
         }
 
-        const descriptionLines = doc.splitTextToSize(
-          progression.progression_description,
-          fullWidth - 5
-        );
-        sectionY = ensureSpaceForPass(
-          sectionY,
-          descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1
-        );
         doc.setFont("helvetica", "normal");
-        drawText(descriptionLines, margin + 6, sectionY);
-        sectionY += descriptionLines.length * PROGRESSION_TEXT_LINE_HEIGHT + 1;
+        sectionY = drawMarkdownBlocks(
+          parseDrillMarkdown(progression.progression_description),
+          margin + 6,
+          sectionY,
+          fullWidth - 5,
+          PROGRESSION_TEXT_LINE_HEIGHT
+        );
       }
     }
 
@@ -701,7 +881,7 @@ export const generateDrillPdf = async (
       doc.setFont("helvetica", "bold");
       drawText("Fundamental Skills:", skillsLeftX, skillsLeftY);
       doc.setFont("helvetica", "normal");
-      skillsLeftY += 3;
+      skillsLeftY += SKILLS_FOCUS_LABEL_TO_VALUES_GAP;
       drillData.tags.fundamental_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsLeftX + 3, skillsLeftY);
         skillsLeftY += 4;
@@ -712,7 +892,7 @@ export const generateDrillPdf = async (
       doc.setFont("helvetica", "bold");
       drawText("Skating Skills:", skillsRightX, skillsRightY);
       doc.setFont("helvetica", "normal");
-      skillsRightY += 3;
+      skillsRightY += SKILLS_FOCUS_LABEL_TO_VALUES_GAP;
       drillData.tags.skating_skill.forEach((skill) => {
         drawText(`• ${formatTag(skill)}`, skillsRightX + 3, skillsRightY);
         skillsRightY += 4;
@@ -723,7 +903,7 @@ export const generateDrillPdf = async (
       doc.setFont("helvetica", "bold");
       drawText("Game Situations:", skillsThirdX, skillsThirdY);
       doc.setFont("helvetica", "normal");
-      skillsThirdY += 3;
+      skillsThirdY += SKILLS_FOCUS_LABEL_TO_VALUES_GAP;
       drillData.tags.game_situations!.forEach((situation) => {
         drawText(`• ${formatTag(situation)}`, skillsThirdX + 3, skillsThirdY);
         skillsThirdY += 4;
@@ -732,13 +912,15 @@ export const generateDrillPdf = async (
 
     if (drillData.video) {
       sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
-      const videoLines = doc.splitTextToSize(drillData.video, pageWidth - 2 * margin);
-      sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * mainLineHeight);
+      const videoUrl = drillData.video.trim();
+      const maxVideoLineWidth = pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
+      const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth) as string[];
+      sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT);
 
       doc.setDrawColor(150, 150, 150);
       doc.setLineWidth(0.5);
       drawLine(margin, sectionY, pageWidth - margin, sectionY);
-      sectionY += 3;
+      sectionY += SKILLS_FOCUS_TOP_GAP;
 
       doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(12);
@@ -746,11 +928,34 @@ export const generateDrillPdf = async (
       drawText("Video Demonstration", margin, sectionY);
       sectionY += 4;
 
-      doc.setTextColor(0, 0, 0);
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
       doc.setFontSize(PROGRESSION_TEXT_FONT_SIZE);
       doc.setFont("helvetica", "normal");
-      drawText(videoLines, margin, sectionY);
-      sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
+      const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
+      if (draw && typeof linkMethod === "function") {
+        videoLines.forEach((line, lineIndex) => {
+          linkMethod.call(doc, line, margin, sectionY + lineIndex * PROGRESSION_TEXT_LINE_HEIGHT, {
+            url: videoUrl,
+          });
+        });
+      } else {
+        drawText(videoLines, margin, sectionY);
+      }
+
+      if (videoQrCodeDataURL && videoLines.length > 0) {
+        const firstLineWidth = doc.getTextWidth(videoLines[0]);
+        const qrX = margin + Math.min(firstLineWidth, maxVideoLineWidth) + LINK_QR_CODE_GAP_MM;
+        const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
+        const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
+        drawImage(videoQrCodeDataURL, "PNG", qrX, qrY, LINK_QR_CODE_SIZE_MM, LINK_QR_CODE_SIZE_MM);
+        // Ensure sectionY clears the bottom of the QR code
+        const qrBottomY = qrY + LINK_QR_CODE_SIZE_MM;
+        sectionY = Math.max(sectionY + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT, qrBottomY);
+      } else {
+        sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;
+      }
+
+      doc.setTextColor(0, 0, 0);
     }
 
     return {
@@ -760,7 +965,12 @@ export const generateDrillPdf = async (
   };
 
   const singleColumnProbe = renderMainSection("single-column", false);
-  const useSingleColumnMainLayout = singleColumnProbe.endPageNum === currentPageNum;
+  const preferSingleColumnForProgressionHeavyLayout = shouldUseFullWidthFirstPageDiagram(
+    drillData,
+    drillImageInfo ? drillImageInfo.width / drillImageInfo.height : undefined
+  );
+  const useSingleColumnMainLayout =
+    singleColumnProbe.endPageNum === currentPageNum || preferSingleColumnForProgressionHeavyLayout;
   renderMainSection(useSingleColumnMainLayout ? "single-column" : "two-column", true);
 
   // Dedicated progression pages are triggered by overall inline overflow. When used,
@@ -782,9 +992,12 @@ export const generateDrillPdf = async (
     const progressionLayouts = progressions.map((progression, index) => {
       const progressionImageInfo = progressionImageInfoByIndex.get(index);
       const buildLayout = (includeImage: boolean): ProgressionCardLayout => {
-        const nameLines = doc.splitTextToSize(progression.progression_name, cardContentWidth);
+        const nameLines = doc.splitTextToSize(
+          drillMarkdownToPlainLines(progression.progression_name).join(" "),
+          cardContentWidth
+        );
         const descriptionLines = doc.splitTextToSize(
-          progression.progression_description,
+          drillMarkdownToPlainLines(progression.progression_description).join("\n"),
           cardContentWidth
         );
         let imageDataURL: string | undefined;

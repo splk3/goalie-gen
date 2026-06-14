@@ -10,6 +10,7 @@ const makeDrills = () => [
       fundamental_skill: ["angles"],
       skating_skill: ["edges"],
       equipment: ["stick"],
+      space_required: ["full_ice"],
     },
   },
   {
@@ -20,6 +21,7 @@ const makeDrills = () => [
       fundamental_skill: ["positioning"],
       skating_skill: ["crossovers"],
       equipment: ["stick", "pucks"],
+      space_required: ["flexible"],
     },
   },
   {
@@ -30,6 +32,7 @@ const makeDrills = () => [
       fundamental_skill: ["angles"],
       skating_skill: ["edges"],
       equipment: ["pucks"],
+      space_required: ["flexible"],
     },
   },
 ];
@@ -135,12 +138,25 @@ describe("useDrillFilters", () => {
     expect(result.current.tagCategories.team_drill).toEqual(expect.arrayContaining(["no", "yes"]));
   });
 
+  it("filters drills by space_required tag value", () => {
+    const drills = makeDrills();
+    const { result } = renderHook(() => useDrillFilters(drills));
+
+    act(() => {
+      result.current.toggleFilter("space_required", "full_ice");
+    });
+
+    expect(result.current.filteredDrills).toHaveLength(1);
+    expect(result.current.filteredDrills[0].tags.space_required).toContain("full_ice");
+  });
+
   it("formatTagName converts snake_case to Title Case", () => {
     const { result } = renderHook(() => useDrillFilters([]));
 
     expect(result.current.formatTagName("skill_level")).toBe("Skill Level");
     expect(result.current.formatTagName("team_drill")).toBe("Team Drill");
     expect(result.current.formatTagName("fundamental_skill")).toBe("Fundamental Skill");
+    expect(result.current.formatTagName("space_required")).toBe("Space Required");
   });
 
   it("formatTagValue converts snake_case values to Title Case", () => {
@@ -177,6 +193,7 @@ describe("useDrillFilters", () => {
         fundamental_skill: [],
         skating_skill: [],
         equipment: [],
+        space_required: [],
       })
     );
 

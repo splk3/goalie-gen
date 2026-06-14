@@ -2,6 +2,22 @@
 
 ## Season Overview
 
-This team-level development plan provides structured goaltending drills and practice guidance
-throughout the season. Each practice includes age-appropriate exercises designed to develop
-fundamental goaltending skills.
+### Selected Overview Placeholder
+
+[SEASON_OVERVIEW_SELECTED]
+
+### 8U Starter Content Placeholder
+
+[SEASON_OVERVIEW_8U_STARTER]
+
+### 10U Starter Content Placeholder
+
+[SEASON_OVERVIEW_10U_STARTER]
+
+### 12U Starter Content Placeholder
+
+[SEASON_OVERVIEW_12U_STARTER]
+
+### 14U+ Starter Content Placeholder
+
+[SEASON_OVERVIEW_14U_PLUS_STARTER]

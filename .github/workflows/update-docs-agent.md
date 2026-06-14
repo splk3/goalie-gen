@@ -4,10 +4,11 @@ description: AI agent that reviews the repository and updates README.md and .git
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "weekly on saturday"
+  # schedule:
+  #   - cron: "weekly on saturday"
 
 permissions:
+  copilot-requests: write
   contents: read
   issues: read
   pull-requests: read

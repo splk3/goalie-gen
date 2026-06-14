@@ -4,13 +4,19 @@ import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import Pagination from "../components/Pagination";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
+import { FRESH_CONTENT_WINDOW_MS } from "../utils/constants";
 import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
+import { drillMarkdownToSearchText } from "../utils/drillMarkdown";
 
 interface DrillNode {
   slug: string;
   name: string;
+  description?: string;
+  drill_steps: string | string[];
+  coaching_focus_points: string | string[];
+  shooter_focus_points?: string | string[];
   drill_image?: string;
   drill_creation_date: string;
   drill_updated_date?: string;
@@ -21,6 +27,7 @@ interface DrillNode {
     fundamental_skill?: string[];
     skating_skill?: string[];
     equipment?: string[];
+    space_required?: string[];
   };
 }
 
@@ -41,6 +48,9 @@ interface DrillCardData extends DrillNode {
   imageUrl: string;
   creationTimestamp: number | null;
   updatedTimestamp: number | null;
+  isNewContent: boolean;
+  isUpdatedContent: boolean;
+  searchableText: string;
 }
 
 const FILTER_STATE_KEYS: Array<keyof FilterState> = [
@@ -50,7 +60,16 @@ const FILTER_STATE_KEYS: Array<keyof FilterState> = [
   "fundamental_skill",
   "skating_skill",
   "equipment",
+  "space_required",
 ];
+
+const normalizeFilterValue = (category: keyof FilterState, value: string): string => {
+  if (category === "space_required" && value === "single_zone") {
+    return "whole_zone";
+  }
+
+  return value;
+};
 
 const parseTimestamp = (value?: string): number | null => {
   if (!value) {
@@ -59,6 +78,14 @@ const parseTimestamp = (value?: string): number | null => {
 
   const timestamp = new Date(value).getTime();
   return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+const isTimestampWithinLast30Days = (timestamp: number | null, nowTimestamp: number): boolean => {
+  if (timestamp === null || timestamp > nowTimestamp) {
+    return false;
+  }
+
+  return nowTimestamp - timestamp <= FRESH_CONTENT_WINDOW_MS;
 };
 
 const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterState => {
@@ -74,7 +101,7 @@ const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterStat
 
     parsedFilters[category] = paramValue
       .split(",")
-      .map((value) => value.trim())
+      .map((value) => normalizeFilterValue(category, value.trim()))
       .filter(Boolean)
       .sort();
   });
@@ -118,22 +145,45 @@ const parseSortFromSearchParams = (searchParams: URLSearchParams): SortOrder => 
   return "updated_newest";
 };
 
+const parseTextQueryFromSearchParams = (searchParams: URLSearchParams): string => {
+  return searchParams.get("q") || "";
+};
+
+const URL_QUERY_DEBOUNCE_MS = 300;
+
 export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   const search = location?.search || "";
   const initialSearchParams = React.useMemo(() => new URLSearchParams(search), [search]);
+  const browseTimestamp = React.useMemo(() => Date.now(), []);
   const drills = React.useMemo<DrillCardData[]>(
     () =>
       data.allDrill.nodes.map((node) => {
         const image = node.drill_image || "placeholder.png";
         const creationTimestamp = parseTimestamp(node.drill_creation_date);
+        const explicitUpdatedTimestamp = parseTimestamp(node.drill_updated_date);
+        const searchableText = [
+          node.name,
+          drillMarkdownToSearchText(node.description || ""),
+          drillMarkdownToSearchText(node.drill_steps),
+          drillMarkdownToSearchText(node.coaching_focus_points),
+          drillMarkdownToSearchText(node.shooter_focus_points || ""),
+        ]
+          .join(" ")
+          .toLowerCase();
+        const isNewContent = isTimestampWithinLast30Days(creationTimestamp, browseTimestamp);
+        const isUpdatedContent = isTimestampWithinLast30Days(explicitUpdatedTimestamp, browseTimestamp);
+
         return {
           ...node,
           imageUrl: buildCacheBustedAssetPath(`/drills/${node.slug}/${image}`),
           creationTimestamp,
-          updatedTimestamp: parseTimestamp(node.drill_updated_date) ?? creationTimestamp,
+          updatedTimestamp: explicitUpdatedTimestamp ?? creationTimestamp,
+          isNewContent,
+          isUpdatedContent,
+          searchableText,
         };
       }),
-    [data.allDrill.nodes]
+    [browseTimestamp, data.allDrill.nodes]
   );
 
   const initialFilters = React.useMemo<FilterState>(
@@ -146,6 +196,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
   );
   const initialSort = React.useMemo<SortOrder>(
     () => parseSortFromSearchParams(initialSearchParams),
+    [initialSearchParams]
+  );
+  const initialTextQuery = React.useMemo(
+    () => parseTextQueryFromSearchParams(initialSearchParams),
     [initialSearchParams]
   );
 
@@ -168,24 +222,71 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
   // State for sorting - initialize from URL if present
   const [sortOrder, setSortOrder] = React.useState<SortOrder>(initialSort);
+  const [textQuery, setTextQuery] = React.useState<string>(initialTextQuery);
+  const [debouncedTextQuery, setDebouncedTextQuery] = React.useState<string>(
+    initialTextQuery.trim()
+  );
 
   // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const hasMountedRef = React.useRef(false);
+  const suppressNextPageResetRef = React.useRef(false);
+  const selectedFiltersRef = React.useRef(initialFilters);
+  const textQueryRef = React.useRef(initialTextQuery);
+
+  React.useEffect(() => {
+    selectedFiltersRef.current = selectedFilters;
+  }, [selectedFilters]);
+
+  React.useEffect(() => {
+    textQueryRef.current = textQuery;
+  }, [textQuery]);
 
   React.useEffect(() => {
     const params = new URLSearchParams(search);
     const nextFilters = parseFiltersFromSearchParams(params);
     const nextPage = parsePageFromSearchParams(params);
     const nextSort = parseSortFromSearchParams(params);
+    const nextTextQuery = parseTextQueryFromSearchParams(params);
+    const filtersWillChange = !areFiltersEqual(selectedFiltersRef.current, nextFilters);
+    const textWillChange = textQueryRef.current.trim() !== nextTextQuery.trim();
 
-    setSelectedFilters((previous) =>
-      areFiltersEqual(previous, nextFilters) ? previous : nextFilters
-    );
+    if (filtersWillChange || textWillChange) {
+      suppressNextPageResetRef.current = true;
+    }
+
+    setSelectedFilters((previous) => {
+      return areFiltersEqual(previous, nextFilters) ? previous : nextFilters;
+    });
     setCurrentPage((previous) => (previous === nextPage ? previous : nextPage));
     setSortOrder((previous) => (previous === nextSort ? previous : nextSort));
+    setTextQuery((previous) => {
+      return previous.trim() === nextTextQuery.trim() ? previous : nextTextQuery;
+    });
   }, [search, setSelectedFilters]);
+
+  React.useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedTextQuery(textQuery.trim());
+    }, URL_QUERY_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [textQuery]);
+
+  const normalizedTextQuery = React.useMemo(() => textQuery.trim().toLowerCase(), [textQuery]);
+
+  const textFilteredDrills = React.useMemo(() => {
+    if (!normalizedTextQuery) {
+      return filteredDrills;
+    }
+
+    return filteredDrills.filter((drill) => {
+      return drill.searchableText.includes(normalizedTextQuery);
+    });
+  }, [filteredDrills, normalizedTextQuery]);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -206,7 +307,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
   // Sort drills based on sortOrder
   const sortedDrills = React.useMemo(() => {
-    const sorted = [...filteredDrills];
+    const sorted = [...textFilteredDrills];
 
     sorted.sort((a, b) => {
       const isUpdatedSort = sortOrder === "updated_newest" || sortOrder === "updated_oldest";
@@ -222,7 +323,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     });
 
     return sorted;
-  }, [filteredDrills, sortOrder]);
+  }, [sortOrder, textFilteredDrills]);
 
   // Reset to page 1 when filters change
   // Use a stable key to prevent unnecessary rerenders
@@ -241,44 +342,48 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       return;
     }
 
-    setCurrentPage(1);
-  }, [filterKey]);
+    if (suppressNextPageResetRef.current) {
+      suppressNextPageResetRef.current = false;
+      return;
+    }
 
-  // Keep pagination state synchronized with the URL
+    setCurrentPage(1);
+  }, [filterKey, normalizedTextQuery]);
+
+  // Keep page/sort/text query state synchronized with the URL in one atomic update
   React.useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }
 
     const searchParams = new URLSearchParams(window.location.search);
+    FILTER_STATE_KEYS.forEach((category) => {
+      const values = selectedFilters[category];
+      if (values.length === 0) {
+        searchParams.delete(category);
+        return;
+      }
+
+      const serializedValues = [...values].sort().join(",");
+      searchParams.set(category, serializedValues);
+    });
 
     if (currentPage > 1) {
       searchParams.set("page", String(currentPage));
     } else {
-      // Remove "page" when on the first page to keep URLs clean
       searchParams.delete("page");
     }
-
-    const searchString = searchParams.toString();
-    const newUrl =
-      window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
-
-    window.history.replaceState(null, "", newUrl);
-  }, [currentPage]);
-
-  // Keep sort state synchronized with the URL
-  React.useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const searchParams = new URLSearchParams(window.location.search);
 
     if (sortOrder !== "updated_newest") {
       searchParams.set("sort", sortOrder);
     } else {
-      // Remove "sort" when it's the default value to keep URLs clean
       searchParams.delete("sort");
+    }
+
+    if (debouncedTextQuery) {
+      searchParams.set("q", debouncedTextQuery);
+    } else {
+      searchParams.delete("q");
     }
 
     const searchString = searchParams.toString();
@@ -286,7 +391,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
 
     window.history.replaceState(null, "", newUrl);
-  }, [sortOrder]);
+  }, [currentPage, debouncedTextQuery, selectedFilters, sortOrder]);
+
+  const handleResetFilters = React.useCallback(() => {
+    resetFilters();
+    setTextQuery("");
+  }, [resetFilters]);
 
   // Calculate pagination values
   const totalPages = Math.ceil(sortedDrills.length / itemsPerPage);
@@ -300,8 +410,22 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="flex-1">
             <h1 className="text-4xl font-bold mb-4">Goalie Drills</h1>
-            <p className="text-lg">
+            <p className="text-lg mb-4">
               Develop your goalies during goalie-focused time or involve the whole team!
+            </p>
+            <p className="text-lg">
+              All drills created and organized in CoachThem. CoachThem has generously sponsored the
+              projects on this site to enable the team to collaborate on drill design using
+              CoachThem&apos;s digital drill drawing and design tools. For more information about
+              CoachThem, visit{" "}
+              <a
+                href="https://coachthem.com/sports/ice-hockey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-usa-blue dark:hover:text-blue-400"
+              >
+                CoachThem.com
+              </a>
             </p>
           </div>
           <div className="flex-shrink-0 w-full md:w-auto flex flex-wrap justify-center md:justify-end gap-3">
@@ -412,10 +536,27 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           })}
         </div>
 
+        <div className="mb-6">
+          <label
+            htmlFor="drill-text-search"
+            className="block text-gray-900 dark:text-gray-100 font-semibold mb-2"
+          >
+            Text Search
+          </label>
+          <input
+            id="drill-text-search"
+            type="search"
+            value={textQuery}
+            onChange={(event) => setTextQuery(event.target.value)}
+            placeholder="Search title, description, steps, and focus points"
+            className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600"
+          />
+        </div>
+
         {/* Reset Button */}
         <div className="flex justify-end">
           <button
-            onClick={resetFilters}
+            onClick={handleResetFilters}
             className="bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900 text-white font-semibold py-2 px-6 rounded transition-colors"
           >
             Reset Filters
@@ -475,12 +616,63 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               >
                 {drill.name}
               </h2>
-              <span
-                aria-hidden="true"
-                className="inline-block bg-usa-blue dark:bg-blue-600 text-white font-semibold py-2 px-6 rounded"
-              >
-                View Drill
-              </span>
+              <div className="flex items-end justify-between gap-4">
+                <span
+                  aria-hidden="true"
+                  className="inline-block bg-usa-blue dark:bg-blue-600 text-white font-semibold py-2 px-6 rounded"
+                >
+                  View Drill
+                </span>
+                <div className="text-right text-sm text-gray-700 dark:text-gray-300">
+                  {drill.isUpdatedContent && (
+                    <p className="flex items-center justify-end gap-1 font-semibold">
+                      <img
+                        src={buildCacheBustedAssetPath("/images/fire.svg")}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-4 h-4"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      Updated Content!
+                    </p>
+                  )}
+                  {!drill.isUpdatedContent && drill.isNewContent && (
+                    <p className="flex items-center justify-end gap-1 font-semibold">
+                      <img
+                        src={buildCacheBustedAssetPath("/images/fire.svg")}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-4 h-4"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      New Content!
+                    </p>
+                  )}
+                  {drill.tags.team_drill === "yes" && (
+                    <p className="flex items-center justify-end gap-1 font-semibold">
+                      <img
+                        src={buildCacheBustedAssetPath("/images/trophy.svg")}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-4 h-4"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      Team Drill!
+                    </p>
+                  )}
+                  {drill.drill_updated_date && (
+                    <p>
+                      <span className="font-semibold">Updated:</span> {drill.drill_updated_date}
+                    </p>
+                  )}
+                  <p>
+                    <span className="font-semibold">Created:</span> {drill.drill_creation_date}
+                  </p>
+                </div>
+              </div>
             </div>
           </Link>
         ))}
@@ -494,6 +686,12 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           Back to Home
         </BackLinkButton>
       </div>
+
+      <div className="mt-8">
+        <a href="https://coachthem.com/sports/ice-hockey" target="_blank" rel="noopener noreferrer">
+          <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto" />
+        </a>
+      </div>
     </PageLayout>
   );
 }
@@ -506,6 +704,10 @@ export const query = graphql`
       nodes {
         slug
         name
+        description
+        drill_steps
+        coaching_focus_points
+        shooter_focus_points
         drill_image
         drill_creation_date
         drill_updated_date
@@ -516,6 +718,7 @@ export const query = graphql`
           fundamental_skill
           skating_skill
           equipment
+          space_required
         }
       }
     }

@@ -1,0 +1,97 @@
+name: Crease Footwork
+drill_steps: |-
+  1. Start on the post at Position 1.
+  2. T-push from 1 to 2, arriving square and set.
+  3. Shuffle from 2 to 3, maintaining angle and depth.
+  4. T-push from 3 to 4 to return to the opposite post.
+  5. Repeat the sequence in reverse:
+  6. T-push 4 - 3
+  7. Shuffle 3 - 2
+  8. T-push 2 - 1
+  9. The goalie continuously moves through the pattern, focusing on clean edges, balance, and controlled stops.
+coaching_focus_points: |-
+  - Movement Quality
+    - Explode on the first push - powerful but controlled T-pushes.
+    - Arrive set at each point; no drifting or sliding into position.
+    - Stay low and loaded in the hips to maintain balance.
+    - Keep chest and shoulders square to the imaginary puck location.
+  - Body Positioning
+    - Hands out in front to maintain balance and readiness.
+    - Stick centered on the ice, blade flat.
+    - Head leads the movement - eyes arrive first, body follows.
+  - Crease Awareness
+    - Maintain consistent depth (don't drift backward).
+    - Visualize the puck at the top of the zone to stay square.
+    - Check posts with quick shoulder/head turns when returning.
+  - Tempo & Conditioning
+    - Work at a pace that challenges footwork but preserves technique.
+    - Prioritize clean mechanics over speed early in the drill.
+    - Increase tempo only when movement quality is consistent.
+drill_image: crease-footwork.png
+drill_progressions:
+  - progression_name: Progression 1 - All T-Push
+    progression_image: crease-footwork-progression-1.png
+    progression_description: |-
+      Replace every movement in the pattern with a T-push.
+      Pattern
+      T-push 1 - 2
+      T-push 2 - 3
+      T-push 3 - 4
+      Reverse the same sequence back to 1
+      Reinforces clean mechanics, builds explosive first pushes, emphasizes arriving set at each point
+      Lead with the head and shoulders, push with full extension, recover under control, hands stay active and forward
+  - progression_name: Progression 2 - T-Push With Butterfly
+    progression_image: crease-footwork-progression-2.png
+    progression_description: |-
+      Add a controlled butterfly at each arrival point.
+      Pattern
+      T-push 1 - 2 - butterfly
+      T-push 2 - 3 - butterfly
+      T-push 3 - 4
+      Reverse the sequence with the same pattern
+      Connects movement to save execution and builds recovery strength and balance
+      Arrive balanced before the butterfly, keep chest tall and hands active through the drop, lead with head and shoulders
+  - progression_name: Progression 3 - Butterfly With Power Push
+    progression_image: crease-footwork-progression-3.png
+    progression_description: |-
+      Now the goalie drops into a butterfly at each point and uses a power push recovery to move to the next point.
+      Pattern
+      T-push 1 - 2 - butterfly
+      Butterfly at 2 - power push to 3
+      Butterfly at 3 - power push to 4
+      Reverse the sequence back to 1
+      Builds explosive lateral movement from the butterfly, trains game-realistic recovery patterns, reinforces strong edge engagement and hip control
+      Seal the ice cleanly on each butterfly, load the pushing leg before exploding laterally, keep shoulders level during the power push
+  - progression_name: Progression 4 - Start Facing the Boards, Recover to Post, Hinge to RVH, Then Begin Previous Sequence's Pattern
+    progression_image: crease-footwork-progression-4.png
+    progression_description: |-
+      Pattern
+      1. Goalie starts on side of the net, set on knees facing the end boards
+      2. Goalie pivots and moves back to the post using controlled backward C-cuts
+      3. On arrival at the post, goalie performs a hinge into RVH on the strong-side post.
+      4. Goalie exits RVH into position 2 of sequence
+
+      On the hinge
+      Seal the post with pad, hip, and shoulder
+      Stick blade stays active to protect the middle
+
+      On the RVH exit:
+      Push out with the inside edge
+      Arrive in stance with square chest and balanced weight
+      Begin the footwork sequence only after achieving a clean, stable stance.
+drill_creation_date: 2026-05-25
+drill_updated_date: 2026-05-31
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "no"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+  skating_skill: []
+  equipment: []
+  space_required:
+    - crease_only

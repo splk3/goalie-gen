@@ -25,6 +25,7 @@
     "gatsby-plugin-manifest": "^5.16.0",
     "js-yaml": "^4.1.1",
     "jspdf": "^4.2.1",
+    "qrcode": "^1.5.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-image-crop": "^11.0.10"
@@ -54,7 +55,7 @@
     "jest-environment-jsdom": "^30.3.0",
     "patch-package": "^8.0.1",
     "postcss": "^8.5.10",
-    "prettier": "^3.8.3",
+    "prettier": "3.8.3",
     "tailwindcss": "^4.2.3",
     "tsx": "^4.20.6",
     "typescript": "^6.0.3"

@@ -11,6 +11,13 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
+const mockQrCodeToDataURL = jest.fn<Promise<string>, unknown[]>(
+  async () => "data:image/png;base64,MOCK"
+);
+jest.mock("qrcode", () => ({
+  toDataURL: (...args: unknown[]) => mockQrCodeToDataURL(...args),
+}));
+
 const loadDrillFixture = (folder: string): DrillData => {
   const drillPath = path.resolve(__dirname, `../../../drills/${folder}/drill.yml`);
   return yaml.load(fs.readFileSync(drillPath, "utf8"), {
@@ -392,6 +399,7 @@ describe("generateDrillPdf layout selection", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockQrCodeToDataURL.mockClear();
   });
 
   afterEach(() => {
@@ -408,6 +416,7 @@ describe("generateDrillPdf layout selection", () => {
       team_drill: "no",
       fundamental_skill: ["angles"],
       skating_skill: ["t-push"],
+      space_required: ["flexible"],
     },
     drill_creation_date: "2026-01-01",
   };
@@ -487,6 +496,80 @@ describe("generateDrillPdf layout selection", () => {
     expect(hasSingleColumnDrillImage).toBe(false);
   });
 
+  it("renders sectioned coaching focus points as headings with nested bullets", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const splitTextSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { splitTextToSize: (...args: unknown[]) => unknown },
+      "splitTextToSize"
+    );
+
+    await generateDrillPdf(
+      {
+        ...baseDrillData,
+        coaching_focus_points: [
+          {
+            "Movement Quality:": ["Explode on the first push", "Arrive set at each point"],
+          },
+          "Track puck into body",
+        ],
+      },
+      "test-folder"
+    );
+
+    const splitValues = splitTextSpy.mock.calls.map((call) => call[0]);
+    expect(splitValues).toContain("• Movement Quality:");
+    expect(splitValues).toContain("• Explode on the first push");
+    expect(splitValues).toContain("• Arrive set at each point");
+    expect(splitValues).toContain("• Track puck into body");
+  });
+
+  it("indents nested description markdown lines in the PDF", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const splitTextSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { splitTextToSize: (...args: unknown[]) => unknown },
+      "splitTextToSize"
+    );
+
+    await generateDrillPdf(
+      {
+        ...baseDrillData,
+        description: "- Primary detail\n  - Nested detail",
+      },
+      "test-folder"
+    );
+
+    const primaryDescriptionCall = splitTextSpy.mock.calls.find(
+      (call) => call[0] === "• Primary detail"
+    );
+    const nestedDescriptionCall = splitTextSpy.mock.calls.find(
+      (call) => call[0] === "• Nested detail"
+    );
+
+    expect(primaryDescriptionCall).toBeDefined();
+    expect(nestedDescriptionCall).toBeDefined();
+    expect(nestedDescriptionCall?.[1]).toBeLessThan(primaryDescriptionCall?.[1] as number);
+  });
+
+  it("renders markdown coaching headings in bold", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const doc = await generateDrillPdf(
+      {
+        ...baseDrillData,
+        coaching_focus_points:
+          "### Movement Quality\n- Explode on the first push\n- Arrive set at each point",
+      },
+      "test-folder"
+    );
+
+    const output = doc.output();
+    const headingIndex = output.indexOf("(Movement Quality)");
+
+    expect(headingIndex).toBeGreaterThanOrEqual(0);
+    expect(output.slice(Math.max(0, headingIndex - 80), headingIndex)).toMatch(/F2 9 Tf/);
+  });
+
   it("uses single-column image width for shot-rebound-recovery", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
@@ -506,6 +589,91 @@ describe("generateDrillPdf layout selection", () => {
       return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
     });
     expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("uses single-column image width for beat-the-pass", async () => {
+    setupMocks({ imageWidth: 1081, imageHeight: 523 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const drillData = loadDrillFixture("beat-the-pass");
+
+    await generateDrillPdf(drillData, "beat-the-pass");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(true);
+  });
+
+  it("renders video URL as a clickable link and adds an inline QR code image", async () => {
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const textWithLinkSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
+      "textWithLink"
+    );
+    const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+    await generateDrillPdf(
+      {
+        ...baseDrillData,
+        video: videoUrl,
+      },
+      "test-folder"
+    );
+
+    expect(mockQrCodeToDataURL).toHaveBeenCalledWith(
+      videoUrl,
+      expect.objectContaining({
+        margin: 0,
+        errorCorrectionLevel: "M",
+        width: 128,
+        color: {
+          dark: "#000000",
+          light: "#FFFFFF",
+        },
+      })
+    );
+    expect(textWithLinkSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Number),
+      expect.any(Number),
+      expect.objectContaining({
+        url: videoUrl,
+      })
+    );
+    expect(textWithLinkSpy).toHaveBeenCalledTimes(1);
+    expect(
+      addImageSpy.mock.calls.some(
+        (call) => call[0] === "data:image/png;base64,MOCK" && call[4] === 9 && call[5] === 9
+      )
+    ).toBe(true);
+  });
+
+  it("keeps butterfly-map-series in two-column mode", async () => {
+    setupMocks({ imageWidth: 862, imageHeight: 411 });
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const drillData = loadDrillFixture("butterfly-map-series");
+
+    await generateDrillPdf(drillData, "butterfly-map-series");
+
+    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
+      const width = call[4];
+      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+    });
+    expect(hasSingleColumnDrillImage).toBe(false);
   });
 });
 
@@ -545,6 +713,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: Array.from({ length: 8 }, (_, index) => ({
@@ -572,6 +741,7 @@ describe("generateDrillPdf pagination regression alignment", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: [
@@ -674,6 +844,7 @@ describe("generateDrillPdf overflow handling", () => {
       drill_image: "diagram.png",
       tags: {
         team_drill: "no",
+        space_required: ["flexible"],
       },
       drill_creation_date: "2026-01-01",
       drill_progressions: [

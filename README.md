@@ -8,6 +8,7 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 - **Team Development Plans**: Create development plans for entire goaltending rosters
 - **Goalie Journal**: Export printable goalie journals for tracking progress
 - **Drill Library**: Access and download various goaltending drills
+- **Content Freshness Indicators**: Automatically highlights new and recently updated drills with "New Content!" or "Updated Content!" badges
 - **PDF/DOCX Export**: Export plans in multiple formats using jsPDF and docx libraries
 - **Dark Mode**: Built-in dark mode toggle for comfortable viewing
 - **Responsive Design**: Mobile-friendly interface for on-the-go access
@@ -137,7 +138,10 @@ The site uses USA national colors:
 │   │   └── team-plan/    # Team development plan sections
 │   └── utils/            # Utility functions
 │       ├── analytics.ts
+│       ├── coachingFocusPoints.ts
 │       ├── docxContent.ts
+│       ├── docxImageType.ts
+│       ├── drillPdfPaginationShared.ts
 │       ├── estimateDrillPdfPages.ts
 │       ├── generateDrillPdf.ts
 │       ├── loadExportModules.ts
@@ -147,12 +151,16 @@ The site uses USA national colors:
 │       ├── videoUtils.ts
 │       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
-│   ├── power-push-quick-movement-blaze-pods/
+│   ├── beat-the-pass/
+│   ├── butterfly-map-series/
+│   ├── crease-footwork/
+│   ├── reaction-shot-read/
+│   ├── read-and-react/
+│   ├── rim-and-shot/
 │   ├── rim-stop-cut-across/
-│   ├── test-drill-advanced-teams/
-│   ├── test-drill-beginner/
-│   ├── test-drill-intermediate/
-│   └── test-drill-max-content/
+│   ├── rvh-low-to-high-release/
+│   ├── shot-rebound-recovery/
+│   └── two-shot/
 ├── drill-spec-example/   # Drill specification example
 ├── static/               # Static assets
 │   ├── CNAME            # Custom domain configuration
@@ -206,20 +214,31 @@ Required fields in drill.yml:
 - `drill_creation_date`
 
 `drill_creation_date` is required and must be a string in `YYYY-MM-DD` format (for example, `2024-01-15`).
+When present, `drill_updated_date` must use the same `YYYY-MM-DD` format.
 All other fields are optional. Known optional fields include:
 
-- `description` — optional string shown above drill steps
+- `description` — optional markdown string shown above drill steps
+- `shooter_focus_points` — optional markdown string shown in the shooter focus section
 - `drill_image` — optional main drill diagram filename
 - `video` — a YouTube or Vimeo URL (see format details below)
 - `drill_updated_date` — string in `YYYY-MM-DD` format; must not be earlier than `drill_creation_date`.
 - `drill_progressions` — array of up to 8 progression objects. Each progression object requires:
-  - `progression_name` (string)
-  - `progression_description` (string)
+  - `progression_name` (markdown string)
+  - `progression_description` (markdown string)
   - `progression_image` (optional string filename)
 
-The `tags` field is required, but each sub-field is optional. Most sub-fields accept an **array** of
+Drill text fields use markdown strings:
+
+- `drill_steps` should be authored as a markdown list.
+  - Ordered (`1.`) and unordered (`-`, `*`) list styles are preserved.
+  - Nested lists are supported up to 3 levels deep.
+- `coaching_focus_points` and `shooter_focus_points` should be authored as markdown bullets/lists (ordered and nested lists are supported up to 3 levels).
+- `description` and progression text fields render markdown paragraphs/lists.
+
+The `tags` field is required. Most sub-fields are optional and accept an **array** of
 values from an allowed list and are validated during build time (in `gatsby-node.ts`).
-The exception is `team_drill`, which is a single string value (`yes` or `no`):
+The exceptions are `team_drill`, which is a single string value (`yes` or `no`), and
+`space_required`, which is required and must contain at least one value:
 
 - `fundamental_skill`: Allowed values are:
   - `skating`
@@ -248,20 +267,34 @@ The exception is `team_drill`, which is a single string value (`yes` or `no`):
   - `blaze_pods`
   - `bumpers`
   - `cones`
-  - `goal`
   - `ice_marker`
   - `none`
+
+- `space_required`: **Required.** At least one value must be selected. Use `flexible` when the drill
+  does not require a specific amount of space. Allowed values are:
+  - `full_ice`
+  - `half_ice`
+  - `whole_zone`
+  - `half_zone`
+  - `crease_only`
+  - `flexible`
 
 - `team_drill`: A single string value, either:
   - `yes`
   - `no`
 
-- `game_situations`: Optional. Allowed values are:
+- `game_situations`: Optional (for team and non-team drills). Allowed values are:
   - `power_play`
   - `penalty_kill`
   - `net_front_traffic`
   - `dump_in`
   - `stick_handling`
+  - `odd_man_rush`
+  - `macro_game`
+  - `small_sided_game`
+  - `small_unit_play`
+  - `opposed_practice`
+  - `unopposed_practice`
 
 For media fields, `drill_image` should be a single image filename string when provided, and `video` should be a single URL string pointing to a **YouTube** or **Vimeo** video. The following URL formats are accepted:
 
@@ -269,6 +302,9 @@ For media fields, `drill_image` should be a single image filename string when pr
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`
 
 The build will fail if a `video` field contains a URL from any other domain or in an unrecognized format.
+If the source diagram is a PDF, capture and save a screenshot of the rink/drill diagram, then use that screenshot filename as `drill_image` (do not use a PDF file as `drill_image`).
+
+Because drill YAML is parsed with `yaml.FAILSAFE_SCHEMA`, any list item text containing `:` should be quoted so it stays a string (especially in progression/shooter/coaching text lists).
 
 ### How Drill Pages Are Generated
 

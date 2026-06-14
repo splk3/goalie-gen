@@ -4,12 +4,14 @@ export interface DrillProgression {
   progression_image?: string;
 }
 
+export type LegacyCoachingFocusPoint = string | Record<string, string[]>;
+
 export interface DrillData {
   name: string;
   description?: string;
-  drill_steps: string[];
-  coaching_focus_points: string[];
-  shooter_focus_points?: string[];
+  drill_steps: string | string[];
+  coaching_focus_points: string | string[] | LegacyCoachingFocusPoint[];
+  shooter_focus_points?: string | string[];
   drill_progressions?: DrillProgression[];
   drill_image?: string;
   video?: string;
@@ -22,6 +24,7 @@ export interface DrillData {
     fundamental_skill?: string[];
     skating_skill?: string[];
     equipment?: string[];
+    space_required: string[];
     game_situations?: string[];
   };
 }
