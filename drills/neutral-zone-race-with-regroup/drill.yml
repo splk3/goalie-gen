@@ -1,0 +1,54 @@
+---
+name: Neutral Zone Race with Regroup
+
+description: Race for puck in the neutral zone for a regroup.
+
+drill_steps: |-
+  1. Drill starts with puck at center ice.
+  2. On the whistle, X and O near coach race for the puck.
+  3. Whoever wins passes back to their teammates on the neutral zone dots to then pass to their partner and have a neutral zone and offensive zone entry.
+  4. If possession is lost, the opposite team can go down to the other end for a scoring attempt.
+  5. Drill ends on goal, save, or whistle.
+
+coaching_focus_points: |-
+  - Break up passes.
+  - Keep your depth and set on feet.
+  - Communicate to back checking players.
+  - Control rebounds/help breakouts.
+
+shooter_focus_points: |-
+  - Do not force passes.
+  - Proper offensive zone entry.
+  - Back checking hard and pick up players.
+
+drill_image: neutral-zone-race-with-regroup.png
+
+drill_creation_date: 2026-06-12
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_sided_game
+  equipment:
+    - none
+  space_required:
+    - full_ice
