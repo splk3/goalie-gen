@@ -151,6 +151,7 @@ The build will fail if any `drill.yml` does not strictly follow these rules:
    - Do not run `git add`, `git commit`, `git push`, or create pull requests unless explicitly requested by the user.
    - Leave all edits unstaged by default.
    - If a commit is explicitly requested, stage only files directly related to the requested task.
+6. **Goalie Drill Issues:** When processing GitHub issues labeled/tagged with `goalie-drills` (or `goalie-grills`), always reference and execute the `new-drill-from-issue` skill to convert the issue template fields into a new drill folder, `drill.yml`, and diagram image assets.
 
 ---
 
