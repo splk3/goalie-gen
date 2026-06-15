@@ -5,12 +5,18 @@ import Modal from "./Modal";
 import SliderToggle from "./SliderToggle";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
+import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
 import { blocksToDocxParagraphs } from "../utils/docxContent";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
 import { buildEventCalendarMonths } from "../utils/teamPlanCalendarGrid";
+import {
+  DEFAULT_PRIMARY_TEAM_COLOR,
+  DEFAULT_SECONDARY_TEAM_COLOR,
+  extractPaletteHexColorsFromDataUrl,
+} from "../utils/teamColors";
 import coverMd from "../content/team-plan/cover.md";
 import seasonOverviewMd from "../content/team-plan/season-overview.md";
 import practiceTemplateMd from "../content/team-plan/practice-template.md";
@@ -211,6 +217,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const [teamMotto, setTeamMotto] = React.useState<string>("");
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
+    DEFAULT_PRIMARY_TEAM_COLOR
+  );
+  const [secondaryTeamColor, setSecondaryTeamColor] = React.useState<string>(
+    DEFAULT_SECONDARY_TEAM_COLOR
+  );
+  const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
   const [skillLevel, setSkillLevel] = React.useState<string>("");
   const [addSuggestedDrillEachPractice, setAddSuggestedDrillEachPractice] =
@@ -346,6 +359,36 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setSelectedImage(file);
     setImagePreview(previewUrl);
   };
+
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    const syncTeamColorsFromLogo = async () => {
+      if (!imagePreview) {
+        if (!isCancelled) {
+          setLogoPaletteColors([]);
+          setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+          setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+        }
+        return;
+      }
+
+      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 8);
+      if (isCancelled) {
+        return;
+      }
+
+      setLogoPaletteColors(palette);
+      setPrimaryTeamColor(palette[0] ?? DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(palette[1] ?? DEFAULT_SECONDARY_TEAM_COLOR);
+    };
+
+    void syncTeamColorsFromLogo();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [imagePreview]);
 
   const updateSelectionEventTypes = React.useCallback(
     (selectionDate: string, updater: (eventTypes: EventType[]) => EventType[]) => {
@@ -489,7 +532,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       })
     );
 
-    if (arrayBuffer && imagePreview) {
+    if (arrayBuffer && imagePreview && selectedImage) {
       const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
       let imgWidth = 400;
       let imgHeight = 400;
@@ -719,9 +762,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               cantSplit: true,
               tableHeader: true,
               children: WEEKDAY_LABELS.map(
-                (weekday) =>
+                (weekday, index) =>
                   new TableCell({
-                    width: { size: 14.28, type: WidthType.PERCENTAGE },
+                    width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
                     verticalAlign: VerticalAlign.CENTER,
                     shading: { fill: "EDEDED" },
                     children: [
@@ -738,11 +781,11 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               (week) =>
                 new TableRow({
                   cantSplit: true,
-                  children: week.map((cell) => {
+                  children: week.map((cell, index) => {
                     const dateLabel = cell.dayOfMonth ? `${cell.dayOfMonth}` : "";
                     const eventTypeLabel = cell.hasEvents ? cell.eventTypes.join(", ") : "";
                     return new TableCell({
-                      width: { size: 14.28, type: WidthType.PERCENTAGE },
+                      width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
                       verticalAlign: VerticalAlign.TOP,
                       shading: cell.hasEvents ? { fill: "D9D9D9" } : undefined,
                       children: [
@@ -767,8 +810,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
           documentChildren.push(
             new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
+              width: { size: 9360, type: WidthType.DXA },
               layout: TableLayoutType.FIXED,
+              columnWidths: [1337, 1337, 1337, 1337, 1337, 1337, 1338],
               rows: tableRows,
             })
           );
@@ -828,12 +872,30 @@ ${getEventStarterMarkdown(event.eventType)}`)
         default: {
           document: {
             run: {
-              font: "Helvetica",
+              font: "Arial",
             },
           },
         },
       },
-      sections: [{ properties: {}, children: documentChildren }],
+      sections: [
+        {
+          properties: {
+            page: {
+              size: {
+                width: 12240, // 8.5 inches in twips (8.5 * 1440)
+                height: 15840, // 11 inches in twips (11 * 1440)
+              },
+              margin: {
+                top: 1440, // 1 inch in twips
+                right: 1440,
+                bottom: 1440,
+                left: 1440,
+              },
+            },
+          },
+          children: documentChildren,
+        },
+      ],
     });
 
     const blob = await Packer.toBlob(doc);
@@ -890,6 +952,9 @@ ${getEventStarterMarkdown(event.eventType)}`)
       setTeamMotto("");
       setSelectedImage(null);
       setImagePreview(null);
+      setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+      setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+      setLogoPaletteColors([]);
       setAgeGroup("");
       setSkillLevel("");
       setAddSuggestedDrillEachPractice(true);
@@ -925,6 +990,9 @@ ${getEventStarterMarkdown(event.eventType)}`)
     setTeamMotto("");
     setSelectedImage(null);
     setImagePreview(null);
+    setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
+    setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
+    setLogoPaletteColors([]);
     setAgeGroup("");
     setSkillLevel("");
     setAddSuggestedDrillEachPractice(true);
@@ -1065,6 +1133,15 @@ ${getEventStarterMarkdown(event.eventType)}`)
               label="Team Logo (Optional)"
             />
           </div>
+
+          <TeamColorPickers
+            primaryColor={primaryTeamColor}
+            secondaryColor={secondaryTeamColor}
+            paletteColors={logoPaletteColors}
+            disabled={!!generatedBlob || isGenerating}
+            onPrimaryColorChange={setPrimaryTeamColor}
+            onSecondaryColorChange={setSecondaryTeamColor}
+          />
 
           <div className="mb-4">
             <label

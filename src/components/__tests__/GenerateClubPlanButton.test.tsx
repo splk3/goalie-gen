@@ -34,6 +34,28 @@ describe("GenerateClubPlanButton", () => {
     expect(screen.queryByRole("radio", { name: /pdf/i })).not.toBeInTheDocument();
   });
 
+  it("shows primary and secondary team color controls with USA defaults", async () => {
+    const user = userEvent.setup();
+    render(<GenerateClubPlanButton />);
+
+    await user.click(screen.getByRole("button", { name: /generate club development plan/i }));
+
+    const primaryColorPicker = screen.getByLabelText("Primary Team Color");
+    const primaryHexInput = screen.getByLabelText("Primary Team Color Hex");
+    const secondaryColorPicker = screen.getByLabelText("Secondary Team Color");
+    const secondaryHexInput = screen.getByLabelText("Secondary Team Color Hex");
+
+    expect(primaryColorPicker).toHaveValue("#00205b");
+    expect(primaryHexInput).toHaveValue("#00205B");
+    expect(secondaryColorPicker).toHaveValue("#af272f");
+    expect(secondaryHexInput).toHaveValue("#AF272F");
+
+    await user.clear(primaryHexInput);
+    await user.type(primaryHexInput, "#123456");
+
+    expect(primaryColorPicker).toHaveValue("#123456");
+  });
+
   it("disables goalie discount field when goalies are free is checked", async () => {
     const user = userEvent.setup();
     render(<GenerateClubPlanButton />);

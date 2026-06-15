@@ -15,6 +15,7 @@ Please adhere strictly to the following architectural guidelines, development wo
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
 - **Exports:** [jsPDF](https://github.com/parallax/jsPDF) (PDF generation) and [docx](https://github.com/dolanmiu/docx) (Word generation)
+- **Color Extraction:** [colorthief](https://github.com/lokesh/color-thief) (palette extraction from logo images, browser-side only)
 - **Data:** YAML (for drill definitions)
 - **Testing:** [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - **Deployment:** GitHub Pages (Development) & Cloudflare Pages (Production)
@@ -89,6 +90,19 @@ The document generators assemble Word documents (`.docx`) from markdown content 
 
 All three use the `docx` library. Shared helpers live in `src/utils/docxContent.ts` and `src/utils/docxImageType.ts`. Use `OBJECT_URL_REVOKE_DELAY_MS` (from `src/utils/staticAsset.ts`) when creating object URLs for the download trigger.
 
+#### Team Color Picker & Logo Palette Extraction
+
+[TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (native color input + hex text field + palette swatches). It is embedded inside all three document generator forms.
+
+[src/utils/teamColors.ts](src/utils/teamColors.ts) provides:
+
+- `DEFAULT_PRIMARY_TEAM_COLOR` / `DEFAULT_SECONDARY_TEAM_COLOR` — USA national colors (`#00205B` / `#AF272F`) used as starting values.
+- `normalizeHexRgbColor(input)` — normalizes any `#RRGGBB`-ish string to uppercase `#RRGGBB`, returns `null` for invalid input.
+- `isValidHexRgbColor(input)` — strict `#RRGGBB` validation.
+- `extractPaletteHexColorsFromDataUrl(dataUrl, colorCount?)` — browser-only async function that loads the image into a canvas via `colorthief` and returns up to `colorCount` unique normalized hex colors.
+
+When a logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Colors are reset on form close/cancel.
+
 ### 4. Shared Drill Filtering Model
 
 [src/hooks/useDrillFilters.ts](file:///home/patrick/github/splk3/goalie-gen/src/hooks/useDrillFilters.ts) is the shared filtering and sorting engine used by `src/pages/goalie-drills.tsx` and `src/components/INeedADrillButton.tsx`. It manages a `FilterState` across seven filter categories: `skill_level`, `team_drill`, `age_level`, `fundamental_skill`, `skating_skill`, `equipment`, and `space_required`.
@@ -113,6 +127,30 @@ The resource pages ([club-resources.tsx](file:///home/patrick/github/splk3/goali
 - Development URL: `https://dev.goaliegen.com`
 - Production URL: `https://goaliegen.com`
 - `.github/aw/actions-lock.json`, `.github/workflows/*.lock.yml`.
+
+## 📄 DOCX Cross-Application Compatibility
+
+Generated `.docx` files must render consistently in **Google Docs**, **Microsoft Word**, and **LibreOffice/OpenOffice**. All three document generators (`GenerateTeamPlanButton`, `GenerateClubPlanButton`, `GoalieJournalButton`) must follow these conventions:
+
+### Required Conventions
+
+| Convention     | Required Value                                             | Rationale                                                                                                |
+| -------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Default font   | `Arial`                                                    | Universally available; `Helvetica` is not embedded in Word/LibreOffice and causes substitution artifacts |
+| Page size      | `width: 12240, height: 15840` (twips, US Letter 8.5×11 in) | Explicit size prevents each app from applying its own default                                            |
+| Page margins   | `top/right/bottom/left: 1440` (twips, 1 inch)              | Consistent readable margins across apps                                                                  |
+| Table width    | `{ size: 9360, type: WidthType.DXA }`                      | `WidthType.PERCENTAGE` renders inconsistently in Google Docs; use absolute twips only                    |
+| Cell width     | `{ size: N, type: WidthType.DXA }`                         | Same rationale; never use `PERCENTAGE` for individual cells                                              |
+| `columnWidths` | Explicit array summing to table width                      | Required for LibreOffice `FIXED` layout to render correctly                                              |
+| Table layout   | `TableLayoutType.FIXED`                                    | Prevents content-driven auto-resizing                                                                    |
+
+### Agent Rules for DOCX Changes
+
+1. **Font:** Always use `Arial` as the default run font. Do not use `Helvetica`, `Calibri`, or other platform-specific fonts.
+2. **Page Properties:** Every `Document` section must include explicit `page.size` (twips) and `page.margin` values — never rely on the `docx` library defaults.
+3. **Table/Cell Widths:** Use `WidthType.DXA` (absolute twips) exclusively. Never use `WidthType.PERCENTAGE`.
+4. **Column Width Arrays:** Any `Table` with `TableLayoutType.FIXED` must supply a `columnWidths` array. Column widths must sum exactly to the table width. When dividing evenly, distribute any remainder (from integer division) to the last column (`+1` twip).
+5. **Cross-App Spot Check:** After changing any document generator layout, manually open the generated file in at least one of Google Docs, Microsoft Word, or LibreOffice to verify rendering before committing.
 
 ## 📄 Adding a New Drill / Drill Database Schema
 
