@@ -10,6 +10,7 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 - **Drill Library**: Access and download various goaltending drills
 - **Content Freshness Indicators**: Automatically highlights new and recently updated drills with "New Content!" or "Updated Content!" badges
 - **PDF/DOCX Export**: Export plans in multiple formats using jsPDF and docx libraries
+- **Team Color Customization**: Pick primary and secondary team colors for exported documents; colors are auto-extracted from an uploaded club or team logo using `colorthief`
 - **Dark Mode**: Built-in dark mode toggle for comfortable viewing
 - **Responsive Design**: Mobile-friendly interface for on-the-go access
 
@@ -38,6 +39,7 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **React 19** - JavaScript library for building user interfaces
 - **PDF/Document Generation** - jsPDF and docx libraries for exporting development plans
+- **Color Extraction** - colorthief for extracting team color palettes from uploaded logo images
 - **YAML Parsing** - js-yaml for drill definitions
 
 ## 🎨 Design
@@ -86,6 +88,32 @@ The site uses USA national colors:
   - `npm run verify-drills`
 - Keep `generateDrillPdf` draw traces stable unless the layout change is intentional.
 
+## 📄 DOCX Cross-Application Compatibility
+
+The `.docx` generators (`GenerateTeamPlanButton`, `GenerateClubPlanButton`, `GoalieJournalButton`) follow
+strict formatting conventions so that generated files render consistently in **Google Docs**,
+**Microsoft Word**, and **LibreOffice/OpenOffice**.
+
+### Conventions in effect
+
+| Convention | Value | Rationale |
+| --- | --- | --- |
+| Default font | `Arial` | Universally available in all three apps; avoids substitution artifacts caused by `Helvetica` |
+| Page size | `12240 × 15840` twips (8.5 × 11 in, US Letter) | Explicit size prevents app-specific defaults overriding layout |
+| Page margins | `1440` twips (1 inch) on all sides | Consistent readable margins across apps |
+| Table widths | Absolute DXA (twips), not `PERCENTAGE` | Percentage-based widths render inconsistently in Google Docs; fixed twip values produce stable column widths |
+| Calendar column widths | `[1337, 1337, 1337, 1337, 1337, 1337, 1338]` twips | Sum exactly `9360` twips (6.5 in body width); last column gets +1 twip to avoid rounding gaps |
+| `columnWidths` array | Provided alongside `Table` width | Required by LibreOffice for correct fixed-layout rendering |
+| Table layout | `TableLayoutType.FIXED` | Ensures cells do not auto-resize based on content |
+
+### When modifying document generators
+
+- Always specify page size and margins explicitly in `section.properties.page`.
+- Use `WidthType.DXA` (absolute twips) for all table and cell widths — never `WidthType.PERCENTAGE`.
+- Provide a `columnWidths` array on every `Table` that uses fixed layout; column widths should sum to the table width.
+- Keep the default run font as `Arial`. Do not switch back to `Helvetica` or any platform-specific font.
+- After changes, open the generated `.docx` in all three apps (or use LibreOffice CLI) to spot-check rendering.
+
 ## 📁 Project Structure
 
 ```text
@@ -112,6 +140,7 @@ The site uses USA national colors:
 │   │   ├── ResourceList.tsx
 │   │   ├── SEO.tsx
 │   │   ├── ShareButton.tsx
+│   │   ├── TeamColorPickers.tsx
 │   │   ├── TermsPopup.tsx
 │   │   ├── UsaHockeyGoldBanner.tsx
 │   │   └── __tests__/     # Unit tests for components
@@ -154,6 +183,7 @@ The site uses USA national colors:
 │       ├── markdownParser.ts
 │       ├── normalizeDrillDescription.ts
 │       ├── staticAsset.ts
+│       ├── teamColors.ts
 │       ├── videoUtils.ts
 │       └── __tests__/     # Unit tests for utilities
 ├── drills/               # Drill database (YAML + images)
