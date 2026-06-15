@@ -96,15 +96,15 @@ strict formatting conventions so that generated files render consistently in **G
 
 ### Conventions in effect
 
-| Convention | Value | Rationale |
-| --- | --- | --- |
-| Default font | `Arial` | Universally available in all three apps; avoids substitution artifacts caused by `Helvetica` |
-| Page size | `12240 × 15840` twips (8.5 × 11 in, US Letter) | Explicit size prevents app-specific defaults overriding layout |
-| Page margins | `1440` twips (1 inch) on all sides | Consistent readable margins across apps |
-| Table widths | Absolute DXA (twips), not `PERCENTAGE` | Percentage-based widths render inconsistently in Google Docs; fixed twip values produce stable column widths |
-| Calendar column widths | `[1337, 1337, 1337, 1337, 1337, 1337, 1338]` twips | Sum exactly `9360` twips (6.5 in body width); last column gets +1 twip to avoid rounding gaps |
-| `columnWidths` array | Provided alongside `Table` width | Required by LibreOffice for correct fixed-layout rendering |
-| Table layout | `TableLayoutType.FIXED` | Ensures cells do not auto-resize based on content |
+| Convention             | Value                                              | Rationale                                                                                                    |
+| ---------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Default font           | `Arial`                                            | Universally available in all three apps; avoids substitution artifacts caused by `Helvetica`                 |
+| Page size              | `12240 × 15840` twips (8.5 × 11 in, US Letter)     | Explicit size prevents app-specific defaults overriding layout                                               |
+| Page margins           | `1440` twips (1 inch) on all sides                 | Consistent readable margins across apps                                                                      |
+| Table widths           | Absolute DXA (twips), not `PERCENTAGE`             | Percentage-based widths render inconsistently in Google Docs; fixed twip values produce stable column widths |
+| Calendar column widths | `[1337, 1337, 1337, 1337, 1337, 1337, 1338]` twips | Sum exactly `9360` twips (6.5 in body width); last column gets +1 twip to avoid rounding gaps                |
+| `columnWidths` array   | Provided alongside `Table` width                   | Required by LibreOffice for correct fixed-layout rendering                                                   |
+| Table layout           | `TableLayoutType.FIXED`                            | Ensures cells do not auto-resize based on content                                                            |
 
 ### When modifying document generators
 

@@ -134,15 +134,15 @@ Generated `.docx` files must render consistently in **Google Docs**, **Microsoft
 
 ### Required Conventions
 
-| Convention | Required Value | Rationale |
-| --- | --- | --- |
-| Default font | `Arial` | Universally available; `Helvetica` is not embedded in Word/LibreOffice and causes substitution artifacts |
-| Page size | `width: 12240, height: 15840` (twips, US Letter 8.5×11 in) | Explicit size prevents each app from applying its own default |
-| Page margins | `top/right/bottom/left: 1440` (twips, 1 inch) | Consistent readable margins across apps |
-| Table width | `{ size: 9360, type: WidthType.DXA }` | `WidthType.PERCENTAGE` renders inconsistently in Google Docs; use absolute twips only |
-| Cell width | `{ size: N, type: WidthType.DXA }` | Same rationale; never use `PERCENTAGE` for individual cells |
-| `columnWidths` | Explicit array summing to table width | Required for LibreOffice `FIXED` layout to render correctly |
-| Table layout | `TableLayoutType.FIXED` | Prevents content-driven auto-resizing |
+| Convention     | Required Value                                             | Rationale                                                                                                |
+| -------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Default font   | `Arial`                                                    | Universally available; `Helvetica` is not embedded in Word/LibreOffice and causes substitution artifacts |
+| Page size      | `width: 12240, height: 15840` (twips, US Letter 8.5×11 in) | Explicit size prevents each app from applying its own default                                            |
+| Page margins   | `top/right/bottom/left: 1440` (twips, 1 inch)              | Consistent readable margins across apps                                                                  |
+| Table width    | `{ size: 9360, type: WidthType.DXA }`                      | `WidthType.PERCENTAGE` renders inconsistently in Google Docs; use absolute twips only                    |
+| Cell width     | `{ size: N, type: WidthType.DXA }`                         | Same rationale; never use `PERCENTAGE` for individual cells                                              |
+| `columnWidths` | Explicit array summing to table width                      | Required for LibreOffice `FIXED` layout to render correctly                                              |
+| Table layout   | `TableLayoutType.FIXED`                                    | Prevents content-driven auto-resizing                                                                    |
 
 ### Agent Rules for DOCX Changes
 
