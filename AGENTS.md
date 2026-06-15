@@ -92,9 +92,9 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 
 #### Team Color Picker & Logo Palette Extraction
 
-[TeamColorPickers.tsx](file:///home/patrick/github/splk3/goalie-gen/src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (native color input + hex text field + palette swatches). It is embedded inside all three document generator forms.
+[TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (native color input + hex text field + palette swatches). It is embedded inside all three document generator forms.
 
-[src/utils/teamColors.ts](file:///home/patrick/github/splk3/goalie-gen/src/utils/teamColors.ts) provides:
+[src/utils/teamColors.ts](src/utils/teamColors.ts) provides:
 
 - `DEFAULT_PRIMARY_TEAM_COLOR` / `DEFAULT_SECONDARY_TEAM_COLOR` — USA national colors (`#00205B` / `#AF272F`) used as starting values.
 - `normalizeHexRgbColor(input)` — normalizes any `#RRGGBB`-ish string to uppercase `#RRGGBB`, returns `null` for invalid input.
