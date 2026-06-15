@@ -762,9 +762,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               cantSplit: true,
               tableHeader: true,
               children: WEEKDAY_LABELS.map(
-                (weekday) =>
+                (weekday, index) =>
                   new TableCell({
-                    width: { size: 14.28, type: WidthType.PERCENTAGE },
+                    width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
                     verticalAlign: VerticalAlign.CENTER,
                     shading: { fill: "EDEDED" },
                     children: [
@@ -781,11 +781,11 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               (week) =>
                 new TableRow({
                   cantSplit: true,
-                  children: week.map((cell) => {
+                  children: week.map((cell, index) => {
                     const dateLabel = cell.dayOfMonth ? `${cell.dayOfMonth}` : "";
                     const eventTypeLabel = cell.hasEvents ? cell.eventTypes.join(", ") : "";
                     return new TableCell({
-                      width: { size: 14.28, type: WidthType.PERCENTAGE },
+                      width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
                       verticalAlign: VerticalAlign.TOP,
                       shading: cell.hasEvents ? { fill: "D9D9D9" } : undefined,
                       children: [
@@ -810,8 +810,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
           documentChildren.push(
             new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
+              width: { size: 9360, type: WidthType.DXA },
               layout: TableLayoutType.FIXED,
+              columnWidths: [1337, 1337, 1337, 1337, 1337, 1337, 1338],
               rows: tableRows,
             })
           );
@@ -871,12 +872,30 @@ ${getEventStarterMarkdown(event.eventType)}`)
         default: {
           document: {
             run: {
-              font: "Helvetica",
+              font: "Arial",
             },
           },
         },
       },
-      sections: [{ properties: {}, children: documentChildren }],
+      sections: [
+        {
+          properties: {
+            page: {
+              size: {
+                width: 12240, // 8.5 inches in twips (8.5 * 1440)
+                height: 15840, // 11 inches in twips (11 * 1440)
+              },
+              margin: {
+                top: 1440, // 1 inch in twips
+                right: 1440,
+                bottom: 1440,
+                left: 1440,
+              },
+            },
+          },
+          children: documentChildren,
+        },
+      ],
     });
 
     const blob = await Packer.toBlob(doc);

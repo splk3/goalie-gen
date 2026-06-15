@@ -196,7 +196,7 @@ describe("GenerateTeamPlanButton", () => {
       TableRow: jest.fn((options) => ({ options })),
       TextRun: mockTextRun,
       VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
-      WidthType: { PERCENTAGE: "PERCENTAGE" },
+      WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
     } as never);
 
     render(<GenerateTeamPlanButton />);
@@ -293,7 +293,7 @@ describe("GenerateTeamPlanButton", () => {
       TableRow: jest.fn((options) => ({ options })),
       TextRun: mockTextRun,
       VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
-      WidthType: { PERCENTAGE: "PERCENTAGE" },
+      WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
     } as never);
 
     render(<GenerateTeamPlanButton />);
