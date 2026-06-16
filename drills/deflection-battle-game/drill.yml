@@ -1,0 +1,101 @@
+name: Deflection Battle Game
+
+drill_steps: |-
+  The coach stands in the high slot and shoots firm, low pucks intentionally aimed at the goalie's stick for controlled deflections. The goalie in Net 1 attempts to angle the puck into Net 2 or Net 3, preventing any pucks from deflecting back into their own net.
+
+  - +1 point for a clean deflection directed safely to either side.
+  - -1 point if the puck deflects into Net 1 (on the goalie).
+  - Run for time (30-45 seconds) or to a point target.
+
+coaching_focus_points: |-
+  - Set early: Be in stance before the coach releases the puck.
+  - Hands out front: Present the stick and gloves in front of the body to smother or steer pucks.
+  - Firm bottom hand: Prevents the stick from twisting on impact.
+  - Corner Deflections: Tilt the stick slightly to angle pucks to the corner.
+  - Body behind the stick: Square chest and shoulders so mishits stay in front.
+  - Track the puck fully: Follow the puck from release – stick contact – deflection path.
+
+shooter_focus_points: |-
+  - Shoot low and firm to create predictable deflection opportunities.
+  - Aim for the stick blade, not the pads or body.
+  - Occasionally shoot slightly off-line to force the goalie to reach and adjust.
+
+drill_image: deflection-battle-game.png
+
+drill_progressions:
+  - progression_name: Progression 1. Angle Variation
+    progression_description: |-
+      Coach moves 2-3 feet left or right to change the deflection angle.
+      Forces goalie to adjust stick angle and body alignment.
+    progression_image: progression-1.png
+  - progression_name: Progression 2. Rapid-Fire Sequence
+    progression_description: |-
+      Coach shoots 3-5 pucks in quick succession.
+      Goalie must maintain consistent stick presentation under pressure.
+  - progression_name: Progression 3. Variable Shot Locations
+    progression_description: |-
+      Coach alternates between:
+
+      - Direct low shots
+      - Slightly off-angle shots
+      - Shots aimed at the heel or toe of the goalie's stick
+      - Shots that force the goalie to reach slightly
+
+      This challenges fine motor control and blade-angle precision.
+  - progression_name: Progression 4. Multi-Goalie Battle (2 Additional Goalies)
+    progression_description: |-
+      Add two more goalies:
+
+      - Goalie A in Net 2
+      - Goalie B in Net 3
+
+      How it works:
+
+      - Coach shoots low pucks for deflections off Goalie 1's stick.
+      - Goalie 1 tries to angle pucks into both Net 2 and Net 3.
+      - Goalie A and Goalie B attempt to stop any redirected pucks that come their way.
+
+      Scoring Options:
+
+      - Goalie 1: +1 for safe deflection, -1 for any puck that ends up in Net 1.
+      - Goalie A/B: +1 for each save.
+      - Coach: Optional scoring for beating any goalie.
+
+      Added Coaching Points:
+      Goalie 1:
+
+      - Must choose deflection direction intentionally.
+      - Read the coach's release and anticipate stick impact angle.
+
+      Goalie A/B:
+
+      - Track deflections late - don't guess.
+      - Maintain depth appropriate to angle and traffic.
+    progression_image: progression-4.png
+  - progression_name: Progression 5. Chaos Mode
+    progression_description: |-
+      Coach mixes in:
+
+      - Low shots for stick deflections
+      - Occasional high shots for glove/blocker reactions
+      - Off-speed shots
+
+      Goalie must read release, manage traffic, and control rebounds under unpredictable conditions.
+
+drill_creation_date: 2026-06-15
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "no"
+  age_level:
+    - all
+  fundamental_skill:
+    - stance
+    - save_selection
+    - rebound_control
+  skating_skill: []
+  equipment: []
+  space_required:
+    - half_zone
