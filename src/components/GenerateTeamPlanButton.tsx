@@ -7,7 +7,7 @@ import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
-import { blocksToDocxParagraphs } from "../utils/docxContent";
+import { blocksToDocxParagraphs, cleanHexColor, makeDocxHeaderFooter } from "../utils/docxContent";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
@@ -373,7 +373,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         return;
       }
 
-      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 8);
+      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 6);
       if (isCancelled) {
         return;
       }
@@ -455,11 +455,20 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       TextRun,
       VerticalAlign,
       WidthType,
+      Header,
+      Footer,
+      BorderStyle,
+      TabStopType,
+      PageNumber,
     } = await loadDocxModule();
     const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
     const eventSelections = sortedEventDates.flatMap<EventSelection>((eventDate) =>
       eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
     );
+
+    const cleanPrimary = cleanHexColor(primaryTeamColor);
+    const cleanSecondary = cleanHexColor(secondaryTeamColor);
+    const colorOpts = { primaryColor: primaryTeamColor, secondaryColor: secondaryTeamColor };
 
     let arrayBuffer: ArrayBuffer | null = null;
     if (selectedImage) {
@@ -468,6 +477,12 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
     const toBlackRun = (text: string, options: Omit<IRunOptions, "text"> = {}) =>
       new TextRun({ text, color: "000000", ...options });
+
+    const toPrimaryRun = (text: string, options: Omit<IRunOptions, "text"> = {}) =>
+      new TextRun({ text, color: cleanPrimary, ...options });
+
+    const toSecondaryRun = (text: string, options: Omit<IRunOptions, "text"> = {}) =>
+      new TextRun({ text, color: cleanSecondary, ...options });
 
     const addResourceLinkWithQr = async (
       linesBeforeUrl: string,
@@ -485,7 +500,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             toBlackRun(linesBeforeUrl),
             new ExternalHyperlink({
               link: normalizedUrl,
-              children: [toBlackRun(normalizedUrl, { underline: { type: "single" } })],
+              children: [toPrimaryRun(normalizedUrl, { underline: { type: "single" } })],
             }),
           ],
           spacing: { after: 120 },
@@ -519,13 +534,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     );
     documentChildren.push(
       new Paragraph({
-        children: [toBlackRun(coverTitle)],
+        children: [toPrimaryRun(coverTitle, { bold: true })],
         heading: HeadingLevel.HEADING_1,
         alignment: AlignmentType.CENTER,
         spacing: { after: 200 },
       }),
       new Paragraph({
-        children: [toBlackRun(teamName)],
+        children: [toPrimaryRun(teamName, { bold: true })],
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.CENTER,
         spacing: { after: 400 },
@@ -579,7 +594,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           children: [
             new ExternalHyperlink({
               link: normalizedWebsiteUrl,
-              children: [toBlackRun(teamWebsite.trim(), { underline: { type: "single" } })],
+              children: [toPrimaryRun(teamWebsite.trim(), { underline: { type: "single" } })],
             }),
           ],
           alignment: AlignmentType.CENTER,
@@ -591,7 +606,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     if (teamMotto.trim()) {
       documentChildren.push(
         new Paragraph({
-          children: [toBlackRun(teamMotto.trim(), { italics: true })],
+          children: [toSecondaryRun(teamMotto.trim(), { italics: true })],
           alignment: AlignmentType.CENTER,
           spacing: { after: 120 },
         })
@@ -602,7 +617,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
     documentChildren.push(
       new Paragraph({
-        children: [toBlackRun("Team-Level Goaltending Development Plan")],
+        children: [toPrimaryRun("Team-Level Goaltending Development Plan", { bold: true })],
         heading: HeadingLevel.HEADING_1,
         spacing: { before: 0, after: 200 },
       }),
@@ -643,7 +658,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
     documentChildren.push(
       ...blocksToDocxParagraphs(
-        parseMarkdown(getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup))
+        parseMarkdown(getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup)),
+        colorOpts
       )
     );
 
@@ -656,7 +672,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 - Mentor Team: [GOALIE_MENTOR_TEAM]
 - Mentor Role: [GOALIE_MENTOR_ROLE]
 - Mentor Contact Information: [GOALIE_MENTOR_CONTACT_INFORMATION]
-- Mentor Meeting Cadence: [GOALIE_MENTOR_MEETING_CADENCE]`)
+- Mentor Meeting Cadence: [GOALIE_MENTOR_MEETING_CADENCE]`),
+          colorOpts
         )
       );
     }
@@ -665,7 +682,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       const evaluationsCount = parseInt(goalieEvaluationTimes, 10);
       documentChildren.push(
         new Paragraph({
-          children: [toBlackRun("Goalie Evaluations")],
+          children: [toPrimaryRun("Goalie Evaluations", { bold: true })],
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 400, after: 200 },
         }),
@@ -693,16 +710,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
     documentChildren.push(
       new Paragraph({
-        children: [toBlackRun("Practice Plans")],
+        children: [toPrimaryRun("Practice Plans", { bold: true })],
         heading: HeadingLevel.HEADING_1,
         spacing: { before: 400, after: 200 },
       })
     );
 
     const allTemplateBlocks = parseMarkdown(practiceTemplateMd);
-    // Skip only the first heading (section title) so the "Practice N" label
-    // above each practice isn't duplicated, but any sub-headings in the
-    // template (e.g. "### Warm-Up") are still rendered in each practice.
     const firstHeadingIdx = allTemplateBlocks.findIndex((b) => b.type === "heading");
     const templateBlocks =
       firstHeadingIdx >= 0
@@ -710,7 +724,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         : allTemplateBlocks;
     documentChildren.push(
       new Paragraph({
-        children: [toBlackRun("Practice 1")],
+        children: [toPrimaryRun("Practice 1", { bold: true })],
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 300, after: 200 },
       })
@@ -723,12 +737,12 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         })
       );
     }
-    documentChildren.push(...blocksToDocxParagraphs(templateBlocks));
+    documentChildren.push(...blocksToDocxParagraphs(templateBlocks, colorOpts));
 
     if (addCalendarOfEvents && eventSelections.length > 0) {
       documentChildren.push(
         new Paragraph({
-          children: [toBlackRun("Team Calendar")],
+          children: [toPrimaryRun("Team Calendar", { bold: true })],
           heading: HeadingLevel.HEADING_1,
           spacing: { before: 400, after: 200 },
         })
@@ -739,7 +753,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
         documentChildren.push(
           new Paragraph({
-            children: [toBlackRun("Calendar View")],
+            children: [toPrimaryRun("Calendar View", { bold: true })],
             heading: HeadingLevel.HEADING_2,
             spacing: { before: 300, after: 200 },
           })
@@ -750,7 +764,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             monthIndex > 0 && monthIndex % MONTH_CALENDARS_PER_PAGE === 0;
           documentChildren.push(
             new Paragraph({
-              children: [toBlackRun(month.monthLabel)],
+              children: [toPrimaryRun(month.monthLabel, { bold: true })],
               heading: HeadingLevel.HEADING_3,
               pageBreakBefore: startsNewCalendarPage,
               spacing: { before: 250, after: 120 },
@@ -771,7 +785,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
                         spacing: { after: 60 },
-                        children: [toBlackRun(weekday, { bold: true })],
+                        children: [toSecondaryRun(weekday, { bold: true })],
                       }),
                     ],
                   })
@@ -825,7 +839,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       if (includeEventDetails) {
         documentChildren.push(
           new Paragraph({
-            children: [toBlackRun("Event Details")],
+            children: [toPrimaryRun("Event Details", { bold: true })],
             heading: HeadingLevel.HEADING_2,
             spacing: { before: 300, after: 200 },
           })
@@ -846,7 +860,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 - Event Type: ${event.eventType}
 - Event Focus: [EVENT_FOCUS]
 
-${getEventStarterMarkdown(event.eventType)}`)
+${getEventStarterMarkdown(event.eventType)}`),
+              colorOpts
             )
           );
 
@@ -880,6 +895,7 @@ ${getEventStarterMarkdown(event.eventType)}`)
       sections: [
         {
           properties: {
+            titlePage: true,
             page: {
               size: {
                 width: 12240, // 8.5 inches in twips (8.5 * 1440)
@@ -893,6 +909,21 @@ ${getEventStarterMarkdown(event.eventType)}`)
               },
             },
           },
+          ...makeDocxHeaderFooter(
+            `${valueOrPlaceholder(teamName, "TEAM_NAME").toUpperCase()} GOALTENDING DEVELOPMENT PLAN`,
+            cleanPrimary,
+            cleanSecondary,
+            {
+              Header,
+              Footer,
+              BorderStyle,
+              TabStopType,
+              PageNumber,
+              Paragraph,
+              TextRun,
+              AlignmentType,
+            }
+          ),
           children: documentChildren,
         },
       ],

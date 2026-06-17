@@ -197,6 +197,11 @@ describe("GenerateTeamPlanButton", () => {
       TextRun: mockTextRun,
       VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
       WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
+      Header: jest.fn((options) => ({ options })),
+      Footer: jest.fn((options) => ({ options })),
+      BorderStyle: { SINGLE: "SINGLE" },
+      TabStopType: { RIGHT: "RIGHT", LEFT: "LEFT" },
+      PageNumber: { CURRENT: "CURRENT", TOTAL_PAGES: "TOTAL_PAGES" },
     } as never);
 
     render(<GenerateTeamPlanButton />);
@@ -294,6 +299,11 @@ describe("GenerateTeamPlanButton", () => {
       TextRun: mockTextRun,
       VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
       WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
+      Header: jest.fn((options) => ({ options })),
+      Footer: jest.fn((options) => ({ options })),
+      BorderStyle: { SINGLE: "SINGLE" },
+      TabStopType: { RIGHT: "RIGHT", LEFT: "LEFT" },
+      PageNumber: { CURRENT: "CURRENT", TOTAL_PAGES: "TOTAL_PAGES" },
     } as never);
 
     render(<GenerateTeamPlanButton />);

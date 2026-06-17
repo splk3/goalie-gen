@@ -1,5 +1,5 @@
 import { TextRun, Paragraph } from "docx";
-import { parseRunData, textToRuns, blocksToDocxParagraphs } from "../docxContent";
+import { parseRunData, textToRuns, blocksToDocxParagraphs, cleanHexColor } from "../docxContent";
 import type { MarkdownBlock } from "../markdownParser";
 
 describe("parseRunData", () => {
@@ -68,7 +68,30 @@ describe("textToRuns", () => {
   });
 });
 
+describe("cleanHexColor", () => {
+  it("strips a leading # from a valid 6-digit hex string", () => {
+    expect(cleanHexColor("#00205B")).toBe("00205B");
+  });
+
+  it("returns the string unchanged when there is no leading #", () => {
+    expect(cleanHexColor("AF272F")).toBe("AF272F");
+  });
+
+  it("returns '000000' for undefined", () => {
+    expect(cleanHexColor(undefined)).toBe("000000");
+  });
+
+  it("returns '000000' for an empty string", () => {
+    expect(cleanHexColor("")).toBe("000000");
+  });
+
+  it("handles a standalone # (returns empty string after stripping)", () => {
+    expect(cleanHexColor("#")).toBe("");
+  });
+});
+
 describe("blocksToDocxParagraphs", () => {
+
   it("returns empty array for empty input", () => {
     expect(blocksToDocxParagraphs([])).toEqual([]);
   });

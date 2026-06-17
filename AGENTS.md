@@ -99,7 +99,7 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 - `DEFAULT_PRIMARY_TEAM_COLOR` / `DEFAULT_SECONDARY_TEAM_COLOR` — USA national colors (`#00205B` / `#AF272F`) used as starting values.
 - `normalizeHexRgbColor(input)` — normalizes any `#RRGGBB`-ish string to uppercase `#RRGGBB`, returns `null` for invalid input.
 - `isValidHexRgbColor(input)` — strict `#RRGGBB` validation.
-- `extractPaletteHexColorsFromDataUrl(dataUrl, colorCount?)` — browser-only async function that loads the image into a canvas via `colorthief` and returns up to `colorCount` unique normalized hex colors.
+- `extractPaletteHexColorsFromDataUrl(dataUrl, colorCount?)` — browser-only async function that loads the image into a canvas and calls `colorthief` asynchronously (using `getPalette` with quality set to `1`) to extract and return up to `colorCount` (default `6`) unique normalized hex colors.
 
 When a logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Colors are reset on form close/cancel.
 

@@ -8,7 +8,7 @@ import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
-import { blocksToDocxParagraphs } from "../utils/docxContent";
+import { blocksToDocxParagraphs, cleanHexColor, makeDocxHeaderFooter } from "../utils/docxContent";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
 import {
@@ -495,7 +495,7 @@ export default function GenerateClubPlanButton() {
         return;
       }
 
-      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 8);
+      const palette = await extractPaletteHexColorsFromDataUrl(imagePreview, 6);
       if (isCancelled) {
         return;
       }
@@ -573,7 +573,22 @@ export default function GenerateClubPlanButton() {
       Packer,
       Paragraph,
       TextRun,
+      Header,
+      Footer,
+      BorderStyle,
+      TabStopType,
+      PageNumber,
     } = await loadDocxModule();
+
+    const cleanPrimary = cleanHexColor(primaryTeamColor);
+    const cleanSecondary = cleanHexColor(secondaryTeamColor);
+    const colorOpts = { primaryColor: primaryTeamColor, secondaryColor: secondaryTeamColor };
+
+    const toPrimaryRun = (text: string, options: Record<string, unknown> = {}) =>
+      new TextRun({ text, color: cleanPrimary, ...options });
+
+    const toSecondaryRun = (text: string, options: Record<string, unknown> = {}) =>
+      new TextRun({ text, color: cleanSecondary, ...options });
 
     let arrayBuffer: ArrayBuffer | null = null;
     if (selectedImage) {
@@ -594,21 +609,19 @@ export default function GenerateClubPlanButton() {
     const documentChildren: Paragraph[] = [];
     documentChildren.push(
       new Paragraph({
-        children: [new TextRun({ text: "Goaltending Development Plan", color: "000000" })],
+        children: [toPrimaryRun("Goaltending Development Plan", { bold: true })],
         heading: HeadingLevel.HEADING_1,
         alignment: AlignmentType.CENTER,
         spacing: { after: 200 },
       }),
       new Paragraph({
-        children: [new TextRun({ text: "for the", color: "000000" })],
+        children: [toPrimaryRun("for the")],
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.CENTER,
         spacing: { after: 200 },
       }),
       new Paragraph({
-        children: [
-          new TextRun({ text: valueOrPlaceholder(clubName, "CLUB_NAME"), color: "000000" }),
-        ],
+        children: [toPrimaryRun(valueOrPlaceholder(clubName, "CLUB_NAME"), { bold: true })],
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.CENTER,
         spacing: { after: 300 },
@@ -675,21 +688,10 @@ export default function GenerateClubPlanButton() {
           ? [
               new ExternalHyperlink({
                 link: websiteLinkTarget,
-                children: [
-                  new TextRun({
-                    text: normalizedWebsiteUrl,
-                    color: "000000",
-                    underline: { type: "single" },
-                  }),
-                ],
+                children: [toPrimaryRun(normalizedWebsiteUrl, { underline: { type: "single" } })],
               }),
             ]
-          : [
-              new TextRun({
-                text: valueOrPlaceholder(clubWebsite, "WEBSITE_URL"),
-                color: "000000",
-              }),
-            ],
+          : [toPrimaryRun(valueOrPlaceholder(clubWebsite, "WEBSITE_URL"))],
         alignment: AlignmentType.CENTER,
         spacing: { after: 120 },
       })
@@ -698,7 +700,7 @@ export default function GenerateClubPlanButton() {
     if (clubMotto.trim()) {
       documentChildren.push(
         new Paragraph({
-          children: [new TextRun({ text: clubMotto.trim(), color: "000000", italics: true })],
+          children: [toSecondaryRun(clubMotto.trim(), { italics: true })],
           alignment: AlignmentType.CENTER,
           spacing: { after: 120 },
         })
@@ -709,14 +711,17 @@ export default function GenerateClubPlanButton() {
 
     documentChildren.push(
       new Paragraph({
-        children: [new TextRun({ text: "Goaltending Development Plan", color: "000000" })],
+        children: [toPrimaryRun("Goaltending Development Plan", { bold: true })],
         heading: HeadingLevel.HEADING_1,
         spacing: { before: 0, after: 200 },
       })
     );
 
     documentChildren.push(
-      ...blocksToDocxParagraphs(parseMarkdown(`## Introduction\n\n${selectedIntroMarkdown}`))
+      ...blocksToDocxParagraphs(
+        parseMarkdown(`## Introduction\n\n${selectedIntroMarkdown}`),
+        colorOpts
+      )
     );
 
     documentChildren.push(
@@ -729,12 +734,16 @@ export default function GenerateClubPlanButton() {
             ),
             "Goalie Coaching Contacts"
           )
-        )
+        ),
+        colorOpts
       )
     );
 
     documentChildren.push(
-      ...blocksToDocxParagraphs(parseMarkdown(`## Season Goals\n\n${selectedSeasonGoalsMarkdown}`))
+      ...blocksToDocxParagraphs(
+        parseMarkdown(`## Season Goals\n\n${selectedSeasonGoalsMarkdown}`),
+        colorOpts
+      )
     );
 
     const hasAnyBenefits =
@@ -776,12 +785,14 @@ export default function GenerateClubPlanButton() {
         goalieDiscountStartingAgeGroup,
         goaliesAreFree
       );
-      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(trainingDetailsMarkdown)));
+      documentChildren.push(
+        ...blocksToDocxParagraphs(parseMarkdown(trainingDetailsMarkdown), colorOpts)
+      );
     }
-    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd)));
+    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd), colorOpts));
 
     if (includeRequiredEquipmentSection) {
-      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(equipmentMd)));
+      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(equipmentMd), colorOpts));
     }
 
     if (hasGoalieEvaluations) {
@@ -789,11 +800,13 @@ export default function GenerateClubPlanButton() {
         /\[GOALIE_EVALUATIONS_WHEN\]/g,
         valueOrPlaceholder(goalieEvaluationsWhen, "GOALIE_EVALUATIONS_WHEN")
       );
-      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(progressWithValues)));
+      documentChildren.push(
+        ...blocksToDocxParagraphs(parseMarkdown(progressWithValues), colorOpts)
+      );
     }
 
     if (includeExternalResourcesSection) {
-      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(resourcesMd)));
+      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(resourcesMd), colorOpts));
     }
 
     const doc = new Document({
@@ -809,6 +822,7 @@ export default function GenerateClubPlanButton() {
       sections: [
         {
           properties: {
+            titlePage: true,
             page: {
               size: {
                 width: 12240, // 8.5 inches in twips (8.5 * 1440)
@@ -822,6 +836,21 @@ export default function GenerateClubPlanButton() {
               },
             },
           },
+          ...makeDocxHeaderFooter(
+            `${valueOrPlaceholder(clubName, "CLUB_NAME").toUpperCase()} GOALTENDING DEVELOPMENT PLAN`,
+            cleanPrimary,
+            cleanSecondary,
+            {
+              Header,
+              Footer,
+              BorderStyle,
+              TabStopType,
+              PageNumber,
+              Paragraph,
+              TextRun,
+              AlignmentType,
+            }
+          ),
           children: documentChildren,
         },
       ],
