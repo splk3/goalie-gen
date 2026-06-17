@@ -223,3 +223,4 @@ Reusable skill definitions for local CLI agents live in [.agents/skills/](file:/
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `new-drill-from-issue` | Convert a `goalie-drills`-labelled GitHub issue into a `drill.yml` + image files + PR                                   |
 | `lsp-setup`            | Enable LSP code intelligence (TypeScript, Tailwind, CSS, YAML, JSON) — a `lsp.json` is already present at the repo root |
+| `super-linter-fixer`   | Auto-fix Prettier/ESLint/Markdown/spelling violations locally; run the Docker super-linter container for CI parity      |

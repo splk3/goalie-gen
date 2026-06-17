@@ -131,7 +131,12 @@ describe("GenerateTeamPlanButton", () => {
     const disabledThumb = disabledSwitch.querySelector("span");
 
     expect(enabledSwitch).toHaveClass("overflow-hidden", "w-11", "bg-usa-blue", "dark:bg-blue-500");
-    expect(disabledSwitch).toHaveClass("overflow-hidden", "w-11", "bg-gray-400", "dark:bg-gray-600");
+    expect(disabledSwitch).toHaveClass(
+      "overflow-hidden",
+      "w-11",
+      "bg-gray-400",
+      "dark:bg-gray-600"
+    );
     expect(enabledThumb).toHaveClass("translate-x-5");
     expect(disabledThumb).toHaveClass("translate-x-0");
     expect(enabledThumb).not.toHaveClass("translate-x-6");
@@ -148,7 +153,9 @@ describe("GenerateTeamPlanButton", () => {
 
     await openModal(user);
 
-    expect(screen.queryByLabelText("Number of evaluation times during season")).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Number of evaluation times during season")
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("switch", { name: "Do goalies receive evaluations?" }));
 
@@ -342,9 +349,13 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     expect(screen.getByText("Event Planning")).toBeInTheDocument();
     expect(screen.getByRole("switch", { name: "Include calendar view?" })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "Include details for each event?" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", { name: "Include details for each event?" })
+    ).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "On-ice Practice" })).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: "TBD event type is always enabled" })).toBeDisabled();
+    expect(
+      screen.getByRole("checkbox", { name: "TBD event type is always enabled" })
+    ).toBeDisabled();
   });
 
   it("persists selected dates and applies default event-type fallback rules", async () => {
@@ -361,7 +372,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     expect(eventTypeSelect).toHaveValue("On-ice Practice");
 
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
-    const secondEventTypeSelect = screen.getByRole("combobox", { name: /additional event type 2 for/i });
+    const secondEventTypeSelect = screen.getByRole("combobox", {
+      name: /additional event type 2 for/i,
+    });
     await user.selectOptions(secondEventTypeSelect, "Off-ice Practice");
 
     await user.click(screen.getByRole("checkbox", { name: "On-ice Practice" }));
@@ -400,7 +413,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     }
 
     const eventTypeSelect = screen.getByRole("combobox", { name: /event type for/i });
-    const secondEventTypeSelect = screen.getByRole("combobox", { name: /additional event type 2 for/i });
+    const secondEventTypeSelect = screen.getByRole("combobox", {
+      name: /additional event type 2 for/i,
+    });
     expect(eventTypeSelect).toHaveValue("TBD");
     expect(secondEventTypeSelect).toHaveValue("TBD");
     expect(within(eventTypeSelect).getAllByRole("option")).toHaveLength(1);
@@ -419,16 +434,24 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await user.click(screen.getByRole("button", { name: / 3,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
-    expect(screen.queryByRole("combobox", { name: /additional event type 2 for/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("combobox", { name: /additional event type 2 for/i })
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
-    expect(screen.getByRole("combobox", { name: /additional event type 2 for/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: /additional event type 2 for/i })
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /add another event type for/i }));
-    expect(screen.getByRole("combobox", { name: /additional event type 3 for/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: /additional event type 3 for/i })
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /remove additional event type 3 for/i }));
-    expect(screen.queryByRole("combobox", { name: /additional event type 3 for/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("combobox", { name: /additional event type 3 for/i })
+    ).not.toBeInTheDocument();
   });
 
   it("reconciles all 3+ event selectors when enabled event types change", async () => {
@@ -444,8 +467,12 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await user.click(screen.getByRole("button", { name: /add another event type for/i }));
 
     const firstEventTypeSelect = screen.getByRole("combobox", { name: /event type for/i });
-    const secondEventTypeSelect = screen.getByRole("combobox", { name: /additional event type 2 for/i });
-    const thirdEventTypeSelect = screen.getByRole("combobox", { name: /additional event type 3 for/i });
+    const secondEventTypeSelect = screen.getByRole("combobox", {
+      name: /additional event type 2 for/i,
+    });
+    const thirdEventTypeSelect = screen.getByRole("combobox", {
+      name: /additional event type 3 for/i,
+    });
 
     await user.selectOptions(secondEventTypeSelect, "Off-ice Practice");
     await user.selectOptions(thirdEventTypeSelect, "Video Review");
@@ -484,7 +511,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
       name: /more than one event on this date/i,
     });
     await user.click(moreThanOneCheckboxes[0]);
-    expect(screen.getByRole("combobox", { name: /additional event type 2 for/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: /additional event type 2 for/i })
+    ).toBeInTheDocument();
 
     const deleteDateButtons = screen.getAllByRole("button", { name: /delete all events for/i });
     await user.click(deleteDateButtons[0]);
@@ -496,7 +525,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await waitFor(() =>
       expect(screen.queryByRole("dialog", { name: "Delete event date?" })).not.toBeInTheDocument()
     );
-    expect(screen.queryByRole("combobox", { name: /additional event type 2 for/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("combobox", { name: /additional event type 2 for/i })
+    ).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(1);
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Add Event Dates" })).toHaveFocus()

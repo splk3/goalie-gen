@@ -171,7 +171,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           .join(" ")
           .toLowerCase();
         const isNewContent = isTimestampWithinLast30Days(creationTimestamp, browseTimestamp);
-        const isUpdatedContent = isTimestampWithinLast30Days(explicitUpdatedTimestamp, browseTimestamp);
+        const isUpdatedContent = isTimestampWithinLast30Days(
+          explicitUpdatedTimestamp,
+          browseTimestamp
+        );
 
         return {
           ...node,

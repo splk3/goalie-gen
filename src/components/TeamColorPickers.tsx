@@ -106,7 +106,9 @@ function ColorPickerControl({
 
       {paletteColors.length > 0 && (
         <div className="mt-3">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{label} Palette</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {label} Palette
+          </p>
           <div className="flex flex-wrap gap-2">
             {paletteColors.map((paletteColor) => (
               <button
@@ -141,7 +143,9 @@ export default function TeamColorPickers({
 }: TeamColorPickersProps) {
   return (
     <fieldset className="mb-6 border border-gray-300 dark:border-gray-600 rounded-lg p-4">
-      <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">Team Colors</legend>
+      <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">
+        Team Colors
+      </legend>
       <ColorPickerControl
         idPrefix="primary-team-color"
         label="Primary Team Color"
