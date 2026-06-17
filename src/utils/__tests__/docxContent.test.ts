@@ -1,5 +1,11 @@
-import { TextRun, Paragraph } from "docx";
-import { parseRunData, textToRuns, blocksToDocxParagraphs, cleanHexColor } from "../docxContent";
+import { TextRun, Paragraph, Header, Footer, BorderStyle, PageNumber, AlignmentType } from "docx";
+import {
+  parseRunData,
+  textToRuns,
+  blocksToDocxParagraphs,
+  cleanHexColor,
+  makeDocxHeaderFooter,
+} from "../docxContent";
 import type { MarkdownBlock } from "../markdownParser";
 
 describe("parseRunData", () => {
@@ -91,7 +97,6 @@ describe("cleanHexColor", () => {
 });
 
 describe("blocksToDocxParagraphs", () => {
-
   it("returns empty array for empty input", () => {
     expect(blocksToDocxParagraphs([])).toEqual([]);
   });
@@ -157,5 +162,60 @@ describe("blocksToDocxParagraphs", () => {
     ];
     const paragraphs = blocksToDocxParagraphs(blocks);
     expect(paragraphs).toHaveLength(3);
+  });
+});
+
+describe("makeDocxHeaderFooter", () => {
+  it("builds running headers and footers with correct styling, thicker borders, and centered page number", () => {
+    const headerLabel = "TEAM PLAN";
+    const primaryColor = "00205B";
+    const secondaryColor = "AF272F";
+
+    const mockHeader = jest.fn().mockImplementation(function (options) {
+      return { type: "Header", options };
+    });
+    const mockFooter = jest.fn().mockImplementation(function (options) {
+      return { type: "Footer", options };
+    });
+    const mockParagraph = jest.fn().mockImplementation(function (options) {
+      return { type: "Paragraph", options };
+    });
+    const mockTextRun = jest.fn().mockImplementation(function (options) {
+      return { type: "TextRun", options };
+    });
+
+    const classes = {
+      Header: mockHeader,
+      Footer: mockFooter,
+      BorderStyle: { SINGLE: "single" },
+      PageNumber: { CURRENT: "current" },
+      Paragraph: mockParagraph,
+      TextRun: mockTextRun,
+      AlignmentType: { CENTER: "center", RIGHT: "right" },
+    };
+
+    const result = makeDocxHeaderFooter(headerLabel, primaryColor, secondaryColor, classes as any);
+
+    expect(mockHeader).toHaveBeenCalledTimes(1);
+    expect(mockFooter).toHaveBeenCalledTimes(1);
+
+    const headerOptions = mockHeader.mock.calls[0][0];
+    const footerOptions = mockFooter.mock.calls[0][0];
+
+    // Header checks
+    const headerP = headerOptions.children[0];
+    expect(headerP.options.alignment).toBe("right");
+    expect(headerP.options.border.bottom.size).toBe(18);
+    expect(headerP.options.border.bottom.color).toBe(secondaryColor);
+    expect(headerP.options.children[0].options.text).toBe(headerLabel);
+    expect(headerP.options.children[0].options.color).toBe(primaryColor);
+
+    // Footer checks
+    const footerP = footerOptions.children[0];
+    expect(footerP.options.alignment).toBe("center");
+    expect(footerP.options.border.top.size).toBe(18);
+    expect(footerP.options.border.top.color).toBe(secondaryColor);
+    expect(footerP.options.children[0].options.text).toBe("Page ");
+    expect(footerP.options.children[1].options.children[0]).toBe("current");
   });
 });
