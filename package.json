@@ -70,5 +70,19 @@
   },
   "bugs": {
     "url": "https://github.com/splk3/goalie-gen/issues"
+  },
+  "allowScripts": {
+    "lmdb@2.5.2": true,
+    "lmdb@2.5.3": true,
+    "@parcel/watcher@2.5.6": true,
+    "core-js@3.47.0": true,
+    "core-js-pure@3.26.0": true,
+    "es5-ext@0.10.64": true,
+    "esbuild@0.28.1": true,
+    "gatsby@5.16.1": true,
+    "gatsby-cli@5.16.0": true,
+    "sharp@0.32.6": true,
+    "msgpackr-extract@3.0.3": true,
+    "unrs-resolver@1.11.1": true
   }
 }
