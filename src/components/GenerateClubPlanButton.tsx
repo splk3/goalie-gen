@@ -964,14 +964,23 @@ export default function GenerateClubPlanButton() {
             disabled={!!generatedBlob || isGenerating}
           />
 
-          <Input
-            id="club-motto"
-            label="Club Motto/Mission"
-            value={clubMotto}
-            onChange={setClubMotto}
-            placeholder="Enter your club motto or mission (optional)"
-            disabled={!!generatedBlob || isGenerating}
-          />
+          <div className="mb-3">
+            <label
+              htmlFor="club-motto"
+              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+            >
+              Club Motto/Mission
+            </label>
+            <textarea
+              id="club-motto"
+              value={clubMotto}
+              onChange={(e) => setClubMotto(e.target.value)}
+              disabled={!!generatedBlob || isGenerating}
+              rows={3}
+              className={formInputClassName}
+              placeholder="Enter your club motto or mission (optional)"
+            />
+          </div>
 
           <ImageUploader
             onImageCropped={handleImageCropped}

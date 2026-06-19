@@ -45,6 +45,11 @@ interface GenerateTeamPlanButtonProps {
   variant?: "blue" | "red";
 }
 
+interface EventTypeLegendProps {
+  label: string;
+  helperText: string;
+}
+
 const CONFIGURABLE_EVENT_TYPES: ConfigurableEventType[] = [
   "On-ice Practice",
   "Off-ice Practice",
@@ -52,9 +57,26 @@ const CONFIGURABLE_EVENT_TYPES: ConfigurableEventType[] = [
   "Evaluation",
   "Game",
 ];
+const DETAILED_ENTRY_EVENT_TYPES: EventType[] = [...CONFIGURABLE_EVENT_TYPES, "TBD"];
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTH_CALENDARS_PER_PAGE = 2;
+
+function EventTypeLegend({ label, helperText }: EventTypeLegendProps) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span>{label}</span>
+      <span
+        role="img"
+        aria-label={`${label} help`}
+        title={helperText}
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-400 text-xs text-gray-600 dark:border-gray-500 dark:text-gray-300"
+      >
+        i
+      </span>
+    </span>
+  );
+}
 
 function getMonthStart(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -236,7 +258,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const [addCalendarOfEvents, setAddCalendarOfEvents] = React.useState<boolean>(false);
   const [includeCalendarView, setIncludeCalendarView] = React.useState<boolean>(true);
   const [includeEventDetails, setIncludeEventDetails] = React.useState<boolean>(true);
-  const [enabledEventTypes, setEnabledEventTypes] = React.useState<
+  const [calendarEnabledEventTypes, setCalendarEnabledEventTypes] = React.useState<
     Record<ConfigurableEventType, boolean>
   >({
     "On-ice Practice": true,
@@ -244,6 +266,16 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     "Video Review": true,
     Evaluation: true,
     Game: true,
+  });
+  const [detailedEntryEventTypes, setDetailedEntryEventTypes] = React.useState<
+    Record<EventType, boolean>
+  >({
+    "On-ice Practice": true,
+    "Off-ice Practice": true,
+    "Video Review": true,
+    Evaluation: true,
+    Game: true,
+    TBD: true,
   });
   const [selectedEventDates, setSelectedEventDates] = React.useState<EventDateSelection[]>([]);
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
@@ -261,8 +293,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
   const availableConfigurableEventTypes = React.useMemo(
-    () => CONFIGURABLE_EVENT_TYPES.filter((eventType) => enabledEventTypes[eventType]),
-    [enabledEventTypes]
+    () => CONFIGURABLE_EVENT_TYPES.filter((eventType) => calendarEnabledEventTypes[eventType]),
+    [calendarEnabledEventTypes]
   );
 
   const availableEventTypeOptions = React.useMemo<EventType[]>(
@@ -271,17 +303,17 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   );
 
   const getDefaultEventType = React.useCallback((): EventType => {
-    if (enabledEventTypes["On-ice Practice"]) {
+    if (calendarEnabledEventTypes["On-ice Practice"]) {
       return "On-ice Practice";
     }
-    if (enabledEventTypes.Game) {
+    if (calendarEnabledEventTypes.Game) {
       return "Game";
     }
     if (availableConfigurableEventTypes.length > 0) {
       return [...availableConfigurableEventTypes].sort((a, b) => a.localeCompare(b))[0];
     }
     return "TBD";
-  }, [availableConfigurableEventTypes, enabledEventTypes]);
+  }, [availableConfigurableEventTypes, calendarEnabledEventTypes]);
 
   const openDatePicker = () => {
     setDraftSelectedDateKeys(selectedEventDates.map((entry) => entry.date));
@@ -464,6 +496,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
     const eventSelections = sortedEventDates.flatMap<EventSelection>((eventDate) =>
       eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
+    );
+    const detailedEventSelections = eventSelections.filter(
+      (event) => detailedEntryEventTypes[event.eventType]
     );
 
     const cleanPrimary = cleanHexColor(primaryTeamColor);
@@ -837,7 +872,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           })
         );
 
-        for (const event of eventSelections) {
+        for (const event of detailedEventSelections) {
           documentChildren.push(
             new Paragraph({
               children: [toBlackRun(`${formatDisplayDate(event.date)} (${event.eventType})`)],
@@ -986,12 +1021,20 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       setAddCalendarOfEvents(false);
       setIncludeCalendarView(true);
       setIncludeEventDetails(true);
-      setEnabledEventTypes({
+      setCalendarEnabledEventTypes({
         "On-ice Practice": true,
         "Off-ice Practice": true,
         "Video Review": true,
         Evaluation: true,
         Game: true,
+      });
+      setDetailedEntryEventTypes({
+        "On-ice Practice": true,
+        "Off-ice Practice": true,
+        "Video Review": true,
+        Evaluation: true,
+        Game: true,
+        TBD: true,
       });
       setSelectedEventDates([]);
       setIsDatePickerOpen(false);
@@ -1024,12 +1067,20 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setAddCalendarOfEvents(false);
     setIncludeCalendarView(true);
     setIncludeEventDetails(true);
-    setEnabledEventTypes({
+    setCalendarEnabledEventTypes({
       "On-ice Practice": true,
       "Off-ice Practice": true,
       "Video Review": true,
       Evaluation: true,
       Game: true,
+    });
+    setDetailedEntryEventTypes({
+      "On-ice Practice": true,
+      "Off-ice Practice": true,
+      "Video Review": true,
+      Evaluation: true,
+      Game: true,
+      TBD: true,
     });
     setSelectedEventDates([]);
     setIsDatePickerOpen(false);
@@ -1336,7 +1387,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
               <fieldset className="mb-4">
                 <legend className="text-gray-700 dark:text-gray-300 font-semibold mb-2">
-                  Event Types
+                  <EventTypeLegend
+                    label="Calendar Event Types"
+                    helperText="These event types will be enabled for your plan and will show up on the calendar view, if enabled"
+                  />
                 </legend>
                 <div className="space-y-2">
                   {CONFIGURABLE_EVENT_TYPES.map((eventType) => (
@@ -1346,31 +1400,72 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                     >
                       <input
                         type="checkbox"
-                        checked={enabledEventTypes[eventType]}
-                        onChange={(e) =>
-                          setEnabledEventTypes((previous) => ({
+                        checked={calendarEnabledEventTypes[eventType]}
+                        onChange={(e) => {
+                          const isEnabled = e.target.checked;
+                          setCalendarEnabledEventTypes((previous) => ({
                             ...previous,
-                            [eventType]: e.target.checked,
-                          }))
-                        }
+                            [eventType]: isEnabled,
+                          }));
+                          setDetailedEntryEventTypes((previous) => ({
+                            ...previous,
+                            [eventType]: isEnabled,
+                          }));
+                        }}
                         disabled={!canEditEventPlanning}
                         className="h-4 w-4 text-usa-blue border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
                       />
                       <span>{eventType}</span>
                     </label>
                   ))}
-                  <label className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                    <input
-                      type="checkbox"
-                      checked
-                      disabled
-                      aria-label="TBD event type is always enabled"
-                      className="h-4 w-4 text-usa-blue border-gray-300 rounded"
-                    />
-                    <span>TBD (always enabled)</span>
-                  </label>
                 </div>
               </fieldset>
+
+              {includeEventDetails && (
+                <fieldset className="mb-4">
+                  <legend className="text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                    <EventTypeLegend
+                      label="Event Types for Detailed Entries"
+                      helperText="Events of these types will have individual entries in the team plan, for use in planning and for taking notes"
+                    />
+                  </legend>
+                  <div className="space-y-2">
+                    {DETAILED_ENTRY_EVENT_TYPES.map((eventType) => {
+                      const isCalendarDisabledForType =
+                        eventType !== "TBD" && !calendarEnabledEventTypes[eventType];
+                      return (
+                        <label
+                          key={`detailed-event-type-${eventType}`}
+                          className={`flex items-center gap-2 ${
+                            isCalendarDisabledForType
+                              ? "text-gray-400 dark:text-gray-500"
+                              : "text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={detailedEntryEventTypes[eventType]}
+                            onChange={(e) =>
+                              setDetailedEntryEventTypes((previous) => ({
+                                ...previous,
+                                [eventType]: e.target.checked,
+                              }))
+                            }
+                            disabled={!canEditEventPlanning || isCalendarDisabledForType}
+                            className="h-4 w-4 text-usa-blue border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                          />
+                          <span>
+                            {eventType}
+                            {isCalendarDisabledForType && (
+                              <span className="ml-1">(Must be enabled in Calendar view.)</span>
+                            )}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              )}
 
               <button
                 type="button"

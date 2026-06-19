@@ -49,6 +49,24 @@ async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.selectOptions(screen.getByLabelText("Skill Level"), "intermediate");
 }
 
+function getCalendarEventTypesFieldset(): HTMLElement {
+  const label = screen.getByText("Calendar Event Types");
+  const fieldset = label.closest("fieldset");
+  if (!fieldset) {
+    throw new Error("Calendar Event Types fieldset not found");
+  }
+  return fieldset;
+}
+
+function getDetailedEntryEventTypesFieldset(): HTMLElement {
+  const label = screen.getByText("Event Types for Detailed Entries");
+  const fieldset = label.closest("fieldset");
+  if (!fieldset) {
+    throw new Error("Event Types for Detailed Entries fieldset not found");
+  }
+  return fieldset;
+}
+
 describe("GenerateTeamPlanButton", () => {
   it("shows DOCX-only UI and team-specific fields", async () => {
     const user = userEvent.setup();
@@ -335,6 +353,58 @@ describe("GenerateTeamPlanButton", () => {
       false,
     ]);
   });
+
+  it("filters event details output by selected detailed-entry event types", async () => {
+    const user = userEvent.setup();
+    const mockDocument = jest.fn((config) => ({ config }));
+
+    mockedLoadDocxModule.mockResolvedValue({
+      AlignmentType: { CENTER: "CENTER", LEFT: "LEFT" },
+      Document: mockDocument,
+      ExternalHyperlink: jest.fn((options) => ({ options })),
+      HeadingLevel: { HEADING_1: "H1", HEADING_2: "H2", HEADING_3: "H3" },
+      ImageRun: jest.fn((options) => ({ options })),
+      Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
+      Paragraph: jest.fn((options) => ({ options })),
+      Table: jest.fn((options) => ({ options })),
+      TableCell: jest.fn((options) => ({ options })),
+      TableLayoutType: { FIXED: "FIXED" },
+      TableRow: jest.fn((options) => ({ options })),
+      TextRun: jest.fn((options) => ({ options })),
+      VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
+      WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
+      Header: jest.fn((options) => ({ options })),
+      Footer: jest.fn((options) => ({ options })),
+      BorderStyle: { SINGLE: "SINGLE" },
+      TabStopType: { RIGHT: "RIGHT", LEFT: "LEFT" },
+      PageNumber: { CURRENT: "CURRENT", TOTAL_PAGES: "TOTAL_PAGES" },
+    } as never);
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: / 8,/ }));
+    await user.click(screen.getByRole("button", { name: "OK" }));
+    await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: /additional event type 2 for/i }),
+      "Game"
+    );
+
+    await user.click(
+      within(getDetailedEntryEventTypesFieldset()).getByRole("checkbox", { name: "Game" })
+    );
+
+    await user.click(screen.getByRole("button", { name: "Generate" }));
+    await waitFor(() => expect(mockDocument).toHaveBeenCalledTimes(1));
+
+    const docArgument = mockDocument.mock.calls[0][0];
+    const serializedDoc = JSON.stringify(docArgument);
+    expect(serializedDoc).toContain("[EVENT_DETAILS_PRACTICE_STARTER]");
+    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_STARTER]");
+  });
 });
 
 describe("GenerateTeamPlanButton event planning UI", () => {
@@ -353,10 +423,14 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     expect(
       screen.getByRole("switch", { name: "Include details for each event?" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: "On-ice Practice" })).toBeInTheDocument();
+    const calendarFieldset = getCalendarEventTypesFieldset();
+    expect(within(calendarFieldset).getByRole("checkbox", { name: "On-ice Practice" })).toBeChecked();
+    expect(screen.getByText("Event Types for Detailed Entries")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "TBD" })).toBeEnabled();
+    expect(screen.getByRole("img", { name: "Calendar Event Types help" })).toBeInTheDocument();
     expect(
-      screen.getByRole("checkbox", { name: "TBD event type is always enabled" })
-    ).toBeDisabled();
+      screen.getByRole("img", { name: "Event Types for Detailed Entries help" })
+    ).toBeInTheDocument();
   });
 
   it("persists selected dates and applies default event-type fallback rules", async () => {
@@ -378,14 +452,20 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     });
     await user.selectOptions(secondEventTypeSelect, "Off-ice Practice");
 
-    await user.click(screen.getByRole("checkbox", { name: "On-ice Practice" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "On-ice Practice" })
+    );
     expect(eventTypeSelect).toHaveValue("Game");
     expect(secondEventTypeSelect).toHaveValue("Off-ice Practice");
 
-    await user.click(screen.getByRole("checkbox", { name: "Off-ice Practice" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Off-ice Practice" })
+    );
     expect(secondEventTypeSelect).toHaveValue("Game");
 
-    await user.click(screen.getByRole("checkbox", { name: "Game" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Game" })
+    );
     expect(eventTypeSelect).toHaveValue("Evaluation");
     expect(secondEventTypeSelect).toHaveValue("Evaluation");
   });
@@ -410,7 +490,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     ] as const;
 
     for (const eventType of configurableTypes) {
-      await user.click(screen.getByRole("checkbox", { name: eventType }));
+      await user.click(within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: eventType }));
     }
 
     const eventTypeSelect = screen.getByRole("combobox", { name: /event type for/i });
@@ -481,20 +561,74 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     expect(secondEventTypeSelect).toHaveValue("Off-ice Practice");
     expect(thirdEventTypeSelect).toHaveValue("Video Review");
 
-    await user.click(screen.getByRole("checkbox", { name: "Off-ice Practice" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Off-ice Practice" })
+    );
     expect(secondEventTypeSelect).toHaveValue("On-ice Practice");
 
-    await user.click(screen.getByRole("checkbox", { name: "On-ice Practice" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "On-ice Practice" })
+    );
     expect(firstEventTypeSelect).toHaveValue("Game");
     expect(secondEventTypeSelect).toHaveValue("Game");
     expect(thirdEventTypeSelect).toHaveValue("Video Review");
 
-    await user.click(screen.getByRole("checkbox", { name: "Video Review" }));
-    await user.click(screen.getByRole("checkbox", { name: "Evaluation" }));
-    await user.click(screen.getByRole("checkbox", { name: "Game" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Video Review" })
+    );
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Evaluation" })
+    );
+    await user.click(within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Game" }));
     expect(firstEventTypeSelect).toHaveValue("TBD");
     expect(secondEventTypeSelect).toHaveValue("TBD");
     expect(thirdEventTypeSelect).toHaveValue("TBD");
+  });
+
+  it("greys out detailed-entry event types disabled in calendar and re-checks when re-enabled", async () => {
+    const user = userEvent.setup();
+    render(<GenerateTeamPlanButton />);
+
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+
+    const calendarFieldset = getCalendarEventTypesFieldset();
+    const detailedFieldset = getDetailedEntryEventTypesFieldset();
+    const detailedOffIceCheckbox = within(detailedFieldset).getByRole("checkbox", {
+      name: "Off-ice Practice",
+    });
+
+    await user.click(detailedOffIceCheckbox);
+    expect(detailedOffIceCheckbox).not.toBeChecked();
+
+    await user.click(within(calendarFieldset).getByRole("checkbox", { name: "Off-ice Practice" }));
+    await waitFor(() => expect(detailedOffIceCheckbox).toBeDisabled());
+    expect(
+      within(detailedFieldset).getByText("(Must be enabled in Calendar view.)")
+    ).toBeInTheDocument();
+
+    await user.click(within(calendarFieldset).getByRole("checkbox", { name: "Off-ice Practice" }));
+    await waitFor(() => {
+      const reenabledDetailedOffIceCheckbox = within(
+        getDetailedEntryEventTypesFieldset()
+      ).getByRole("checkbox", {
+        name: "Off-ice Practice",
+      });
+      expect(reenabledDetailedOffIceCheckbox).toBeEnabled();
+      expect(reenabledDetailedOffIceCheckbox).toBeChecked();
+    });
+  });
+
+  it("hides detailed-entry type controls when include-event-details is disabled", async () => {
+    const user = userEvent.setup();
+    render(<GenerateTeamPlanButton />);
+
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    expect(screen.getByText("Event Types for Detailed Entries")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("switch", { name: "Include details for each event?" }));
+    expect(screen.queryByText("Event Types for Detailed Entries")).not.toBeInTheDocument();
   });
 
   it("deletes an entire selected date entry after confirmation", async () => {

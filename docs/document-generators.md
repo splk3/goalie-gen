@@ -4,12 +4,21 @@ Goalie Gen features client-side document compilers that assemble personalized de
 
 ---
 
+## 🖼️ Logo Upload Compatibility
+
+- Team and club logo uploads are normalized to PNG when needed for compatibility.
+- SVG uploads are rasterized to a high-resolution PNG working image (long edge 2048px) before crop, preview, and palette extraction.
+- This keeps color extraction and DOCX image embedding consistent across browsers and office apps that do not reliably handle raw SVG input.
+
+---
+
 ## 🚀 Document Compiler Features
 
 Goalie Gen provides three separate document generation workflows:
 
 1. **Team Plan Generator (`src/components/GenerateTeamPlanButton.tsx`)**:
    - Compiles a weekly development calendar and goalie assignments.
+   - Separates **Calendar Event Types** (calendar visibility) from **Event Types for Detailed Entries** (which event detail sections are generated).
    - Embeds goalie evaluation sheets and team-level goaltending practice guidelines.
 2. **Club Plan Generator (`src/components/GenerateClubPlanButton.tsx`)**:
    - Produces institutional club-wide plans for goalie training and development pathways.

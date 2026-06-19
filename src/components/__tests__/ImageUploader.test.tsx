@@ -1,6 +1,12 @@
 import * as React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ImageUploader from "../ImageUploader";
+import { rasterizeSvgFileToPngDataUrl } from "../../utils/svgRasterize";
+
+jest.mock("../../utils/svgRasterize", () => ({
+  isSvgImageFile: jest.fn((file: File) => file.type === "image/svg+xml"),
+  rasterizeSvgFileToPngDataUrl: jest.fn(),
+}));
 
 // react-image-crop uses ResizeObserver internally; stub it for jsdom
 global.ResizeObserver = class {
@@ -11,9 +17,11 @@ global.ResizeObserver = class {
 
 describe("ImageUploader", () => {
   let onImageCropped: jest.Mock;
+  const mockedRasterizeSvgFileToPngDataUrl = jest.mocked(rasterizeSvgFileToPngDataUrl);
 
   beforeEach(() => {
     onImageCropped = jest.fn();
+    mockedRasterizeSvgFileToPngDataUrl.mockReset();
   });
 
   afterEach(() => {
@@ -111,5 +119,45 @@ describe("ImageUploader", () => {
     render(<ImageUploader onImageCropped={onImageCropped} disabled={true} />);
     const input = screen.getByLabelText("Image (Optional)") as HTMLInputElement;
     expect(input).toBeDisabled();
+  });
+
+  it("rasterizes SVG uploads before showing crop preview", async () => {
+    mockedRasterizeSvgFileToPngDataUrl.mockResolvedValue("data:image/png;base64,svg-raster");
+    render(<ImageUploader onImageCropped={onImageCropped} />);
+
+    const input = screen.getByLabelText("Image (Optional)") as HTMLInputElement;
+    const svgFile = new File(["<svg></svg>"], "logo.svg", { type: "image/svg+xml" });
+
+    fireEvent.change(input, { target: { files: [svgFile] } });
+
+    await waitFor(() => {
+      expect(mockedRasterizeSvgFileToPngDataUrl).toHaveBeenCalledWith(svgFile);
+    });
+    await waitFor(() => {
+      expect(screen.getByAltText("Crop preview")).toHaveAttribute(
+        "src",
+        "data:image/png;base64,svg-raster"
+      );
+    });
+  });
+
+  it("shows an error and clears output when SVG rasterization fails", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    mockedRasterizeSvgFileToPngDataUrl.mockRejectedValue(new Error("broken svg"));
+    render(<ImageUploader onImageCropped={onImageCropped} />);
+
+    const input = screen.getByLabelText("Image (Optional)") as HTMLInputElement;
+    const svgFile = new File(["<svg></svg>"], "logo.svg", { type: "image/svg+xml" });
+
+    fireEvent.change(input, { target: { files: [svgFile] } });
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          "Unable to process this SVG file. Please try another SVG or upload a PNG/JPG image."
+        )
+      ).toBeInTheDocument()
+    );
+    expect(onImageCropped).toHaveBeenCalledWith(null, null);
   });
 });
