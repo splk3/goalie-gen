@@ -34,16 +34,16 @@ describe("GenerateClubPlanButton", () => {
     expect(screen.queryByRole("radio", { name: /pdf/i })).not.toBeInTheDocument();
   });
 
-  it("shows primary and secondary team color controls with USA defaults", async () => {
+  it("shows primary and secondary club color controls with USA defaults", async () => {
     const user = userEvent.setup();
     render(<GenerateClubPlanButton />);
 
     await user.click(screen.getByRole("button", { name: /generate club development plan/i }));
 
-    const primaryColorPicker = screen.getByLabelText("Primary Team Color");
-    const primaryHexInput = screen.getByLabelText("Primary Team Color Hex");
-    const secondaryColorPicker = screen.getByLabelText("Secondary Team Color");
-    const secondaryHexInput = screen.getByLabelText("Secondary Team Color Hex");
+    const primaryColorPicker = screen.getByLabelText("Primary Club Color");
+    const primaryHexInput = screen.getByLabelText("Primary Club Color Hex");
+    const secondaryColorPicker = screen.getByLabelText("Secondary Club Color");
+    const secondaryHexInput = screen.getByLabelText("Secondary Club Color Hex");
 
     expect(primaryColorPicker).toHaveValue("#00205b");
     expect(primaryHexInput).toHaveValue("#00205B");

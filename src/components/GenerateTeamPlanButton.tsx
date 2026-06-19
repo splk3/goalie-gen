@@ -1124,7 +1124,7 @@ ${getEventStarterMarkdown(event.eventType)}`),
       <Modal
         isOpen={showModal}
         labelledBy="team-plan-modal-title"
-        className="max-w-md w-full"
+        className="max-w-2xl w-full"
         triggerRef={triggerRef}
       >
         {/* Scrollable content */}

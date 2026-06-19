@@ -983,6 +983,7 @@ export default function GenerateClubPlanButton() {
             secondaryColor={secondaryTeamColor}
             paletteColors={logoPaletteColors}
             disabled={!!generatedBlob || isGenerating}
+            entityName="Club"
             onPrimaryColorChange={setPrimaryTeamColor}
             onSecondaryColorChange={setSecondaryTeamColor}
           />
@@ -1227,7 +1228,7 @@ export default function GenerateClubPlanButton() {
                   isGenerating ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {isGenerating ? "Generating..." : "Generate DOCX"}
+                {isGenerating ? "Generating..." : "Generate"}
               </button>
               <button
                 onClick={handleCancel}

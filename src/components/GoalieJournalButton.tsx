@@ -25,7 +25,7 @@ import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
 const BLANK_LINE = "_______________________________________________";
 
-export default function GoalieJournalButton() {
+export default function GoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [goalieName, setGoalieName] = React.useState<string>("");
@@ -690,15 +690,15 @@ export default function GoalieJournalButton() {
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 shadow-lg"
+        className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
       >
-        Goalie Journal
+        {label}
       </button>
 
       <Modal
         isOpen={showModal}
         labelledBy="journal-modal-title"
-        className="max-w-md w-full"
+        className="max-w-2xl w-full"
         triggerRef={triggerRef}
       >
         {/* Scrollable content */}

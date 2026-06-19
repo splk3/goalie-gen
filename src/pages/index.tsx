@@ -6,6 +6,7 @@ import DarkModeToggle from "../components/DarkModeToggle";
 import HamburgerMenu from "../components/HamburgerMenu";
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton";
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton";
+import GoalieJournalButton from "../components/GoalieJournalButton";
 import INeedADrillButton from "../components/INeedADrillButton";
 import NavigationButton from "../components/NavigationButton";
 import TermsPopup from "../components/TermsPopup";
@@ -71,6 +72,7 @@ export default function Home() {
             </p>
             <div className="w-full px-4 flex flex-col gap-4 items-stretch">
               <GenerateClubPlanButton />
+              <NavigationButton to="/about-club-plans">About Club Plans</NavigationButton>
               <NavigationButton to="/club-resources">More Club Resources</NavigationButton>
             </div>
           </div>
@@ -82,6 +84,7 @@ export default function Home() {
             </p>
             <div className="w-full px-4 flex flex-col gap-3 items-stretch">
               <GenerateTeamPlanButton variant="red" />
+              <NavigationButton to="/about-team-plans" variant="red">About Team Plans</NavigationButton>
               <NavigationButton to="/goalie-drills?team_drill=yes" variant="red">
                 Team Drills with Goalie Focus
               </NavigationButton>
@@ -104,7 +107,9 @@ export default function Home() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Resources and tools to support your goalie development journey.
             </p>
-            <div className="w-full px-4 flex flex-col items-stretch">
+            <div className="w-full px-4 flex flex-col gap-3 items-stretch">
+              <GoalieJournalButton label="Generate Goalie Journal" />
+              <NavigationButton to="/about-goalie-journals">About Goalie Journals</NavigationButton>
               <NavigationButton to="/goalie-resources">Goalie Resources</NavigationButton>
             </div>
           </div>
