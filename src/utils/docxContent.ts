@@ -198,14 +198,9 @@ export function makeDocxHeaderFooter(
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-                text: "Page ",
+                children: ["Page ", PageNumber.CURRENT],
                 size: 18,
-                color: cleanSecondary,
-              }),
-              new TextRun({
-                children: [PageNumber.CURRENT],
-                size: 18,
-                color: cleanSecondary,
+                color: cleanPrimary,
                 bold: true,
               }),
             ],

@@ -19,7 +19,6 @@ import {
 } from "../utils/teamColors";
 import coverMd from "../content/team-plan/cover.md";
 import seasonOverviewMd from "../content/team-plan/season-overview.md";
-import practiceTemplateMd from "../content/team-plan/practice-template.md";
 import eventDetailsMd from "../content/team-plan/event-details.md";
 
 type AgeGroup = "8u" | "10u" | "12u" | "14u+";
@@ -72,6 +71,7 @@ function formatDisplayDate(dateKey: string): string {
   const [year, month, day] = dateKey.split("-").map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));
   return date.toLocaleDateString(undefined, {
+    weekday: "short",
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -487,41 +487,64 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     const addResourceLinkWithQr = async (
       linesBeforeUrl: string,
       rawUrl: string,
-      qrSize = 84
+      qrSize = 84,
+      inline = false
     ): Promise<void> => {
       const normalizedUrl = normalizeUrl(rawUrl);
       if (!normalizedUrl) {
         return;
       }
 
-      documentChildren.push(
-        new Paragraph({
-          children: [
-            toBlackRun(linesBeforeUrl),
-            new ExternalHyperlink({
-              link: normalizedUrl,
-              children: [toPrimaryRun(normalizedUrl, { underline: { type: "single" } })],
-            }),
-          ],
-          spacing: { after: 120 },
-        })
-      );
-
       const qrData = await getQrCodePngData(normalizedUrl);
-      if (qrData) {
+
+      if (inline && qrData) {
         documentChildren.push(
           new Paragraph({
             children: [
+              toBlackRun(linesBeforeUrl),
+              new ExternalHyperlink({
+                link: normalizedUrl,
+                children: [toPrimaryRun(normalizedUrl, { underline: { type: "single" } })],
+              }),
+              toBlackRun(" "),
               new ImageRun({
                 type: "png",
                 data: qrData,
                 transformation: { width: qrSize, height: qrSize },
               }),
             ],
-            alignment: AlignmentType.LEFT,
             spacing: { after: 200 },
           })
         );
+      } else {
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              toBlackRun(linesBeforeUrl),
+              new ExternalHyperlink({
+                link: normalizedUrl,
+                children: [toPrimaryRun(normalizedUrl, { underline: { type: "single" } })],
+              }),
+            ],
+            spacing: { after: 120 },
+          })
+        );
+
+        if (qrData) {
+          documentChildren.push(
+            new Paragraph({
+              children: [
+                new ImageRun({
+                  type: "png",
+                  data: qrData,
+                  transformation: { width: qrSize, height: qrSize },
+                }),
+              ],
+              alignment: AlignmentType.LEFT,
+              spacing: { after: 200 },
+            })
+          );
+        }
       }
     };
 
@@ -708,37 +731,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       );
     }
 
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun("Practice Plans", { bold: true })],
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 400, after: 200 },
-      })
-    );
-
-    const allTemplateBlocks = parseMarkdown(practiceTemplateMd);
-    const firstHeadingIdx = allTemplateBlocks.findIndex((b) => b.type === "heading");
-    const templateBlocks =
-      firstHeadingIdx >= 0
-        ? allTemplateBlocks.filter((_, i) => i !== firstHeadingIdx)
-        : allTemplateBlocks;
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun("Practice 1", { bold: true })],
-        heading: HeadingLevel.HEADING_2,
-        spacing: { before: 300, after: 200 },
-      })
-    );
-    if (addSuggestedDrillEachPractice) {
-      documentChildren.push(
-        new Paragraph({
-          children: [toBlackRun("Suggested Goalie Drill: [SUGGESTED_GOALIE_DRILL]")],
-          spacing: { after: 100 },
-        })
-      );
-    }
-    documentChildren.push(...blocksToDocxParagraphs(templateBlocks, colorOpts));
-
     if (addCalendarOfEvents && eventSelections.length > 0) {
       documentChildren.push(
         new Paragraph({
@@ -856,11 +848,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
           documentChildren.push(
             ...blocksToDocxParagraphs(
-              parseMarkdown(`- Event Date: ${valueOrPlaceholder(event.date, "EVENT_DATE")}
-- Event Type: ${event.eventType}
-- Event Focus: [EVENT_FOCUS]
-
-${getEventStarterMarkdown(event.eventType)}`),
+              parseMarkdown(getEventStarterMarkdown(event.eventType)),
               colorOpts
             )
           );
@@ -868,7 +856,9 @@ ${getEventStarterMarkdown(event.eventType)}`),
           if (event.eventType === "On-ice Practice" && addSuggestedDrillEachPractice) {
             await addResourceLinkWithQr(
               "Suggested goalie drills page: ",
-              "https://goaliegen.com/goalie-drills/"
+              "https://goaliegen.com/goalie-drills/",
+              60,
+              true
             );
           }
 

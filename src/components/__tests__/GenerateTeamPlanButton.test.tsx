@@ -183,7 +183,7 @@ describe("GenerateTeamPlanButton", () => {
     ).toBeInTheDocument();
   });
 
-  it("generates team plan doc without number-of-practices content and retains Practice 1 flow", async () => {
+  it("generates team plan doc without practice plans section", async () => {
     const user = userEvent.setup();
     const mockDocument = jest.fn((config) => ({ config }));
     const mockParagraph = jest.fn((options) => ({ options }));
@@ -219,7 +219,8 @@ describe("GenerateTeamPlanButton", () => {
     expect(mockDocument).toHaveBeenCalledTimes(1);
     const docArgument = mockDocument.mock.calls[0][0];
     const serializedDoc = JSON.stringify(docArgument);
-    expect(serializedDoc).toContain("Practice 1");
+    expect(serializedDoc).not.toContain("Practice 1");
+    expect(serializedDoc).not.toContain("Practice Plans");
     expect(serializedDoc).not.toContain("Number of Practices");
   });
 

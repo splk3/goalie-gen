@@ -215,7 +215,8 @@ describe("makeDocxHeaderFooter", () => {
     expect(footerP.options.alignment).toBe("center");
     expect(footerP.options.border.top.size).toBe(18);
     expect(footerP.options.border.top.color).toBe(secondaryColor);
-    expect(footerP.options.children[0].options.text).toBe("Page ");
-    expect(footerP.options.children[1].options.children[0]).toBe("current");
+    expect(footerP.options.children[0].options.children).toEqual(["Page ", "current"]);
+    expect(footerP.options.children[0].options.color).toBe(primaryColor);
+    expect(footerP.options.children[0].options.bold).toBe(true);
   });
 });

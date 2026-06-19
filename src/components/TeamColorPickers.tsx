@@ -158,7 +158,7 @@ export default function TeamColorPickers({
       <ColorPickerControl
         idPrefix={`primary-${slug}-color`}
         label={`Primary ${entityName} Color`}
-        description="Used for Titles, Headings, and Links"
+        description="Used for Titles, Headings, and Links - darker color recommended"
         value={primaryColor}
         paletteColors={paletteColors}
         disabled={disabled}
@@ -167,7 +167,7 @@ export default function TeamColorPickers({
       <ColorPickerControl
         idPrefix={`secondary-${slug}-color`}
         label={`Secondary ${entityName} Color`}
-        description="Used for other formatting elements"
+        description="Used for other formatting elements - brighter color recommended"
         value={secondaryColor}
         paletteColors={paletteColors}
         disabled={disabled}
