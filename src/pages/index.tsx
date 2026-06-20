@@ -127,9 +127,14 @@ export default function Home() {
                 Patrick Boyle's Project
               </NavigationButton>
               <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
-                Creating a website and tools to help clubs, coaches, and goalies equip themselves for success in recruiting, developing, and retaining goalies while building a love for the position.
+                Creating a website and tools to help clubs, coaches, and goalies equip themselves
+                for success in recruiting, developing, and retaining goalies while building a love
+                for the position.
                 <span className="block mt-2">
-                  <a href="mailto:patrick@goaliegen.com" className="underline text-usa-blue dark:text-blue-400">
+                  <a
+                    href="mailto:patrick@goaliegen.com"
+                    className="underline text-usa-blue dark:text-blue-400"
+                  >
                     Contact Patrick
                   </a>
                 </span>
@@ -142,7 +147,10 @@ export default function Home() {
               <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
                 Integrating Goalie Development into Team Practices and Drills.
                 <span className="block mt-2">
-                  <a href="mailto:katie@goaliegen.com" className="underline text-usa-blue dark:text-blue-400">
+                  <a
+                    href="mailto:katie@goaliegen.com"
+                    className="underline text-usa-blue dark:text-blue-400"
+                  >
                     Contact Katie
                   </a>
                 </span>
@@ -153,9 +161,13 @@ export default function Home() {
                 James Kujawski's Project
               </NavigationButton>
               <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
-                Modernizing Goalie Drill Design using a constraints-led approach and flexible, progression and options-based adaptability.
+                Modernizing Goalie Drill Design using a constraints-led approach and flexible,
+                progression and options-based adaptability.
                 <span className="block mt-2">
-                  <a href="mailto:james@goaliegen.com" className="underline text-usa-blue dark:text-blue-400">
+                  <a
+                    href="mailto:james@goaliegen.com"
+                    className="underline text-usa-blue dark:text-blue-400"
+                  >
                     Contact James
                   </a>
                 </span>
