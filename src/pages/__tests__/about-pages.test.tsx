@@ -3,6 +3,9 @@ import { render, screen } from "@testing-library/react";
 import AboutClubPlans from "../about-club-plans";
 import AboutTeamPlans from "../about-team-plans";
 import AboutGoalieJournals from "../about-goalie-journals";
+import PatrickBoyleProject from "../patrick-boyle-project";
+import KatieJablynskiProject from "../katie-jablynski-project";
+import JamesKujawskiProject from "../james-kujawski-project";
 
 // .md files are mapped to "test-file-stub" by Jest's moduleNameMapper.
 // PageLayout, ShareButton, and BackLinkButton are mocked to isolate page rendering.
@@ -74,6 +77,60 @@ describe("About pages", () => {
     it("renders the correct h1 title", () => {
       expect(
         screen.getByRole("heading", { level: 1, name: "About Goalie Journals" })
+      ).toBeInTheDocument();
+    });
+
+    it("renders the Content Coming Soon notice", () => {
+      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    });
+
+    it("renders a Back to Home link", () => {
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
+    });
+  });
+
+  describe("PatrickBoyleProject (/patrick-boyle-project)", () => {
+    beforeEach(() => render(<PatrickBoyleProject />));
+
+    it("renders the correct h1 title", () => {
+      expect(
+        screen.getByRole("heading", { level: 1, name: "Patrick Boyle's Project" })
+      ).toBeInTheDocument();
+    });
+
+    it("renders the Content Coming Soon notice", () => {
+      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    });
+
+    it("renders a Back to Home link", () => {
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
+    });
+  });
+
+  describe("KatieJablynskiProject (/katie-jablynski-project)", () => {
+    beforeEach(() => render(<KatieJablynskiProject />));
+
+    it("renders the correct h1 title", () => {
+      expect(
+        screen.getByRole("heading", { level: 1, name: "Katie Jablynski's Project" })
+      ).toBeInTheDocument();
+    });
+
+    it("renders the Content Coming Soon notice", () => {
+      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    });
+
+    it("renders a Back to Home link", () => {
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
+    });
+  });
+
+  describe("JamesKujawskiProject (/james-kujawski-project)", () => {
+    beforeEach(() => render(<JamesKujawskiProject />));
+
+    it("renders the correct h1 title", () => {
+      expect(
+        screen.getByRole("heading", { level: 1, name: "James Kujawski's Project" })
       ).toBeInTheDocument();
     });
 
