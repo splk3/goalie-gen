@@ -124,7 +124,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex flex-col items-stretch text-center">
               <NavigationButton to="/patrick-boyle-project" variant="red">
-                Patrick Boyle's Project
+                Patrick Boyle&apos;s Project
               </NavigationButton>
               <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
                 Creating a website and tools to help clubs, coaches, and goalies equip themselves
@@ -142,7 +142,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-stretch text-center">
               <NavigationButton to="/katie-jablynski-project" variant="red">
-                Katie Jablynski's Project
+                Katie Jablynski&apos;s Project
               </NavigationButton>
               <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
                 Integrating Goalie Development into Team Practices and Drills.
@@ -158,7 +158,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-stretch text-center">
               <NavigationButton to="/james-kujawski-project" variant="red">
-                James Kujawski's Project
+                James Kujawski&apos;s Project
               </NavigationButton>
               <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
                 Modernizing Goalie Drill Design using a constraints-led approach and flexible,
