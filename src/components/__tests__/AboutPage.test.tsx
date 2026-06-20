@@ -15,13 +15,7 @@ jest.mock("../ShareButton", () => {
 });
 
 jest.mock("../BackLinkButton", () => {
-  return function MockBackLinkButton({
-    children,
-    to,
-  }: {
-    children: React.ReactNode;
-    to: string;
-  }) {
+  return function MockBackLinkButton({ children, to }: { children: React.ReactNode; to: string }) {
     return <a href={to}>{children}</a>;
   };
 });
@@ -35,16 +29,12 @@ describe("AboutPage", () => {
 
   it("renders the page title as an h1", () => {
     render(<AboutPage {...defaultProps} />);
-    expect(
-      screen.getByRole("heading", { level: 1, name: "About Test Plans" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "About Test Plans" })).toBeInTheDocument();
   });
 
   it("renders the subtitle in the hero banner", () => {
     render(<AboutPage {...defaultProps} />);
-    expect(
-      screen.getByText("A subtitle for testing purposes.")
-    ).toBeInTheDocument();
+    expect(screen.getByText("A subtitle for testing purposes.")).toBeInTheDocument();
   });
 
   it("renders the Content Coming Soon notice", () => {

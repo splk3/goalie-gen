@@ -28,9 +28,11 @@ Goalie Gen is deployed to two separate environments depending on the branch:
 - **Trigger**: Automatic on commits to the `dev` branch via the `deploy.yml` GitHub action.
 - **Custom Domain Configuration**: Handled via the custom CNAME asset located at `static/CNAME`.
 - **Manual Build & Deploy Command**:
+
   ```bash
   npm run deploy
   ```
+
   _(Runs Gatsby build and pushes the `public/` directory to the `gh-pages` branch)._
 
 ### 2. Production (Cloudflare Pages)

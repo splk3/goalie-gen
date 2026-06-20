@@ -37,9 +37,11 @@ npm test -- -t "clamps out-of-range currentPage"
 Drill pagination rules are verified using a dedicated validation script to catch layout regression errors:
 
 - **Verification Command**:
+
   ```bash
   npm run verify-drills
   ```
+
 - **What it does**: Executes `verify-drills.ts` (using `tsx`) to read the entire active drill catalogue. It parses page estimates and warns of any layouts or spacing issues that would result in drill text overflowing their PDF pages.
 
 ---

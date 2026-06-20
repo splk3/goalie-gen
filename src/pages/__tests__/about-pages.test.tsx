@@ -20,13 +20,7 @@ jest.mock("../../components/ShareButton", () => {
 });
 
 jest.mock("../../components/BackLinkButton", () => {
-  return function MockBackLinkButton({
-    children,
-    to,
-  }: {
-    children: React.ReactNode;
-    to: string;
-  }) {
+  return function MockBackLinkButton({ children, to }: { children: React.ReactNode; to: string }) {
     return <a href={to}>{children}</a>;
   };
 });
@@ -49,9 +43,7 @@ describe("About pages", () => {
     });
 
     it("renders a Back to Home link", () => {
-      expect(
-        screen.getByRole("link", { name: /back to home/i })
-      ).toHaveAttribute("href", "/");
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
     });
   });
 
@@ -72,9 +64,7 @@ describe("About pages", () => {
     });
 
     it("renders a Back to Home link", () => {
-      expect(
-        screen.getByRole("link", { name: /back to home/i })
-      ).toHaveAttribute("href", "/");
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
     });
   });
 
@@ -92,9 +82,7 @@ describe("About pages", () => {
     });
 
     it("renders a Back to Home link", () => {
-      expect(
-        screen.getByRole("link", { name: /back to home/i })
-      ).toHaveAttribute("href", "/");
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
     });
   });
 });

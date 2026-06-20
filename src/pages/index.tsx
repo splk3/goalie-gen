@@ -84,7 +84,9 @@ export default function Home() {
             </p>
             <div className="w-full px-4 flex flex-col gap-3 items-stretch">
               <GenerateTeamPlanButton variant="red" />
-              <NavigationButton to="/about-team-plans" variant="red">About Team Plans</NavigationButton>
+              <NavigationButton to="/about-team-plans" variant="red">
+                About Team Plans
+              </NavigationButton>
               <NavigationButton to="/goalie-drills?team_drill=yes" variant="red">
                 Team Drills with Goalie Focus
               </NavigationButton>

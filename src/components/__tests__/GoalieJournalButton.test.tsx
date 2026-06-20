@@ -44,8 +44,6 @@ describe("GoalieJournalButton", () => {
 
   it("renders a custom trigger label when the label prop is provided", () => {
     render(<GoalieJournalButton label="Generate Goalie Journal" />);
-    expect(
-      screen.getByRole("button", { name: "Generate Goalie Journal" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Generate Goalie Journal" })).toBeInTheDocument();
   });
 });

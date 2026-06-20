@@ -1,4 +1,4 @@
-import { TextRun, Paragraph, Header, Footer, BorderStyle, PageNumber, AlignmentType } from "docx";
+import { TextRun, Paragraph } from "docx";
 import {
   parseRunData,
   textToRuns,
@@ -6,6 +6,7 @@ import {
   cleanHexColor,
   makeDocxHeaderFooter,
 } from "../docxContent";
+import type { DocxHeaderFooterClasses } from "../docxContent";
 import type { MarkdownBlock } from "../markdownParser";
 
 describe("parseRunData", () => {
@@ -194,7 +195,12 @@ describe("makeDocxHeaderFooter", () => {
       AlignmentType: { CENTER: "center", RIGHT: "right" },
     };
 
-    const result = makeDocxHeaderFooter(headerLabel, primaryColor, secondaryColor, classes as any);
+    makeDocxHeaderFooter(
+      headerLabel,
+      primaryColor,
+      secondaryColor,
+      classes as unknown as DocxHeaderFooterClasses
+    );
 
     expect(mockHeader).toHaveBeenCalledTimes(1);
     expect(mockFooter).toHaveBeenCalledTimes(1);

@@ -424,7 +424,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
       screen.getByRole("switch", { name: "Include details for each event?" })
     ).toBeInTheDocument();
     const calendarFieldset = getCalendarEventTypesFieldset();
-    expect(within(calendarFieldset).getByRole("checkbox", { name: "On-ice Practice" })).toBeChecked();
+    expect(
+      within(calendarFieldset).getByRole("checkbox", { name: "On-ice Practice" })
+    ).toBeChecked();
     expect(screen.getByText("Event Types for Detailed Entries")).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "TBD" })).toBeEnabled();
     expect(screen.getByRole("img", { name: "Calendar Event Types help" })).toBeInTheDocument();
@@ -490,7 +492,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     ] as const;
 
     for (const eventType of configurableTypes) {
-      await user.click(within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: eventType }));
+      await user.click(
+        within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: eventType })
+      );
     }
 
     const eventTypeSelect = screen.getByRole("combobox", { name: /event type for/i });
@@ -579,7 +583,9 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await user.click(
       within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Evaluation" })
     );
-    await user.click(within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Game" }));
+    await user.click(
+      within(getCalendarEventTypesFieldset()).getByRole("checkbox", { name: "Game" })
+    );
     expect(firstEventTypeSelect).toHaveValue("TBD");
     expect(secondEventTypeSelect).toHaveValue("TBD");
     expect(thirdEventTypeSelect).toHaveValue("TBD");
