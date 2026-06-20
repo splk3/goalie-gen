@@ -60,7 +60,18 @@ const CONFIGURABLE_EVENT_TYPES: ConfigurableEventType[] = [
 const DETAILED_ENTRY_EVENT_TYPES: EventType[] = [...CONFIGURABLE_EVENT_TYPES, "TBD"];
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTH_CALENDARS_PER_PAGE = 2;
+// Keep each month table contiguous by forcing one calendar month per page.
+const MONTH_CALENDARS_PER_PAGE = 1;
+const DOCX_CONTENT_WIDTH_TWIPS = 9360;
+const GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS = 1200;
+const GAME_EVENT_TOTALS_COLUMN_WIDTH_TWIPS = 900;
+const GAME_EVENT_TIMELINE_WIDTH_TWIPS =
+  DOCX_CONTENT_WIDTH_TWIPS -
+  GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS -
+  GAME_EVENT_TOTALS_COLUMN_WIDTH_TWIPS;
+const GAME_EVENT_PERIOD_WIDTH_TWIPS = Math.floor(GAME_EVENT_TIMELINE_WIDTH_TWIPS * 0.3);
+const GAME_EVENT_OT_WIDTH_TWIPS =
+  GAME_EVENT_TIMELINE_WIDTH_TWIPS - GAME_EVENT_PERIOD_WIDTH_TWIPS * 3;
 
 function EventTypeLegend({ label, helperText }: EventTypeLegendProps) {
   return (
@@ -519,6 +530,141 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     const toSecondaryRun = (text: string, options: Omit<IRunOptions, "text"> = {}) =>
       new TextRun({ text, color: cleanSecondary, ...options });
 
+    const createGameEventScoreTable = () => {
+      const gameEventColumnWidths = [
+        GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS,
+        GAME_EVENT_PERIOD_WIDTH_TWIPS,
+        GAME_EVENT_PERIOD_WIDTH_TWIPS,
+        GAME_EVENT_PERIOD_WIDTH_TWIPS,
+        GAME_EVENT_OT_WIDTH_TWIPS,
+        GAME_EVENT_TOTALS_COLUMN_WIDTH_TWIPS,
+      ];
+      const periodLabels = ["1st", "2nd", "3rd", "OT", "Totals"];
+
+      const borderCell = (
+        children: FileChild[],
+        options?: { showBottomBorder?: boolean; showRightBorder?: boolean }
+      ) => ({
+        children,
+        verticalAlign: VerticalAlign.TOP,
+        borders: {
+          left: { style: BorderStyle.SINGLE, size: 8, color: "000000" },
+          right:
+            options?.showRightBorder === false
+              ? { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
+              : { style: BorderStyle.SINGLE, size: 8, color: "000000" },
+          top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          bottom: options?.showBottomBorder
+            ? { style: BorderStyle.SINGLE, size: 8, color: "000000" }
+            : { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        },
+      });
+
+      return new Table({
+        width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+        layout: TableLayoutType.FIXED,
+        columnWidths: gameEventColumnWidths,
+        rows: [
+          new TableRow({
+            cantSplit: true,
+            children: [
+              new TableCell({
+                width: { size: GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                borders: {
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: [new Paragraph({ children: [toBlackRun("")] })],
+              }),
+              ...periodLabels.map(
+                (label, index) =>
+                  new TableCell({
+                    width: { size: gameEventColumnWidths[index + 1], type: WidthType.DXA },
+                    ...borderCell(
+                      [
+                        new Paragraph({
+                          alignment: AlignmentType.CENTER,
+                          spacing: { after: 120 },
+                          children: [toBlackRun(label, { bold: true })],
+                        }),
+                      ],
+                      {
+                        showBottomBorder: false,
+                        showRightBorder: label !== "Totals",
+                      }
+                    ),
+                  })
+              ),
+            ],
+          }),
+          new TableRow({
+            cantSplit: true,
+            children: [
+              new TableCell({
+                width: { size: GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                borders: {
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.SINGLE, size: 8, color: "000000" },
+                },
+                children: [
+                  new Paragraph({
+                    spacing: { after: 60 },
+                    children: [toBlackRun("Goals")],
+                  }),
+                ],
+              }),
+              ...periodLabels.map(
+                (label, index) =>
+                  new TableCell({
+                    width: { size: gameEventColumnWidths[index + 1], type: WidthType.DXA },
+                    ...borderCell([new Paragraph({ children: [toBlackRun("")] })], {
+                      showBottomBorder: true,
+                      showRightBorder: label !== "Totals",
+                    }),
+                  })
+              ),
+            ],
+          }),
+          new TableRow({
+            cantSplit: true,
+            children: [
+              new TableCell({
+                width: { size: GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                borders: {
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: [new Paragraph({ children: [toBlackRun("Shots")] })],
+              }),
+              ...periodLabels.map(
+                (label, index) =>
+                  new TableCell({
+                    width: { size: gameEventColumnWidths[index + 1], type: WidthType.DXA },
+                    ...borderCell(
+                      [
+                        new Paragraph({
+                          spacing: { after: 1400 },
+                          children: [toBlackRun("")],
+                        }),
+                      ],
+                      {
+                        showRightBorder: label !== "Totals",
+                      }
+                    ),
+                  })
+              ),
+            ],
+          }),
+        ],
+      });
+    };
+
     const addResourceLinkWithQr = async (
       linesBeforeUrl: string,
       rawUrl: string,
@@ -894,6 +1040,23 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               "https://goaliegen.com/goalie-drills/",
               60,
               true
+            );
+          }
+
+          if (event.eventType === "Game") {
+            documentChildren.push(
+              new Paragraph({
+                children: [toBlackRun("Game Timeline", { bold: true })],
+                pageBreakBefore: true,
+                spacing: { before: 120, after: 80 },
+              })
+            );
+            documentChildren.push(createGameEventScoreTable());
+            documentChildren.push(
+              new Paragraph({
+                children: [toBlackRun("")],
+                spacing: { after: 160 },
+              })
             );
           }
 

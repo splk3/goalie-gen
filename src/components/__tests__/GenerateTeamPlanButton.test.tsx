@@ -348,9 +348,9 @@ describe("GenerateTeamPlanButton", () => {
     expect(monthHeadingParagraphs).toHaveLength(4);
     expect(monthHeadingParagraphs.map((options) => options.pageBreakBefore)).toEqual([
       false,
-      false,
       true,
-      false,
+      true,
+      true,
     ]);
   });
 
@@ -404,6 +404,63 @@ describe("GenerateTeamPlanButton", () => {
     const serializedDoc = JSON.stringify(docArgument);
     expect(serializedDoc).toContain("[EVENT_DETAILS_PRACTICE_STARTER]");
     expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_STARTER]");
+    expect(serializedDoc).not.toContain("Goals");
+    expect(serializedDoc).not.toContain("Shots");
+    expect(serializedDoc).not.toContain("Totals");
+  });
+
+  it("adds the game event score diagram when game entries are included in event details", async () => {
+    const user = userEvent.setup();
+    const mockDocument = jest.fn((config) => ({ config }));
+
+    mockedLoadDocxModule.mockResolvedValue({
+      AlignmentType: { CENTER: "CENTER", LEFT: "LEFT" },
+      Document: mockDocument,
+      ExternalHyperlink: jest.fn((options) => ({ options })),
+      HeadingLevel: { HEADING_1: "H1", HEADING_2: "H2", HEADING_3: "H3" },
+      ImageRun: jest.fn((options) => ({ options })),
+      Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
+      Paragraph: jest.fn((options) => ({ options })),
+      Table: jest.fn((options) => ({ options })),
+      TableCell: jest.fn((options) => ({ options })),
+      TableLayoutType: { FIXED: "FIXED" },
+      TableRow: jest.fn((options) => ({ options })),
+      TextRun: jest.fn((options) => ({ options })),
+      VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
+      WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
+      Header: jest.fn((options) => ({ options })),
+      Footer: jest.fn((options) => ({ options })),
+      BorderStyle: { SINGLE: "SINGLE", NONE: "NONE" },
+      TabStopType: { RIGHT: "RIGHT", LEFT: "LEFT" },
+      PageNumber: { CURRENT: "CURRENT", TOTAL_PAGES: "TOTAL_PAGES" },
+    } as never);
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: / 9,/ }));
+    await user.click(screen.getByRole("button", { name: "OK" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: /event type for/i }), "Game");
+
+    await user.click(screen.getByRole("button", { name: "Generate" }));
+    await waitFor(() => expect(mockDocument).toHaveBeenCalledTimes(1));
+
+    const docArgument = mockDocument.mock.calls[0][0];
+    const serializedDoc = JSON.stringify(docArgument);
+
+    expect(serializedDoc).toContain("[EVENT_DETAILS_GAME_STARTER]");
+    expect(serializedDoc).toContain("Goals");
+    expect(serializedDoc).toContain("Shots");
+    expect(serializedDoc).toContain("1st");
+    expect(serializedDoc).toContain("2nd");
+    expect(serializedDoc).toContain("3rd");
+    expect(serializedDoc).toContain("OT");
+    expect(serializedDoc).toContain("Totals");
+    expect(serializedDoc).toContain('"width":{"size":9360,"type":"DXA"}');
+    expect(serializedDoc).toContain('"columnWidths":[1200,2178,2178,2178,726,900]');
+    expect(serializedDoc).toContain('"layout":"FIXED"');
   });
 });
 
