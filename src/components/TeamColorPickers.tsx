@@ -4,6 +4,7 @@ import { normalizeHexRgbColor } from "../utils/teamColors";
 interface ColorPickerControlProps {
   idPrefix: string;
   label: string;
+  description?: string;
   value: string;
   paletteColors: string[];
   disabled: boolean;
@@ -15,6 +16,8 @@ interface TeamColorPickersProps {
   secondaryColor: string;
   paletteColors: string[];
   disabled?: boolean;
+  /** Label noun used in the section heading and picker labels. Defaults to "Team". */
+  entityName?: string;
   onPrimaryColorChange: (color: string) => void;
   onSecondaryColorChange: (color: string) => void;
 }
@@ -22,6 +25,7 @@ interface TeamColorPickersProps {
 function ColorPickerControl({
   idPrefix,
   label,
+  description,
   value,
   paletteColors,
   disabled,
@@ -62,10 +66,13 @@ function ColorPickerControl({
     <div className="mb-4 rounded-lg border border-gray-300 p-3 dark:border-gray-600">
       <label
         htmlFor={`${idPrefix}-color`}
-        className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+        className="block text-gray-700 dark:text-gray-300 font-semibold mb-1"
       >
         {label}
       </label>
+      {description && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{description}</p>
+      )}
 
       <div className="flex items-start gap-4">
         <div>
@@ -106,7 +113,9 @@ function ColorPickerControl({
 
       {paletteColors.length > 0 && (
         <div className="mt-3">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{label} Palette</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {label} Palette
+          </p>
           <div className="flex flex-wrap gap-2">
             {paletteColors.map((paletteColor) => (
               <button
@@ -136,23 +145,29 @@ export default function TeamColorPickers({
   secondaryColor,
   paletteColors,
   disabled = false,
+  entityName = "Team",
   onPrimaryColorChange,
   onSecondaryColorChange,
 }: TeamColorPickersProps) {
+  const slug = entityName.toLowerCase();
   return (
     <fieldset className="mb-6 border border-gray-300 dark:border-gray-600 rounded-lg p-4">
-      <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">Team Colors</legend>
+      <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">
+        {entityName} Colors
+      </legend>
       <ColorPickerControl
-        idPrefix="primary-team-color"
-        label="Primary Team Color"
+        idPrefix={`primary-${slug}-color`}
+        label={`Primary ${entityName} Color`}
+        description="Used for Titles, Headings, and Links - darker color recommended"
         value={primaryColor}
         paletteColors={paletteColors}
         disabled={disabled}
         onChange={onPrimaryColorChange}
       />
       <ColorPickerControl
-        idPrefix="secondary-team-color"
-        label="Secondary Team Color"
+        idPrefix={`secondary-${slug}-color`}
+        label={`Secondary ${entityName} Color`}
+        description="Used for other formatting elements - brighter color recommended"
         value={secondaryColor}
         paletteColors={paletteColors}
         disabled={disabled}

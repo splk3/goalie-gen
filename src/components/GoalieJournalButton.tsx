@@ -12,6 +12,7 @@ import { parseMarkdown } from "../utils/markdownParser";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { toDocxImageTypeFromDataUrl } from "../utils/docxImageType";
 import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
+import { cleanHexColor, makeDocxHeaderFooter } from "../utils/docxContent";
 import {
   DEFAULT_PRIMARY_TEAM_COLOR,
   DEFAULT_SECONDARY_TEAM_COLOR,
@@ -24,7 +25,7 @@ import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
 const BLANK_LINE = "_______________________________________________";
 
-export default function GoalieJournalButton() {
+export default function GoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [goalieName, setGoalieName] = React.useState<string>("");
@@ -60,7 +61,7 @@ export default function GoalieJournalButton() {
         return;
       }
 
-      const palette = await extractPaletteHexColorsFromDataUrl(logoPreview, 8);
+      const palette = await extractPaletteHexColorsFromDataUrl(logoPreview, 6);
       if (isCancelled) {
         return;
       }
@@ -307,10 +308,31 @@ export default function GoalieJournalButton() {
   };
 
   const generateDocx = async (): Promise<void> => {
-    const { AlignmentType, Document, HeadingLevel, ImageRun, Packer, Paragraph, TextRun } =
-      await loadDocxModule();
+    const {
+      AlignmentType,
+      Document,
+      HeadingLevel,
+      ImageRun,
+      Packer,
+      Paragraph,
+      TextRun,
+      Header,
+      Footer,
+      BorderStyle,
+      TabStopType,
+      PageNumber,
+    } = await loadDocxModule();
     const currentYear = new Date().getFullYear();
     const season = `${currentYear}-${currentYear + 1}`;
+
+    const cleanPrimary = cleanHexColor(primaryTeamColor);
+    const cleanSecondary = cleanHexColor(secondaryTeamColor);
+
+    const toPrimaryRun = (text: string, options: Record<string, unknown> = {}) =>
+      new TextRun({ text, color: cleanPrimary, ...options });
+
+    const toSecondaryRun = (text: string, options: Record<string, unknown> = {}) =>
+      new TextRun({ text, color: cleanSecondary, ...options });
 
     const documentChildren: Paragraph[] = [];
 
@@ -321,7 +343,7 @@ export default function GoalieJournalButton() {
 
     documentChildren.push(
       new Paragraph({
-        text: coverTitle,
+        children: [toPrimaryRun(coverTitle, { bold: true })],
         heading: HeadingLevel.HEADING_1,
         alignment: AlignmentType.CENTER,
         spacing: { after: 300 },
@@ -366,17 +388,17 @@ export default function GoalieJournalButton() {
 
     documentChildren.push(
       new Paragraph({
-        children: [new TextRun({ text: goalieName, bold: true, size: 36 })],
+        children: [toPrimaryRun(goalieName, { bold: true, size: 36 })],
         alignment: AlignmentType.CENTER,
         spacing: { after: 200 },
       }),
       new Paragraph({
-        children: [new TextRun({ text: teamName, size: 28 })],
+        children: [toPrimaryRun(teamName, { size: 28 })],
         alignment: AlignmentType.CENTER,
         spacing: { after: 200 },
       }),
       new Paragraph({
-        children: [new TextRun({ text: `Season ${season}`, size: 28 })],
+        children: [toPrimaryRun(`Season ${season}`, { size: 28 })],
         alignment: AlignmentType.CENTER,
         spacing: { after: coverSubtitle ? 200 : 600 },
       })
@@ -385,7 +407,7 @@ export default function GoalieJournalButton() {
     if (coverSubtitle) {
       documentChildren.push(
         new Paragraph({
-          children: [new TextRun({ text: coverSubtitle, italics: true })],
+          children: [toSecondaryRun(coverSubtitle, { italics: true })],
           alignment: AlignmentType.CENTER,
           spacing: { after: 600 },
         })
@@ -399,7 +421,7 @@ export default function GoalieJournalButton() {
 
     documentChildren.push(
       new Paragraph({
-        text: goalsTitle,
+        children: [toPrimaryRun(goalsTitle, { bold: true })],
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 400, after: 200 },
       })
@@ -417,7 +439,10 @@ export default function GoalieJournalButton() {
     for (let i = 1; i <= 8; i++) {
       documentChildren.push(
         new Paragraph({
-          children: [new TextRun({ text: `${i}. ` }), new TextRun({ text: BLANK_LINE })],
+          children: [
+            new TextRun({ text: `${i}. `, color: cleanSecondary, bold: true }),
+            new TextRun({ text: BLANK_LINE }),
+          ],
           spacing: { after: 200 },
         })
       );
@@ -432,7 +457,7 @@ export default function GoalieJournalButton() {
 
     documentChildren.push(
       new Paragraph({
-        text: entryTitle,
+        children: [toPrimaryRun(entryTitle, { bold: true })],
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 400, after: 200 },
       })
@@ -441,16 +466,16 @@ export default function GoalieJournalButton() {
     for (let i = 1; i <= 24; i++) {
       documentChildren.push(
         new Paragraph({
-          children: [new TextRun({ text: `Entry ${i}`, bold: true })],
+          children: [toPrimaryRun(`Entry ${i}`, { bold: true })],
           spacing: { before: 300, after: 100 },
         }),
         // The date/type/opponent row is structural layout for each entry,
         // rendered separately from the editable markdown prompts.
         new Paragraph({
           children: [
-            new TextRun({ text: "Date: " }),
+            toSecondaryRun("Date: ", { bold: true }),
             new TextRun({ text: BLANK_LINE }),
-            new TextRun({ text: "   \u25A1 Practice  \u25A1 Game   Opponent: " }),
+            toSecondaryRun("   \u25A1 Practice  \u25A1 Game   Opponent: ", { bold: true }),
             new TextRun({ text: BLANK_LINE }),
           ],
           spacing: { after: 100 },
@@ -480,7 +505,7 @@ export default function GoalieJournalButton() {
 
     documentChildren.push(
       new Paragraph({
-        text: eosTitle,
+        children: [toPrimaryRun(eosTitle, { bold: true })],
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 400, after: 200 },
       })
@@ -520,6 +545,7 @@ export default function GoalieJournalButton() {
       sections: [
         {
           properties: {
+            titlePage: true,
             page: {
               size: {
                 width: 12240, // 8.5 inches in twips (8.5 * 1440)
@@ -533,6 +559,21 @@ export default function GoalieJournalButton() {
               },
             },
           },
+          ...makeDocxHeaderFooter(
+            `${(goalieName.trim() || "GOALIE").toUpperCase()} - GOALIE JOURNAL`,
+            cleanPrimary,
+            cleanSecondary,
+            {
+              Header,
+              Footer,
+              BorderStyle,
+              TabStopType,
+              PageNumber,
+              Paragraph,
+              TextRun,
+              AlignmentType,
+            }
+          ),
           children: documentChildren,
         },
       ],
@@ -649,15 +690,15 @@ export default function GoalieJournalButton() {
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 shadow-lg"
+        className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
       >
-        Goalie Journal
+        {label}
       </button>
 
       <Modal
         isOpen={showModal}
         labelledBy="journal-modal-title"
-        className="max-w-md w-full"
+        className="max-w-2xl w-full"
         triggerRef={triggerRef}
       >
         {/* Scrollable content */}

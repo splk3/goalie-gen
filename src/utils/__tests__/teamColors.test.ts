@@ -3,13 +3,13 @@ import {
   isValidHexRgbColor,
   normalizeHexRgbColor,
 } from "../teamColors";
-import { getPaletteSync } from "colorthief";
+import { getPalette } from "colorthief";
 
 jest.mock("colorthief", () => ({
-  getPaletteSync: jest.fn(),
+  getPalette: jest.fn(),
 }));
 
-const mockedGetPaletteSync = jest.mocked(getPaletteSync);
+const mockedGetPalette = jest.mocked(getPalette);
 const OriginalImage = global.Image;
 
 class MockImage {
@@ -33,7 +33,7 @@ describe("teamColors", () => {
   });
 
   beforeEach(() => {
-    mockedGetPaletteSync.mockReset();
+    mockedGetPalette.mockReset();
   });
 
   it("normalizes valid hex values and rejects unsupported formats", () => {
@@ -51,7 +51,7 @@ describe("teamColors", () => {
   });
 
   it("extracts a normalized unique palette from colorthief", async () => {
-    mockedGetPaletteSync.mockReturnValue([
+    mockedGetPalette.mockResolvedValue([
       { hex: () => "#112233" },
       { hex: () => "#445566" },
       { hex: () => "#112233" },
@@ -60,6 +60,10 @@ describe("teamColors", () => {
     const result = await extractPaletteHexColorsFromDataUrl("data:image/png;base64,abc");
 
     expect(result).toEqual(["#112233", "#445566"]);
-    expect(mockedGetPaletteSync).toHaveBeenCalledTimes(1);
+    expect(mockedGetPalette).toHaveBeenCalledTimes(1);
+    expect(mockedGetPalette).toHaveBeenCalledWith(expect.any(Object), {
+      colorCount: 6,
+      quality: 1,
+    });
   });
 });

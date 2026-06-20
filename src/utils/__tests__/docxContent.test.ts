@@ -1,5 +1,12 @@
 import { TextRun, Paragraph } from "docx";
-import { parseRunData, textToRuns, blocksToDocxParagraphs } from "../docxContent";
+import {
+  parseRunData,
+  textToRuns,
+  blocksToDocxParagraphs,
+  cleanHexColor,
+  makeDocxHeaderFooter,
+} from "../docxContent";
+import type { DocxHeaderFooterClasses } from "../docxContent";
 import type { MarkdownBlock } from "../markdownParser";
 
 describe("parseRunData", () => {
@@ -65,6 +72,28 @@ describe("textToRuns", () => {
     const runs = textToRuns("No brackets here");
     expect(runs).toHaveLength(1);
     expect(runs[0]).toBeInstanceOf(TextRun);
+  });
+});
+
+describe("cleanHexColor", () => {
+  it("strips a leading # from a valid 6-digit hex string", () => {
+    expect(cleanHexColor("#00205B")).toBe("00205B");
+  });
+
+  it("returns the string unchanged when there is no leading #", () => {
+    expect(cleanHexColor("AF272F")).toBe("AF272F");
+  });
+
+  it("returns '000000' for undefined", () => {
+    expect(cleanHexColor(undefined)).toBe("000000");
+  });
+
+  it("returns '000000' for an empty string", () => {
+    expect(cleanHexColor("")).toBe("000000");
+  });
+
+  it("handles a standalone # (returns empty string after stripping)", () => {
+    expect(cleanHexColor("#")).toBe("");
   });
 });
 
@@ -134,5 +163,66 @@ describe("blocksToDocxParagraphs", () => {
     ];
     const paragraphs = blocksToDocxParagraphs(blocks);
     expect(paragraphs).toHaveLength(3);
+  });
+});
+
+describe("makeDocxHeaderFooter", () => {
+  it("builds running headers and footers with correct styling, thicker borders, and centered page number", () => {
+    const headerLabel = "TEAM PLAN";
+    const primaryColor = "00205B";
+    const secondaryColor = "AF272F";
+
+    const mockHeader = jest.fn().mockImplementation(function (options) {
+      return { type: "Header", options };
+    });
+    const mockFooter = jest.fn().mockImplementation(function (options) {
+      return { type: "Footer", options };
+    });
+    const mockParagraph = jest.fn().mockImplementation(function (options) {
+      return { type: "Paragraph", options };
+    });
+    const mockTextRun = jest.fn().mockImplementation(function (options) {
+      return { type: "TextRun", options };
+    });
+
+    const classes = {
+      Header: mockHeader,
+      Footer: mockFooter,
+      BorderStyle: { SINGLE: "single" },
+      PageNumber: { CURRENT: "current" },
+      Paragraph: mockParagraph,
+      TextRun: mockTextRun,
+      AlignmentType: { CENTER: "center", RIGHT: "right" },
+    };
+
+    makeDocxHeaderFooter(
+      headerLabel,
+      primaryColor,
+      secondaryColor,
+      classes as unknown as DocxHeaderFooterClasses
+    );
+
+    expect(mockHeader).toHaveBeenCalledTimes(1);
+    expect(mockFooter).toHaveBeenCalledTimes(1);
+
+    const headerOptions = mockHeader.mock.calls[0][0];
+    const footerOptions = mockFooter.mock.calls[0][0];
+
+    // Header checks
+    const headerP = headerOptions.children[0];
+    expect(headerP.options.alignment).toBe("right");
+    expect(headerP.options.border.bottom.size).toBe(18);
+    expect(headerP.options.border.bottom.color).toBe(secondaryColor);
+    expect(headerP.options.children[0].options.text).toBe(headerLabel);
+    expect(headerP.options.children[0].options.color).toBe(primaryColor);
+
+    // Footer checks
+    const footerP = footerOptions.children[0];
+    expect(footerP.options.alignment).toBe("center");
+    expect(footerP.options.border.top.size).toBe(18);
+    expect(footerP.options.border.top.color).toBe(secondaryColor);
+    expect(footerP.options.children[0].options.children).toEqual(["Page ", "current"]);
+    expect(footerP.options.children[0].options.color).toBe(primaryColor);
+    expect(footerP.options.children[0].options.bold).toBe(true);
   });
 });

@@ -8,7 +8,9 @@ import BackLinkButton from "../components/BackLinkButton";
 import rawResourceList from "../data/club-resources-list.yml";
 import type { ResourceListData } from "../types/resources";
 
-const resourceData = yaml.load(rawResourceList, { schema: yaml.FAILSAFE_SCHEMA }) as ResourceListData;
+const resourceData = yaml.load(rawResourceList, {
+  schema: yaml.FAILSAFE_SCHEMA,
+}) as ResourceListData;
 
 export default function ClubResources() {
   return (
