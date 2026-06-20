@@ -28,7 +28,7 @@ async function loadImageFromDataUrl(dataUrl: string): Promise<HTMLImageElement> 
 
 export async function extractPaletteHexColorsFromDataUrl(
   dataUrl: string,
-  colorCount = 8
+  colorCount = 6
 ): Promise<string[]> {
   if (!dataUrl || typeof window === "undefined") {
     return [];
@@ -36,8 +36,8 @@ export async function extractPaletteHexColorsFromDataUrl(
 
   try {
     const image = await loadImageFromDataUrl(dataUrl);
-    const { getPaletteSync } = await import("colorthief");
-    const palette = getPaletteSync(image, { colorCount }) ?? [];
+    const { getPalette } = await import("colorthief");
+    const palette = (await getPalette(image, { colorCount, quality: 1 })) ?? [];
     const normalizedPalette = palette
       .map((color) => normalizeHexRgbColor(color.hex()))
       .filter((color): color is string => Boolean(color));

@@ -7,6 +7,7 @@ import ReactCrop, {
   makeAspectCrop,
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { isSvgImageFile, rasterizeSvgFileToPngDataUrl } from "../utils/svgRasterize";
 
 interface ImageUploaderProps {
   onImageCropped: (file: File | null, previewUrl: string | null) => void;
@@ -27,7 +28,7 @@ export default function ImageUploader({
   const imgRef = useRef<HTMLImageElement>(null);
   const [fileName, setFileName] = useState<string>("");
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -50,6 +51,23 @@ export default function ImageUploader({
       setValidationError("");
       setAspectWarning("");
       setFileName(file.name);
+
+      if (isSvgImageFile(file)) {
+        try {
+          const rasterizedPngDataUrl = await rasterizeSvgFileToPngDataUrl(file);
+          setImgSrc(rasterizedPngDataUrl);
+          return;
+        } catch (error) {
+          console.error("Failed to convert SVG to PNG", error);
+          setValidationError(
+            "Unable to process this SVG file. Please try another SVG or upload a PNG/JPG image."
+          );
+          setImgSrc("");
+          setAspectWarning("");
+          onImageCropped(null, null);
+          return;
+        }
+      }
 
       const reader = new FileReader();
       reader.onloadend = () => {

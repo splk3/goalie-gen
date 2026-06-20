@@ -41,4 +41,9 @@ describe("GoalieJournalButton", () => {
 
     expect(primaryColorPicker).toHaveValue("#112233");
   });
+
+  it("renders a custom trigger label when the label prop is provided", () => {
+    render(<GoalieJournalButton label="Generate Goalie Journal" />);
+    expect(screen.getByRole("button", { name: "Generate Goalie Journal" })).toBeInTheDocument();
+  });
 });
