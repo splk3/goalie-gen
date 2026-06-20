@@ -11,15 +11,15 @@ describe("FeedbackButton", () => {
     await user.click(screen.getByRole("button", { name: "Contact Us" }));
 
     expect(screen.getByRole("heading", { name: "Contact Goalie Gen" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Report a Site Issue" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Send Us Feedback" })).toHaveAttribute(
       "href",
-      "https://github.com/splk3/goalie-gen/issues/new?template=bug_report.yml"
+      "https://forms.gle/qFEbMdm2PN4hDytj8"
     );
-    expect(screen.getByRole("link", { name: "Request an Improvement" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Email Us" })).toHaveAttribute(
       "href",
-      "https://github.com/splk3/goalie-gen/issues/new?template=feature_request.yml"
+      "mailto:feedback@goaliegen.com"
     );
-    expect(screen.getByRole("link", { name: "Share a Drill Idea" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Share a Drill Idea (GitHub)" })).toHaveAttribute(
       "href",
       "https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
     );

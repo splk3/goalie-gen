@@ -47,20 +47,18 @@ export default function FeedbackButton() {
 
           <div className="space-y-3">
             <a
-              href="https://github.com/splk3/goalie-gen/issues/new?template=bug_report.yml"
+              href="https://forms.gle/qFEbMdm2PN4hDytj8"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full text-center bg-usa-red hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
-              Report a Site Issue
+              Send Us Feedback
             </a>
             <a
-              href="https://github.com/splk3/goalie-gen/issues/new?template=feature_request.yml"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:feedback@goaliegen.com"
               className="block w-full text-center bg-usa-blue hover:bg-blue-900 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
-              Request an Improvement
+              Email Us
             </a>
             <a
               href="https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
@@ -68,7 +66,7 @@ export default function FeedbackButton() {
               rel="noopener noreferrer"
               className="block w-full text-center bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
-              Share a Drill Idea
+              Share a Drill Idea (GitHub)
             </a>
           </div>
         </div>

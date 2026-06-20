@@ -428,7 +428,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                 className="underline hover:text-usa-blue dark:hover:text-blue-400"
               >
                 CoachThem.com
-              </a>
+              </a>.
             </p>
           </div>
           <div className="flex-shrink-0 w-full md:w-auto flex flex-wrap justify-center md:justify-end gap-3">

@@ -165,8 +165,18 @@ export default function Home() {
             </div>
             <div>
               <p>
-                © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
-                Kujawski
+                © {data.site.siteMetadata.copyrightYear}{" "}
+                <a href="mailto:patrick@goaliegen.com" className="underline">
+                  Patrick Boyle
+                </a>
+                ,{" "}
+                <a href="mailto:katie@goaliegen.com" className="underline">
+                  Katie Jablynski
+                </a>
+                , and{" "}
+                <a href="mailto:james@goaliegen.com" className="underline">
+                  James Kujawski
+                </a>
               </p>
               <div className="mt-2 flex items-center justify-center gap-3">
                 <TermsPopup />
