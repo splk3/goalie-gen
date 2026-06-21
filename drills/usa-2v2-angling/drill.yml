@@ -1,0 +1,47 @@
+name: USA 2v2 Angling
+description: 2v2 angling with a scissor pass.
+drill_steps: |-
+  1. Set up X and O players alternating in line, with O defending first.
+  2. X starts with the puck and drives toward the inside, touching the bottom of the center circle.
+  3. At the same time, O gaps up and transitions backward.
+  4. Enter the zone and play to score.
+  5. O tries to force a turnover, then passes to the next teammates in line.
+  6. Continue the drill continuously.
+coaching_focus_points: |-
+  - Stick in passing lanes.
+  - Get set on feet.
+  - Stay on stick angle.
+shooter_focus_points: |-
+  - Protect puck and present passing targets.
+  - Take away time and space.
+  - Use stick positioning to take away lanes.
+drill_image: usa-2v2-angling.png
+drill_creation_date: 2026-06-08
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_unit_play
+  equipment:
+    - none
+  space_required:
+    - whole_zone
