@@ -83,8 +83,18 @@ export default function UsaHockeyGoldBanner({
           <div className="text-center">
             {showCopyright && (
               <p className="text-sm opacity-80">
-                © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
-                Kujawski
+                © {data.site.siteMetadata.copyrightYear}{" "}
+                <a href="mailto:patrick@goaliegen.com" className="underline">
+                  Patrick Boyle
+                </a>
+                ,{" "}
+                <a href="mailto:katie@goaliegen.com" className="underline">
+                  Katie Jablynski
+                </a>
+                , and{" "}
+                <a href="mailto:james@goaliegen.com" className="underline">
+                  James Kujawski
+                </a>
               </p>
             )}
             {showTerms && (

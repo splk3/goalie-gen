@@ -117,6 +117,65 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="border-2 border-usa-red dark:border-red-400 p-6 rounded-lg bg-white dark:bg-gray-800 transition-colors mt-6">
+          <h2 className="text-2xl font-bold text-usa-red dark:text-red-400 mb-4 text-center md:text-left">
+            Goaltending Gold Project Information
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="flex flex-col items-stretch text-center">
+              <NavigationButton to="/patrick-boyle-project" variant="red">
+                Patrick Boyle&apos;s Project
+              </NavigationButton>
+              <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
+                Creating a website and tools to help clubs, coaches, and goalies equip themselves
+                for success in recruiting, developing, and retaining goalies while building a love
+                for the position.
+                <span className="block mt-2">
+                  <a
+                    href="mailto:patrick@goaliegen.com"
+                    className="underline text-usa-blue dark:text-blue-400"
+                  >
+                    Contact Patrick
+                  </a>
+                </span>
+              </p>
+            </div>
+            <div className="flex flex-col items-stretch text-center">
+              <NavigationButton to="/katie-jablynski-project" variant="red">
+                Katie Jablynski&apos;s Project
+              </NavigationButton>
+              <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
+                Integrating Goalie Development into Team Practices and Drills.
+                <span className="block mt-2">
+                  <a
+                    href="mailto:katie@goaliegen.com"
+                    className="underline text-usa-blue dark:text-blue-400"
+                  >
+                    Contact Katie
+                  </a>
+                </span>
+              </p>
+            </div>
+            <div className="flex flex-col items-stretch text-center">
+              <NavigationButton to="/james-kujawski-project" variant="red">
+                James Kujawski&apos;s Project
+              </NavigationButton>
+              <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
+                Modernizing Goalie Drill Design using a constraints-led approach and flexible,
+                progression and options-based adaptability.
+                <span className="block mt-2">
+                  <a
+                    href="mailto:james@goaliegen.com"
+                    className="underline text-usa-blue dark:text-blue-400"
+                  >
+                    Contact James
+                  </a>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-10 flex flex-col lg:flex-row items-center gap-6 w-full">
           <div className="w-full lg:flex-1 text-gray-700 dark:text-gray-300">
             <p>
@@ -165,8 +224,18 @@ export default function Home() {
             </div>
             <div>
               <p>
-                © {data.site.siteMetadata.copyrightYear} Patrick Boyle, Katie Jablynski, and James
-                Kujawski
+                © {data.site.siteMetadata.copyrightYear}{" "}
+                <a href="mailto:patrick@goaliegen.com" className="underline">
+                  Patrick Boyle
+                </a>
+                ,{" "}
+                <a href="mailto:katie@goaliegen.com" className="underline">
+                  Katie Jablynski
+                </a>
+                , and{" "}
+                <a href="mailto:james@goaliegen.com" className="underline">
+                  James Kujawski
+                </a>
               </p>
               <div className="mt-2 flex items-center justify-center gap-3">
                 <TermsPopup />
