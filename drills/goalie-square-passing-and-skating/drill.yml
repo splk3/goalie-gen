@@ -1,0 +1,50 @@
+---
+name: Goalie Square Passing and Skating
+
+description: Players skate and pass while goalie follows along with play.
+
+drill_steps: |-
+  1. Goalie starts lined up with the puck.
+  2. Player can either pass or skate.
+  3. Wherever that player skates to, that corresponding player will skate for a scissor pass or to trade places.
+  4. Each round goes for about 45 seconds.
+  5. If a player taps their stick, the goalie must butterfly before making the movement.
+
+coaching_focus_points: |-
+  - Hinging your lead foot before making t-pushes.
+  - Stay square to the puck.
+  - Squeeze knees together on butterfly.
+
+shooter_focus_points: |-
+  - Clean passes.
+  - Communicate with teammates.
+  - Drop scissor passes to the outside.
+
+drill_image: goalie-square-passing-and-skating.png
+
+drill_creation_date: 2026-06-22
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - none
+  space_required:
+    - whole_zone
