@@ -1,0 +1,47 @@
+name: Transition Skating
+
+drill_steps: |-
+  1. Players skate up ice and stay facing up ice while transitioning around the cones.
+
+coaching_focus_points: |-
+  - Follow player in the last couple cones.
+  - Set on stick angle for shot.
+  - Adjust depth when player comes in.
+
+shooter_focus_points: |-
+  - Eyes up and not on the puck.
+  - Smooth transitions.
+  - Shoot before hash marks.
+
+drill_image: transition-skating.png
+
+drill_creation_date: 2026-06-23
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+  team_drill: "yes"
+  age_level:
+    - 10U_below
+    - 12U
+    - 14U
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - cones
+  space_required:
+    - half_zone
