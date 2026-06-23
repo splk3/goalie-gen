@@ -1,0 +1,44 @@
+name: Corner Puck Retrieval
+
+drill_steps: |-
+  Coach dumps a puck over the pad. Player skates below and retrieves it. They can skate up over the pad and down below and drive the net. Quick shot and follow rebound.
+
+coaching_focus_points: |-
+  - Follow puck the entire time.
+  - Seal the post if they drive low.
+  - Control rebounds to the corner.
+
+shooter_focus_points: |-
+  - Quick turn and get out.
+  - Quick shot and retrieve rebound.
+
+drill_image: corner-puck-retrieval.png
+
+drill_creation_date: 2026-06-23
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - bumpers
+  space_required:
+    - whole_zone
+  game_situations:
+    - unopposed_practice
