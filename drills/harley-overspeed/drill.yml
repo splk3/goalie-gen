@@ -1,0 +1,51 @@
+name: Harley Overspeed
+
+drill_steps: |-
+  1. On the whistle, players from opposite lines go at the same time and skate toward the inside lane.
+  2. Receive a touch pass and give it to the opposite line.
+  3. Continue across to the far side, receive again, and return the pass back.
+  4. Transition to face the puck, open up-ice, and receive the final pass.
+  5. Skate down ice and shoot from above the top of the circle.
+  6. Add a coach at the end to apply pressure as a progression.
+
+coaching_focus_points: |-
+  - Gain depth before the last pass.
+  - Follow the shooter through the neutral zone.
+  - Control rebounds to the corner.
+
+shooter_focus_points: |-
+  - Give clean passes.
+  - Time the transition.
+  - Take a hard shot on net and follow for a rebound.
+
+drill_image: harley-overspeed.png
+
+drill_creation_date: 2026-06-23
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - none
+  space_required:
+    - full_ice
