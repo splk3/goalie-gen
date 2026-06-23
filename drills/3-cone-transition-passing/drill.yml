@@ -1,0 +1,53 @@
+---
+name: 3 Cone Transition Passing
+
+description: Transition and passing drill.
+
+drill_steps: |-
+  1. Set up with one player in the high slot and one player in the corner.
+  2. Player passes, then transitions past the first cone to face the puck and receives before the second cone.
+  3. Skate above the second cone, then pass and receive again before the third cone.
+  4. Pass after the third cone, receive before the first cone, then shoot at the hash mark.
+  5. Player who shot replaces the player in the corner.
+
+coaching_focus_points: |-
+  - Focus on the last three passes: starting in the corner, out to the player, back to the corner, then out for the shot.
+  - Set on stick angle.
+  - Focus on the drag leg pulling back underneath you.
+
+shooter_focus_points: |-
+  - Stay facing the puck the whole time.
+  - Give and receive on backhand.
+  - Accurate passes.
+
+drill_image: 3-cone-transition-passing.png
+
+drill_creation_date: 2026-06-22
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - cones
+  space_required:
+    - whole_zone
