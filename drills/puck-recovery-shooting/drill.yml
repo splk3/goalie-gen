@@ -1,0 +1,44 @@
+name: Puck Recovery Shooting
+description: Working on handling puck off object and finding the puck in feet.
+drill_steps: |-
+  1. Start with players facing the cone.
+  2. The first player in line gets into a ready stance while the second player in line dumps a puck toward the net while facing backwards.
+  3. The first player retrieves the puck, then either pushes or pulls around the net and takes a quick shot before the dot.
+  4. Play the rebound if it comes out front.
+coaching_focus_points: |-
+  - Butterfly and recover with the puck hitting the net.
+  - Make sure to recover on stick angle.
+  - Control rebounds.
+shooter_focus_points: |-
+  - Push or pull the puck in the direction it is favoring.
+  - Quick release of shot.
+  - Go to the net for rebound.
+drill_image: puck-recovery-shooting.png
+drill_creation_date: 2026-06-23
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - bumpers
+  space_required:
+    - half_zone
