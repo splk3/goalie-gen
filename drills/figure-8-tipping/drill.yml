@@ -1,0 +1,54 @@
+---
+name: Figure 8 Tipping
+
+description: Drill focuses on tipping angles and shots from the point.
+
+drill_steps: |-
+  1. F in the corner carries the puck and passes to the board-side D.
+  2. That D passes D-to-D while F skates to the net for a tip.
+  3. Once D shoots, both D shift over to the other side.
+  4. After redirecting the puck, F continues to the other corner.
+  5. F receives a pass from the first person in line, then passes up to D.
+  6. D completes a D-to-D pass and shoots; F goes to the net for a tip again.
+  7. F completes both sides twice before rotating.
+
+coaching_focus_points: |-
+  - Follow passes.
+  - Seal ice and holes under arms on tips.
+  - Recover quickly to corner.
+
+shooter_focus_points: |-
+  - Angle stick for tips.
+  - Time your skating for the shot.
+  - Receive and give pass quickly.
+
+drill_image: figure-8-tipping.png
+
+drill_creation_date: 2026-06-22
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: yes
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - none
+  space_required:
+    - whole_zone
