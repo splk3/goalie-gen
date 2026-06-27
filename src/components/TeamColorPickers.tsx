@@ -79,7 +79,7 @@ function ColorPickerControl({
           <input
             id={`${idPrefix}-color`}
             type="color"
-            value={value}
+            value={value.toLowerCase()}
             onChange={handleColorPickerChange}
             disabled={disabled}
             className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed"
