@@ -35,8 +35,13 @@ function ColorPickerControl({
   const normalizedHex = normalizeHexRgbColor(hexInput);
   const showHexValidationError = hexInput.trim().length > 0 && !normalizedHex;
 
+  const colorInputRef = React.useRef<HTMLInputElement>(null);
+
   React.useEffect(() => {
     setHexInput(value);
+    if (colorInputRef.current) {
+      colorInputRef.current.setAttribute("value", value.toLowerCase());
+    }
   }, [value]);
 
   const handleColorPickerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,9 +82,10 @@ function ColorPickerControl({
       <div className="flex items-start gap-4">
         <div>
           <input
+            ref={colorInputRef}
             id={`${idPrefix}-color`}
             type="color"
-            value={value?.toLowerCase() || "#000000"}
+            value={value.toLowerCase()}
             onChange={handleColorPickerChange}
             disabled={disabled}
             className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed"
