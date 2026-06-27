@@ -182,9 +182,16 @@ function buildTrainingDetailsBlock(
   hasGoalieDiscount: boolean,
   goalieDiscountDetails: string,
   goalieDiscountStartingAgeGroup: string,
-  goaliesAreFree: boolean
+  goaliesAreFree: boolean,
+  useIntermediateNets: boolean
 ): string {
   const lines: string[] = [benefitsForClubGoaliesMd.trim(), ""];
+
+  if (useIntermediateNets) {
+    lines.push(
+      "- 8U and younger (mites) teams use USA Hockey recommended intermediate sized nets."
+    );
+  }
 
   if (isEquipmentProvided) {
     lines.push(
@@ -268,13 +275,12 @@ function buildTrainingDetailsBlock(
   if (hasGoalieDiscount) {
     if (goaliesAreFree) {
       lines.push(
-        `- Goalie discount program: Goalies are free${
-          goalieDiscountStartingAgeGroup.trim()
-            ? ` starting at ${valueOrPlaceholder(
-                goalieDiscountStartingAgeGroup,
-                "GOALIE_DISCOUNT_STARTING_AGE_GROUP"
-              )}`
-            : ""
+        `- Goalie discount program: Goalies are free${goalieDiscountStartingAgeGroup.trim()
+          ? ` starting at ${valueOrPlaceholder(
+            goalieDiscountStartingAgeGroup,
+            "GOALIE_DISCOUNT_STARTING_AGE_GROUP"
+          )}`
+          : ""
         }.`
       );
     } else {
@@ -282,13 +288,12 @@ function buildTrainingDetailsBlock(
         `- Goalie discount program: ${valueOrPlaceholder(
           goalieDiscountDetails,
           "GOALIE_DISCOUNT"
-        )}${
-          goalieDiscountStartingAgeGroup.trim()
-            ? ` (starting age group: ${valueOrPlaceholder(
-                goalieDiscountStartingAgeGroup,
-                "GOALIE_DISCOUNT_STARTING_AGE_GROUP"
-              )})`
-            : ""
+        )}${goalieDiscountStartingAgeGroup.trim()
+          ? ` (starting age group: ${valueOrPlaceholder(
+            goalieDiscountStartingAgeGroup,
+            "GOALIE_DISCOUNT_STARTING_AGE_GROUP"
+          )})`
+          : ""
         }.`
       );
     }
@@ -416,6 +421,7 @@ export default function GenerateClubPlanButton() {
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
   const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
 
+  const [useIntermediateNets, setUseIntermediateNets] = React.useState<boolean>(false);
   const [isEquipmentProvided, setIsEquipmentProvided] = React.useState<boolean>(false);
   const [equipmentProvidedAgeGroups, setEquipmentProvidedAgeGroups] = React.useState<string>(
     DEFAULT_PROVIDED_EQUIPMENT_AGE_GROUPS
@@ -526,6 +532,7 @@ export default function GenerateClubPlanButton() {
     setGeneratedBlob(null);
     setGeneratedFileName("");
 
+    setUseIntermediateNets(false);
     setIsEquipmentProvided(false);
     setEquipmentProvidedAgeGroups(DEFAULT_PROVIDED_EQUIPMENT_AGE_GROUPS);
     setHasTeamPracticeGoalieTraining(false);
@@ -597,9 +604,9 @@ export default function GenerateClubPlanButton() {
 
     const selectedIntroMarkdown = includeStarterIntroduction
       ? extractLevel3Section(
-          introductionMd,
-          INTRO_OPTIONS[Math.floor(Math.random() * INTRO_OPTIONS.length)]
-        )
+        introductionMd,
+        INTRO_OPTIONS[Math.floor(Math.random() * INTRO_OPTIONS.length)]
+      )
       : extractLevel3Section(introductionMd, "Placeholder");
 
     const selectedSeasonGoalsMarkdown = includeStarterSeasonGoals
@@ -686,11 +693,11 @@ export default function GenerateClubPlanButton() {
       new Paragraph({
         children: normalizedWebsiteUrl
           ? [
-              new ExternalHyperlink({
-                link: websiteLinkTarget,
-                children: [toPrimaryRun(normalizedWebsiteUrl, { underline: { type: "single" } })],
-              }),
-            ]
+            new ExternalHyperlink({
+              link: websiteLinkTarget,
+              children: [toPrimaryRun(normalizedWebsiteUrl, { underline: { type: "single" } })],
+            }),
+          ]
           : [toPrimaryRun(valueOrPlaceholder(clubWebsite, "WEBSITE_URL"))],
         alignment: AlignmentType.CENTER,
         spacing: { after: 120 },
@@ -747,6 +754,7 @@ export default function GenerateClubPlanButton() {
     );
 
     const hasAnyBenefits =
+      useIntermediateNets ||
       isEquipmentProvided ||
       hasTeamPracticeGoalieTraining ||
       hasGoalieCoachPerTeam ||
@@ -783,7 +791,8 @@ export default function GenerateClubPlanButton() {
         hasGoalieDiscount,
         goalieDiscountDetails,
         goalieDiscountStartingAgeGroup,
-        goaliesAreFree
+        goaliesAreFree,
+        useIntermediateNets
       );
       documentChildren.push(
         ...blocksToDocxParagraphs(parseMarkdown(trainingDetailsMarkdown), colorOpts)
@@ -1001,6 +1010,14 @@ export default function GenerateClubPlanButton() {
             <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">
               Club Training Details
             </legend>
+
+            <Toggle
+              id="use-intermediate-nets"
+              label="Does your club use intermediate-sized nets for 8U and younger teams?"
+              checked={useIntermediateNets}
+              onChange={setUseIntermediateNets}
+              disabled={!!generatedBlob || isGenerating}
+            />
 
             <Toggle
               id="equipment-provided"
@@ -1233,9 +1250,8 @@ export default function GenerateClubPlanButton() {
               <button
                 onClick={generateDocument}
                 disabled={isGenerating}
-                className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
-                  isGenerating ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`flex-1 bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${isGenerating ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 {isGenerating ? "Generating..." : "Generate"}
               </button>

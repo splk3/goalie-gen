@@ -127,4 +127,20 @@ describe("GenerateClubPlanButton", () => {
     await user.click(resourcesSlider);
     expect(resourcesSlider).toHaveAttribute("aria-checked", "false");
   });
+
+  it("shows intermediate nets toggle at the top of Club Training Details", async () => {
+    const user = userEvent.setup();
+    render(<GenerateClubPlanButton />);
+
+    await user.click(screen.getByRole("button", { name: /generate club development plan/i }));
+
+    const netsToggle = screen.getByLabelText(
+      "Does your club use Intermediate Nets for 8U and younger teams?"
+    );
+    expect(netsToggle).toBeInTheDocument();
+    expect(netsToggle).not.toBeChecked();
+
+    await user.click(netsToggle);
+    expect(netsToggle).toBeChecked();
+  });
 });

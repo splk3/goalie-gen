@@ -11,8 +11,8 @@ All goalies will need the following equipment:
 - cup (goalie cup recommended for 10U+)
 - chest protector
 - goalie glove
-- goalie blocker
-- goalie stick
+- goalie blocker (younger 8U/mites may use normal hockey glove)
+- goalie stick (younger 8U/mites may use a normal player stick)
 - neck guard (goalie neck guard recommended)
 - helmet (goalie helmet recommended, must be HECC certified)
 - helmet "dangler" recommended
