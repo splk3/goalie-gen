@@ -147,7 +147,7 @@ function ColorPickerControl({
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="text-xs text-center text-usa-blue dark:text-blue-400 hover:underline"
+                className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition-colors text-center"
               >
                 Done
               </button>
