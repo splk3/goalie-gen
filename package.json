@@ -28,6 +28,7 @@
     "jspdf": "^4.2.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
+    "react-colorful": "^5.7.0",
     "react-dom": "^19.2.5",
     "react-image-crop": "^11.0.10"
   },

@@ -1,5 +1,6 @@
 import * as React from "react";
-import { normalizeHexRgbColor, hexToHsv, hsvToHex, type HsvColor } from "../utils/teamColors";
+import { HexColorPicker, HexColorInput } from "react-colorful";
+import { normalizeHexRgbColor } from "../utils/teamColors";
 
 interface ColorPickerControlProps {
   idPrefix: string;
@@ -23,69 +24,21 @@ interface TeamColorPickersProps {
 }
 
 /**
- * Collapsible HSV slider panel for fine-tuning a color.
+ * A color picker control that uses react-colorful's HexColorPicker for a
+ * consistent, cross-platform color picking experience. The picker opens as a
+ * popover when the user clicks/taps the color swatch, and dismisses on outside
+ * click or Escape key.
  *
- * **Why this exists:** Chrome on Android's native `<input type="color">` picker
- * has a known bug (as of June 2025) where the "Custom" color tab's
- * Hue/Saturation/Value sliders always initialize at 0/0/0 (black), regardless
- * of the currently selected color. This is a browser-level issue that cannot be
- * fixed via HTML/CSS/JS. These custom sliders provide a reliable alternative
- * for fine-tuning colors on all platforms.
+ * This replaces the previous implementation that used a native
+ * `<input type="color">` plus custom HSV sliders. The native picker had a
+ * known bug on Chrome for Android (as of June 2025) where the "Custom" color
+ * tab's sliders always initialized at black, regardless of the selected color.
+ * react-colorful renders its own cross-platform picker that is immune to
+ * browser-specific native picker bugs.
  *
- * **Re-testing:** If a future Chrome release fixes the native picker's "Custom"
- * tab, this panel can optionally be removed. To verify: open the site on Android
- * Chrome, tap the color square, select "Custom", and check whether the native
- * sliders start at the currently selected color instead of black.
- *
- * See AGENTS.md § "Chrome on Android: Native Color Picker Limitation" for full
- * details on the attempted fixes and workaround rationale.
+ * See AGENTS.md § "Chrome on Android: Native Color Picker Limitation" for
+ * the full history of that workaround.
  */
-function HsvSliders({
-  idPrefix,
-  hsv,
-  disabled,
-  onHsvChange,
-}: {
-  idPrefix: string;
-  hsv: HsvColor;
-  disabled: boolean;
-  onHsvChange: (next: HsvColor) => void;
-}) {
-  const sliders: { id: string; label: string; field: keyof HsvColor; max: number }[] = [
-    { id: `${idPrefix}-hue`, label: "Hue", field: "h", max: 360 },
-    { id: `${idPrefix}-saturation`, label: "Saturation", field: "s", max: 100 },
-    { id: `${idPrefix}-brightness`, label: "Brightness", field: "v", max: 100 },
-  ];
-
-  return (
-    <div className="flex flex-col gap-2">
-      {sliders.map(({ id, label, field, max }) => (
-        <div key={id} className="flex items-center gap-2">
-          <label
-            htmlFor={id}
-            className="w-20 text-xs font-medium text-gray-600 dark:text-gray-400 shrink-0"
-          >
-            {label}
-          </label>
-          <input
-            id={id}
-            type="range"
-            min={0}
-            max={max}
-            value={hsv[field]}
-            disabled={disabled}
-            onChange={(e) => onHsvChange({ ...hsv, [field]: Number(e.target.value) })}
-            className="flex-1 h-2 rounded-lg appearance-none cursor-pointer accent-usa-blue disabled:cursor-not-allowed disabled:opacity-50"
-          />
-          <span className="w-8 text-right text-xs font-mono text-gray-500 dark:text-gray-400">
-            {hsv[field]}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function ColorPickerControl({
   idPrefix,
   label,
@@ -95,59 +48,57 @@ function ColorPickerControl({
   disabled,
   onChange,
 }: ColorPickerControlProps) {
-  const [hexInput, setHexInput] = React.useState<string>(value);
-  const normalizedHex = normalizeHexRgbColor(hexInput);
-  const showHexValidationError = hexInput.trim().length > 0 && !normalizedHex;
+  const [open, setOpen] = React.useState(false);
+  const popoverRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = React.useRef<HTMLInputElement>(null);
 
-  const [showAdjust, setShowAdjust] = React.useState(false);
-  const [hsv, setHsv] = React.useState<HsvColor>(() => hexToHsv(value));
-
-  const colorInputRef = React.useRef<HTMLInputElement>(null);
-
-  // Sync local state when the parent value changes (e.g. palette selection, logo extraction).
-  React.useEffect(() => {
-    setHexInput(value);
-    setHsv(hexToHsv(value));
-    if (colorInputRef.current) {
-      const lower = value.toLowerCase();
-      colorInputRef.current.value = lower;
-      colorInputRef.current.setAttribute("value", lower);
-      colorInputRef.current.defaultValue = lower;
-    }
-  }, [value]);
-
-  const handleColorPickerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const normalized = normalizeHexRgbColor(event.target.value);
-    if (!normalized) {
-      return;
-    }
-    onChange(normalized);
-    setHexInput(normalized);
-    setHsv(hexToHsv(normalized));
-  };
-
-  const handleHexInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nextValue = event.target.value.toUpperCase();
-    setHexInput(nextValue);
-    const normalized = normalizeHexRgbColor(nextValue);
+  const handlePickerChange = (hex: string) => {
+    const normalized = normalizeHexRgbColor(hex);
     if (normalized) {
       onChange(normalized);
-      setHsv(hexToHsv(normalized));
+    }
+  };
+
+  const handleColorInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (!disabled) {
+      setOpen((prev) => !prev);
     }
   };
 
   const handlePaletteColorSelect = (paletteColor: string) => {
     onChange(paletteColor);
-    setHexInput(paletteColor);
-    setHsv(hexToHsv(paletteColor));
   };
 
-  const handleHsvChange = (next: HsvColor) => {
-    setHsv(next);
-    const hex = hsvToHex(next);
-    onChange(hex);
-    setHexInput(hex);
-  };
+  // Close popover when clicking outside.
+  React.useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   return (
     <div className="mb-4 rounded-lg border border-gray-300 p-3 dark:border-gray-600">
@@ -162,17 +113,46 @@ function ColorPickerControl({
       )}
 
       <div className="flex items-start gap-4">
-        <div>
+        <div className="relative">
           <input
-            ref={colorInputRef}
+            ref={triggerRef}
             id={`${idPrefix}-color`}
             type="color"
-            defaultValue={value.toLowerCase()}
-            onChange={handleColorPickerChange}
+            value={value.toLowerCase()}
+            onClick={handleColorInputClick}
+            onChange={(e) => {
+              const normalized = normalizeHexRgbColor(e.target.value);
+              if (normalized) {
+                onChange(normalized);
+              }
+            }}
             disabled={disabled}
-            className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed"
+            className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-usa-blue"
           />
           <p className="mt-2 text-xs font-mono text-gray-700 dark:text-gray-300">{value}</p>
+
+          {/* Popover picker */}
+          {open && (
+            <div
+              ref={popoverRef}
+              role="dialog"
+              aria-label={`${label} color picker`}
+              className="absolute z-50 mt-2 left-0 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-2xl p-3 flex flex-col gap-3"
+              style={{ minWidth: "220px" }}
+            >
+              <HexColorPicker
+                color={value.toLowerCase()}
+                onChange={handlePickerChange}
+              />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="text-xs text-center text-usa-blue dark:text-blue-400 hover:underline"
+              >
+                Done
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex-1">
@@ -182,53 +162,15 @@ function ColorPickerControl({
           >
             {label} Hex
           </label>
-          <input
+          <HexColorInput
             id={`${idPrefix}-hex`}
-            type="text"
-            value={hexInput}
-            onChange={handleHexInputChange}
+            color={value}
+            onChange={handlePickerChange}
             disabled={disabled}
-            placeholder="#RRGGBB"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed font-mono"
+            prefixed={true}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase"
           />
-          {showHexValidationError && (
-            <p className="mt-1 text-xs text-red-700 dark:text-red-300">
-              Enter a valid color in #RRGGBB format.
-            </p>
-          )}
         </div>
-      </div>
-
-      {/* Collapsible HSV adjustment sliders */}
-      <div className="mt-3">
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => setShowAdjust((prev) => !prev)}
-          className="text-xs font-medium text-usa-blue dark:text-blue-400 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
-          aria-expanded={showAdjust}
-          aria-controls={`${idPrefix}-adjust`}
-        >
-          {showAdjust ? "▾ Hide Adjust Color" : "▸ Adjust Color"}
-        </button>
-        {showAdjust && (
-          <div id={`${idPrefix}-adjust`} className="mt-2">
-            <HsvSliders
-              idPrefix={idPrefix}
-              hsv={hsv}
-              disabled={disabled}
-              onHsvChange={handleHsvChange}
-            />
-            {/* Live preview swatch */}
-            <div className="mt-2 flex items-center gap-2">
-              <span
-                className="inline-block h-6 w-6 rounded border border-gray-400"
-                style={{ backgroundColor: value }}
-              />
-              <span className="text-xs font-mono text-gray-600 dark:text-gray-400">{value}</span>
-            </div>
-          </div>
-        )}
       </div>
 
       {paletteColors.length > 0 && (

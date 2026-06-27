@@ -92,30 +92,23 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 
 #### Team Color Picker & Logo Palette Extraction
 
-[TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (native color input + hex text field + collapsible HSV sliders + palette swatches). It is embedded inside all three document generator forms.
+[TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (custom popover color picker using `react-colorful`'s `HexColorPicker` + `HexColorInput` + palette swatches). It is embedded inside all three document generator forms.
 
 [src/utils/teamColors.ts](src/utils/teamColors.ts) provides:
 
 - `DEFAULT_PRIMARY_TEAM_COLOR` / `DEFAULT_SECONDARY_TEAM_COLOR` — USA national colors (`#00205B` / `#AF272F`) used as starting values.
 - `normalizeHexRgbColor(input)` — normalizes any `#RRGGBB`-ish string to uppercase `#RRGGBB`, returns `null` for invalid input.
 - `isValidHexRgbColor(input)` — strict `#RRGGBB` validation.
-- `hexToHsv(hex)` / `hsvToHex(hsv)` — convert between `#RRGGBB` hex strings and `HsvColor` objects (`{ h: 0–360, s: 0–100, v: 0–100 }`). Used by the HSV adjustment sliders. Round-trip precision is ±1 per RGB channel due to integer HSV quantization.
 - `extractPaletteHexColorsFromDataUrl(dataUrl, colorCount?)` — browser-only async function that loads the image into a canvas and calls `colorthief` asynchronously (using `getPalette` with quality set to `1`) to extract and return up to `colorCount` (default `6`) unique normalized hex colors.
 
 When a logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Colors are reset on form close/cancel.
 
-#### Chrome on Android: Native Color Picker Limitation & HSV Slider Workaround
+#### Custom react-colorful Color Picker & HexColorInput
 
-> **Known platform bug (as of June 2025):** Chrome on Android's native `<input type="color">` picker has a bug where the "Custom" color tab's Hue/Saturation/Value sliders always initialize at 0/0/0 (black), regardless of the currently selected color value. This makes it impossible for mobile users to make small adjustments from an existing color. The bug is in the browser's native UI and **cannot** be fixed via HTML, CSS, or JavaScript — all standard approaches have been attempted and verified:
->
-> - Lowercase hex normalization (`value.toLowerCase()`)
-> - `defaultValue` binding (uncontrolled React input)
-> - Ref-based DOM property/attribute/defaultValue syncing via `useEffect`
-> - `setAttribute("value", ...)` on the raw DOM element
->
-> **Workaround:** `ColorPickerControl` in `TeamColorPickers.tsx` includes a collapsible **"▸ Adjust Color"** panel with three `<input type="range">` sliders (Hue 0–360, Saturation 0–100, Brightness 0–100) powered by `hexToHsv`/`hsvToHex`. The sliders are always initialized from the current color and update the color in real-time. This panel is available on **all platforms** (not conditionally rendered), so it works as a universal fallback.
->
-> **Re-testing guidance:** To check whether this platform bug has been fixed in a future Chrome release, open the site on an Android device running the latest Chrome, tap the native color square, select "Custom", and verify whether the HSV sliders start at the currently selected color (not black). If the native picker is fixed, the "Adjust Color" panel can optionally be removed or hidden — but keeping it provides a consistent cross-platform experience and is harmless.
+To resolve cross-platform and browser-specific bugs (such as Chrome on Android's native `<input type="color">` HSV slider initialization issue), we use a custom picker UI:
+- **Popover Picker**: The color swatch trigger element is an `<input type="color">` which retains standard testability and `.value` querying. Clicks/activations on this trigger are intercepted via `e.preventDefault()` to block the browser's default picker. Instead, a custom popover containing `react-colorful`'s `HexColorPicker` is rendered. The popover dismisses when clicking outside or pressing the `Escape` key.
+- **Hex Input**: In the main form layout, the hex value is edited using `HexColorInput` from `react-colorful` which automatically validates inputs and displays a `#` prefix.
+
 
 ### 4. Shared Drill Filtering Model
 
