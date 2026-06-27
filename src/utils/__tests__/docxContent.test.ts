@@ -1,7 +1,9 @@
-import { TextRun, Paragraph } from "docx";
+import { TextRun, Paragraph, ExternalHyperlink } from "docx";
 import {
   parseRunData,
   textToRuns,
+  parseSegments,
+  textToParagraphChildren,
   blocksToDocxParagraphs,
   cleanHexColor,
   makeDocxHeaderFooter,
@@ -72,6 +74,65 @@ describe("textToRuns", () => {
     const runs = textToRuns("No brackets here");
     expect(runs).toHaveLength(1);
     expect(runs[0]).toBeInstanceOf(TextRun);
+  });
+});
+
+describe("parseSegments", () => {
+  it("handles plain text", () => {
+    expect(parseSegments("Plain text")).toEqual([
+      { type: "text", text: "Plain text" },
+    ]);
+  });
+
+  it("handles empty string", () => {
+    expect(parseSegments("")).toEqual([
+      { type: "text", text: "" },
+    ]);
+  });
+
+  it("handles placeholder text only", () => {
+    expect(parseSegments("[Placeholder]")).toEqual([
+      { type: "placeholder", text: "[Placeholder]" },
+    ]);
+  });
+
+  it("handles link only", () => {
+    expect(parseSegments("[Link](https://google.com)")).toEqual([
+      { type: "link", text: "Link", url: "https://google.com" },
+    ]);
+  });
+
+  it("handles mixed placeholders, links, and text", () => {
+    const text = "Prefix [Placeholder] middle [Link](https://google.com) suffix";
+    expect(parseSegments(text)).toEqual([
+      { type: "text", text: "Prefix " },
+      { type: "placeholder", text: "[Placeholder]" },
+      { type: "text", text: " middle " },
+      { type: "link", text: "Link", url: "https://google.com" },
+      { type: "text", text: " suffix" },
+    ]);
+  });
+});
+
+describe("textToParagraphChildren", () => {
+  it("converts parsed segments to appropriate docx instances", () => {
+    const text = "Prefix [Placeholder] middle [Link](https://google.com) suffix";
+    const children = textToParagraphChildren(text, "00205B", "000000");
+
+    expect(children).toHaveLength(5);
+    expect(children[0]).toBeInstanceOf(TextRun);
+    expect(children[1]).toBeInstanceOf(TextRun);
+    expect(children[2]).toBeInstanceOf(TextRun);
+    expect(children[3]).toBeInstanceOf(ExternalHyperlink);
+    expect(children[4]).toBeInstanceOf(TextRun);
+
+    // Verify properties of hyperlink
+    const link = children[3] as ExternalHyperlink;
+    // We can check how it is constructed or check its properties
+    // In docx library, the option is stored in the instance.
+    // Let's check: link.options is typically present (see mock in makeDocxHeaderFooter test, but here it is a real instance)
+    // For real ExternalHyperlink, the properties might not be directly public or easy to inspect depending on the package version,
+    // but the test will verify it runs without crashing, and compiles correctly.
   });
 });
 

@@ -135,7 +135,7 @@ describe("GenerateClubPlanButton", () => {
     await user.click(screen.getByRole("button", { name: /generate club development plan/i }));
 
     const netsToggle = screen.getByLabelText(
-      "Does your club use Intermediate Nets for 8U and younger teams?"
+      "Does your club use intermediate-sized nets for 8U and younger teams?"
     );
     expect(netsToggle).toBeInTheDocument();
     expect(netsToggle).not.toBeChecked();
