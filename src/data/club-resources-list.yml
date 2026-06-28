@@ -1,7 +1,10 @@
 resource-list:
   - name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi"
-    description: "Learn how to develop a goaltending development plan for your club following the strategies identified by Hiroki Wakabayashi as part of the USA Hockey Goaltending Gold Class of 2024"
+    description: "Learn how to develop a goaltending development plan for your club following the strategies identified by Hiroki Wakabayashi as part of his project for the USA Hockey Goaltending Gold Class of 2024."
     link: "https://worldhockeylab.com/how_to_structure_a_goaltending_development_program/"
   - name: "USA Hockey Goaltending Resources"
     description: "Official USA Hockey resources and information for goaltending programs, including certification, coaching materials, and development guidelines."
     link: "https://www.usahockey.com/goaltending"
+  - name: "Example Club-Level Plan for Youth Goaltending Coach Development - South Windsor Youth Hockey Association"
+    description: "This is a great example of a well-structured plan for developing goaltending coaches and implementing goalie-focused coaching for teams at the youth club level."
+    link: "https://www.swhockey.com/coaching-resources/goaltending-coach-development/10190"
