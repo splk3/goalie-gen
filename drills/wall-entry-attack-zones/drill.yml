@@ -3,6 +3,7 @@ description: |-
   A shooter attacks down the wall and enters one of seven designated attack zones.
   The shooter releases a shot from that zone.
   The goalie reads the shooter's lane, identifies the correct zone, and adjusts angle, depth, and post integration accordingly.
+  Run from both sides of the ice.
 drill_steps: |-
   Goalie:
     1. Track the puck carrier from the top of the crease.
