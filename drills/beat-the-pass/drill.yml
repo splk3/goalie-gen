@@ -34,7 +34,7 @@ drill_progressions:
   - progression_name: Progression 6 - Random Second Pass
     progression_description: "After receiving the first pass, Shooter 1 may: shoot immediately, pass across, or delay and then pass. Forces the goalie to read stick, body, and timing cues."
     progression_image: progression-6.png
-  - progression_name: Progression 7 - Add Lateral Movement for Goalie
+  - progression_name: Progression 7 - Add Lateral Movement for Goalie before and drill iteration
     progression_description: Start goalie slightly off-angle or require a pre-movement shuffle. Increases difficulty in arriving set before the shot.
     progression_image: progression-7.png
 drill_creation_date: 2026-05-22
