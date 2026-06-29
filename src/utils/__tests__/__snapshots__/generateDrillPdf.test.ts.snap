@@ -445,7 +445,9 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter varies rim height, speed, and angle.
+• Goalie adjusts footwork.
+• Goa...",
         75,
       ],
       "op": "splitTextToSize",
@@ -479,9 +481,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle.
-• Goalie adjusts footwork.
-• Goa...",
+        "Add shooter options:
+• Cut immediately
+• Delay at the wall
+• Take a quick sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -516,10 +519,8 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add shooter options:
-• Cut immediately
-• Delay at the wall
-• Take a quick sho...",
+        "Coach applies light forecheck pressure after the rim. Goalie:
+• Shoulder chec...",
         75,
       ],
       "op": "splitTextToSize",
@@ -552,8 +553,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim. Goalie:
-• Shoulder chec...",
+        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -585,7 +585,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
+        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
         75,
       ],
       "op": "splitTextToSize",
@@ -606,22 +606,6 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
       ],
       "op": "splitTextToSize",
       "order": 389,
-    },
-    {
-      "args": [
-        "Net Front Screen",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 390,
-    },
-    {
-      "args": [
-        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 391,
     },
     {
       "args": [
@@ -995,7 +979,9 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter varies rim height, speed, and angle.
+• Goalie adjusts footwork.
+• Goa...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1029,9 +1015,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle.
-• Goalie adjusts footwork.
-• Goa...",
+        "Add shooter options:
+• Cut immediately
+• Delay at the wall
+• Take a quick sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1066,10 +1053,8 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add shooter options:
-• Cut immediately
-• Delay at the wall
-• Take a quick sho...",
+        "Coach applies light forecheck pressure after the rim. Goalie:
+• Shoulder chec...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1102,8 +1087,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim. Goalie:
-• Shoulder chec...",
+        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1135,7 +1119,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
+        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1156,22 +1140,6 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
       ],
       "op": "splitTextToSize",
       "order": 389,
-    },
-    {
-      "args": [
-        "Net Front Screen",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 390,
-    },
-    {
-      "args": [
-        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
-        75,
-      ],
-      "op": "splitTextToSize",
-      "order": 391,
     },
     {
       "args": [
