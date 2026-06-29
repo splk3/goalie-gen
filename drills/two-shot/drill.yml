@@ -17,13 +17,20 @@ shooter_focus_points: |-
   - Repetition with purpose — vary shot types: first low, second high; first blocker, second glove; etc.
 drill_progressions:
   - progression_name: Progression 1 — Increased Distance
-    progression_description: Move pucks farther apart to force longer goalie recoveries.
+    progression_description: |-
+      Move pucks farther apart.
+      - Forces longer goalie recoveries.
     progression_image: progression-1-increased-distance.png
   - progression_name: Progression 2 — Lane Variation
-    progression_description: Shooter approaches from different entry points (middle, left lane, right lane).
+    progression_description: |-
+      Shooter approaches from different entry points:
+      - Middle
+      - Left lane
+      - Right lane
     progression_image: progression-2-lane-variation.png
   - progression_name: Progression 3 — Rebound Activation
-    progression_description: After the second shot, shooter plays any rebound for 1-2 seconds.
+    progression_description: |-
+      After the second shot, shooter plays any rebound for 1-2 seconds.
 drill_image: two-shot.png
 drill_creation_date: 2026-05-22
 tags:

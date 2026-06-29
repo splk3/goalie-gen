@@ -21,23 +21,48 @@ shooter_focus_points: |-
 drill_image: beat-the-pass.png
 drill_progressions:
   - progression_name: Progression 1 - One-Touch Passing
-    progression_description: Both shooters must one-touch the puck. (Forces quicker goalie reads and sharper shooter execution.)
+    progression_description: |-
+      Both shooters must one-touch the puck.
+      - Forces quicker goalie reads.
+      - Sharpens shooter execution.
   - progression_name: Progression 2 - Coach Adds a Fake
-    progression_description: Coach fakes a pass to one shooter before sending it to the other. (Goalie must stay patient and avoid biting early.)
+    progression_description: |-
+      Coach fakes a pass to one shooter before sending it to the other.
+      - Goalie must stay patient.
+      - Avoid biting early.
   - progression_name: Progression 3 - Shooter Shot Options
-    progression_description: "Second shooter may: catch-and-release shot, one-timer, or pull-and-shoot (drag laterally). Goalie must adjust depth and angle based on release type."
+    progression_description: |-
+      Second shooter options:
+      - Catch-and-release shot
+      - One-timer
+      - Pull-and-shoot (drag laterally)
+      Goalie adjusts depth and angle based on release type.
   - progression_name: Progression 4 - Add a Middle "Screen" Player
-    progression_description: Place a stationary or lightly moving screen player between shooters. Goalie must maintain sightlines, track through traffic, and stay patient on delayed releases.
+    progression_description: |-
+      Place a stationary or lightly moving screen player between shooters.
+      - Goalie maintains sightlines.
+      - Goalie must track through traffic.
+      - Goalie must stay patient on delayed releases.
     progression_image: progression-4.png
   - progression_name: Progression 5 - Add a Rebound Threat
-    progression_description: After the shot, the opposite shooter crashes for a rebound. Goalie must control rebounds and recover quickly.
+    progression_description: |-
+      After the shot, the opposite shooter crashes for a rebound.
+      Goalie must control rebounds and recover quickly.
   - progression_name: Progression 6 - Random Second Pass
-    progression_description: "After receiving the first pass, Shooter 1 may: shoot immediately, pass across, or delay and then pass. Forces the goalie to read stick, body, and timing cues."
+    progression_description: |-
+      After receiving the first pass, Shooter 1 may:
+      - Shoot immediately
+      - Pass across
+      - Delay and then pass
+      This forces the goalie to read stick, body, and timing cues.
     progression_image: progression-6.png
   - progression_name: Progression 7 - Add Lateral Movement for Goalie
-    progression_description: Start goalie slightly off-angle or require a pre-movement shuffle. Increases difficulty in arriving set before the shot.
+    progression_description: |-
+      Start goalie slightly off-angle or require a pre-movement shuffle.
+      This increases difficulty in arriving set before the shot.
     progression_image: progression-7.png
 drill_creation_date: 2026-05-22
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner

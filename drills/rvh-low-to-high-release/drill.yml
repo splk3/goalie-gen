@@ -22,18 +22,28 @@ shooter_focus_points: |-
 drill_image: rvh-low-to-high-release.png
 drill_progressions:
   - progression_name: Progression 1 — Passer Walkout Threat
-    progression_description: Low player can either pass to the slot, or walk out short-side for a jam attempt.
+    progression_description: |-
+      Low player options:
+      - Pass to the slot
+      - Walk out short-side for a jam attempt
     progression_image: progression-1-passer-walkout-threat.png
   - progression_name: Progression 2 — High Slot Movement
-    progression_description: Shooter starts high, then times a downhill cut into the slot.
+    progression_description: |-
+      Shooter starts high, then times a downhill cut into the slot.
     progression_image: progression-2-high-slot-movement.png
   - progression_name: Progression 3 — Second Shooter Option
-    progression_description: Add a second shooter on the weak-side flank. Low player can pass to the high slot (original) or the weak-side flank for a catch-and-shoot.
+    progression_description: |-
+      Add a second shooter on the weak-side flank.
+      Low player can pass to:
+      - The high slot (original option)
+      - The weak-side flank for a catch-and-shoot
     progression_image: progression-3-second-shooter-option.png
   - progression_name: Progression 4 — Rebound Live
-    progression_description: After the initial shot, the puck is live for 2-3 seconds.
+    progression_description: |-
+      After the initial shot, the puck is live for 2-3 seconds.
   - progression_name: Progression 5 — High Slot Screen
-    progression_description: Add a second goalie or skater in the high slot as a screen.
+    progression_description: |-
+      Add a second goalie or skater in the high slot as a screen.
     progression_image: progression-5-high-slot-screen.png
 drill_creation_date: 2026-05-22
 tags:

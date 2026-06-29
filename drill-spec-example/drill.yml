@@ -19,7 +19,7 @@ shooter_focus_points: |-
 drill_image: test-drill-image.png
 video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 drill_creation_date: 2024-01-01
-drill_updated_date: 2024-06-15
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner
@@ -56,3 +56,25 @@ tags:
     - odd_man_rush
   space_required:
     - flexible
+drill_progressions:
+  - progression_name: Progression 1 - Basic Shot and Rebound
+    progression_description: |-
+      Purpose: Introduce the basic shot and rebound recovery.
+      Shooter 1 takes a shot on goal, and Shooter 2 reacts to the rebound.
+      Goalie must make the initial save and recover to face the second shot.
+      Coaching emphasis: Focus on proper save technique and quick recovery.
+  - progression_name: Progression 2 - Controlled Edges
+    progression_description: |-
+      Purpose: Add timing pressure and force controlled edges.
+      Shooter 2 may:
+      - shoot immediately
+      - hold for one stickhandle
+      - or pull the puck laterally before shooting.
+      Goalie must maintain balance and avoid over-sliding.
+      Coaching emphasis: Stay tall in the slide; don't chase.
+  - progression_name: Progression 3 - Coach Shot Fake Before Pass
+    progression_description: |-
+      Purpose: Add deception and force the goalie to manage visual cues.
+      Coach gives a shoulder fake or stick fake before passing to Shooter 1.
+      Goalie must stay patient in RVH and release only when the puck moves.
+      Coaching emphasis: Don't pre-release off the post.
