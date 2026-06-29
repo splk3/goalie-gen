@@ -7,6 +7,7 @@ drill_steps: |-
   5. After the pass, the goalie moves across the crease, re-establishes positioning on the new puck side, and returns to the front of the net.
   6. Shooter 2 passes to Shooter 1, who has skated into a scoring area.
   7. Shooter 1 receives and shoots in stride.
+  8. Run drill from both sides of the ice.
 coaching_focus_points: |-
   - Read the rim early - shoulder check before leaving the crease.
   - Beat the puck to the stop point; arrive set, not sliding.
@@ -26,20 +27,34 @@ shooter_focus_points: |-
 drill_image: rim-and-shot.png
 drill_progressions:
   - progression_name: Progression 1 - Add Shot Options
-    progression_description: Shooter 2 may shoot or pass. Goalie must read body language and react accordingly.
+    progression_description: |-
+      Shooter 2 may shoot or pass. Goalie must read body language and react accordingly.
     progression_image: progression-1.png
   - progression_name: Progression 2 - Add a Coach or Player Forechecker
-    progression_description: Light pressure on the goalie during the rim retrieval. Forces quicker decision-making and stronger puck protection.
+    progression_description: |-
+      Apply light pressure on the goalie during the rim retrieval. This forces quicker decision-making and stronger puck protection.
     progression_image: progression-2.png
   - progression_name: Progression 3 - Shooter 2 Randomly Chooses Corner
-    progression_description: Shooter 2 can choose the same corner as the rim or the opposite corner. Shooter 1 reads Shooter 2 and sets up for a shot on the appropriate side. Goalie must read the passing option and adjust accordingly.
+    progression_description: |-
+      - Shooter 2 can choose the same corner as the rim or the opposite corner.
+      - Shooter 1 reads Shooter 2 and sets up for a shot on the appropriate side.
+      - Goalie must read the passing option and adjust accordingly.
     progression_image: progression-3.png
   - progression_name: Progression 4 - Add a Screen or Net-Front Player
-    progression_description: Place a stationary or moving screen in front. Goalie works on finding sightlines and tracking through traffic.
+    progression_description: |-
+      Place a stationary or moving screen in front.
+      Goalie works on finding sightlines and tracking the puck through traffic.
     progression_image: progression-4.png
   - progression_name: Progression 5 - Combine All Four Previous Progressions
-    progression_description: Combine Shooter 2's shoot option, coach pressure, random corner, and screen. Goalie works on puck handling, decision-making, scanning, and puck tracking.
+    progression_description: |-
+      Combine Shooter 2's shoot option, coach pressure, random corner, and screen.
+      Goalie works on:
+      - Puck handling
+      - Decision-making
+      - Scanning
+      - Puck tracking
 drill_creation_date: 2026-05-25
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner

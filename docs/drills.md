@@ -38,7 +38,7 @@ The Gatsby build process automatically validates all drills using a strict build
 - **`drill_updated_date`**: ISO string `YYYY-MM-DD`. If specified, it must not be earlier than `drill_creation_date`.
 - **`drill_progressions`**: Array of up to 8 progression steps. Each progression requires:
   - `progression_name`: Markdown text.
-  - `progression_description`: Markdown text.
+  - `progression_description`: Markdown text authored as a YAML block scalar (`|-`) to preserve intentional paragraph breaks and single-level lists.
   - `progression_image`: Optional filename string.
 
 ---
@@ -76,7 +76,15 @@ Because drill YAML is parsed using `FAILSAFE_SCHEMA`, any text field containing 
 
 If a drill diagram originates from a PDF, capture a PNG/JPG screenshot of the diagram and save it in the drill directory. Do not reference raw PDF files in the `drill_image` or `progression_image` fields.
 
-### 3. Video URL Regex Formats
+### 3. Progression Markdown Formatting
+
+For consistency and readability, format every `drill_progressions[*].progression_description` using YAML block markdown (`|-`), even for short text.
+
+- Use intentional line breaks to separate context, options, and coaching emphasis.
+- Use single-level lists (`- item`) when listing options or cues.
+- Reference example: `drills/shot-rebound-recovery/drill.yml` or `drill-spec-example/drill.yml`.
+
+### 4. Video URL Regex Formats
 
 Only the following URL schemes are accepted:
 

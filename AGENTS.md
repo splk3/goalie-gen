@@ -180,6 +180,8 @@ The build will fail if any `drill.yml` does not strictly follow these rules:
    - `coaching_focus_points` is required markdown text.
    - `description` and `shooter_focus_points` are optional markdown text.
    - `drill_progressions[*].progression_name` and `progression_description` are markdown text.
+     - Author `progression_description` using YAML block scalars (`|-`) so intentional paragraph breaks and single-level lists are preserved.
+     - Use `drill-spec-example/drill.yml` as the reference formatting style.
 4. **YAML Colon `:` Rule:** Because drill YAML is loaded using `FAILSAFE_SCHEMA`, values containing colons `:` in progression or step text **must be quoted** to prevent YAML parsing errors.
 5. **Required Tags:**
    - `tags.space_required`: **Required** (must contain at least one value). Allowed values: `full_ice`, `half_ice`, `whole_zone`, `half_zone`, `crease_only`, `flexible`. Default to `flexible` if no specific space is required. Shown on the page after "Equipment Needed" but excluded from PDF exports.

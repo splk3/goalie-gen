@@ -3,6 +3,7 @@ description: |-
   A shooter attacks down the wall and enters one of seven designated attack zones.
   The shooter releases a shot from that zone.
   The goalie reads the shooter's lane, identifies the correct zone, and adjusts angle, depth, and post integration accordingly.
+  Run from both sides of the ice.
 drill_steps: |-
   Goalie:
     1. Track the puck carrier from the top of the crease.
@@ -63,15 +64,27 @@ coaching_focus_points: |-
 drill_image: wall-entry-attack-zones.png
 drill_progressions:
   - progression_name: Progression 1 - Random Zone Activation
-    progression_description: Coach calls out a zone number as the shooter enters the zone to force late goalie reaction and build reading and adjustment speed.
+    progression_description: |-
+      Coach calls out a zone number as the shooter enters the zone.
+      - Forces late goalie reaction.
+      - Builds reading and adjustment speed.
   - progression_name: Progression 2 - Shooter Deception Layer
-    progression_description: Shooter fakes entering one zone, then cuts into another. Goalie must read hips instead of the stick to build discipline and patience.
+    progression_description: |-
+      Shooter fakes entering one zone, then cuts into another.
+      - Goalie reads hips instead of the stick.
+      - Builds discipline and patience.
     progression_image: progression-2.png
   - progression_name: Progression 3 - Add a Second Shooter
-    progression_description: Add a second attacker in the slot or weak side to force goalie management of shot versus pass threat and teach proper RVH exit mechanics.
+    progression_description: |-
+      Add a second attacker in the slot or weak side.
+      - Forces goalie management of shot-versus-pass threat.
+      - Teaches proper RVH exit mechanics.
     progression_image: progression-3.png
   - progression_name: Progression 4 - Screen
-    progression_description: Add a player or barrier as a screen to force goalie tracking through traffic while the shooter learns to use the screen effectively.
+    progression_description: |-
+      Add a player or barrier as a screen.
+      - Forces goalie tracking through traffic.
+      - Helps the shooter learn to use the screen effectively.
     progression_image: progression-4.png
 drill_creation_date: 2026-06-05
 tags:

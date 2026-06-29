@@ -14,8 +14,6 @@ coaching_focus_points: |-
   - Hands out front - smothering posture.
   - Track the blade - eyes locked on the ringette/puck.
   - Controlled butterfly - seal ice, chest tall.
-  - Efficient recovery - stick-side leg leads.
-  - Stay square - shuffle, don't over-rotate.
   - Stay under control - don't overcommit.
 shooter_focus_points: |-
   - Approach = Drop.
@@ -25,11 +23,14 @@ shooter_focus_points: |-
 drill_image: read-and-react.png
 drill_progressions:
   - progression_name: Progression 1 - Add Angle Changes
-    progression_description: Coach moves in a semicircle around the crease. Goalie must maintain angle and depth discipline.
+    progression_description: |-
+      Coach moves in a semicircle around the crease. Goalie must maintain angle and depth discipline.
     progression_image: progression-add-angle-changes.png
   - progression_name: Progression 2 - Add a Shot
-    progression_description: Coach shoots only when inside the threat line. Goalie must stay ready during movement.
+    progression_description: |-
+      Coach shoots only when inside the threat line. Goalie must stay ready during movement.
 drill_creation_date: 2026-05-22
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner

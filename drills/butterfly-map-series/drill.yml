@@ -17,7 +17,6 @@ coaching_focus_points: |-
   - Track the puck from stick to impact - no guessing.
   - Stay tall in the butterfly - chest up, shoulders forward.
   - Seal the five-hole - knees tight, stick blade flat.
-  - Active stick - angle low shots to safe areas.
   - Controlled rebounds - no unnecessary chaos.
   - Reset quickly - recover to ready butterfly between reps.
   - Head leads every movement - eyes before body.
@@ -30,15 +29,34 @@ shooter_focus_points: |-
 drill_image: butterfly-map-series.png
 drill_progressions:
   - progression_name: Progression 1 - Variable Timing
-    progression_description: Shooter varies release timing (hold, quick release, delay). Goalie must maintain discipline and patience.
+    progression_description: |-
+      Shooter varies release timing:
+      - Hold
+      - Quick release
+      - Delay
+      Goalie must maintain discipline and patience.
   - progression_name: Progression 2 - Lateral Movement Added
-    progression_description: After each shot, goalie performs a butterfly slide to one post or post to post, returns to center, resets to butterfly, then receives the next shot.
+    progression_description: |-
+      After each shot, goalie:
+      - Performs a butterfly slide to one post (or post to post)
+      - Returns to center
+      - Resets to butterfly
+      - Receives the next shot
     progression_image: progression-2.png
   - progression_name: Progression 3 - Shot Deception
-    progression_description: Shooter adds slight shoulder fakes, shoots at any of the 5 locations, blade angle changes, quick puck pulls before release.
+    progression_description: |-
+      Shooter adds deception through:
+      - Slight shoulder fakes
+      - Any of the 5 shot locations
+      - Blade angle changes
+      - Quick puck pulls before release
   - progression_name: Progression 4 - Timed Set
-    progression_description: 25 shots in 45-60 seconds. Simulate focus and late game fatigue.
+    progression_description: |-
+      25 shots in 45-60 seconds.
+      - Simulates focus under fatigue.
+      - Simulates late-game pace.
 drill_creation_date: 2026-05-25
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner

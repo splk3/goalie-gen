@@ -65,6 +65,8 @@ Create `drills/{folder-name}/drill.yml` using the field mapping below.
 - Include a progression entry **only when both** `progression_name` and `progression_description` are provided
 - If no valid progressions exist, omit `drill_progressions` entirely
 - Preserve markdown formatting in `progression_description` (including nested list indentation up to 3 levels)
+- Author every `progression_description` as a YAML block scalar (`|-`) so intentional line breaks and single-level lists are preserved
+- Use `drill-spec-example/drill.yml` as the canonical progression-format example
 - If a progression description contains an attached or pasted image URL (GitHub CDN link):
   - Download the image file
   - Save it to `drills/{folder-name}/progression-{N}.{ext}` (e.g. `progression-1.png`)
@@ -75,7 +77,10 @@ Create `drills/{folder-name}/drill.yml` using the field mapping below.
 ```yaml
 drill_progressions:
   - progression_name: Progression 1
-    progression_description: Description text here.
+    progression_description: |-
+      Purpose: Add timing pressure.
+      - Point one
+      - Point two
 ```
 
 ### YAML Authoring Rules

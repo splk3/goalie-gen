@@ -4,7 +4,7 @@ drill_steps: |-
   2. The goalie starts on the post in RVH, then releases off the post to establish angle and depth on Shooter 1 as the pass arrives.
   3. The shooter takes a controlled low shot aimed at the goalie's far pad to generate a rebound toward Shooter 2.
   4. The goalie executes a controlled butterfly slide across the crease to make the rebound save on Shooter 2.
-  5. Run the drill from both sides of the net to work forehand and backhand retrieval angles.
+  5. Run the drill from both sides of the net.
 coaching_focus_points: |-
   - Release cleanly from RVH and square up to Shooter 1 with proper angle and depth.
   - Track the initial shot into the save and recover quickly to locate the rebound.
@@ -14,19 +14,49 @@ shooter_focus_points: |-
   - Shooter 2: Attack the rebound immediately with a quick, decisive shot.
 drill_progressions:
   - progression_name: Progression 1 - Variable Rebound Location
-    progression_description: "Purpose: Force the goalie to read and react instead of sliding to a pre-planned spot. Shooter 1 still shoots low, but may aim slightly wider or closer to the pad. Shooter 2 adjusts to the rebound instead of standing in a fixed spot. Goalie must locate the puck before committing to the slide. Coaching emphasis: Eyes find the puck first, movement second."
+    progression_description: |-
+      Purpose: Force the goalie to read and react instead of sliding to a pre-planned spot.
+      - Shooter 1 still shoots low, but may aim slightly wider or closer to the pad.
+      - Shooter 2 adjusts to the rebound instead of standing in a fixed spot.
+      Goalie must locate the puck before committing to the slide.
+      Coaching emphasis: Eyes find the puck first, movement second.
   - progression_name: Progression 2 - Shooter 2 Delay or Quick Release Options
-    progression_description: "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot immediately, hold for one stickhandle, or pull the puck laterally before shooting. Goalie must maintain balance and avoid over-sliding. Coaching emphasis: Stay tall in the slide; don't chase."
+    progression_description: |-
+      Purpose: Add timing pressure and force controlled edges.
+      Shooter 2 may:
+      - shoot immediately
+      - hold for one stickhandle
+      - or pull the puck laterally before shooting.
+      Goalie must maintain balance and avoid over-sliding.
+      Coaching emphasis: Stay tall in the slide; don't chase.
   - progression_name: Progression 3 - Coach Shot Fake Before Pass
-    progression_description: "Purpose: Add deception and force the goalie to manage visual cues. Coach gives a shoulder fake or stick fake before passing to Shooter 1. Goalie must stay patient in RVH and release only when the puck moves. Coaching emphasis: Don't pre-release off the post."
+    progression_description: |-
+      Purpose: Add deception and force the goalie to manage visual cues.
+      Coach gives a shoulder fake or stick fake before passing to Shooter 1.
+      Goalie must stay patient in RVH and release only when the puck moves.
+      Coaching emphasis: Don't pre-release off the post.
   - progression_name: Progression 4 - Third Shot Recovery
-    progression_description: "Purpose: Build endurance and post-save recovery habits. After Shooter 2's rebound shot, Coach immediately tosses or shoots a third puck back to Shooter 1, into the slot, or behind the net. Goalie must recover to feet or rotate on knees depending on puck location. Coaching emphasis: Prioritize recovery path, not speed."
+    progression_description: |-
+      Purpose: Build endurance and post-save recovery habits.
+      After Shooter 2's rebound shot, Coach immediately tosses or shoots a third puck:
+      - back to Shooter 1
+      - into the slot
+      - or behind the net.
+      Goalie must recover to feet or rotate on knees depending on puck location.
+      Coaching emphasis: Prioritize recovery path, not speed.
     progression_image: progression-4-third-shot-recovery.png
   - progression_name: Progression 5 - Traffic / Screen Layer
-    progression_description: "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for the first shot. Shooter 1 still aims for far pad; Shooter 2 reacts to rebound. Goalie must track through bodies and maintain discipline on the slide. Coaching emphasis: Head trajectory stays level through traffic."
+    progression_description: |-
+      Purpose: Add traffic and force the goalie to maintain focus on the puck.
+      - Add a passive screen in front of the goalie for the first shot.
+      - Shooter 1 still aims for far pad
+      - Shooter 2 reacts to rebound.
+      Goalie must track through bodies and maintain discipline on the slide.
+      Coaching emphasis: Head trajectory stays level through traffic.
     progression_image: progression-5-traffic-screen-layer.png
 drill_image: shot-rebound-recovery.png
 drill_creation_date: 2026-05-22
+drill_updated_date: 2026-06-28
 tags:
   skill_level:
     - beginner
