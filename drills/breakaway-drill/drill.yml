@@ -29,7 +29,7 @@ drill_progressions:
     progression_image: progression-1.png
   - progression_name: Progression 2 - Delay Move
     progression_description: |-
-      Shooter slows down at the hashmarks to force the goalie to hold their edges longer and stay patient.  
+      Shooter slows down at the hashmarks to force the goalie to hold their edges longer and stay patient.
   - progression_name: Progression 3 - Add multiple dekes
     progression_description: |-
       Shooter executes a series of fakes, such as:
