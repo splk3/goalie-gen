@@ -445,7 +445,9 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter varies rim height, speed, and angle.
+• Goalie adjusts footwork.
+• Goa...",
         75,
       ],
       "op": "splitTextToSize",
@@ -461,7 +463,9 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter varies rim height, speed, and angle.
+• Goalie adjusts footwork.
+• Goa...",
         75,
       ],
       "op": "splitTextToSize",
@@ -477,7 +481,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Add shooter options:
+• Cut immediately
+• Delay at the wall
+• Take a quick sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -493,7 +500,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Add shooter options:
+• Cut immediately
+• Delay at the wall
+• Take a quick sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -509,7 +519,8 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Coach applies light forecheck pressure after the rim. Goalie:
+• Shoulder chec...",
         75,
       ],
       "op": "splitTextToSize",
@@ -525,7 +536,8 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Coach applies light forecheck pressure after the rim. Goalie:
+• Shoulder chec...",
         75,
       ],
       "op": "splitTextToSize",
@@ -541,7 +553,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -557,7 +569,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -573,7 +585,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
         75,
       ],
       "op": "splitTextToSize",
@@ -589,7 +601,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
         75,
       ],
       "op": "splitTextToSize",
@@ -672,7 +684,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
-        116,
+        124,
         53.33,
         30,
       ],
@@ -684,7 +696,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
-        180,
+        196,
         53.33,
         30,
       ],
@@ -967,7 +979,9 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter varies rim height, speed, and angle.
+• Goalie adjusts footwork.
+• Goa...",
         75,
       ],
       "op": "splitTextToSize",
@@ -983,7 +997,9 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter varies rim height, speed, and angle while the goalie adjusts footwork...",
+        "Shooter varies rim height, speed, and angle.
+• Goalie adjusts footwork.
+• Goa...",
         75,
       ],
       "op": "splitTextToSize",
@@ -999,7 +1015,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Add shooter options:
+• Cut immediately
+• Delay at the wall
+• Take a quick sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1015,7 +1034,10 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Shooter may cut immediately, delay at the wall, or take a quick shot from the...",
+        "Add shooter options:
+• Cut immediately
+• Delay at the wall
+• Take a quick sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1031,7 +1053,8 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Coach applies light forecheck pressure after the rim. Goalie:
+• Shoulder chec...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1047,7 +1070,8 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Coach applies light forecheck pressure after the rim, and the goalie shoulder...",
+        "Coach applies light forecheck pressure after the rim. Goalie:
+• Shoulder chec...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1063,7 +1087,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1079,7 +1103,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add a second shooter in the slot so the primary shooter can pass or shoot.",
+        "Add a second shooter in the slot. Primary shooter can pass or shoot.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1095,7 +1119,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1111,7 +1135,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
     },
     {
       "args": [
-        "Add an extra goaltender or obstacle in the high slot so the goalie must track...",
+        "Add an extra goaltender or obstacle in the high slot. so the goalie must trac...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1194,7 +1218,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
-        116,
+        124,
         53.33,
         30,
       ],
@@ -1206,7 +1230,7 @@ exports[`generateDrillPdf visual regression traces matches dedicated progression
         "data:image/png;base64,MOCK",
         "PNG",
         33.83,
-        180,
+        196,
         53.33,
         30,
       ],
@@ -1547,7 +1571,8 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Move pucks farther apart.
+• Forces longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1563,7 +1588,8 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Move pucks farther apart.
+• Forces longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -1579,7 +1605,10 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Shooter approaches from different entry points:
+• Middle
+• Left lane
+• Right ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1595,7 +1624,10 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Shooter approaches from different entry points:
+• Middle
+• Left lane
+• Right ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -1985,7 +2017,8 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Move pucks farther apart.
+• Forces longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -2001,7 +2034,8 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Move pucks farther apart to force longer goalie recoveries.",
+        "Move pucks farther apart.
+• Forces longer goalie recoveries.",
         75,
       ],
       "op": "splitTextToSize",
@@ -2017,7 +2051,10 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Shooter approaches from different entry points:
+• Middle
+• Left lane
+• Right ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2033,7 +2070,10 @@ exports[`generateDrillPdf visual regression traces matches dense inline-content 
     },
     {
       "args": [
-        "Shooter approaches from different entry points (middle, left lane, right lane).",
+        "Shooter approaches from different entry points:
+• Middle
+• Left lane
+• Right ...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2293,7 +2333,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        "5. Run the drill from both sides of the net.",
         165,
       ],
       "op": "splitTextToSize",
@@ -2385,7 +2425,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        "5. Run the drill from both sides of the net.",
         165,
       ],
       "op": "splitTextToSize",
@@ -2473,7 +2513,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may:
+• sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2489,7 +2530,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may:
+• sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2569,7 +2611,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Purpose: Add traffic and force the goalie to maintain focus on the puck.
+• Ad...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2585,7 +2628,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Purpose: Add traffic and force the goalie to maintain focus on the puck.
+• Ad...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2680,7 +2724,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         "data:image/png;base64,MOCK",
         "PNG",
         127,
-        140,
+        152,
         45,
         30,
       ],
@@ -2739,7 +2783,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "5. Run the drill from both sides of the net to work forehand and backhand ret...",
+        "5. Run the drill from both sides of the net.",
         165,
       ],
       "op": "splitTextToSize",
@@ -2827,7 +2871,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may:
+• sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2843,7 +2888,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may shoot ...",
+        "Purpose: Add timing pressure and force controlled edges. Shooter 2 may:
+• sho...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2923,7 +2969,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Purpose: Add traffic and force the goalie to maintain focus on the puck.
+• Ad...",
         75,
       ],
       "op": "splitTextToSize",
@@ -2939,7 +2986,8 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
     },
     {
       "args": [
-        "Purpose: Add game-like chaos. Add a passive screen in front of the goalie for...",
+        "Purpose: Add traffic and force the goalie to maintain focus on the puck.
+• Ad...",
         75,
       ],
       "op": "splitTextToSize",
@@ -3034,7 +3082,7 @@ exports[`generateDrillPdf visual regression traces matches full-width first-page
         "data:image/png;base64,MOCK",
         "PNG",
         127,
-        140,
+        152,
         45,
         30,
       ],

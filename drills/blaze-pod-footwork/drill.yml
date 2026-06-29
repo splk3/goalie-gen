@@ -24,19 +24,48 @@ shooter_focus_points: |-
 drill_image: blaze-pod-footwork.png
 drill_progressions:
   - progression_name: Progression 1 - T-Push
-    progression_description: Goalie starts in ready stance centered on the goal line. Goalie performs a series of T-pushes, always pushing off the correct edge, rotating hips first, and arriving square. Lead with the eyes - head snaps to the next light before the push; hip rotation first - point the toe, open the hip, then drive; explosive first push with a controlled stop. Reinforce clean stops with no drifting past the pod.
+    progression_description: |-
+      Goalie starts in ready stance centered on the goal line and performs a series of T-pushes.
+      Technical focus:
+      - Push off the correct edge, rotate hips first, and arrive square.
+      - Lead with the eyes (head snaps to the next light before the push).
+      - Hip rotation first - point the toe, open the hip, then drive.
+      - Use an explosive first push with a controlled stop.
+      - Reinforce clean stops with no drifting past the pod.
     progression_image: progression-1.png
   - progression_name: Progression 2 - Power Push
-    progression_description: Goalie begins in a butterfly position centered at the top of the crease. On first light activation, goalie performs a controlled butterfly slide to that pod. Eyes first - head snaps to the next light before initiating the slide. Use a strong push leg by loading the edge fully before driving. Keep chest tall in the butterfly and maintain glove and blocker positioning during slides.
+    progression_description: |-
+      Goalie begins in a butterfly centered at the top of the crease.
+      On first light activation, the goalie performs a controlled butterfly slide to that pod.
+      Technical focus:
+      - Eyes first (head snaps to the next light before initiating the slide).
+      - Use a strong push leg by fully loading the edge before driving.
+      - Keep chest tall in the butterfly and maintain glove and blocker positioning during slides.
     progression_image: progression-2.png
   - progression_name: Progression 3 - Mirror
-    progression_description: Place a large pad or divider in the crease area to separate two goalies. Goalie A works on the BlazePod side while Goalie B mirrors on the non-pod side. Progress through shuffle, T-push, butterfly slide, and power push.
+    progression_description: |-
+      Place a large pad or divider in the crease area to separate two goalies.
+      - Goalie A works on the BlazePod side.
+      - Goalie B mirrors on the non-pod side.
+      Progress through:
+      - Shuffle
+      - T-push
+      - Butterfly slide
+      - Power push
     progression_image: progression-3.png
   - progression_name: Sample Program
-    progression_description: This image shows a sample blazepods configuration for this drill with 6 pods, 1 goalie, single color that lights up, 30 seconds total drill time, and 2 seconds between each light change. Adjust as desired for your goalie.
+    progression_description: |-
+      This image shows a sample BlazePods configuration for this drill.
+      Suggested settings:
+      - 6 pods
+      - 1 goalie
+      - Single color activation
+      - 30 seconds total drill time
+      - 2 seconds between each light change
+      Adjust as desired for your goalie.
     progression_image: progression-4.png
 drill_creation_date: 2026-06-05
-drill_updated_date: 2026-06-11
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner

@@ -24,13 +24,26 @@ shooter_focus_points: |-
 drill_image: breakaway-drill.png
 drill_progressions:
   - progression_name: Progression 1 - Angle Variation
-    progression_description: Shooter starts from wide left, wide right, or the middle lane.
+    progression_description: |-
+      Shooter starts from wide left, wide right, or middle lane and skates in under control.
     progression_image: progression-1.png
   - progression_name: Progression 2 - Delay Move
-    progression_description: Shooter slows down at the hashmarks to force the goalie to hold edges longer and stay patient.
+    progression_description: |-
+      Shooter slows down at the hashmarks to force the goalie to hold their edges longer and stay patient.
   - progression_name: Progression 3 - Add multiple dekes
-    progression_description: Shooter executes a series of fakes (forehand fake, backhand fake, slapshot fake, shot fake). Goalie maintains angle while backing in, holds edges through each fake, avoids dropping early, and reacts only when the shooter commits.
+    progression_description: |-
+      Shooter executes a series of fakes, such as:
+      - Forehand fake
+      - Backhand fake
+      - Slapshot fake
+      - Shot fake
+      Goalie:
+      - Maintains angle while backing in
+      - Holds edges through each fake
+      - Avoids dropping early
+      - Reacts only when the shooter commits
 drill_creation_date: 2026-06-05
+drill_update_date: 2026-06-28
 tags:
   skill_level:
     - beginner
