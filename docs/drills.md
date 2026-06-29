@@ -82,7 +82,7 @@ For consistency and readability, format every `drill_progressions[*].progression
 
 - Use intentional line breaks to separate context, options, and coaching emphasis.
 - Use single-level lists (`- item`) when listing options or cues.
-- Reference example: `drills/shot-rebound-recovery/drill.yml`.
+- Reference example: `drills/shot-rebound-recovery/drill.yml` or `drill-spec-example/drill.yml`.
 
 ### 4. Video URL Regex Formats
 
