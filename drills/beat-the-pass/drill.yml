@@ -56,7 +56,7 @@ drill_progressions:
       - Delay and then pass
       This forces the goalie to read stick, body, and timing cues.
     progression_image: progression-6.png
-  - progression_name: Progression 7 - Add Lateral Movement for Goalie
+  - progression_name: Progression 7 - Add Lateral Movement for Goalie before each drill iteration
     progression_description: |-
       Start goalie slightly off-angle or require a pre-movement shuffle.
       This increases difficulty in arriving set before the shot.
