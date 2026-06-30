@@ -1,0 +1,41 @@
+name: Father 3v2
+description: 3v2 gap up zone entry.
+drill_steps: |-
+  1. X line up on the blue line.
+  2. O's line up top of the circles.
+  3. On the whistle, the X's gap up to the red line and O's gap up to the blue line.
+  4. Coach passes to whoever is closest to the blue line.
+  5. Players play 3v2 until the coach blows the whistle or the goalie covers it.
+coaching_focus_points: |-
+  - Depth management as players enter blue line.
+  - Communication with their defenders.
+  - Identify threats on the weak side of the ice.
+shooter_focus_points: |-
+  - Center drive to the net.
+  - Challenge defenseman and creating speed.
+  - Gap up closer then comfortable with and put stick on lanes to break up plays.
+drill_image: father-3v2.png
+drill_creation_date: 2026-06-29
+tags:
+  skill_level:
+    - intermediate
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - half_ice
+  game_situations:
+    - small_unit_play
