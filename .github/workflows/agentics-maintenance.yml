@@ -93,7 +93,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -131,7 +131,7 @@ jobs:
       actions: write
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -160,7 +160,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -207,7 +207,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -253,7 +253,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -299,7 +299,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -345,7 +345,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -450,7 +450,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -542,7 +542,7 @@ jobs:
       issues: write
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
@@ -579,7 +579,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@5c2fe865bb4dc46e1450f6ee0d0541d759aea73a # v0.79.6
+        uses: github/gh-aw-actions/setup@4f64d3872d104d9597f706236f0b3de3b4e18252 # v0.81.1
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
 
