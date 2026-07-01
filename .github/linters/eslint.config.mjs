@@ -68,14 +68,16 @@ export default [
       },
     },
   },
-  // TS/TSX: typescript-eslint + n + react + prettier
+  // TS/TSX: typescript-eslint + react + prettier
+  // Note: eslint-plugin-n v18 is ESM-only, so its shareable config can't be
+  // loaded via FlatCompat.extends("plugin:n/recommended") (which relies on a
+  // synchronous require()). Apply its native flat config directly instead.
+  {
+    ...n.configs["flat/recommended"],
+    files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
+  },
   ...compat
-    .extends(
-      "plugin:@typescript-eslint/recommended",
-      "plugin:n/recommended",
-      "plugin:react/recommended",
-      "prettier"
-    )
+    .extends("plugin:@typescript-eslint/recommended", "plugin:react/recommended", "prettier")
     .map((config) => ({
       ...config,
       files: ["**/*.ts", "**/*.cts", "**/*.mts", "**/*.tsx"],
