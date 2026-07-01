@@ -79,15 +79,11 @@ describe("textToRuns", () => {
 
 describe("parseSegments", () => {
   it("handles plain text", () => {
-    expect(parseSegments("Plain text")).toEqual([
-      { type: "text", text: "Plain text" },
-    ]);
+    expect(parseSegments("Plain text")).toEqual([{ type: "text", text: "Plain text" }]);
   });
 
   it("handles empty string", () => {
-    expect(parseSegments("")).toEqual([
-      { type: "text", text: "" },
-    ]);
+    expect(parseSegments("")).toEqual([{ type: "text", text: "" }]);
   });
 
   it("handles placeholder text only", () => {

@@ -14,12 +14,11 @@ We aim to promote individual development both on and off the ice, while prioriti
 Ultimately, our club's goal is to create a fun, positive experience that builds lifelong friendships and creates excitement for the goalie position.
 We want our club to be the desired destination for goaltenders in our region.
 
-At the team level, our goals blend competitive success with player advancement. Teams should aim to compete at the highest level while actively preparing for advancement to the next age group and/or competition level.  Goaltending is a long-term development process, and player development will be emphasized over winning and individual statistics, especially at the younger age groups.
+At the team level, our goals blend competitive success with player advancement. Teams should aim to compete at the highest level while actively preparing for advancement to the next age group and/or competition level. Goaltending is a long-term development process, and player development will be emphasized over winning and individual statistics, especially at the younger age groups.
 
 For our individual netminders, goals are focused on technical mastery, athleticism, and character.
 Goalies should aim to master basic crease movements, proper depth, positioning, and save execution.
 Goals should also include improving rebound control, puck handling, and the ability to make quick reads and decisions during game situations, helping them be "ahead of the play".
-
 
 Character and Mental Toughness: Goalies should focus on building confidence both on and off the ice, learning to embrace pressure, and establishing a strong work ethic.
 Resilience and character will separate experienced goalies from the pack as they grow and improve.

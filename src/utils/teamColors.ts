@@ -17,7 +17,6 @@ export function isValidHexRgbColor(input: string): boolean {
   return HEX_RGB_PATTERN.test(input.trim().toUpperCase());
 }
 
-
 async function loadImageFromDataUrl(dataUrl: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();

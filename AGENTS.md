@@ -106,9 +106,11 @@ When a logo image is uploaded, an `useEffect` in each generator calls `extractPa
 #### Custom react-colorful Color Picker & HexColorInput
 
 To resolve cross-platform and browser-specific bugs (such as Chrome on Android's native `<input type="color">` HSV slider initialization issue), we use a custom picker UI:
-- **Popover Picker**: The color swatch trigger element is an `<input type="color">` which retains standard testability and `.value` querying. Clicks/activations on this trigger are intercepted via `e.preventDefault()` to block the browser's default picker. Instead, a custom popover containing `react-colorful`'s `HexColorPicker` is rendered. The popover dismisses when clicking outside or pressing the `Escape` key.
-- **Hex Input**: In the main form layout, the hex value is edited using `HexColorInput` from `react-colorful` which automatically validates inputs and displays a `#` prefix.
 
+- **Popover Picker**: The color swatch trigger element is an `<input type="color">` which retains standard testability and `.value` querying. Clicks/activations on this trigger are intercepted via `e.preventDefault()` to block the browser's default picker.
+  Instead, a custom popover containing `react-colorful`'s `HexColorPicker` is rendered.
+  The popover dismisses when clicking outside or pressing the `Escape` key.
+- **Hex Input**: In the main form layout, the hex value is edited using `HexColorInput` from `react-colorful` which automatically validates inputs and displays a `#` prefix.
 
 ### 4. Shared Drill Filtering Model
 
