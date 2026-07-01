@@ -123,7 +123,7 @@ describe("textToParagraphChildren", () => {
     expect(children[4]).toBeInstanceOf(TextRun);
 
     // Verify properties of hyperlink
-    const link = children[3] as ExternalHyperlink;
+    const _link = children[3] as ExternalHyperlink;
     // We can check how it is constructed or check its properties
     // In docx library, the option is stored in the instance.
     // Let's check: link.options is typically present (see mock in makeDocxHeaderFooter test, but here it is a real instance)
