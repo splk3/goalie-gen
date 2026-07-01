@@ -1155,7 +1155,7 @@ export const generateDrillPdf = async (
           `Progression '${progression.progression_name}' exceeded progression pagination limits; rendering placeholder card instead.`
         );
         startNewPage();
-        ({ columnStartY, leftY, rightY } = drawProgressionPageHeader());
+        ({ columnStartY, rightY } = drawProgressionPageHeader());
         renderedProgressionPageIndex += 1;
 
         const omittedLayout = buildOmittedProgressionLayout(progression.progression_name);
