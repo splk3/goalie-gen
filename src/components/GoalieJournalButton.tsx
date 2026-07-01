@@ -1,18 +1,13 @@
 import * as React from "react";
-import type { Paragraph } from "docx";
 import { withPrefix } from "gatsby";
-import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
-import FormatSelector from "./FormatSelector";
 import TeamColorPickers from "./TeamColorPickers";
 import { parseMarkdown } from "../utils/markdownParser";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
-import { toDocxImageTypeFromDataUrl } from "../utils/docxImageType";
-import { loadDocxModule, loadJsPdfModule } from "../utils/loadExportModules";
-import { cleanHexColor, makeDocxHeaderFooter } from "../utils/docxContent";
+import { loadJsPdfModule } from "../utils/loadExportModules";
 import {
   DEFAULT_PRIMARY_TEAM_COLOR,
   DEFAULT_SECONDARY_TEAM_COLOR,
@@ -38,7 +33,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     DEFAULT_SECONDARY_TEAM_COLOR
   );
   const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
-  const [outputFormat, setOutputFormat] = React.useState<"pdf" | "docx">("pdf");
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
@@ -307,289 +301,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${season}.pdf`);
   };
 
-  const generateDocx = async (): Promise<void> => {
-    const {
-      AlignmentType,
-      Document,
-      HeadingLevel,
-      ImageRun,
-      Packer,
-      Paragraph,
-      TextRun,
-      Header,
-      Footer,
-      BorderStyle,
-      TabStopType,
-      PageNumber,
-    } = await loadDocxModule();
-    const currentYear = new Date().getFullYear();
-    const season = `${currentYear}-${currentYear + 1}`;
-
-    const cleanPrimary = cleanHexColor(primaryTeamColor);
-    const cleanSecondary = cleanHexColor(secondaryTeamColor);
-
-    const toPrimaryRun = (text: string, options: Record<string, unknown> = {}) =>
-      new TextRun({ text, color: cleanPrimary, ...options });
-
-    const toSecondaryRun = (text: string, options: Record<string, unknown> = {}) =>
-      new TextRun({ text, color: cleanSecondary, ...options });
-
-    const documentChildren: Paragraph[] = [];
-
-    // Cover: heading, optional logo, name/team/season/subtitle
-    const coverBlocks = parseMarkdown(coverMd);
-    const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
-    const coverSubtitle = coverBlocks.find((b) => b.type === "paragraph")?.text ?? "";
-
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun(coverTitle, { bold: true })],
-        heading: HeadingLevel.HEADING_1,
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 300 },
-      })
-    );
-
-    // Embed logo in DOCX cover if available
-    const logoBase64 = await getLogoAsBase64();
-    if (logoBase64) {
-      try {
-        const logoBuffer = dataUrlToArrayBuffer(logoBase64);
-        const img = new Image();
-        await new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve;
-          img.src = logoBase64;
-        });
-        const maxW = 150;
-        const maxH = 150;
-        let lw = img.width > 0 ? img.width : maxW;
-        let lh = img.height > 0 ? img.height : maxH;
-        const ratio = Math.min(maxW / lw, maxH / lh);
-        lw = Math.round(lw * ratio);
-        lh = Math.round(lh * ratio);
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new ImageRun({
-                type: toDocxImageTypeFromDataUrl(logoBase64),
-                data: logoBuffer,
-                transformation: { width: lw, height: lh },
-              }),
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 300 },
-          })
-        );
-      } catch (e) {
-        console.error("Failed to embed logo in DOCX:", e);
-      }
-    }
-
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun(goalieName, { bold: true, size: 36 })],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 200 },
-      }),
-      new Paragraph({
-        children: [toPrimaryRun(teamName, { size: 28 })],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 200 },
-      }),
-      new Paragraph({
-        children: [toPrimaryRun(`Season ${season}`, { size: 28 })],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: coverSubtitle ? 200 : 600 },
-      })
-    );
-
-    if (coverSubtitle) {
-      documentChildren.push(
-        new Paragraph({
-          children: [toSecondaryRun(coverSubtitle, { italics: true })],
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 600 },
-        })
-      );
-    }
-
-    // Season Goals section
-    const goalsBlocks = parseMarkdown(seasonGoalsMd);
-    const goalsTitle = goalsBlocks.find((b) => b.type === "heading")?.text ?? "Season Goals";
-    const goalsPrompt = goalsBlocks.find((b) => b.type === "paragraph")?.text ?? "";
-
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun(goalsTitle, { bold: true })],
-        heading: HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 },
-      })
-    );
-
-    if (goalsPrompt) {
-      documentChildren.push(
-        new Paragraph({
-          children: [new TextRun({ text: goalsPrompt })],
-          spacing: { after: 200 },
-        })
-      );
-    }
-
-    for (let i = 1; i <= 8; i++) {
-      documentChildren.push(
-        new Paragraph({
-          children: [
-            new TextRun({ text: `${i}. `, color: cleanSecondary, bold: true }),
-            new TextRun({ text: BLANK_LINE }),
-          ],
-          spacing: { after: 200 },
-        })
-      );
-    }
-
-    // Practice & Game Log section — use markdown paragraphs as the write-in prompts
-    const entryBlocks = parseMarkdown(practiceEntryMd);
-    const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
-    const entryPrompts = entryBlocks
-      .filter((b) => b.type === "paragraph" || b.type === "bullet")
-      .map((b) => b.text);
-
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun(entryTitle, { bold: true })],
-        heading: HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 },
-      })
-    );
-
-    for (let i = 1; i <= 24; i++) {
-      documentChildren.push(
-        new Paragraph({
-          children: [toPrimaryRun(`Entry ${i}`, { bold: true })],
-          spacing: { before: 300, after: 100 },
-        }),
-        // The date/type/opponent row is structural layout for each entry,
-        // rendered separately from the editable markdown prompts.
-        new Paragraph({
-          children: [
-            toSecondaryRun("Date: ", { bold: true }),
-            new TextRun({ text: BLANK_LINE }),
-            toSecondaryRun("   \u25A1 Practice  \u25A1 Game   Opponent: ", { bold: true }),
-            new TextRun({ text: BLANK_LINE }),
-          ],
-          spacing: { after: 100 },
-        })
-      );
-
-      entryPrompts.forEach((prompt) => {
-        documentChildren.push(
-          new Paragraph({
-            children: [new TextRun({ text: prompt })],
-            spacing: { after: 50 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: BLANK_LINE })],
-            spacing: { after: 100 },
-          })
-        );
-      });
-    }
-
-    // End of Season Review section
-    const eosBlocks = parseMarkdown(endOfSeasonMd);
-    const eosTitle = eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
-    const eosPrompts = eosBlocks
-      .filter((b) => b.type === "paragraph" || b.type === "bullet")
-      .map((b) => b.text);
-
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun(eosTitle, { bold: true })],
-        heading: HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 },
-      })
-    );
-
-    eosPrompts.forEach((prompt) => {
-      documentChildren.push(
-        new Paragraph({
-          children: [new TextRun({ text: prompt })],
-          spacing: { after: 100 },
-        }),
-        new Paragraph({
-          children: [new TextRun({ text: BLANK_LINE })],
-          spacing: { after: 100 },
-        }),
-        new Paragraph({
-          children: [new TextRun({ text: BLANK_LINE })],
-          spacing: { after: 100 },
-        }),
-        new Paragraph({
-          children: [new TextRun({ text: BLANK_LINE })],
-          spacing: { after: 300 },
-        })
-      );
-    });
-
-    const doc = new Document({
-      styles: {
-        default: {
-          document: {
-            run: {
-              font: "Arial",
-            },
-          },
-        },
-      },
-      sections: [
-        {
-          properties: {
-            titlePage: true,
-            page: {
-              size: {
-                width: 12240, // 8.5 inches in twips (8.5 * 1440)
-                height: 15840, // 11 inches in twips (11 * 1440)
-              },
-              margin: {
-                top: 1440, // 1 inch in twips
-                right: 1440,
-                bottom: 1440,
-                left: 1440,
-              },
-            },
-          },
-          ...makeDocxHeaderFooter(
-            `${(goalieName.trim() || "GOALIE").toUpperCase()} - GOALIE JOURNAL`,
-            cleanPrimary,
-            cleanSecondary,
-            {
-              Header,
-              Footer,
-              BorderStyle,
-              TabStopType,
-              PageNumber,
-              Paragraph,
-              TextRun,
-              AlignmentType,
-            }
-          ),
-          children: documentChildren,
-        },
-      ],
-    });
-
-    const blob = await Packer.toBlob(doc);
-    const sanitizedName =
-      goalieName
-        .replace(/[<>:"/\\|?*]+/g, "_")
-        .replace(/^\.+|\.+$/g, "")
-        .replace(/\s+/g, "_")
-        .trim() || "Goalie";
-    setGeneratedBlob(blob);
-    setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${season}.docx`);
-  };
-
   const generateJournal = async () => {
     setValidationError("");
 
@@ -606,14 +317,10 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setIsGenerating(true);
 
     try {
-      if (outputFormat === "pdf") {
-        await generatePdf();
-      } else {
-        await generateDocx();
-      }
+      await generatePdf();
 
       trackEvent("generate_journal", {
-        format: outputFormat,
+        format: "pdf",
         team_name: teamName,
       });
     } catch (error) {
@@ -626,21 +333,17 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
 
   const handleDownload = () => {
     if (generatedBlob && generatedFileName) {
-      if (outputFormat === "pdf") {
-        const url = URL.createObjectURL(generatedBlob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = generatedFileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
-      } else {
-        saveAs(generatedBlob, generatedFileName);
-      }
+      const url = URL.createObjectURL(generatedBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = generatedFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
 
       trackEvent("download_journal", {
-        format: outputFormat,
+        format: "pdf",
         team_name: teamName,
       });
 
@@ -651,7 +354,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
-      setOutputFormat("pdf");
       setValidationError("");
       setGeneratedBlob(null);
       setGeneratedFileName("");
@@ -666,7 +368,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
-    setOutputFormat("pdf");
     setValidationError("");
     setGeneratedBlob(null);
     setGeneratedFileName("");
@@ -768,13 +469,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
             disabled={!!generatedBlob || isGenerating}
             onPrimaryColorChange={setPrimaryTeamColor}
             onSecondaryColorChange={setSecondaryTeamColor}
-          />
-
-          <FormatSelector
-            format={outputFormat}
-            onChange={setOutputFormat}
-            name="journal-output-format"
-            disabled={!!generatedBlob || isGenerating}
           />
 
           {validationError && (

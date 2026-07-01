@@ -83,5 +83,8 @@ tmp/
 # test drills
 drills/test-*
 
+# test document generation
+test-docs/*
+
 # playwright mcp
 .playwright-mcp/

@@ -15,6 +15,13 @@
     "noEmit": true,
     "types": ["node", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src/**/*", "gatsby-*.ts", "gatsby-*.tsx"],
+  "include": [
+    "src/**/*",
+    "gatsby-*.ts",
+    "gatsby-*.tsx",
+    "generate-test-club-plan.ts",
+    "generate-test-team-plan.ts",
+    "generate-test-goalie-journal.ts"
+  ],
   "exclude": ["node_modules", "public", ".cache"]
 }

@@ -15,6 +15,9 @@
     "clean": "gatsby clean",
     "test": "jest",
     "verify-drills": "tsx verify-drills.ts",
+    "generate-test-club-plan": "tsx generate-test-club-plan.ts",
+    "generate-test-team-plan": "tsx generate-test-team-plan.ts",
+    "generate-test-goalie-journal": "tsx generate-test-goalie-journal.ts",
     "deploy": "gatsby build && gh-pages -d public",
     "postinstall": "patch-package"
   },

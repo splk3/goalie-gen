@@ -24,7 +24,7 @@ Goalie Gen provides three separate document generation workflows:
    - Produces institutional club-wide plans for goalie training and development pathways.
    - Includes long-term season planning structures and goalie coordinator instructions.
 3. **Goalie Journal Generator (`src/components/GoalieJournalButton.tsx`)**:
-   - Compiles a printable journal for youth goalies.
+   - Compiles a printable journal for youth goalies as a **PDF document**.
    - Includes game log sheets, practice goals checklists, and self-evaluation templates.
 
 ---
@@ -46,7 +46,7 @@ Goalie drills can be printed or exported directly as standalone PDF sheets.
 
 Because compiled `.docx` files are edited and printed by various users, they must render identically in **Microsoft Word**, **Google Docs**, and **LibreOffice/OpenOffice**.
 
-All three document generators must strictly enforce the following formatting rules:
+The Club Plan and Team Plan document generators must strictly enforce the following formatting rules:
 
 | Rule Category     | Required Configuration / Value                                | Rationale                                                                                                                                                         |
 | ----------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -65,6 +65,92 @@ When dividing widths among columns, distribute any remainders from integer divis
 - _Example Calendar Layout (body width: 9360 twips)_:
   - Six columns of `1337` twips.
   - The seventh column gets `1338` twips (sums exactly to `9360`).
+
+---
+
+## 💻 CLI Document Generation Scripts
+
+To allow quick local iteration and layout/compatibility testing without needing a browser, Goalie Gen provides three Node/TypeScript CLI document compilers. These scripts parse the same raw markdown content stored in `src/content/` and output compiled `.docx` files directly to disk.
+
+### Available CLI Commands
+
+| Document Type      | NPM Command                            | Underlying Script                 | Output File (Default)     |
+| :----------------- | :------------------------------------- | :-------------------------------- | :------------------------ |
+| **Club Plan**      | `npm run generate-test-club-plan`      | `generate-test-club-plan.ts`      | `test-club-plan.docx`     |
+| **Team Plan**      | `npm run generate-test-team-plan`      | `generate-test-team-plan.ts`      | `test-team-plan.docx`     |
+| **Goalie Journal** | `npm run generate-test-goalie-journal` | `generate-test-goalie-journal.ts` | `test-goalie-journal.pdf` |
+
+---
+
+### Command Line Arguments & Customization
+
+You can run the underlying scripts directly using `npx tsx` to customize names, colors, logos, and outputs:
+
+#### 1. Club Plan Generator Options
+
+- `--name <string>`: Club Name (default: `"Test Club"`)
+- `--website <string>`: Website URL (default: `"www.testclub.com"`)
+- `--motto <string>`: Motto/Mission statement (default: `"Developing great goalies!"`)
+- `--primary <hex>`: Primary color hex code (default: `"#00205B"`)
+- `--secondary <hex>`: Secondary color hex code (default: `"#AF272F"`)
+- `--logo <path>`: Local file path to a logo image (default: none)
+- `--out <path>`: Destination path of the generated `.docx` (default: `"test-club-plan.docx"`)
+- `--all` / `--none`: Enable/disable all optional training details and sections (default: `--all`)
+
+#### 2. Team Plan Generator Options
+
+- `--name <string>`: Team Name (default: `"Test Team"`)
+- `--website <string>`: Website URL (default: `"www.testteam.com"`)
+- `--motto <string>`: Motto/Mission statement (default: `"Strive for excellence!"`)
+- `--primary <hex>`: Primary color hex code (default: `"#00205B"`)
+- `--secondary <hex>`: Secondary color hex code (default: `"#AF272F"`)
+- `--logo <path>`: Local file path to a logo image (default: none)
+- `--out <path>`: Destination path of the generated `.docx` (default: `"test-team-plan.docx"`)
+- `--age <string>`: Age Group (`8u`, `10u`, `12u`, `14u+`, default: `"12u"`)
+- `--skill <string>`: Skill Level (`beginner`, `intermediate`, `advanced`, default: `"intermediate"`)
+- `--all` / `--none`: Enable/disable all optional event calendars and details (default: `--all`)
+
+#### 3. Goalie Journal Generator Options
+
+- `--name <string>`: Goalie Name (default: `"Test Goalie"`)
+- `--team <string>`: Team Name (default: `"Test Team"`)
+- `--logo <path>`: Local file path to a logo image (default: none)
+- `--out <path>`: Destination path of the generated `.pdf` (default: `"test-goalie-journal.pdf"`)
+- `--entries <number>`: Number of blank logs to generate (default: `24`)
+
+---
+
+### Usage & Testing Examples
+
+For quick manual testing and verifying layout compatibility, use the test assets under `static/images/test/logos/`:
+
+#### Example 1: Club Plan for "Brandywine Outlaws" (JPEG logo)
+
+```bash
+npx tsx generate-test-club-plan.ts \
+  --name "Brandywine Outlaws" \
+  --logo static/images/test/logos/outlaws.jpeg \
+  --out brandywine-outlaws-club-plan.docx
+```
+
+#### Example 2: Team Plan for "Delaware Stars" (JPG logo)
+
+```bash
+npx tsx generate-test-team-plan.ts \
+  --name "Delaware Stars" \
+  --logo static/images/test/logos/stars.jpg \
+  --out delaware-stars-team-plan.docx
+```
+
+#### Example 3: Goalie Journal for "Delmarva Raptors" (PNG logo)
+
+```bash
+npx tsx generate-test-goalie-journal.ts \
+  --name "Johnny Raptor" \
+  --team "Delmarva Raptors" \
+  --logo static/images/test/logos/raptors.png \
+  --out delmarva-raptors-goalie-journal.pdf
+```
 
 ---
 
