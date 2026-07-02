@@ -110,6 +110,8 @@ You can run the underlying scripts directly using `npx tsx` to customize names, 
 - `--skill <string>`: Skill Level (`beginner`, `intermediate`, `advanced`, default: `"intermediate"`)
 - `--all` / `--none`: Enable/disable all optional event calendars and details (default: `--all`)
 
+When `--all` is active (the default), the script generates a 4-month schedule (August–November) with 4 events per month — covering all five event types at least once (On-ice Practice, Off-ice Practice, Video Review, Evaluation, Game) — and enables both the calendar view and detailed event entries.
+
 #### 3. Goalie Journal Generator Options
 
 - `--name <string>`: Goalie Name (default: `"Test Goalie"`)

@@ -166,15 +166,29 @@ Options:
     }
   }
 
-  // Build mock schedule dates for testing (e.g. July 2026)
+  // Build mock schedule dates for testing (4 months × 4 events/month, ≥1 of each type)
   const selectedEventDates: EventDateSelection[] = enableAll
     ? [
-        { date: "2026-07-06", eventTypes: ["On-ice Practice"] },
-        { date: "2026-07-08", eventTypes: ["Video Review"] },
-        { date: "2026-07-11", eventTypes: ["Game"] },
-        { date: "2026-07-13", eventTypes: ["On-ice Practice"] },
-        { date: "2026-07-15", eventTypes: ["Evaluation"] },
-        { date: "2026-07-18", eventTypes: ["Game"] },
+        // August 2026
+        { date: "2026-08-03", eventTypes: ["On-ice Practice"] },
+        { date: "2026-08-08", eventTypes: ["Game"] },
+        { date: "2026-08-12", eventTypes: ["Off-ice Practice"] },
+        { date: "2026-08-17", eventTypes: ["Video Review"] },
+        // September 2026
+        { date: "2026-09-02", eventTypes: ["On-ice Practice"] },
+        { date: "2026-09-07", eventTypes: ["Off-ice Practice"] },
+        { date: "2026-09-12", eventTypes: ["Game"] },
+        { date: "2026-09-16", eventTypes: ["Evaluation"] },
+        // October 2026
+        { date: "2026-10-01", eventTypes: ["On-ice Practice"] },
+        { date: "2026-10-06", eventTypes: ["Video Review"] },
+        { date: "2026-10-10", eventTypes: ["Game"] },
+        { date: "2026-10-14", eventTypes: ["Evaluation"] },
+        // November 2026
+        { date: "2026-11-02", eventTypes: ["On-ice Practice"] },
+        { date: "2026-11-07", eventTypes: ["Game"] },
+        { date: "2026-11-11", eventTypes: ["Off-ice Practice"] },
+        { date: "2026-11-16", eventTypes: ["Video Review"] },
       ]
     : [];
 
