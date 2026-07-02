@@ -17,7 +17,7 @@ body:
         - Attach each progression image in its matching progression field, and attach the main drill diagram in the final **Drill Diagram** section when you have one. If the diagram is only available as a PDF, attach the PDF and the drill-processing workflow will use a screenshot of the rink/drill diagram as the final drill image.
         - Drill text fields support markdown paragraphs/lists, including nested list indentation up to 3 levels. Use that formatting directly when needed.
         - Use `YYYY-MM-DD` date format for all drill date values (for example, `2026-01-15`). This applies to both `drill_creation_date` and `drill_updated_date` when an updated date is used.
-        - If you have any trouble with the drill submission process, email us at 
+        - If you have any trouble with the drill submission process, email us at
           [help@goaliegen.com](mailto:help@goaliegen.com) and we'll be happy to assist you.
 
   - type: markdown

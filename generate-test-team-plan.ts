@@ -47,6 +47,7 @@ interface EventSelection {
   date: string;
   eventType: EventType;
 }
+type TextRunOptions = Exclude<ConstructorParameters<typeof TextRun>[0], string>;
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTH_CALENDARS_PER_PAGE = 1;
@@ -246,7 +247,7 @@ Options:
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features
       `);
-      process.exit(0);
+      return;
     }
   }
 
@@ -321,13 +322,13 @@ Options:
   const cleanSecondary = cleanHexColor(secondaryColor);
   const colorOpts = { primaryColor, secondaryColor };
 
-  const toBlackRun = (text: string, options: any = {}) =>
+  const toBlackRun = (text: string, options: Partial<TextRunOptions> = {}) =>
     new TextRun({ text, color: "000000", ...options });
 
-  const toPrimaryRun = (text: string, options: any = {}) =>
+  const toPrimaryRun = (text: string, options: Partial<TextRunOptions> = {}) =>
     new TextRun({ text, color: cleanPrimary, ...options });
 
-  const toSecondaryRun = (text: string, options: any = {}) =>
+  const toSecondaryRun = (text: string, options: Partial<TextRunOptions> = {}) =>
     new TextRun({ text, color: cleanSecondary, ...options });
 
   const createGameEventScoreTable = () => {
@@ -342,7 +343,7 @@ Options:
     const periodLabels = ["1st", "2nd", "3rd", "OT", "Totals"];
 
     const borderCell = (
-      children: any[],
+      children: Paragraph[],
       options?: { showBottomBorder?: boolean; showRightBorder?: boolean }
     ) => ({
       children,
@@ -465,7 +466,7 @@ Options:
     });
   };
 
-  const documentChildren: any[] = [];
+  const documentChildren: Array<Paragraph | Table> = [];
 
   const addResourceLinkWithQr = async (
     linesBeforeUrl: string,
@@ -945,5 +946,5 @@ Options:
 
 run().catch((err) => {
   console.error("Fatal error generating team plan:", err);
-  process.exit(1);
+  throw err instanceof Error ? err : new Error(String(err));
 });

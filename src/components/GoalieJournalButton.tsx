@@ -18,8 +18,6 @@ import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
 import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
-const BLANK_LINE = "_______________________________________________";
-
 export default function GoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
@@ -103,16 +101,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       };
       img.src = withPrefix(buildCacheBustedAssetPath("/images/logos/logo-alt-light.png"));
     });
-  };
-
-  const dataUrlToArrayBuffer = (dataUrl: string): ArrayBuffer => {
-    const base64 = dataUrl.split(",")[1] ?? dataUrl;
-    const binary = atob(base64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes.buffer;
   };
 
   const generatePdf = async (): Promise<void> => {

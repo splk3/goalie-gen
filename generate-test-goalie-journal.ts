@@ -3,23 +3,21 @@ import * as path from "path";
 import { jsPDF } from "jspdf";
 import { parseMarkdown } from "./src/utils/markdownParser";
 
-const BLANK_LINE = "_______________________________________________";
-
 // Simple dimension parser for PNG and JPEG
 function getImageDimensions(filePath: string): { width: number; height: number } | null {
   try {
     const buffer = fs.readFileSync(filePath);
-    if (buffer.readUInt32BE(0) === 0x89504E47) {
+    if (buffer.readUInt32BE(0) === 0x89504e47) {
       const width = buffer.readUInt32BE(16);
       const height = buffer.readUInt32BE(20);
       return { width, height };
     }
-    if (buffer.readUInt16BE(0) === 0xFFD8) {
+    if (buffer.readUInt16BE(0) === 0xffd8) {
       let offset = 2;
       while (offset < buffer.length) {
         const marker = buffer.readUInt16BE(offset);
         offset += 2;
-        if (marker === 0xFFC0 || marker === 0xFFC2) {
+        if (marker === 0xffc0 || marker === 0xffc2) {
           const _length = buffer.readUInt16BE(offset);
           const height = buffer.readUInt16BE(offset + 3);
           const width = buffer.readUInt16BE(offset + 5);
@@ -34,29 +32,6 @@ function getImageDimensions(filePath: string): { width: number; height: number }
     console.error("Error reading image dimensions:", e);
   }
   return null;
-}
-
-function extractLevel3Section(markdown: string, heading: string): string {
-  const lines = markdown.split(/\r?\n/);
-  const sectionLines: string[] = [];
-  let collecting = false;
-
-  for (const line of lines) {
-    const headingMatch = line.match(/^###\s+(.+)$/);
-    if (headingMatch) {
-      if (collecting) {
-        break;
-      }
-      collecting = headingMatch[1].trim() === heading;
-      continue;
-    }
-
-    if (collecting) {
-      sectionLines.push(line);
-    }
-  }
-
-  return sectionLines.join("\n").trim();
 }
 
 async function run() {
@@ -94,7 +69,7 @@ Options:
   --out <path>         Path to output .pdf file (default: "test-goalie-journal.pdf")
   --entries <number>   Number of weekly entry pages to generate (default: 24)
       `);
-      process.exit(0);
+      return;
     }
   }
 
@@ -302,5 +277,5 @@ Options:
 
 run().catch((err) => {
   console.error("Fatal error generating goalie journal:", err);
-  process.exit(1);
+  throw err instanceof Error ? err : new Error(String(err));
 });

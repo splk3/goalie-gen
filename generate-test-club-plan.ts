@@ -292,7 +292,7 @@ Options:
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features
       `);
-      process.exit(0);
+      return;
     }
   }
 
@@ -660,5 +660,5 @@ Options:
 
 run().catch((err) => {
   console.error("Fatal error generating club plan:", err);
-  process.exit(1);
+  throw err instanceof Error ? err : new Error(String(err));
 });
