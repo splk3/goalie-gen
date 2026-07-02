@@ -5,7 +5,6 @@ import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import TeamColorPickers from "./TeamColorPickers";
-import { parseMarkdown } from "../utils/markdownParser";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { loadJsPdfModule } from "../utils/loadExportModules";
 import {
@@ -13,6 +12,8 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   extractPaletteHexColorsFromDataUrl,
 } from "../utils/teamColors";
+import { DEFAULT_JOURNAL_ENTRY_COUNT } from "../utils/generatorDefaults";
+import { buildGoalieJournalPdf } from "../utils/builders/goalieJournalBuilder";
 import coverMd from "../content/goalie-journal/cover.md";
 import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
@@ -104,30 +105,17 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
   };
 
   const generatePdf = async (): Promise<void> => {
-    const { jsPDF } = await loadJsPdfModule();
-    const doc = new jsPDF();
+    const jsPdfModule = await loadJsPdfModule();
     const currentYear = new Date().getFullYear();
     const season = `${currentYear}-${currentYear + 1}`;
 
     const logoBase64 = await getLogoAsBase64();
 
-    // Cover page
-    const coverBlocks = parseMarkdown(coverMd);
-    const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
-    const coverSubtitle = coverBlocks.find((b) => b.type === "paragraph")?.text ?? "";
-
-    doc.setFontSize(28);
-    doc.text(coverTitle, 105, 40, { align: "center" });
-    doc.setFontSize(18);
-    doc.text(goalieName, 105, 58, { align: "center" });
-    doc.text(teamName, 105, 72, { align: "center" });
-    doc.text(`Season ${season}`, 105, 86, { align: "center" });
-    if (coverSubtitle) {
-      doc.setFontSize(10);
-      doc.text(coverSubtitle, 105, 97, { align: "center" });
-    }
-
+    // Resolve logo dimensions for the builder
+    let logoData: import("../types/generatorConfig").JournalLogoData | null = null;
     if (logoBase64) {
+      let logoWidth = 60;
+      let logoHeight = 60;
       try {
         const img = new Image();
         await new Promise((resolve) => {
@@ -135,148 +123,29 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
           img.onerror = resolve;
           img.src = logoBase64;
         });
-
-        const maxW = 60;
-        const maxH = 60;
-        let w = img.width > 0 ? img.width : maxW;
-        let h = img.height > 0 ? img.height : maxH;
-        const ratio = Math.min(maxW / w, maxH / h);
-        w = w * ratio;
-        h = h * ratio;
-
-        doc.addImage(logoBase64, "PNG", 105 - w / 2, 110, w, h);
+        logoWidth = img.width > 0 ? img.width : 60;
+        logoHeight = img.height > 0 ? img.height : 60;
       } catch (e) {
-        console.error("Error adding logo:", e);
+        console.error("Failed to parse logo dimensions", e);
       }
+      logoData = { dataUrl: logoBase64, width: logoWidth, height: logoHeight };
     }
 
-    // Season Goals page
-    doc.addPage();
-    const goalsBlocks = parseMarkdown(seasonGoalsMd);
-    const goalsTitle = goalsBlocks.find((b) => b.type === "heading")?.text ?? "Season Goals";
-    const goalsPrompt = goalsBlocks.find((b) => b.type === "paragraph")?.text ?? "";
+    const config: import("../types/generatorConfig").GoalieJournalConfig = {
+      goalieName,
+      teamName,
+      season,
+      entryCount: DEFAULT_JOURNAL_ENTRY_COUNT,
+    };
 
-    doc.setFontSize(20);
-    doc.text(goalsTitle, 105, 20, { align: "center" });
-    doc.setFontSize(12);
-    if (goalsPrompt) {
-      doc.text(goalsPrompt, 20, 40);
-    }
+    const journalContent: import("../types/generatorConfig").GoalieJournalContent = {
+      coverMd,
+      seasonGoalsMd,
+      practiceEntryMd,
+      endOfSeasonMd,
+    };
 
-    for (let i = 0; i < 8; i++) {
-      const y = 55 + i * 25;
-      doc.text(`${i + 1}.`, 20, y);
-      doc.line(30, y, 190, y);
-      doc.line(30, y + 10, 190, y + 10);
-    }
-
-    // Practice/Game Log pages
-    const entryBlocks = parseMarkdown(practiceEntryMd);
-    const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
-    const entryLabels = entryBlocks
-      .filter((b) => b.type === "paragraph" || b.type === "bullet")
-      .map((b) => b.text);
-
-    // Compute entry box height accounting for label text wrapping so long
-    // prompts don't collide with the underline or the next field.
-    const labelMaxWidth = 165; // mm available for label text at x=20
-    const labelLineHeight = 5; // mm per wrapped text line
-    const labelRowGap = 8; // mm from last text line to underline + to next prompt start
-    const entryHeaderHeight = 23; // mm from box top to first prompt (entry label + date row)
-    const entryBorderPadding = 2; // mm for the box border
-    const entryMinHeight = 50; // mm minimum so the box is always readable
-
-    // Set font size before splitTextToSize so measurements are accurate
-    doc.setFontSize(9);
-    const labelWrapped = entryLabels.map(
-      (label) => doc.splitTextToSize(label, labelMaxWidth) as string[]
-    );
-    const computedEntryHeight =
-      entryHeaderHeight +
-      labelWrapped.reduce((sum, lines) => sum + lines.length * labelLineHeight + labelRowGap, 0) +
-      entryBorderPadding;
-    const entryHeight = Math.max(entryMinHeight, computedEntryHeight);
-    const journalPageHeight = doc.internal.pageSize.height;
-    const availablePerPage = journalPageHeight - 40; // top header + bottom margin
-    const entriesPerPage = Math.max(1, Math.floor(availablePerPage / entryHeight));
-    const totalEntries = 24;
-    const numLogPages = Math.ceil(totalEntries / entriesPerPage);
-
-    for (let page = 0; page < numLogPages; page++) {
-      doc.addPage();
-      doc.setFontSize(16);
-      doc.text(`${entryTitle} - Page ${page + 1}`, 105, 15, { align: "center" });
-
-      const firstEntry = page * entriesPerPage;
-      const lastEntry = Math.min(firstEntry + entriesPerPage, totalEntries);
-      for (let entry = firstEntry; entry < lastEntry; entry++) {
-        const startY = 25 + (entry - firstEntry) * entryHeight;
-        const entryNum = entry + 1;
-
-        doc.setLineWidth(0.5);
-        doc.rect(15, startY, 180, entryHeight - 2);
-
-        doc.setFontSize(11);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Entry ${entryNum}`, 20, startY + 7);
-        doc.setFont("helvetica", "normal");
-
-        doc.setFontSize(9);
-        doc.text("Date: _______________", 20, startY + 15);
-        doc.text("\u25A1 Practice  \u25A1 Game", 80, startY + 15);
-        doc.text("Opponent: _______________", 135, startY + 15);
-
-        let promptY = startY + entryHeaderHeight;
-        labelWrapped.forEach((lines) => {
-          lines.forEach((line, lineIdx) => {
-            doc.text(line, 20, promptY + lineIdx * labelLineHeight);
-          });
-          const underlineY = promptY + lines.length * labelLineHeight + 1;
-          doc.line(20, underlineY, 190, underlineY);
-          promptY += lines.length * labelLineHeight + labelRowGap;
-        });
-      }
-    }
-
-    // End of Season Review page
-    doc.addPage();
-    const eosBlocks = parseMarkdown(endOfSeasonMd);
-    const eosTitle = eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
-    // All non-heading blocks (paragraphs and bullets) become review prompts
-    const eosPrompts = eosBlocks
-      .filter((b) => b.type === "paragraph" || b.type === "bullet")
-      .map((b) => b.text);
-
-    doc.setFontSize(20);
-    doc.text(eosTitle, 105, 20, { align: "center" });
-
-    const eosPageHeight = doc.internal.pageSize.height - 15;
-    // Each EOS prompt block = prompt text line + 3 answer lines with spacing
-    const eosAnswerLines = 3;
-    const eosAnswerLineSpacing = 15; // mm between answer lines
-    const eosBlockHeight = 10 + eosAnswerLines * eosAnswerLineSpacing; // text(10) + 3×15
-    doc.setFontSize(12);
-    let eosY = 40;
-    eosPrompts.forEach((prompt) => {
-      if (eosY + eosBlockHeight > eosPageHeight) {
-        doc.addPage();
-        eosY = 20;
-      }
-      const promptLines = doc.splitTextToSize(prompt, 170) as string[];
-      promptLines.forEach((line, lineIdx) => {
-        doc.text(line, 20, eosY + lineIdx * 6);
-      });
-      const eosAnswerStart = eosY + promptLines.length * 6 + 2;
-      for (let i = 0; i < eosAnswerLines; i++) {
-        doc.line(
-          20,
-          eosAnswerStart + i * eosAnswerLineSpacing,
-          190,
-          eosAnswerStart + i * eosAnswerLineSpacing
-        );
-      }
-      eosY += eosBlockHeight + (promptLines.length - 1) * 6;
-    });
+    const doc = buildGoalieJournalPdf(config, journalContent, logoData, jsPdfModule);
 
     const sanitizedName =
       goalieName

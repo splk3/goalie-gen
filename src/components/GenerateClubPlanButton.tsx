@@ -1,5 +1,4 @@
 import * as React from "react";
-import type { Paragraph } from "docx";
 import { saveAs } from "file-saver";
 import Logo from "./Logo";
 import Modal from "./Modal";
@@ -7,8 +6,6 @@ import SliderToggle from "./SliderToggle";
 import { trackEvent } from "../utils/analytics";
 import ImageUploader from "./ImageUploader";
 import TeamColorPickers from "./TeamColorPickers";
-import { parseMarkdown } from "../utils/markdownParser";
-import { blocksToDocxParagraphs, cleanHexColor, makeDocxHeaderFooter } from "../utils/docxContent";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
 import {
@@ -16,6 +13,18 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   extractPaletteHexColorsFromDataUrl,
 } from "../utils/teamColors";
+import {
+  DEFAULT_PROVIDED_EQUIPMENT_AGE_GROUPS,
+  DEFAULT_TRAINING_FREQUENCY,
+  DEFAULT_TRAINING_SESSION_LENGTH,
+  DEFAULT_TRAINING_WITH_WHOM,
+  DEFAULT_TRAINING_STARTING_AGE,
+  DEFAULT_VIDEO_SESSION_FREQUENCY,
+  DEFAULT_VIDEO_SESSION_LENGTH,
+  DEFAULT_EVALUATION_WHEN,
+  DEFAULT_GOALIE_DISCOUNT,
+} from "../utils/generatorDefaults";
+import { buildClubPlanDocument } from "../utils/builders/clubPlanBuilder";
 import introductionMd from "../content/club-plan/introduction.md";
 import seasonGoalsMd from "../content/club-plan/season-goals.md";
 import benefitsForClubGoaliesMd from "../content/club-plan/benefits-for-club-goalies.md";
@@ -24,19 +33,6 @@ import contactInformationMd from "../content/club-plan/contact-information.md";
 import equipmentMd from "../content/club-plan/equipment.md";
 import progressTrackingMd from "../content/club-plan/progress-tracking.md";
 import resourcesMd from "../content/club-plan/resources.md";
-
-const INTRO_OPTIONS = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"] as const;
-
-const DEFAULT_PROVIDED_EQUIPMENT_AGE_GROUPS = "8U and younger (mites)";
-const DEFAULT_TRAINING_FREQUENCY = "2x a month";
-const DEFAULT_TRAINING_SESSION_LENGTH = "1 hour";
-const DEFAULT_TRAINING_WITH_WHOM = "Goalie Coach or Training Organization Name";
-const DEFAULT_TRAINING_STARTING_AGE = "12U";
-const DEFAULT_VIDEO_SESSION_FREQUENCY = "weekly";
-const DEFAULT_VIDEO_SESSION_LENGTH = "30 minutes";
-const DEFAULT_EVALUATION_WHEN =
-  "at the beginning of the season, mid-season, and at the end of the season";
-const DEFAULT_GOALIE_DISCOUNT = "ex. 50%, $500";
 
 type FieldsetProps = {
   children: React.ReactNode;
@@ -123,183 +119,6 @@ function Input({ id, label, value, onChange, placeholder, disabled }: InputProps
       />
     </div>
   );
-}
-
-function extractLevel3Section(markdown: string, heading: string): string {
-  const lines = markdown.split(/\r?\n/);
-  const sectionLines: string[] = [];
-  let collecting = false;
-
-  for (const line of lines) {
-    const headingMatch = line.match(/^###\s+(.+)$/);
-    if (headingMatch) {
-      if (collecting) {
-        break;
-      }
-      collecting = headingMatch[1].trim() === heading;
-      continue;
-    }
-
-    if (collecting) {
-      sectionLines.push(line);
-    }
-  }
-
-  return sectionLines.join("\n").trim();
-}
-
-function valueOrPlaceholder(value: string, placeholderName: string): string {
-  const trimmed = value.trim();
-  return trimmed || `[${placeholderName}]`;
-}
-
-function withSectionHeading(markdown: string, heading: string): string {
-  return markdown.replace(/^##\s+.+$/m, `## ${heading}`);
-}
-
-function buildTrainingDetailsBlock(
-  hasDedicatedGoaliePractices: boolean,
-  dedicatedGoaliePracticesHowOften: string,
-  dedicatedGoaliePracticesLength: string,
-  dedicatedGoaliePracticesWithWhom: string,
-  dedicatedGoaliePracticesStartingAgeGroup: string,
-  hasOffIceGoalieTraining: boolean,
-  offIceGoalieTrainingHowOften: string,
-  offIceGoalieTrainingLength: string,
-  offIceGoalieTrainingWithWhom: string,
-  offIceGoalieTrainingStartingAgeGroup: string,
-  hasGoalieVideoSessions: boolean,
-  goalieVideoSessionsHowOften: string,
-  goalieVideoSessionsLength: string,
-  goalieVideoSessionsStartingAgeGroup: string,
-  isEquipmentProvided: boolean,
-  equipmentProvidedAgeGroups: string,
-  hasTeamPracticeGoalieTraining: boolean,
-  hasGoalieCoachPerTeam: boolean,
-  hasYoungerGoalieMentors: boolean,
-  hasGoalieEvaluations: boolean,
-  goalieEvaluationsWhen: string,
-  hasGoalieDiscount: boolean,
-  goalieDiscountDetails: string,
-  goalieDiscountStartingAgeGroup: string,
-  goaliesAreFree: boolean,
-  useIntermediateNets: boolean
-): string {
-  const lines: string[] = [benefitsForClubGoaliesMd.trim(), ""];
-
-  if (useIntermediateNets) {
-    lines.push(
-      "- 8U and younger (mites) teams use USA Hockey recommended intermediate sized nets."
-    );
-  }
-
-  if (isEquipmentProvided) {
-    lines.push(
-      `- Goalie equipment is provided by the club for: ${valueOrPlaceholder(
-        equipmentProvidedAgeGroups,
-        "EQUIPMENT_AGE_GROUPS"
-      )}.`
-    );
-  }
-
-  if (hasTeamPracticeGoalieTraining) {
-    lines.push("- Teams include goalie training during team practices.");
-  }
-  if (hasGoalieCoachPerTeam) {
-    lines.push("- Each team has a goalie coach.");
-  }
-  if (hasYoungerGoalieMentors) {
-    lines.push("- Younger goalies are paired with mentors from older teams.");
-  }
-
-  if (hasDedicatedGoaliePractices) {
-    lines.push(
-      `- Dedicated goalie practices are offered ${valueOrPlaceholder(
-        dedicatedGoaliePracticesHowOften,
-        "DEDICATED_GOALIE_PRACTICES_HOW_OFTEN"
-      )}, run for ${valueOrPlaceholder(
-        dedicatedGoaliePracticesLength,
-        "DEDICATED_GOALIE_PRACTICES_LENGTH"
-      )}, led by ${valueOrPlaceholder(
-        dedicatedGoaliePracticesWithWhom,
-        "DEDICATED_GOALIE_PRACTICES_WITH_WHOM"
-      )}, starting at ${valueOrPlaceholder(
-        dedicatedGoaliePracticesStartingAgeGroup,
-        "DEDICATED_GOALIE_PRACTICES_STARTING_AGE_GROUP"
-      )}.`
-    );
-  }
-
-  if (hasOffIceGoalieTraining) {
-    lines.push(
-      `- Off-ice goalie training is offered ${valueOrPlaceholder(
-        offIceGoalieTrainingHowOften,
-        "OFF_ICE_GOALIE_TRAINING_HOW_OFTEN"
-      )}, run for ${valueOrPlaceholder(
-        offIceGoalieTrainingLength,
-        "OFF_ICE_GOALIE_TRAINING_LENGTH"
-      )}, led by ${valueOrPlaceholder(
-        offIceGoalieTrainingWithWhom,
-        "OFF_ICE_GOALIE_TRAINING_WITH_WHOM"
-      )}, starting at ${valueOrPlaceholder(
-        offIceGoalieTrainingStartingAgeGroup,
-        "OFF_ICE_GOALIE_TRAINING_STARTING_AGE_GROUP"
-      )}.`
-    );
-  }
-
-  if (hasGoalieVideoSessions) {
-    lines.push(
-      `- Goalie-specific video sessions are offered ${valueOrPlaceholder(
-        goalieVideoSessionsHowOften,
-        "GOALIE_VIDEO_SESSIONS_HOW_OFTEN"
-      )}, run for ${valueOrPlaceholder(
-        goalieVideoSessionsLength,
-        "GOALIE_VIDEO_SESSIONS_LENGTH"
-      )}, starting at ${valueOrPlaceholder(
-        goalieVideoSessionsStartingAgeGroup,
-        "GOALIE_VIDEO_SESSIONS_STARTING_AGE_GROUP"
-      )}.`
-    );
-  }
-
-  if (hasGoalieEvaluations) {
-    lines.push(
-      `- Goalie evaluations are conducted ${valueOrPlaceholder(
-        goalieEvaluationsWhen,
-        "GOALIE_EVALUATIONS_WHEN"
-      )}.`
-    );
-  }
-
-  if (hasGoalieDiscount) {
-    if (goaliesAreFree) {
-      lines.push(
-        `- Goalie discount program: Goalies are free${goalieDiscountStartingAgeGroup.trim()
-          ? ` starting at ${valueOrPlaceholder(
-            goalieDiscountStartingAgeGroup,
-            "GOALIE_DISCOUNT_STARTING_AGE_GROUP"
-          )}`
-          : ""
-        }.`
-      );
-    } else {
-      lines.push(
-        `- Goalie discount program: ${valueOrPlaceholder(
-          goalieDiscountDetails,
-          "GOALIE_DISCOUNT"
-        )}${goalieDiscountStartingAgeGroup.trim()
-          ? ` (starting age group: ${valueOrPlaceholder(
-            goalieDiscountStartingAgeGroup,
-            "GOALIE_DISCOUNT_STARTING_AGE_GROUP"
-          )})`
-          : ""
-        }.`
-      );
-    }
-  }
-
-  return lines.join("\n");
 }
 
 function TrainingDetailInputs({
@@ -571,75 +390,16 @@ export default function GenerateClubPlanButton() {
   }, []);
 
   const generateDocx = async (): Promise<void> => {
-    const {
-      AlignmentType,
-      Document,
-      ExternalHyperlink,
-      HeadingLevel,
-      ImageRun,
-      Packer,
-      Paragraph,
-      TextRun,
-      Header,
-      Footer,
-      BorderStyle,
-      TabStopType,
-      PageNumber,
-    } = await loadDocxModule();
+    const docxModule = await loadDocxModule();
+    const { Packer } = docxModule;
 
-    const cleanPrimary = cleanHexColor(primaryTeamColor);
-    const cleanSecondary = cleanHexColor(secondaryTeamColor);
-    const colorOpts = { primaryColor: primaryTeamColor, secondaryColor: secondaryTeamColor };
-
-    const toPrimaryRun = (text: string, options: Record<string, unknown> = {}) =>
-      new TextRun({ text, color: cleanPrimary, ...options });
-
-    const toSecondaryRun = (text: string, options: Record<string, unknown> = {}) =>
-      new TextRun({ text, color: cleanSecondary, ...options });
-
-    let arrayBuffer: ArrayBuffer | null = null;
-    if (selectedImage) {
-      arrayBuffer = await selectedImage.arrayBuffer();
-    }
-
-    const selectedIntroMarkdown = includeStarterIntroduction
-      ? extractLevel3Section(
-        introductionMd,
-        INTRO_OPTIONS[Math.floor(Math.random() * INTRO_OPTIONS.length)]
-      )
-      : extractLevel3Section(introductionMd, "Placeholder");
-
-    const selectedSeasonGoalsMarkdown = includeStarterSeasonGoals
-      ? extractLevel3Section(seasonGoalsMd, "Sample Content")
-      : extractLevel3Section(seasonGoalsMd, "Placeholder");
-
-    const documentChildren: Paragraph[] = [];
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun("Goaltending Development Plan", { bold: true })],
-        heading: HeadingLevel.HEADING_1,
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 200 },
-      }),
-      new Paragraph({
-        children: [toPrimaryRun("for the")],
-        heading: HeadingLevel.HEADING_2,
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 200 },
-      }),
-      new Paragraph({
-        children: [toPrimaryRun(valueOrPlaceholder(clubName, "CLUB_NAME"), { bold: true })],
-        heading: HeadingLevel.HEADING_2,
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 300 },
-      })
-    );
-
-    if (arrayBuffer && imagePreview) {
-      const docxImageType = toDocxImageTypeFromMime(selectedImage?.type);
+    // ── Resolve logo image ──────────────────────────────────────────────────
+    let resolvedLogo: import("../types/generatorConfig").ResolvedLogoData | null = null;
+    if (selectedImage && imagePreview) {
+      const arrayBuffer = await selectedImage.arrayBuffer();
+      const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
       let imgWidth = 320;
       let imgHeight = 320;
-
       try {
         const img = new Image();
         await new Promise((resolve) => {
@@ -647,7 +407,6 @@ export default function GenerateClubPlanButton() {
           img.onerror = resolve;
           img.src = imagePreview;
         });
-
         const ratio = img.width / img.height;
         if (ratio > 1) {
           imgWidth = 320;
@@ -659,214 +418,62 @@ export default function GenerateClubPlanButton() {
       } catch (e) {
         console.error("Failed to parse image dimensions", e);
       }
-
-      documentChildren.push(
-        new Paragraph({
-          children: [
-            new ImageRun({
-              type: docxImageType,
-              data: arrayBuffer,
-              transformation: { width: imgWidth, height: imgHeight },
-            }),
-          ],
-          alignment: AlignmentType.CENTER,
-          spacing: { before: 200, after: 200 },
-        })
-      );
-    } else {
-      documentChildren.push(
-        new Paragraph({
-          children: [new TextRun({ text: "[CLUB_LOGO]", color: "000000" })],
-          alignment: AlignmentType.CENTER,
-          spacing: { before: 200, after: 200 },
-        })
-      );
+      resolvedLogo = { data: arrayBuffer, type: docxImageType, width: imgWidth, height: imgHeight };
     }
 
-    const normalizedWebsiteUrl = clubWebsite.trim();
-    const websiteLinkTarget =
-      normalizedWebsiteUrl && !/^https?:\/\//i.test(normalizedWebsiteUrl)
-        ? `https://${normalizedWebsiteUrl}`
-        : normalizedWebsiteUrl;
+    // ── Build config & content ──────────────────────────────────────────────
+    const config: import("../types/generatorConfig").ClubPlanConfig = {
+      clubName,
+      clubWebsite,
+      clubMotto,
+      primaryColor: primaryTeamColor,
+      secondaryColor: secondaryTeamColor,
+      hasDedicatedGoaliePractices,
+      dedicatedGoaliePracticesHowOften,
+      dedicatedGoaliePracticesLength,
+      dedicatedGoaliePracticesWithWhom,
+      dedicatedGoaliePracticesStartingAgeGroup,
+      hasOffIceGoalieTraining,
+      offIceGoalieTrainingHowOften,
+      offIceGoalieTrainingLength,
+      offIceGoalieTrainingWithWhom,
+      offIceGoalieTrainingStartingAgeGroup,
+      hasGoalieVideoSessions,
+      goalieVideoSessionsHowOften,
+      goalieVideoSessionsLength,
+      goalieVideoSessionsStartingAgeGroup,
+      isEquipmentProvided,
+      equipmentProvidedAgeGroups,
+      hasTeamPracticeGoalieTraining,
+      hasGoalieCoachPerTeam,
+      hasYoungerGoalieMentors,
+      hasGoalieEvaluations,
+      goalieEvaluationsWhen,
+      hasGoalieDiscount,
+      goalieDiscountDetails,
+      goalieDiscountStartingAgeGroup,
+      goaliesAreFree,
+      useIntermediateNets,
+      includeStarterIntroduction,
+      includeStarterSeasonGoals,
+      includeRequiredEquipmentSection,
+      includeExternalResourcesSection,
+    };
 
-    documentChildren.push(
-      new Paragraph({
-        children: normalizedWebsiteUrl
-          ? [
-            new ExternalHyperlink({
-              link: websiteLinkTarget,
-              children: [toPrimaryRun(normalizedWebsiteUrl, { underline: { type: "single" } })],
-            }),
-          ]
-          : [toPrimaryRun(valueOrPlaceholder(clubWebsite, "WEBSITE_URL"))],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 120 },
-      })
-    );
+    const content: import("../types/generatorConfig").ClubPlanContent = {
+      introductionMd,
+      seasonGoalsMd,
+      benefitsForClubGoaliesMd,
+      skillDevelopmentMd,
+      contactInformationMd,
+      equipmentMd,
+      progressTrackingMd,
+      resourcesMd,
+    };
 
-    if (clubMotto.trim()) {
-      documentChildren.push(
-        new Paragraph({
-          children: [toSecondaryRun(clubMotto.trim(), { italics: true })],
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 120 },
-        })
-      );
-    }
-
-    documentChildren.push(new Paragraph({ text: "", pageBreakBefore: true }));
-
-    documentChildren.push(
-      new Paragraph({
-        children: [toPrimaryRun("Goaltending Development Plan", { bold: true })],
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 0, after: 200 },
-      })
-    );
-
-    documentChildren.push(
-      ...blocksToDocxParagraphs(
-        parseMarkdown(`## Introduction\n\n${selectedIntroMarkdown}`),
-        colorOpts
-      )
-    );
-
-    documentChildren.push(
-      ...blocksToDocxParagraphs(
-        parseMarkdown(
-          withSectionHeading(
-            contactInformationMd.replace(
-              /\[CLUB NAME\]/g,
-              valueOrPlaceholder(clubName, "CLUB_NAME")
-            ),
-            "Goalie Coaching Contacts"
-          )
-        ),
-        colorOpts
-      )
-    );
-
-    documentChildren.push(
-      ...blocksToDocxParagraphs(
-        parseMarkdown(`## Season Goals\n\n${selectedSeasonGoalsMarkdown}`),
-        colorOpts
-      )
-    );
-
-    const hasAnyBenefits =
-      useIntermediateNets ||
-      isEquipmentProvided ||
-      hasTeamPracticeGoalieTraining ||
-      hasGoalieCoachPerTeam ||
-      hasYoungerGoalieMentors ||
-      hasDedicatedGoaliePractices ||
-      hasOffIceGoalieTraining ||
-      hasGoalieVideoSessions ||
-      hasGoalieEvaluations ||
-      hasGoalieDiscount;
-
-    if (hasAnyBenefits) {
-      const trainingDetailsMarkdown = buildTrainingDetailsBlock(
-        hasDedicatedGoaliePractices,
-        dedicatedGoaliePracticesHowOften,
-        dedicatedGoaliePracticesLength,
-        dedicatedGoaliePracticesWithWhom,
-        dedicatedGoaliePracticesStartingAgeGroup,
-        hasOffIceGoalieTraining,
-        offIceGoalieTrainingHowOften,
-        offIceGoalieTrainingLength,
-        offIceGoalieTrainingWithWhom,
-        offIceGoalieTrainingStartingAgeGroup,
-        hasGoalieVideoSessions,
-        goalieVideoSessionsHowOften,
-        goalieVideoSessionsLength,
-        goalieVideoSessionsStartingAgeGroup,
-        isEquipmentProvided,
-        equipmentProvidedAgeGroups,
-        hasTeamPracticeGoalieTraining,
-        hasGoalieCoachPerTeam,
-        hasYoungerGoalieMentors,
-        hasGoalieEvaluations,
-        goalieEvaluationsWhen,
-        hasGoalieDiscount,
-        goalieDiscountDetails,
-        goalieDiscountStartingAgeGroup,
-        goaliesAreFree,
-        useIntermediateNets
-      );
-      documentChildren.push(
-        ...blocksToDocxParagraphs(parseMarkdown(trainingDetailsMarkdown), colorOpts)
-      );
-    }
-    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd), colorOpts));
-
-    if (includeRequiredEquipmentSection) {
-      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(equipmentMd), colorOpts));
-    }
-
-    if (hasGoalieEvaluations) {
-      const progressWithValues = progressTrackingMd.replace(
-        /\[GOALIE_EVALUATIONS_WHEN\]/g,
-        valueOrPlaceholder(goalieEvaluationsWhen, "GOALIE_EVALUATIONS_WHEN")
-      );
-      documentChildren.push(
-        ...blocksToDocxParagraphs(parseMarkdown(progressWithValues), colorOpts)
-      );
-    }
-
-    if (includeExternalResourcesSection) {
-      documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(resourcesMd), colorOpts));
-    }
-
-    const doc = new Document({
-      styles: {
-        default: {
-          document: {
-            run: {
-              font: "Arial",
-            },
-          },
-        },
-      },
-      sections: [
-        {
-          properties: {
-            titlePage: true,
-            page: {
-              size: {
-                width: 12240, // 8.5 inches in twips (8.5 * 1440)
-                height: 15840, // 11 inches in twips (11 * 1440)
-              },
-              margin: {
-                top: 1440, // 1 inch in twips
-                right: 1440,
-                bottom: 1440,
-                left: 1440,
-              },
-            },
-          },
-          ...makeDocxHeaderFooter(
-            `${valueOrPlaceholder(clubName, "CLUB_NAME").toUpperCase()} GOALTENDING DEVELOPMENT PLAN`,
-            cleanPrimary,
-            cleanSecondary,
-            {
-              Header,
-              Footer,
-              BorderStyle,
-              TabStopType,
-              PageNumber,
-              Paragraph,
-              TextRun,
-              AlignmentType,
-            }
-          ),
-          children: documentChildren,
-        },
-      ],
-    });
-
+    const doc = await buildClubPlanDocument(config, content, resolvedLogo, docxModule);
     const blob = await Packer.toBlob(doc);
-    const safeName = valueOrPlaceholder(clubName, "CLUB_NAME").replace(/[<>:"/\\|?*]/g, "_");
+    const safeName = (clubName.trim() || "CLUB_NAME").replace(/[<>:"/\\|?*]/g, "_");
     setGeneratedBlob(blob);
     setGeneratedFileName(`${safeName}_Club_Development_Plan.docx`);
   };
