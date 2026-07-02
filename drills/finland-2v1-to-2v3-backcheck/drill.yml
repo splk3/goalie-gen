@@ -47,7 +47,7 @@ tags:
     - power_push
   game_situations:
     - odd_man_rush
-    - small_sided_game
+    - small_unit_play
   equipment:
     - bumpers
   space_required:
