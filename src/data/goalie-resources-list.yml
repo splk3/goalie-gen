@@ -1,6 +1,9 @@
 resource-list:
   - name: "USA Hockey Goaltender Basics"
-    description: "This is a great resource for new goaltenders and their parents to learn the basic goaltending terms and techniques for stance, movement, and positioning."
+    description: >-
+      This is a great resource for new goaltenders and their parents to learn
+      the basic goaltending terms and techniques for stance, movement, and
+      positioning.
     link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics"
   - name: "How to Break in a Goalie Glove - StaubersGoalcrease"
     description: "Learn how to break in a goalie glove with the tips and tricks from StaubersGoalcrease"
