@@ -1,0 +1,53 @@
+name: 3v3 Below the Tops of the circles
+
+description: 3v3 designated offense and defense.
+
+drill_steps: |-
+  1. Play 3v3 below the tops of the circles with one team designated on offense and one team designated on defense.
+  2. Offense is trying to score goals.
+  3. Defense is trying to skate the puck out above the tops of the circles.
+  4. If the defense skates the puck out, the whistle blows, the offense goes to defense, and the coach dumps a new puck in with 3 new offensive players.
+  5. This drill is continuous.
+
+coaching_focus_points: |-
+  - Break up passes with stick.
+  - Recognize passing options.
+  - Seal posts on net drives.
+
+shooter_focus_points: |-
+  - Maintain possession carrying the puck up the ice.
+  - Make clean passes.
+  - Communicate with teammates.
+
+drill_image: 3v3-below-the-tops-of-the-circles.png
+
+drill_creation_date: 2026-07-02
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - whole_zone
+  game_situations:
+    - small_sided_game
