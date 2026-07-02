@@ -1,0 +1,54 @@
+---
+name: 3v2 to 5v5
+
+description: 3v2 to simulate a rush to a full ice back check.
+
+drill_steps: |-
+  1. Activity starts with a 3v2 at the net front with a second 3v2 waiting in the neutral zone.
+  2. Coaches or players are posted at the top of the circles on each side of the net-front 3v2.
+  3. On the first whistle, players battle at the net front for body positioning while one coach shoots a puck to create a rebound. Players play it out until the whistle.
+  4. On the second whistle, a second puck is shot by the coach on the opposite side and players continue until the third whistle.
+  5. On the third whistle, players in the neutral zone leave and rush up ice, with the original net-front 3v2 following to create a 5v5.
+  6. Play out the 5v5 until a goal, stoppage of play, breakout, or whistle.
+
+coaching_focus_points: |-
+  - Recognize passing options.
+  - Communicate to back checking players.
+  - Recognize stick hands of threat options.
+
+shooter_focus_points: |-
+  - Clean passes.
+  - Use speed on the rush.
+  - Put sticks in passing lanes.
+
+drill_image: 3v2-to-5v5.png
+
+drill_creation_date: 2026-07-02
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - macro_game
+  equipment:
+    - none
+  space_required:
+    - full_ice
