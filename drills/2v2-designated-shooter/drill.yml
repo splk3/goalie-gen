@@ -1,0 +1,50 @@
+---
+name: 2v2 Designated Shooter
+description: 2v2 with third player as shooter above circles.
+
+drill_steps: |-
+  1. Drill starts as a 2v2 in the zone.
+  2. Whichever team gains possession they pass to their designated shooter above the top of the circles.
+  3. Their job is to work to get the shot off and teammates pick up rebounds and tips.
+
+coaching_focus_points: |-
+  - Communicate with teammates.
+  - Set hands outside of tips and stay on angle while looking around the sides of player.
+  - Track play behind the net through the net.
+
+shooter_focus_points: |-
+  - Clean passes.
+  - Drive net for rebounds.
+  - Get in front of goalies eyes.
+
+drill_image: 2v2-designated-shooter.png
+
+drill_creation_date: 2026-06-02
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - whole_zone
+  game_situations:
+    - small_sided_game
