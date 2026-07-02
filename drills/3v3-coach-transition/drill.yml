@@ -4,7 +4,12 @@ name: 3v3 Coach Transition
 description: 3v3 transition when players miss net.
 
 drill_steps: |-
-  Navy scores on Gold goalie, Gold scores on Navy goalie. If the puck is hit below the dot line (Marked with a black line) the opposing teams coach passes a puck out to their corresponding team. Ex. If Gold goes down and shoots and misses the net and the puck goes below the dot line then the navy coach passes a puck out to navy. If a team scores, they get the puck back and receive a pass from their coach. Ex. Navy scores, they then regroup with the navy coach. Waiting players are on the bench and typically change on the whistle.
+  1. Two teams (Navy and Gold) play 3v3, each trying to score on the opposing goalie.
+  2. If a shot misses the net and the puck goes below the dot line, the opposing team's coach passes a new puck out to their team.
+     - Ex. Gold shoots, misses, and the puck crosses the dot line → Navy coach passes a puck to Navy.
+  3. If a team scores, they get the puck back and receive a pass from their own coach.
+     - Ex. Navy scores → Navy regroups with the Navy coach.
+  4. Waiting players are on the bench and change on the whistle.
 
   Point system:
   - Royal road goals = 3 pts
