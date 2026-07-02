@@ -21,7 +21,9 @@ drill_progressions:
   - progression_name: Progression 2
     progression_description: Add second progression step here.  with some other stuff that's important to remember
   - progression_name: Progression 3
-    progression_description: third is the most complicated.  add a 2nd and 3rd shooter, and have the shooters do some different things to keep the goalie on their toes.
+    progression_description: |-
+      third is the most complicated. add a 2nd and 3rd shooter, and have the
+      shooters do some different things to keep the goalie on their toes.
 drill_image: test-drill-image-1.png
 video: https://vimeo.com/830266352?fl=pl&fe=sh
 drill_creation_date: 2024-03-10

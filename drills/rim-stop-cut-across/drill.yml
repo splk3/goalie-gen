@@ -54,7 +54,7 @@ drill_progressions:
       Add an extra goaltender or obstacle in the high slot. so the goalie must track the puck through a screen.
     progression_image: rim-stop-cut-across-progression-5.png
 drill_creation_date: 2026-05-13
-drill_update_date: 2026-06-28
+drill_updated_date: 2026-06-28
 tags:
   skill_level:
     - intermediate

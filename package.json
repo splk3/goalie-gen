@@ -2,7 +2,7 @@
   "name": "goalie-gen",
   "private": true,
   "description": "Goalie Gen - Website to make it easy for youth ice hockey teams and clubs to generate customized goaltending development plans",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "BSD-3-Clause",
   "engines": {
     "node": "24.x"
@@ -15,6 +15,9 @@
     "clean": "gatsby clean",
     "test": "jest",
     "verify-drills": "tsx verify-drills.ts",
+    "generate-test-club-plan": "tsx generate-test-club-plan.ts",
+    "generate-test-team-plan": "tsx generate-test-team-plan.ts",
+    "generate-test-goalie-journal": "tsx generate-test-goalie-journal.ts",
     "deploy": "gatsby build && gh-pages -d public",
     "postinstall": "patch-package"
   },
@@ -28,6 +31,7 @@
     "jspdf": "^4.2.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
+    "react-colorful": "^5.7.0",
     "react-dom": "^19.2.5",
     "react-image-crop": "^11.0.10"
   },

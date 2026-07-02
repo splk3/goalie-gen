@@ -8,6 +8,9 @@ cd "$PROJECT_ROOT"
 
 echo "=== Running Super-Linter locally via Docker ==="
 
+# Keep this aligned with .github/workflows/super-linter.yml action version (v8.7.0).
+SUPER_LINTER_IMAGE="${SUPER_LINTER_IMAGE:-ghcr.io/super-linter/super-linter:slim-v8.7.0}"
+
 # Check if Docker is running
 if ! docker info &>/dev/null; then
   echo "Error: Docker daemon is not running. Please start Docker."
@@ -32,6 +35,6 @@ docker run --rm \
   -e VALIDATE_PYTHON_BLACK=false \
   -e FILTER_REGEX_EXCLUDE=".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/).*" \
   -v "$(pwd):/tmp/lint" \
-  ghcr.io/super-linter/super-linter:latest
+  "$SUPER_LINTER_IMAGE"
 
 echo "=== Super-Linter check complete! ==="

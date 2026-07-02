@@ -1,4 +1,5 @@
 import * as React from "react";
+import { HexColorPicker, HexColorInput } from "react-colorful";
 import { normalizeHexRgbColor } from "../utils/teamColors";
 
 interface ColorPickerControlProps {
@@ -22,6 +23,22 @@ interface TeamColorPickersProps {
   onSecondaryColorChange: (color: string) => void;
 }
 
+/**
+ * A color picker control that uses react-colorful's HexColorPicker for a
+ * consistent, cross-platform color picking experience. The picker opens as a
+ * popover when the user clicks/taps the color swatch, and dismisses on outside
+ * click or Escape key.
+ *
+ * This replaces the previous implementation that used a native
+ * `<input type="color">` plus custom HSV sliders. The native picker had a
+ * known bug on Chrome for Android (as of June 2025) where the "Custom" color
+ * tab's sliders always initialized at black, regardless of the selected color.
+ * react-colorful renders its own cross-platform picker that is immune to
+ * browser-specific native picker bugs.
+ *
+ * See AGENTS.md § "Chrome on Android: Native Color Picker Limitation" for
+ * the full history of that workaround.
+ */
 function ColorPickerControl({
   idPrefix,
   label,
@@ -31,36 +48,57 @@ function ColorPickerControl({
   disabled,
   onChange,
 }: ColorPickerControlProps) {
-  const [hexInput, setHexInput] = React.useState<string>(value);
-  const normalizedHex = normalizeHexRgbColor(hexInput);
-  const showHexValidationError = hexInput.trim().length > 0 && !normalizedHex;
+  const [open, setOpen] = React.useState(false);
+  const popoverRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    setHexInput(value);
-  }, [value]);
-
-  const handleColorPickerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const normalized = normalizeHexRgbColor(event.target.value);
-    if (!normalized) {
-      return;
-    }
-    onChange(normalized);
-    setHexInput(normalized);
-  };
-
-  const handleHexInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nextValue = event.target.value.toUpperCase();
-    setHexInput(nextValue);
-    const normalized = normalizeHexRgbColor(nextValue);
+  const handlePickerChange = (hex: string) => {
+    const normalized = normalizeHexRgbColor(hex);
     if (normalized) {
       onChange(normalized);
     }
   };
 
+  const handleColorInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (!disabled) {
+      setOpen((prev) => !prev);
+    }
+  };
+
   const handlePaletteColorSelect = (paletteColor: string) => {
     onChange(paletteColor);
-    setHexInput(paletteColor);
   };
+
+  // Close popover when clicking outside.
+  React.useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   return (
     <div className="mb-4 rounded-lg border border-gray-300 p-3 dark:border-gray-600">
@@ -75,16 +113,46 @@ function ColorPickerControl({
       )}
 
       <div className="flex items-start gap-4">
-        <div>
+        <div className="relative">
           <input
+            ref={triggerRef}
             id={`${idPrefix}-color`}
             type="color"
-            value={value}
-            onChange={handleColorPickerChange}
+            value={value.toLowerCase()}
+            onClick={handleColorInputClick}
+            onChange={(e) => {
+              const normalized = normalizeHexRgbColor(e.target.value);
+              if (normalized) {
+                onChange(normalized);
+              }
+            }}
             disabled={disabled}
-            className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed"
+            className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-usa-blue"
           />
           <p className="mt-2 text-xs font-mono text-gray-700 dark:text-gray-300">{value}</p>
+
+          {/* Popover picker */}
+          {open && (
+            <div
+              ref={popoverRef}
+              role="dialog"
+              aria-label={`${label} color picker`}
+              className="absolute z-50 mt-2 left-0 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-2xl p-3 flex flex-col gap-3"
+              style={{ minWidth: "220px" }}
+            >
+              <HexColorPicker
+                color={value.toLowerCase()}
+                onChange={handlePickerChange}
+              />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition-colors text-center"
+              >
+                Done
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex-1">
@@ -94,20 +162,14 @@ function ColorPickerControl({
           >
             {label} Hex
           </label>
-          <input
+          <HexColorInput
             id={`${idPrefix}-hex`}
-            type="text"
-            value={hexInput}
-            onChange={handleHexInputChange}
+            color={value}
+            onChange={handlePickerChange}
             disabled={disabled}
-            placeholder="#RRGGBB"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed font-mono"
+            prefixed={true}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase"
           />
-          {showHexValidationError && (
-            <p className="mt-1 text-xs text-red-700 dark:text-red-300">
-              Enter a valid color in #RRGGBB format.
-            </p>
-          )}
         </div>
       </div>
 

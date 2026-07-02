@@ -1,4 +1,4 @@
-import { HeadingLevel, Paragraph, TextRun } from "docx";
+import { HeadingLevel, Paragraph, TextRun, ExternalHyperlink } from "docx";
 import type { MarkdownBlock } from "./markdownParser";
 
 /**
@@ -67,11 +67,99 @@ export function textToRuns(text: string, color: string = "000000"): TextRun[] {
   );
 }
 
+export interface ParsedSegment {
+  type: "text" | "placeholder" | "link";
+  text: string;
+  url?: string;
+}
+
+/**
+ * Parses a string to identify plain text, placeholders in square brackets,
+ * and markdown links of the format [text](url).
+ */
+export function parseSegments(text: string): ParsedSegment[] {
+  const segments: ParsedSegment[] = [];
+  const regex = /\[([^\]]+)\]\(([^)]+)\)|\[([^\]]+)\]/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({
+        type: "text",
+        text: text.slice(lastIndex, match.index),
+      });
+    }
+
+    if (match[1] !== undefined && match[2] !== undefined) {
+      segments.push({
+        type: "link",
+        text: match[1],
+        url: match[2],
+      });
+    } else if (match[3] !== undefined) {
+      segments.push({
+        type: "placeholder",
+        text: `[${match[3]}]`,
+      });
+    }
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({
+      type: "text",
+      text: text.slice(lastIndex),
+    });
+  }
+
+  if (segments.length === 0) {
+    segments.push({
+      type: "text",
+      text,
+    });
+  }
+
+  return segments;
+}
+
+/**
+ * Converts a text string into an array of docx ParagraphChild objects (either TextRun
+ * or ExternalHyperlink). Italicizes placeholder text in square brackets (e.g. [Placeholder]),
+ * and converts markdown links (e.g. [text](url)) into clickable ExternalHyperlinks.
+ */
+export function textToParagraphChildren(
+  text: string,
+  primaryColor: string = "000000",
+  textColor: string = "000000"
+): (TextRun | ExternalHyperlink)[] {
+  return parseSegments(text).map((segment) => {
+    if (segment.type === "link") {
+      return new ExternalHyperlink({
+        link: segment.url || "",
+        children: [
+          new TextRun({
+            text: segment.text,
+            color: primaryColor,
+            underline: { type: "single" },
+          }),
+        ],
+      });
+    }
+    return new TextRun({
+      text: segment.text,
+      italics: segment.type === "placeholder" ? true : undefined,
+      color: textColor,
+    });
+  });
+}
+
 /**
  * Converts an array of parsed markdown blocks into docx Paragraph objects.
  * For both paragraph and bullet blocks, italic style is applied to placeholder
  * text wrapped in square brackets, including inline occurrences such as
- * "Focus: [Placeholder]".
+ * "Focus: [Placeholder]". Markdown links [text](url) are parsed and rendered
+ * as clickable hyperlinks.
  */
 export function blocksToDocxParagraphs(
   blocks: MarkdownBlock[],
@@ -100,7 +188,7 @@ export function blocksToDocxParagraphs(
       case "paragraph":
         return [
           new Paragraph({
-            children: textToRuns(block.text),
+            children: textToParagraphChildren(block.text, primary, "000000"),
             spacing: { after: 300 },
           }),
         ];
@@ -114,7 +202,7 @@ export function blocksToDocxParagraphs(
                 color: secondary,
                 bold: true,
               }),
-              ...textToRuns(block.text),
+              ...textToParagraphChildren(block.text, primary, "000000"),
             ],
             spacing: { after: 100 },
           }),

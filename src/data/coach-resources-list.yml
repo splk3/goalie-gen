@@ -1,7 +1,22 @@
 resource-list:
-  - name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi"
-    description: "Learn how to develop a goaltending development plan for your club following the strategies identified by Hiroki Wakabayashi as part of the USA Hockey Goaltending Gold Class of 2024"
-    link: "https://worldhockeylab.com/how_to_structure_a_goaltending_development_program/"
+  - name: "USA Hockey Goaltender Basics"
+    description: >-
+      This is a great resource for coaches to learn the basic goaltending terms
+      and techniques for stance, movement, and positioning to help instruct
+      their team's goalies.
+    link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics"
+  - name: "USA Hockey Goaltender Season Development Practice Plans"
+    description: "USA Hockey practice plans for coaches to help develop their team's goalies during each practice."
+    link: "https://www.usahockeygoaltending.com/page/show/2872653-goaltending-practice-plans"
   - name: "USA Hockey Goalie Plans"
-    description: "Official USA Hockey goaltending plans and coaching resources to help coaches develop structured practice plans and assessment tools for their goalies."
+    description: >-
+      Official USA Hockey goaltending plans and coaching resources to help
+      coaches develop structured practice plans and assessment tools for their
+      goalies.
     link: "https://www.usahockey.com/goaltendingplans"
+  - name: "USA Hockey Goaltending Game Situation Drills"
+    description: "A collection of drills designed to help coaches teach their goalies how to handle various game situations effectively."
+    link: "https://www.usahockeygoaltending.com/page/show/890215-game-situation-drills"
+  - name: "USA Hockey Video - Mental Preparation - Pre-Game"
+    description: "A video resource that provides insights into the mental preparation and pre-game routines for goaltenders."
+    link: "https://www.usahockeygoaltending.com/video/mental-preparation-pre-game-routine"

@@ -67,6 +67,12 @@ export default [
         },
       },
     },
+
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
   },
   // TS/TSX: typescript-eslint + react + prettier
   // Note: eslint-plugin-n v18 is ESM-only, so its shareable config can't be

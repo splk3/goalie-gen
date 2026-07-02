@@ -56,7 +56,7 @@ drill_progressions:
       - Simulates focus under fatigue.
       - Simulates late-game pace.
 drill_creation_date: 2026-05-25
-drill_update_date: 2026-06-28
+drill_updated_date: 2026-06-28
 tags:
   skill_level:
     - beginner

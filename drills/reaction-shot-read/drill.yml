@@ -2,7 +2,9 @@ name: Reaction Shot Read
 drill_steps: |-
   1. Shooter begins each rep by presenting a 5-hole threat (stick angle, puck position, body language).
   2. Shooter may: Shoot 5-hole, or fake 5-hole and elevate if the goalie drops early.
-  3. Goalie must: Stay patient. Read the puck release. React appropriately: hold edges if shooter delays, seal 5-hole if shot is released low, or extend hands upward if shot elevates.
+  3. Goalie must: Stay patient. Read the puck release. React appropriately:
+     hold edges if shooter delays, seal 5-hole if shot is released low, or
+     extend hands upward if shot elevates.
 coaching_focus_points: |-
   - Read the blade: watch the shooter's bottom hand, blade angle, and puck position.
   - Patience first: avoid pre-dropping; force the shooter to make the first commitment.
@@ -39,7 +41,7 @@ drill_progressions:
       - Goalie recovers quickly.
       - Goalie reacts quickly.
 drill_creation_date: 2026-05-25
-drill_update_date: 2026-06-28
+drill_updated_date: 2026-06-28
 tags:
   skill_level:
     - beginner

@@ -13,4 +13,4 @@ These are the 6 core fundamentals of goaltending as established by USA Hockey:
 - Rebound Control
 - Recovery
 
-Also include individual and skating skills from fundamentals diagrams.
+Also include individual and skating skills from fundamentals diagrams. - TBD!!!

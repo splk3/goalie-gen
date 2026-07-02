@@ -10,7 +10,9 @@ drill_steps: |-
 coaching_focus_points: |-
   - Coaching point 1 that required a good amount of text to fully describe and explain the coaching point in detail.
   - Coaching point 2 that also requires a good amount of text to fully describe and explain the coaching point in detail
-  - Coaching point 3 this coaching point is also important to include and takes a good amount of text to fully describe and explain the coaching point in detail.
+  - Coaching point 3 this coaching point is also important to include and takes
+    a good amount of text to fully describe and explain the coaching point in
+    detail.
 shooter_focus_points: |-
   - Shooter focus point 1 that requires a good amount of text to fully describe and explain the shooter focus point in detail.
   - Shooter focus point 2 that also requires a good amount of text to fully describe and explain the shooter focus point in detail
@@ -19,9 +21,13 @@ drill_progressions:
   - progression_name: Progression 1
     progression_description: This drill has a progression step that requires a good amount of text to fully describe and explain the progression step in detail
   - progression_name: Progression 2
-    progression_description: Add second progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+    progression_description: |-
+      Add second progression step here that also requires a good amount of text
+      to fully describe and explain the progression step in detail
   - progression_name: Progression 3
-    progression_description: Add third progression step here that also requires a good amount of text to fully describe and explain the progression step in detail
+    progression_description: |-
+      Add third progression step here that also requires a good amount of text
+      to fully describe and explain the progression step in detail
 drill_image: test-drill-image-1.png
 video: https://youtu.be/akm-LgliiTo?si=4BqCf1k9jWxDoviR
 drill_creation_date: 2024-01-15

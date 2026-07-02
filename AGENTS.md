@@ -92,7 +92,7 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 
 #### Team Color Picker & Logo Palette Extraction
 
-[TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (native color input + hex text field + palette swatches). It is embedded inside all three document generator forms.
+[TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (custom popover color picker using `react-colorful`'s `HexColorPicker` + `HexColorInput` + palette swatches). It is embedded inside all three document generator forms.
 
 [src/utils/teamColors.ts](src/utils/teamColors.ts) provides:
 
@@ -102,6 +102,15 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 - `extractPaletteHexColorsFromDataUrl(dataUrl, colorCount?)` — browser-only async function that loads the image into a canvas and calls `colorthief` asynchronously (using `getPalette` with quality set to `1`) to extract and return up to `colorCount` (default `6`) unique normalized hex colors.
 
 When a logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Colors are reset on form close/cancel.
+
+#### Custom react-colorful Color Picker & HexColorInput
+
+To resolve cross-platform and browser-specific bugs (such as Chrome on Android's native `<input type="color">` HSV slider initialization issue), we use a custom picker UI:
+
+- **Popover Picker**: The color swatch trigger element is an `<input type="color">` which retains standard testability and `.value` querying. Clicks/activations on this trigger are intercepted via `e.preventDefault()` to block the browser's default picker.
+  Instead, a custom popover containing `react-colorful`'s `HexColorPicker` is rendered.
+  The popover dismisses when clicking outside or pressing the `Escape` key.
+- **Hex Input**: In the main form layout, the hex value is edited using `HexColorInput` from `react-colorful` which automatically validates inputs and displays a `#` prefix.
 
 ### 4. Shared Drill Filtering Model
 

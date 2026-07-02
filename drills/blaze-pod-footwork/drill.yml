@@ -65,7 +65,7 @@ drill_progressions:
       Adjust as desired for your goalie.
     progression_image: progression-4.png
 drill_creation_date: 2026-06-05
-drill_update_date: 2026-06-28
+drill_updated_date: 2026-06-28
 tags:
   skill_level:
     - beginner

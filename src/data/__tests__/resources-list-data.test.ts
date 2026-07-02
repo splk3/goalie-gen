@@ -132,13 +132,27 @@ describe("resources-list YAML source files", () => {
       }
     });
 
-    it("the Hiroki Wakabayashi article appears as the first item in every file", () => {
-      const expectedLink =
-        "https://worldhockeylab.com/how_to_structure_a_goaltending_development_program/";
+    it("each file starts with its expected lead resource", () => {
+      const expectedFirstItems = {
+        "club-resources-list.yml": {
+          name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi",
+          link: "https://worldhockeylab.com/how_to_structure_a_goaltending_development_program/",
+        },
+        "coach-resources-list.yml": {
+          name: "USA Hockey Goaltender Basics",
+          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+        },
+        "goalie-resources-list.yml": {
+          name: "USA Hockey Goaltender Basics",
+          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+        },
+      } as const;
+
       for (const file of FILES) {
         const data = loadResourceList(file);
         const first = data["resource-list"][0];
-        expect(first.link).toBe(expectedLink);
+        expect(first.name).toBe(expectedFirstItems[file].name);
+        expect(first.link).toBe(expectedFirstItems[file].link);
       }
     });
   });

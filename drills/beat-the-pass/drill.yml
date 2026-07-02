@@ -62,7 +62,7 @@ drill_progressions:
       This increases difficulty in arriving set before the shot.
     progression_image: progression-7.png
 drill_creation_date: 2026-05-22
-drill_update_date: 2026-06-28
+drill_updated_date: 2026-06-28
 tags:
   skill_level:
     - beginner
