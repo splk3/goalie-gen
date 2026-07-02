@@ -1,0 +1,53 @@
+---
+name: Overspeed Warm Up
+
+description: |-
+  Full ice skating with angle change shot.
+
+drill_steps: |-
+  In this activity, players will skate as shown in the diagram, receive a pass from the
+  opposite line, make a move on the pad and shoot on the goalie. Players start at 70%
+  speed and each rep add 10% speed. At rep 4, all skaters should be skating 100% speed.
+  The goal of this activity is to develop speed. Switch sides after 3 reps at 100%.
+
+coaching_focus_points: |-
+  - Only change angle when puck is shifted, do not follow shooter's body.
+  - Gain depth once they hit the red line.
+  - Focus on tracking the puck all the way into your body.
+
+shooter_focus_points: |-
+  - Focus on lengthening stride.
+  - Carry the puck with one hand on your stick.
+  - Quick release of the shot right after you get around the pad and follow rebound.
+
+drill_image: overspeed-warm-up.png
+
+drill_creation_date: 2026-07-02
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - none
+  space_required:
+    - full_ice
