@@ -1,0 +1,52 @@
+---
+name: 1 Net 3v2 Game
+
+description: 3v2 on two sides with one net.
+
+drill_steps: |-
+  1. Play 3v2 on each side of the ice with a line down the middle.
+  2. Players cannot go to the other side, and teams can only score on their offensive side of the ice that has 3 players.
+  3. Defensive players cannot shoot the puck, but must pass it to the players on the offensive half.
+
+coaching_focus_points: |-
+  - Stay on angle.
+  - Don't over commit to the shot.
+  - Use stick to break up passes.
+
+shooter_focus_points: |-
+  - Create rebounds.
+  - Put sticks in passing lanes.
+  - Use the boards to your advantage.
+
+drill_image: 1-net-3v2-game.png
+
+drill_creation_date: 2026-07-02
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_unit_play
+  equipment:
+    - none
+  space_required:
+    - whole_zone
