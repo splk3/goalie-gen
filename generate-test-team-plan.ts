@@ -4,6 +4,7 @@ import * as qrCode from "qrcode";
 import * as docx from "docx";
 import { toDocxImageTypeFromExtension } from "./src/utils/docxImageType";
 import { normalizeUrl } from "./src/utils/generatorDefaults";
+import { getImageDimensions } from "./generate-utils";
 import { buildTeamPlanDocument } from "./src/utils/builders/teamPlanBuilder";
 import type {
   TeamPlanConfig,
@@ -13,37 +14,6 @@ import type {
   EventSelection,
   QrGenerator,
 } from "./src/types/generatorConfig";
-
-// Simple dimension parser for PNG and JPEG
-function getImageDimensions(filePath: string): { width: number; height: number } | null {
-  try {
-    const buffer = fs.readFileSync(filePath);
-    // PNG Check
-    if (buffer.readUInt32BE(0) === 0x89504e47) {
-      const width = buffer.readUInt32BE(16);
-      const height = buffer.readUInt32BE(20);
-      return { width, height };
-    }
-    // Simple JPEG Check
-    if (buffer.readUInt16BE(0) === 0xffd8) {
-      let offset = 2;
-      while (offset < buffer.length) {
-        const marker = buffer.readUInt16BE(offset);
-        offset += 2;
-        if (marker === 0xffc0 || marker === 0xffc2) {
-          const height = buffer.readUInt16BE(offset + 3);
-          const width = buffer.readUInt16BE(offset + 5);
-          return { width, height };
-        }
-        const segLength = buffer.readUInt16BE(offset);
-        offset += segLength;
-      }
-    }
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
 
 // Node-native QR generator (satisfies QrGenerator callback type)
 const nodeQrGenerator: QrGenerator = async (url: string): Promise<Uint8Array | null> => {

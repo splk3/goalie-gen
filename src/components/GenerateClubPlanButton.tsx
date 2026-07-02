@@ -479,7 +479,6 @@ export default function GenerateClubPlanButton() {
   };
 
   const generateDocument = async () => {
-
     setValidationError("");
 
     if (!clubName.trim()) {

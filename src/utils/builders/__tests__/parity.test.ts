@@ -337,7 +337,7 @@ describe("buildTeamPlanDocument", () => {
     );
     // The builder calls QR generator for the evaluation forms link
     expect(calledUrls.length).toBeGreaterThan(0);
-    expect(calledUrls.some((url) => url.includes("goaliegen.com"))).toBe(true);
+    expect(calledUrls.some((url) => url === "https://goaliegen.com/goalie-evals/")).toBe(true);
   });
 });
 

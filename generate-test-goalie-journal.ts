@@ -3,37 +3,8 @@ import * as path from "path";
 import * as jsPdfModule from "jspdf";
 import { DEFAULT_JOURNAL_ENTRY_COUNT } from "./src/utils/generatorDefaults";
 import { buildGoalieJournalPdf } from "./src/utils/builders/goalieJournalBuilder";
+import { getImageDimensions } from "./generate-utils";
 import type { GoalieJournalConfig, GoalieJournalContent, JournalLogoData } from "./src/types/generatorConfig";
-
-// Simple dimension parser for PNG and JPEG
-function getImageDimensions(filePath: string): { width: number; height: number } | null {
-  try {
-    const buffer = fs.readFileSync(filePath);
-    if (buffer.readUInt32BE(0) === 0x89504e47) {
-      const width = buffer.readUInt32BE(16);
-      const height = buffer.readUInt32BE(20);
-      return { width, height };
-    }
-    if (buffer.readUInt16BE(0) === 0xffd8) {
-      let offset = 2;
-      while (offset < buffer.length) {
-        const marker = buffer.readUInt16BE(offset);
-        offset += 2;
-        if (marker === 0xffc0 || marker === 0xffc2) {
-          const height = buffer.readUInt16BE(offset + 3);
-          const width = buffer.readUInt16BE(offset + 5);
-          return { width, height };
-        } else {
-          const length = buffer.readUInt16BE(offset);
-          offset += length;
-        }
-      }
-    }
-  } catch (e) {
-    console.error("Error reading image dimensions:", e);
-  }
-  return null;
-}
 
 async function run() {
   const args = process.argv.slice(2);
