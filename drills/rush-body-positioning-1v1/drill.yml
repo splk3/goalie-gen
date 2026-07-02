@@ -1,0 +1,53 @@
+---
+name: Rush body positioning 1v1
+description: 1v1 with support.
+
+drill_steps: |-
+  1. Play a 1v1 in the middle space with a line down the middle and two wide support players on the offensive side.
+  2. Upon possession, players must pass to a support player before attacking the net.
+  3. Support players can pass or shoot.
+  4. If a turnover is caused on your offensive side, you can attack right away.
+  5. Progress to 2v2 in the middle.
+
+coaching_focus_points: |-
+  - Work on side-to-side movement on your feet.
+  - If pucks are in tight, slide to the post on lateral plays.
+  - Break up passes with your stick.
+
+shooter_focus_points: |-
+  - Use speed to get around the player.
+  - Anticipate the play.
+  - Present your stick for passing options.
+
+drill_image: rush-body-positioning-1v1.png
+
+drill_creation_date: 2026-07-02
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - opposed_practice
+  equipment:
+    - none
+  space_required:
+    - whole_zone
