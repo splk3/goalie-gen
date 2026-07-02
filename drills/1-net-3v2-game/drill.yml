@@ -45,7 +45,7 @@ tags:
     - butterfly
     - power_push
   game_situations:
-    - small_sided_game
+    - small_unit_play
   equipment:
     - none
   space_required:
