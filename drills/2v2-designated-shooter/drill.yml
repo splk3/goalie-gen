@@ -1,20 +1,24 @@
 ---
 name: 2v2 Designated Shooter
-description: 2v2 with third player as shooter above circles.
 
 drill_steps: |-
-  1. Drill starts as a 2v2 in the zone.
-  2. Whichever team gains possession they pass to their designated shooter above the top of the circles.
-  3. Their job is to work to get the shot off and teammates pick up rebounds and tips.
+  1. Set up two designated shooters on the walls at the top of the zone on each offensive side, with a 2v2 battle in the middle.
+  2. Coach dumps the puck in — whichever team wins possession must pass to their designated shooter up top.
+  3. Only the shooters can take shots on net; before shooting, they need at least one D-to-D pass across the top.
+  4. Net-front players battle, screen, and work to get pucks back up top.
+  5. Shooters move the puck quickly side-to-side and find shooting lanes.
+  6. Net-front defenders box out and clear lanes for the goalies.
+
+  Optional Rule: Add a big circle to the net-front area. Any goal scored with a player in that circle is worth two points. The goal is to emphasize players going to the net and defensemen clearing out.
 
 coaching_focus_points: |-
-  - Communicate with teammates.
-  - Set hands outside of tips and stay on angle while looking around the sides of player.
-  - Track play behind the net through the net.
+  - Track puck throughout the zone.
+  - Communicate to teammates screens and threats.
+  - Make sure you're on the stick angle of the puck.
 
 shooter_focus_points: |-
-  - Clean passes.
-  - Drive net for rebounds.
+  - Communication with teammates.
+  - Quick accurate passes.
   - Get in front of goalie's eyes.
 
 drill_image: 2v2-designated-shooter.png
@@ -23,12 +27,12 @@ drill_creation_date: 2026-07-02
 
 tags:
   skill_level:
-    - beginner
     - intermediate
     - advanced
   team_drill: "yes"
   age_level:
-    - all
+    - 14U
+    - 16U_and_older
   fundamental_skill:
     - skating
     - positioning
@@ -42,9 +46,9 @@ tags:
     - c_cut
     - butterfly
     - power_push
+  game_situations:
+    - small_sided_game
   equipment:
     - none
   space_required:
     - whole_zone
-  game_situations:
-    - small_sided_game
