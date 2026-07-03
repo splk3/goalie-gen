@@ -1,0 +1,42 @@
+name: 3v3 Interchange
+drill_steps: |-
+  1. In this activity, there can only be a maximum of two players in a zone.
+  2. Players are encouraged to interchange with each other.
+coaching_focus_points: |-
+  - Recognize passing lanes.
+  - Stay on feet as long as possible.
+  - Stay on stick angle.
+shooter_focus_points: |-
+  - Communicate change.
+  - Use all passing options.
+  - Crash rebounds.
+drill_creation_date: 2026-07-02
+drill_image: 3v3-interchange.png
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_sided_game
+  equipment:
+    - none
+  space_required:
+    - whole_zone
