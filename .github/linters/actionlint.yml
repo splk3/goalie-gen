@@ -1,0 +1,6 @@
+---
+self-hosted-runner:
+  labels: []
+paths:
+  .github/workflows/agentics-maintenance.yml: ignore
+  .github/workflows/updates-docs-agent.lock.yml: ignore
