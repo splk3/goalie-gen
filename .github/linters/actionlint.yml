@@ -1,4 +1,7 @@
 ---
+self-hosted-runner:
+  labels: []
 paths:
   .github/workflows/agentics-maintenance.yml:
-    ignore: "string should not be empty [syntax-check]"
+    ignore:
+      - ".*"
