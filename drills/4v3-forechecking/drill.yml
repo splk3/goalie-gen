@@ -1,0 +1,50 @@
+---
+name: 4v3 Forechecking
+description: Half ice 4v3 forecheck.
+drill_steps: |-
+  1. Teams alternate being the forechecking team (4 players) or the breakout team (3 players).
+  2. The coach begins the game by dumping a puck into an area where the breakout team can gain possession.
+  3. The game plays out 4v3 for 20-30 seconds.
+  4. If the breakout team (3 players) scores, the goal is worth 3 points. If the forechecking team (4 players) scores, the goal is worth 1 point.
+  5. Alternate breakout teams and make sure to switch sides.
+
+  Optional Additional Rules:
+  - 3v2, 4v3, or 5v4
+  - Change the point system to shots to incentivize higher scoring and success.
+coaching_focus_points: |-
+  - Communicate threats.
+  - Anticipate play.
+  - Set feet on shooter stick.
+shooter_focus_points: |-
+  - Forechecking hard force plays.
+  - Use speed and passes to get around players.
+  - Keep players to the outside.
+drill_creation_date: 2026-07-02
+drill_image: 4v3-forechecking.png
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_sided_game
+  equipment:
+    - none
+  space_required:
+    - half_ice
