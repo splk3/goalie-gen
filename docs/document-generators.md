@@ -131,27 +131,39 @@ For quick manual testing and verifying layout compatibility, use the test assets
 ```bash
 npx tsx generate-test-club-plan.ts \
   --name "Brandywine Outlaws" \
+  --website "https://www.facebook.com/brandywineoutlaws/" \
+  --motto "The most fun you'll ever have playing summer hockey\!" \
   --logo static/images/test/logos/outlaws.jpeg \
-  --out brandywine-outlaws-club-plan.docx
+  --primary "#081f8a" \
+  --secondary "#7b7e8c" \
+  --all \
+  --out "brandywine-outlaws-club-plan.docx"
 ```
 
 #### Example 2: Team Plan for "Delaware Stars" (JPG logo)
 
 ```bash
 npx tsx generate-test-team-plan.ts \
-  --name "Delaware Stars" \
-  --logo static/images/test/logos/stars.jpg \
-  --out delaware-stars-team-plan.docx
+  --name "Delmarva Raptors 10U A National" \
+  --website "https://raptorhockey.com/" \
+  --motto "Fostering a love for hockey while promoting teamwork, hard work, and important life skills for players aged 4-18." \
+  --logo static/images/test/logos/raptors.png \
+  --primary "#56a0d3" \
+  --secondary "#666666" \
+  --age "10u" \
+  --skill "intermediate" \
+  --all \
+  --out delmarva-raptors-10a-national-team-plan.docx
 ```
 
 #### Example 3: Goalie Journal for "Delmarva Raptors" (PNG logo)
 
 ```bash
 npx tsx generate-test-goalie-journal.ts \
-  --name "Johnny Raptor" \
-  --team "Delmarva Raptors" \
-  --logo static/images/test/logos/raptors.png \
-  --out delmarva-raptors-goalie-journal.pdf
+  --name "Jimmy Goldberg" \
+  --team "Delaware Stars" \
+  --logo static/images/test/logos/stars.jpg \
+  --out stars-goalie-journal.pdf
 ```
 
 ---
