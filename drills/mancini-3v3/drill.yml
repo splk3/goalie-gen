@@ -1,0 +1,44 @@
+---
+name: Mancini 3v3
+description: 3v3 with dump to start.
+drill_steps: |-
+  3v3 cross-ice. Activity starts with a dump behind one of the team's nets. Play out 3v3 for about 20 seconds. Shifts should be quick.
+
+  Optional for the goalies: Goalies must stop the puck and make the first pass.
+coaching_focus_points: |-
+  - Track puck throughout zone.
+  - Be ready at all times.
+  - Control rebounds to corners or teammates.
+shooter_focus_points: |-
+  - Get open for passes.
+  - Communicate to teammates.
+  - Backcheck hard if rush occurs.
+drill_creation_date: 2026-07-02
+drill_image: mancini-3v3.png
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  equipment:
+    - none
+  space_required:
+    - whole_zone
+  game_situations:
+    - small_sided_game
