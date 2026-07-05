@@ -332,7 +332,7 @@ export function buildTrainingDetailsBlock(
  * including age-group–specific starter content.
  *
  * @param includeStarter   Whether to embed the age-group–specific starter block.
- * @param selectedAgeGroup Age group string from the form/CLI (e.g. `"12u"`).
+ * @param selectedAgeGroup Age group string from the form/CLI (e.g. `"12U"`).
  * @param seasonOverviewMd Pre-loaded content from
  *   `src/content/team-plan/season-overview.md`.
  */
@@ -342,10 +342,10 @@ export function getSeasonOverviewMarkdown(
   seasonOverviewMd: string
 ): string {
   const ageGroupHeadingMap: Record<string, string> = {
-    "8u": "8U Starter Content Placeholder",
-    "10u": "10U Starter Content Placeholder",
-    "12u": "12U Starter Content Placeholder",
-    "14u+": "14U+ Starter Content Placeholder",
+    "8U": "8U Starter Content Placeholder",
+    "10U": "10U Starter Content Placeholder",
+    "12U": "12U Starter Content Placeholder",
+    "14U+": "14U+ Starter Content Placeholder",
   };
 
   const selectedPlaceholderSection = extractLevel3Section(

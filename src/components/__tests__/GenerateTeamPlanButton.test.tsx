@@ -45,7 +45,7 @@ async function openModal(user: ReturnType<typeof userEvent.setup>) {
 
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText("Team Name"), "Springfield Goalies");
-  await user.selectOptions(screen.getByLabelText("Age Group"), "10u");
+  await user.selectOptions(screen.getByLabelText("Age Group"), "10U");
   await user.selectOptions(screen.getByLabelText("Skill Level"), "intermediate");
 }
 

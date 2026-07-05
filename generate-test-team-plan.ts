@@ -43,7 +43,7 @@ async function run() {
   let secondaryColor = "#AF272F";
   let logoPath = "";
   let outputPath = "test-team-plan.docx";
-  let ageGroup = "12u";
+  let ageGroup = "12U";
   let skillLevel = "intermediate";
   let enableAll = true;
 
@@ -70,7 +70,7 @@ async function run() {
       outputPath = args[i + 1];
       i++;
     } else if (args[i] === "--age" && args[i + 1]) {
-      ageGroup = args[i + 1].toLowerCase();
+      ageGroup = args[i + 1].toUpperCase();
       i++;
     } else if (args[i] === "--skill" && args[i + 1]) {
       skillLevel = args[i + 1].toLowerCase();
@@ -91,7 +91,7 @@ Options:
   --secondary <hex>    Secondary Color (default: "#AF272F")
   --logo <path>        Path to logo image file (optional)
   --out <path>         Path to output .docx file (default: "test-team-plan.docx")
-  --age <string>       Age Group (8u, 10u, 12u, 14u+, default: "12u")
+  --age <string>       Age Group (8U, 10U, 12U, 14U+, default: "12U")
   --skill <string>     Skill Level (beginner, intermediate, advanced, default: "intermediate")
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features

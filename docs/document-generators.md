@@ -106,7 +106,7 @@ You can run the underlying scripts directly using `npx tsx` to customize names, 
 - `--secondary <hex>`: Secondary color hex code (default: `"#AF272F"`)
 - `--logo <path>`: Local file path to a logo image (default: none)
 - `--out <path>`: Destination path of the generated `.docx` (default: `"test-team-plan.docx"`)
-- `--age <string>`: Age Group (`8u`, `10u`, `12u`, `14u+`, default: `"12u"`)
+- `--age <string>`: Age Group (`8U`, `10U`, `12U`, `14U+`, default: `"12U"`)
 - `--skill <string>`: Skill Level (`beginner`, `intermediate`, `advanced`, default: `"intermediate"`)
 - `--all` / `--none`: Enable/disable all optional event calendars and details (default: `--all`)
 
@@ -150,7 +150,7 @@ npx tsx generate-test-team-plan.ts \
   --logo static/images/test/logos/raptors.png \
   --primary "#56a0d3" \
   --secondary "#666666" \
-  --age "10u" \
+  --age "10U" \
   --skill "intermediate" \
   --all \
   --out delmarva-raptors-10a-national-team-plan.docx

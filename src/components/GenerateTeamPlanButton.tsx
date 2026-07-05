@@ -190,7 +190,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const addEventDatesButtonRef = React.useRef<HTMLButtonElement>(null);
   const deleteDateTriggerRef = React.useRef<HTMLButtonElement | null>(null);
 
-  const ageGroups: AgeGroup[] = ["8u", "10u", "12u", "14u+"];
+  const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U+"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
   const availableConfigurableEventTypes = React.useMemo(

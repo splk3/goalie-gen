@@ -99,7 +99,7 @@ export interface ClubPlanContent {
 
 // ─── Team Plan ────────────────────────────────────────────────────────────────
 
-export type AgeGroup = "8u" | "10u" | "12u" | "14u+";
+export type AgeGroup = "8U" | "10U" | "12U" | "14U+";
 export type SkillLevel = "beginner" | "intermediate" | "advanced";
 export type ConfigurableEventType =
   | "On-ice Practice"

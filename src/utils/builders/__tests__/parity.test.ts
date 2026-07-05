@@ -77,7 +77,7 @@ const MINIMAL_TEAM_CONFIG: TeamPlanConfig = {
   teamMotto: "Win together",
   primaryColor: "#00205B",
   secondaryColor: "#AF272F",
-  ageGroup: "12u",
+  ageGroup: "12U",
   skillLevel: "intermediate",
   hasGoalieMentors: false,
   hasGoalieEvaluations: false,
