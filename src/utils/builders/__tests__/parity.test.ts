@@ -126,16 +126,37 @@ function makeMockJsPdfModule() {
       pageSize: { height: 297 },
       pages,
     };
-    setFontSize(_size: number) { return this; }
-    setFont(_name: string, _style?: string) { return this; }
-    setLineWidth(_w: number) { return this; }
-    text(_text: string | string[], _x: number, _y: number, _options?: object) { return this; }
-    line(_x1: number, _y1: number, _x2: number, _y2: number) { return this; }
-    rect(_x: number, _y: number, _w: number, _h: number) { return this; }
-    splitTextToSize(text: string, _maxWidth: number): string[] { return [text]; }
-    addPage() { pages.push(pages.length + 1); return this; }
-    addImage(_data: string, _format: string, _x: number, _y: number, _w: number, _h: number) { return this; }
-    output(_type: string): unknown { return _type === "blob" ? new Blob() : new ArrayBuffer(0); }
+    setFontSize(_size: number) {
+      return this;
+    }
+    setFont(_name: string, _style?: string) {
+      return this;
+    }
+    setLineWidth(_w: number) {
+      return this;
+    }
+    text(_text: string | string[], _x: number, _y: number, _options?: object) {
+      return this;
+    }
+    line(_x1: number, _y1: number, _x2: number, _y2: number) {
+      return this;
+    }
+    rect(_x: number, _y: number, _w: number, _h: number) {
+      return this;
+    }
+    splitTextToSize(text: string, _maxWidth: number): string[] {
+      return [text];
+    }
+    addPage() {
+      pages.push(pages.length + 1);
+      return this;
+    }
+    addImage(_data: string, _format: string, _x: number, _y: number, _w: number, _h: number) {
+      return this;
+    }
+    output(_type: string): unknown {
+      return _type === "blob" ? new Blob() : new ArrayBuffer(0);
+    }
   }
   return { jsPDF: MockJsPDF };
 }
@@ -328,13 +349,7 @@ describe("buildTeamPlanDocument", () => {
       hasGoalieEvaluations: true,
       goalieEvaluationTimes: "1",
     };
-    await buildTeamPlanDocument(
-      config,
-      MINIMAL_TEAM_CONTENT,
-      null,
-      trackingQrGenerator,
-      docx
-    );
+    await buildTeamPlanDocument(config, MINIMAL_TEAM_CONTENT, null, trackingQrGenerator, docx);
     // The builder calls QR generator for the evaluation forms link
     expect(calledUrls.length).toBeGreaterThan(0);
     expect(calledUrls.some((url) => url === "https://goaliegen.com/goalie-evals/")).toBe(true);
@@ -392,7 +407,8 @@ describe("buildGoalieJournalPdf", () => {
   it("accepts logo data without error", () => {
     const mockModule = makeMockJsPdfModule();
     const logoData = {
-      dataUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+      dataUrl:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
       width: 60,
       height: 60,
     };

@@ -231,7 +231,13 @@ Options:
     detailedEventSelections,
   };
 
-  const document = await buildTeamPlanDocument(config, content, resolvedLogo, nodeQrGenerator, docx);
+  const document = await buildTeamPlanDocument(
+    config,
+    content,
+    resolvedLogo,
+    nodeQrGenerator,
+    docx
+  );
   const buffer = await docx.Packer.toBuffer(document);
   fs.writeFileSync(outputPath, buffer);
   console.log(`\u2713 Generated team plan successfully at: ${outputPath}`);
