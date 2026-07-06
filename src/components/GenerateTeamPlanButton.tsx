@@ -907,7 +907,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                           }));
                         }}
                         disabled={!canEditEventPlanning}
-                        className="h-4 w-4 text-usa-blue border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                        className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
                       />
                       <span>{eventType}</span>
                     </label>
@@ -946,7 +946,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                               }))
                             }
                             disabled={!canEditEventPlanning || isCalendarDisabledForType}
-                            className="h-4 w-4 text-usa-blue border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                            className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
                           />
                           <span>
                             {eventType}
@@ -1039,7 +1039,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                                   }
                                   disabled={!canEditEventPlanning}
                                   aria-label={`More than one event on this date (${formatDisplayDate(selection.date)})`}
-                                  className="h-4 w-4 text-usa-blue border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                                  className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
                                 />
                                 <span>More than one event on this date</span>
                               </label>

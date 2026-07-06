@@ -95,7 +95,7 @@ function Toggle({ id, label, checked, onChange, disabled }: ToggleProps) {
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
-        className="mt-1 h-4 w-4 accent-usa-blue disabled:cursor-not-allowed"
+        className="mt-1 h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
       />
       <span className="text-gray-700 dark:text-gray-300">{label}</span>
     </label>
@@ -796,7 +796,7 @@ export default function GenerateClubPlanButton() {
                     checked={goaliesAreFree}
                     onChange={(e) => setGoaliesAreFree(e.target.checked)}
                     disabled={!!generatedBlob || isGenerating}
-                    className="h-4 w-4 accent-usa-blue"
+                    className="h-4 w-4 accent-usa-blue dark:accent-blue-400"
                   />
                   Goalies are Free!
                 </label>

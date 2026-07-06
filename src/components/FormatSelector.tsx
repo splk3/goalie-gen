@@ -32,7 +32,7 @@ export default function FormatSelector({
             checked={format === "docx"}
             onChange={() => onChange("docx")}
             disabled={disabled}
-            className="accent-usa-blue"
+            className="accent-usa-blue dark:accent-blue-400"
           />
           <span className="text-gray-700 dark:text-gray-300">Word (.docx)</span>
         </label>
@@ -44,7 +44,7 @@ export default function FormatSelector({
             checked={format === "pdf"}
             onChange={() => onChange("pdf")}
             disabled={disabled}
-            className="accent-usa-blue"
+            className="accent-usa-blue dark:accent-blue-400"
           />
           <span className="text-gray-700 dark:text-gray-300">PDF (.pdf)</span>
         </label>

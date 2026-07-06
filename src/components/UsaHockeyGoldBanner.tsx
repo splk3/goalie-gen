@@ -71,13 +71,20 @@ export default function UsaHockeyGoldBanner({
       </div>
       {(showCopyright || showTerms) && (
         <div className="mt-4 flex items-start justify-center gap-3">
-          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-white dark:bg-transparent flex items-center justify-center flex-shrink-0">
             <img
               src={withPrefix("/images/logos/logo-alt-light-whitebg.png")}
               alt="Goalie Gen"
               width={56}
               height={56}
-              className="w-14 h-14 object-contain"
+              className="w-14 h-14 object-contain block dark:hidden"
+            />
+            <img
+              src={withPrefix("/images/logos/logo-alt-dark.png")}
+              alt="Goalie Gen"
+              width={56}
+              height={56}
+              className="w-14 h-14 object-contain hidden dark:block"
             />
           </div>
           <div className="text-center">

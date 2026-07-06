@@ -127,7 +127,7 @@ function ColorPickerControl({
               }
             }}
             disabled={disabled}
-            className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white p-1 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-usa-blue"
+            className="h-10 w-16 cursor-pointer rounded border border-gray-300 bg-white dark:bg-gray-700 p-1 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-usa-blue"
           />
           <p className="mt-2 text-xs font-mono text-gray-700 dark:text-gray-300">{value}</p>
 

@@ -56,7 +56,7 @@ export default function Home() {
               <ShareButton
                 label="Share Goalie Gen"
                 title="Goalie Gen — Goaltending Development Plans"
-                className="inline-flex w-full items-center gap-2 justify-center rounded-md bg-white px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100"
+                className="inline-flex w-full items-center gap-2 justify-center rounded-md bg-white dark:bg-white/90 px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100 dark:hover:bg-white"
               />
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function Home() {
               <img
                 src="/images/coachthem/supported-by-ct.png"
                 alt="Supported by CoachThem"
-                className="w-full h-auto"
+                className="w-full h-auto dark:opacity-90 dark:brightness-90"
               />
             </a>
           </div>

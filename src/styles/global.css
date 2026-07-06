@@ -174,3 +174,25 @@
     page-break-before: always;
   }
 }
+
+/* Dark mode overrides for react-image-crop
+ * The library's default CSS uses white handles and borders that are hard to
+ * see on dark backgrounds. These overrides improve crop UI visibility in dark mode. */
+.dark .ReactCrop__crop-selection {
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 0 0 9999em rgba(0, 0, 0, 0.65),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.dark .ReactCrop__drag-handle::after {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.dark .ReactCrop__rule-of-thirds-hz::before,
+.dark .ReactCrop__rule-of-thirds-hz::after,
+.dark .ReactCrop__rule-of-thirds-vt::before,
+.dark .ReactCrop__rule-of-thirds-vt::after {
+  background-color: rgba(255, 255, 255, 0.3);
+}

@@ -147,7 +147,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             <ShareButton
               label="Share Drill"
               title={drillData.name}
-              className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
+              className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900`}
             />
             <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
           </div>
@@ -442,7 +442,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             type="button"
             onClick={handlePrint}
             disabled={isPrinting}
-            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 ${
+            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900 ${
               isPrinting ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
@@ -456,7 +456,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <ShareButton
             label="Share Drill"
             title={drillData.name}
-            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700`}
+            className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900`}
           />
           <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>
         </div>
@@ -467,7 +467,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto" />
+            <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto dark:opacity-90 dark:brightness-90" />
           </a>
         </div>
       </main>
