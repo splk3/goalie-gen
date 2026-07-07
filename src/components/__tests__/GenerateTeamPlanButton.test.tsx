@@ -45,7 +45,7 @@ async function openModal(user: ReturnType<typeof userEvent.setup>) {
 
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText("Team Name"), "Springfield Goalies");
-  await user.selectOptions(screen.getByLabelText("Age Group"), "10u");
+  await user.selectOptions(screen.getByLabelText("Age Group"), "10U");
   await user.selectOptions(screen.getByLabelText("Skill Level"), "intermediate");
 }
 
@@ -81,6 +81,20 @@ describe("GenerateTeamPlanButton", () => {
     expect(screen.queryByText(/output format/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("radio", { name: /word/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("radio", { name: /pdf/i })).not.toBeInTheDocument();
+  });
+
+  it("shows updated age group options", async () => {
+    const user = userEvent.setup();
+    render(<GenerateTeamPlanButton />);
+
+    await openModal(user);
+
+    const ageGroupSelect = screen.getByLabelText("Age Group");
+    expect(within(ageGroupSelect).getByRole("option", { name: "14U" })).toBeInTheDocument();
+    expect(
+      within(ageGroupSelect).getByRole("option", { name: "16U and older" })
+    ).toBeInTheDocument();
+    expect(within(ageGroupSelect).queryByRole("option", { name: "14U+" })).not.toBeInTheDocument();
   });
 
   it("shows primary and secondary team color controls with USA defaults", async () => {

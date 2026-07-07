@@ -436,13 +436,13 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
             <ShareButton
               label="Share"
               title="Goalie Drills — Goalie Gen"
-              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white dark:bg-white/90 px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100 dark:hover:bg-white"
             />
             <a
               href="https://github.com/splk3/goalie-gen/issues/new?template=new-drill-template.yml"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100"
+              className="inline-flex items-center justify-center rounded-md bg-white dark:bg-white/90 px-4 py-2 font-semibold text-usa-red transition-colors hover:bg-gray-100 dark:hover:bg-white"
             >
               Share a Drill Idea
             </a>
@@ -693,7 +693,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
       <div className="mt-8">
         <a href="https://coachthem.com/sports/ice-hockey" target="_blank" rel="noopener noreferrer">
-          <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto" />
+          <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto dark:opacity-90 dark:brightness-90" />
         </a>
       </div>
     </PageLayout>

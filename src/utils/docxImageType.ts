@@ -20,3 +20,17 @@ export const toDocxImageTypeFromDataUrl = (dataUrl: string): DocxImageType => {
   const match = dataUrl.match(/^data:(image\/[a-z0-9+.-]+);/i);
   return toDocxImageTypeFromMime(match?.[1]);
 };
+
+export const toDocxImageTypeFromExtension = (ext: string): DocxImageType => {
+  const normalized = ext.trim().toLowerCase().replace(/^\./, "");
+  if (normalized === "jpg" || normalized === "jpeg") {
+    return "jpg";
+  }
+  if (normalized === "gif") {
+    return "gif";
+  }
+  if (normalized === "bmp") {
+    return "bmp";
+  }
+  return "png";
+};

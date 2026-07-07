@@ -50,13 +50,13 @@ export default function FeedbackButton() {
               href="https://forms.gle/qFEbMdm2PN4hDytj8"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full text-center bg-usa-red hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              className="block w-full text-center bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
               Send Us Feedback
             </a>
             <a
               href="mailto:feedback@goaliegen.com"
-              className="block w-full text-center bg-usa-blue hover:bg-blue-900 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              className="block w-full text-center bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
             >
               Email Us
             </a>

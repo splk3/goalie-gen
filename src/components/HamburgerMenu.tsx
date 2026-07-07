@@ -99,7 +99,7 @@ export default function HamburgerMenu() {
         aria-expanded={isOpen}
         aria-controls="hamburger-menu-dialog"
         onClick={() => setIsOpen((v) => !v)}
-        className="flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-usa-blue"
+        className="flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-usa-blue dark:focus:ring-offset-gray-800"
       >
         <span className="block w-6 h-0.5 bg-white rounded-full" />
         <span className="block w-6 h-0.5 bg-white rounded-full" />
