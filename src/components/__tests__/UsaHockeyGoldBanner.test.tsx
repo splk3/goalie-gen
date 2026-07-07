@@ -4,7 +4,7 @@ import UsaHockeyGoldBanner from "../UsaHockeyGoldBanner";
 import { useStaticQuery } from "gatsby";
 
 jest.mock("gatsby", () => {
-  const React = require("react");
+  const React = jest.requireActual("react");
   const gatsby = jest.requireActual("gatsby");
 
   return {

@@ -345,7 +345,8 @@ export function getSeasonOverviewMarkdown(
     "8U": "8U Starter Content Placeholder",
     "10U": "10U Starter Content Placeholder",
     "12U": "12U Starter Content Placeholder",
-    "14U+": "14U+ Starter Content Placeholder",
+    "14U": "14U Starter Content Placeholder",
+    "16U and older": "16U and older Starter Content Placeholder",
   };
 
   const selectedPlaceholderSection = extractLevel3Section(

@@ -7,7 +7,11 @@
  */
 import { parseMarkdown } from "../markdownParser";
 import { blocksToDocxParagraphs, cleanHexColor, makeDocxHeaderFooter } from "../docxContent";
-import type { ClubPlanConfig, ClubPlanContent, ResolvedLogoData } from "../../types/generatorConfig";
+import type {
+  ClubPlanConfig,
+  ClubPlanContent,
+  ResolvedLogoData,
+} from "../../types/generatorConfig";
 import {
   extractLevel3Section,
   valueOrPlaceholder,
@@ -235,10 +239,7 @@ export async function buildClubPlanDocument(
     ...blocksToDocxParagraphs(
       parseMarkdown(
         withSectionHeading(
-          contactInformationMd.replace(
-            /\[CLUB NAME\]/g,
-            valueOrPlaceholder(clubName, "CLUB_NAME")
-          ),
+          contactInformationMd.replace(/\[CLUB NAME\]/g, valueOrPlaceholder(clubName, "CLUB_NAME")),
           "Goalie Coaching Contacts"
         )
       ),
@@ -318,9 +319,7 @@ export async function buildClubPlanDocument(
       /\[GOALIE_EVALUATIONS_WHEN\]/g,
       valueOrPlaceholder(goalieEvaluationsWhen, "GOALIE_EVALUATIONS_WHEN")
     );
-    documentChildren.push(
-      ...blocksToDocxParagraphs(parseMarkdown(progressWithValues), colorOpts)
-    );
+    documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(progressWithValues), colorOpts));
   }
 
   // External Resources section (optional)

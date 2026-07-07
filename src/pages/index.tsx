@@ -57,7 +57,7 @@ export default function Home() {
             </div>
             <div className="hidden md:block flex-1 mx-4">
               <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
-                Where every coach is a goalie coach!
+                Making every coach a goalie coach!
               </p>
             </div>
             <DarkModeToggle />

@@ -8,7 +8,6 @@ import TeamColorPickers from "./TeamColorPickers";
 import { loadDocxModule } from "../utils/loadExportModules";
 import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 import { toDocxImageTypeFromMime } from "../utils/docxImageType";
-import { buildEventCalendarMonths } from "../utils/teamPlanCalendarGrid";
 import {
   DEFAULT_PRIMARY_TEAM_COLOR,
   DEFAULT_SECONDARY_TEAM_COLOR,
@@ -48,8 +47,6 @@ const CONFIGURABLE_EVENT_TYPES: ConfigurableEventType[] = [
 const DETAILED_ENTRY_EVENT_TYPES: EventType[] = [...CONFIGURABLE_EVENT_TYPES, "TBD"];
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-// Keep each month table contiguous by forcing one calendar month per page.
-const MONTH_CALENDARS_PER_PAGE = 1;
 
 function EventTypeLegend({ label, helperText }: EventTypeLegendProps) {
   return (
@@ -190,7 +187,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const addEventDatesButtonRef = React.useRef<HTMLButtonElement>(null);
   const deleteDateTriggerRef = React.useRef<HTMLButtonElement | null>(null);
 
-  const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U+"];
+  const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U", "16U and older"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
   const availableConfigurableEventTypes = React.useMemo(
@@ -449,7 +446,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       docxModule
     );
     const blob = await Packer.toBlob(doc);
-    const safeName = (teamName.trim() || "TEAM_NAME").replace(/[<>:"/\|?*]/g, "_");
+    const safeName = (teamName.trim() || "TEAM_NAME").replace(/[<>:"/|?*]/g, "_");
     setGeneratedBlob(blob);
     setGeneratedFileName(`${safeName}_Team_Development_Plan.docx`);
   };

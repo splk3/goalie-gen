@@ -14,7 +14,11 @@ import {
   DEFAULT_GOALIE_DISCOUNT,
 } from "./src/utils/generatorDefaults";
 import { buildClubPlanDocument } from "./src/utils/builders/clubPlanBuilder";
-import type { ClubPlanConfig, ClubPlanContent, ResolvedLogoData } from "./src/types/generatorConfig";
+import type {
+  ClubPlanConfig,
+  ClubPlanContent,
+  ResolvedLogoData,
+} from "./src/types/generatorConfig";
 
 import { getImageDimensions } from "./generate-utils";
 
@@ -104,10 +108,7 @@ Options:
       "utf8"
     ),
     skillDevelopmentMd: fs.readFileSync(path.join(contentDir, "skill-development.md"), "utf8"),
-    contactInformationMd: fs.readFileSync(
-      path.join(contentDir, "contact-information.md"),
-      "utf8"
-    ),
+    contactInformationMd: fs.readFileSync(path.join(contentDir, "contact-information.md"), "utf8"),
     equipmentMd: fs.readFileSync(path.join(contentDir, "equipment.md"), "utf8"),
     progressTrackingMd: fs.readFileSync(path.join(contentDir, "progress-tracking.md"), "utf8"),
     resourcesMd: fs.readFileSync(path.join(contentDir, "resources.md"), "utf8"),

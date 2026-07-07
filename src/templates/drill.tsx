@@ -11,6 +11,7 @@ import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
+import { formatDrillTagValue } from "../utils/drillTagLabels";
 import type { DrillData } from "../types/drill";
 import DrillMarkdown from "../components/DrillMarkdown";
 
@@ -24,12 +25,7 @@ interface DrillTemplateProps {
   pageContext: DrillPageContext;
 }
 
-const formatTag = (tag: string): string => {
-  return tag
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
+const formatTag = (tag: string): string => formatDrillTagValue(tag);
 
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext;

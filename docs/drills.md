@@ -56,7 +56,7 @@ Filter metadata tags must conform to the following allowed values:
 - **`skating_skill`**:
   - `butterfly`, `power_push`, `shuffle`, `t_push`, `c_cut`
 - **`age_level`**:
-  - `10U_below`, `12U`, `14U`, `16U_and_older`, `all`
+  - `10_and_under`, `12U`, `14U`, `16U_and_older`, `all`
 - **`skill_level`**:
   - `beginner`, `intermediate`, `advanced`
 - **`equipment`**:

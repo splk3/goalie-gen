@@ -34,6 +34,23 @@ const nodeQrGenerator: QrGenerator = async (url: string): Promise<Uint8Array | n
   }
 };
 
+function normalizeAgeGroup(rawValue: string): string {
+  const normalized = rawValue.trim().toLowerCase().replace(/\s+/g, " ");
+
+  const ageMap: Record<string, string> = {
+    "8u": "8U",
+    "10u": "10U",
+    "12u": "12U",
+    "14u": "14U",
+    "14u+": "14U",
+    "16u and older": "16U and older",
+    "16u_and_older": "16U and older",
+    "16u+": "16U and older",
+  };
+
+  return ageMap[normalized] || rawValue.trim();
+}
+
 async function run() {
   const args = process.argv.slice(2);
   let teamName = "Test Team";
@@ -70,7 +87,7 @@ async function run() {
       outputPath = args[i + 1];
       i++;
     } else if (args[i] === "--age" && args[i + 1]) {
-      ageGroup = args[i + 1].toUpperCase();
+      ageGroup = normalizeAgeGroup(args[i + 1]);
       i++;
     } else if (args[i] === "--skill" && args[i + 1]) {
       skillLevel = args[i + 1].toLowerCase();
@@ -91,7 +108,7 @@ Options:
   --secondary <hex>    Secondary Color (default: "#AF272F")
   --logo <path>        Path to logo image file (optional)
   --out <path>         Path to output .docx file (default: "test-team-plan.docx")
-  --age <string>       Age Group (8U, 10U, 12U, 14U+, default: "12U")
+  --age <string>       Age Group (8U, 10U, 12U, 14U, 16U and older, default: "12U")
   --skill <string>     Skill Level (beginner, intermediate, advanced, default: "intermediate")
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features

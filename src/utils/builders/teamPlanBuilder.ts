@@ -264,10 +264,7 @@ export async function buildTeamPlanDocument(
 
   // ── QR resource link helper ────────────────────────────────────────────────
 
-  const documentChildren: (
-    | InstanceType<typeof Paragraph>
-    | InstanceType<typeof Table>
-  )[] = [];
+  const documentChildren: (InstanceType<typeof Paragraph> | InstanceType<typeof Table>)[] = [];
 
   const addResourceLinkWithQr = async (
     linesBeforeUrl: string,
@@ -526,8 +523,7 @@ export async function buildTeamPlanDocument(
       );
 
       calendarMonths.forEach((month, monthIndex) => {
-        const startsNewCalendarPage =
-          monthIndex > 0 && monthIndex % MONTH_CALENDARS_PER_PAGE === 0;
+        const startsNewCalendarPage = monthIndex > 0 && monthIndex % MONTH_CALENDARS_PER_PAGE === 0;
         documentChildren.push(
           new Paragraph({
             children: [toPrimaryRun(month.monthLabel, { bold: true })],
@@ -615,9 +611,7 @@ export async function buildTeamPlanDocument(
       for (const event of detailedEventSelections) {
         documentChildren.push(
           new Paragraph({
-            children: [
-              toBlackRun(`${formatDisplayDate(event.date)} (${event.eventType})`),
-            ],
+            children: [toBlackRun(`${formatDisplayDate(event.date)} (${event.eventType})`)],
             heading: HeadingLevel.HEADING_3,
             spacing: { before: 250, after: 120 },
           })

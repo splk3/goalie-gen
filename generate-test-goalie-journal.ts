@@ -4,7 +4,11 @@ import * as jsPdfModule from "jspdf";
 import { DEFAULT_JOURNAL_ENTRY_COUNT } from "./src/utils/generatorDefaults";
 import { buildGoalieJournalPdf } from "./src/utils/builders/goalieJournalBuilder";
 import { getImageDimensions } from "./generate-utils";
-import type { GoalieJournalConfig, GoalieJournalContent, JournalLogoData } from "./src/types/generatorConfig";
+import type {
+  GoalieJournalConfig,
+  GoalieJournalContent,
+  JournalLogoData,
+} from "./src/types/generatorConfig";
 
 async function run() {
   const args = process.argv.slice(2);

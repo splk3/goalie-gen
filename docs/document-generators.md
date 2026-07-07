@@ -106,7 +106,7 @@ You can run the underlying scripts directly using `npx tsx` to customize names, 
 - `--secondary <hex>`: Secondary color hex code (default: `"#AF272F"`)
 - `--logo <path>`: Local file path to a logo image (default: none)
 - `--out <path>`: Destination path of the generated `.docx` (default: `"test-team-plan.docx"`)
-- `--age <string>`: Age Group (`8U`, `10U`, `12U`, `14U+`, default: `"12U"`)
+- `--age <string>`: Age Group (`8U`, `10U`, `12U`, `14U`, `16U and older`, default: `"12U"`)
 - `--skill <string>`: Skill Level (`beginner`, `intermediate`, `advanced`, default: `"intermediate"`)
 - `--all` / `--none`: Enable/disable all optional event calendars and details (default: `--all`)
 

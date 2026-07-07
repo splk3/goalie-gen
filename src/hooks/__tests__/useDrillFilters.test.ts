@@ -164,6 +164,8 @@ describe("useDrillFilters", () => {
 
     expect(result.current.formatTagValue("beginner")).toBe("Beginner");
     expect(result.current.formatTagValue("some_value")).toBe("Some Value");
+    expect(result.current.formatTagValue("10_and_under")).toBe("10U and under");
+    expect(result.current.formatTagValue("16U_and_older")).toBe("16U and older");
   });
 
   it("returns activeFilters as a flat list of category/value pairs", () => {

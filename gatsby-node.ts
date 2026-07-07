@@ -24,7 +24,7 @@ const ALLOWED_FUNDAMENTAL_SKILLS = [
 
 const ALLOWED_SKATING_SKILLS = ["butterfly", "power_push", "shuffle", "t_push", "c_cut"];
 
-const ALLOWED_AGE_LEVELS = ["10U_below", "12U", "14U", "16U_and_older", "all"];
+const ALLOWED_AGE_LEVELS = ["10_and_under", "12U", "14U", "16U_and_older", "all"];
 
 const ALLOWED_SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
