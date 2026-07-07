@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useStaticQuery, graphql } from "gatsby";
+import { useStaticQuery, graphql, withPrefix } from "gatsby";
 import Seo from "../components/SEO";
 import Logo from "../components/Logo";
 import DarkModeToggle from "../components/DarkModeToggle";
@@ -24,6 +24,27 @@ export default function Home() {
       }
     }
   `);
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const updateThemeState = () => {
+      setIsDarkMode(document.documentElement.classList.contains("dark"));
+    };
+
+    updateThemeState();
+
+    const observer = new MutationObserver(updateThemeState);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-usa-white dark:bg-gray-900 transition-colors">
@@ -56,7 +77,7 @@ export default function Home() {
               <ShareButton
                 label="Share Goalie Gen"
                 title="Goalie Gen — Goaltending Development Plans"
-                className="inline-flex w-full items-center gap-2 justify-center rounded-md bg-white dark:bg-white/90 px-6 py-3 text-lg font-semibold text-usa-red transition-colors hover:bg-gray-100 dark:hover:bg-white"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 text-lg font-semibold text-usa-red dark:text-red-700 transition-colors"
               />
             </div>
           </div>
@@ -213,9 +234,17 @@ export default function Home() {
       <footer className="bg-usa-blue dark:bg-gray-800 text-usa-white py-4 mt-12">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-start justify-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+            <div
+              className={`w-16 h-16 rounded-full ${
+                isDarkMode ? "bg-transparent" : "bg-white"
+              } flex items-center justify-center flex-shrink-0`}
+            >
               <img
-                src="/images/logos/logo-alt-light-whitebg.png"
+                src={withPrefix(
+                  isDarkMode
+                    ? "/images/logos/logo-alt-dark.png"
+                    : "/images/logos/logo-alt-light-whitebg.png"
+                )}
                 alt="Goalie Gen"
                 width={56}
                 height={56}

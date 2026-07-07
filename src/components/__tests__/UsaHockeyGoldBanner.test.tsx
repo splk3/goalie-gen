@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import UsaHockeyGoldBanner from "../UsaHockeyGoldBanner";
 import { useStaticQuery } from "gatsby";
 
@@ -32,19 +32,17 @@ describe("UsaHockeyGoldBanner", () => {
     });
   });
 
-  it("renders a dark-mode-aware footer logo with a dark variant and transparent background", () => {
+  it("switches the footer logo when dark mode is enabled", async () => {
+    document.documentElement.classList.remove("dark");
     render(<UsaHockeyGoldBanner showCopyright showTerms />);
 
-    const images = screen.getAllByRole("img");
-    const lightModeLogo = images.find((img) =>
-      img.getAttribute("src")?.includes("/images/logos/logo-alt-light-whitebg.png")
-    );
-    const darkModeLogo = images.find((img) =>
-      img.getAttribute("src")?.includes("/images/logos/logo-alt-dark.png")
-    );
+    const logo = screen.getByAltText("Goalie Gen");
+    expect(logo).toHaveAttribute("src", "/images/logos/logo-alt-light-whitebg.png");
 
-    expect(lightModeLogo).toBeInTheDocument();
-    expect(darkModeLogo).toBeInTheDocument();
-    expect(darkModeLogo?.closest("div")).toHaveClass("dark:bg-transparent");
+    document.documentElement.classList.add("dark");
+
+    await waitFor(() => {
+      expect(logo).toHaveAttribute("src", "/images/logos/logo-alt-dark.png");
+    });
   });
 });
