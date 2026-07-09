@@ -12,13 +12,19 @@ interface NavLink {
 const NAV_LINKS: (NavLink | null)[] = [
   { label: "Home", to: "/" },
   null,
-  { label: "Goalie Drills", to: "/goalie-drills" },
-  { label: "Team Drills with Goalie Focus", to: "/goalie-drills?team_drill=yes" },
+  { label: "All Goalie Drills", to: "/goalie-drills" },
+  { label: "Goalie Drills with Team", to: "/goalie-drills?team_drill=yes" },
+  { label: "Goalie Drills without Team", to: "/goalie-drills?team_drill=no" },
   null,
-  { label: "Goalie Evaluations", to: "/goalie-evals" },
   { label: "Club Resources", to: "/club-resources" },
   { label: "Coach Resources", to: "/coach-resources" },
   { label: "Goalie Resources", to: "/goalie-resources" },
+  null,
+  { label: "Patrick Boyle's Project", to: "/patrick-boyle-project" },
+  { label: "Katie Jablynski's Project", to: "/katie-jablynski-project" },
+  { label: "James Kujawski's Project", to: "/james-kujawski-project" },
+  null,
+  { label: "About Goalie Gen", to: "/patrick-boyle-project" },
 ];
 
 export default function HamburgerMenu() {

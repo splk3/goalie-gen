@@ -32,12 +32,18 @@ describe("HamburgerMenu", () => {
     render(<HamburgerMenu />);
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
     expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Goalie Drills" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Team Drills with Goalie Focus" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Goalie Evaluations" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "About Goalie Gen" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "All Goalie Drills" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Goalie Drills with Team" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Goalie Drills without Team" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Club Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Coach Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Resources" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Patrick Boyle's Project" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Katie Jablynski's Project" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "James Kujawski's Project" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "About Goalie Gen" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Goalie Evaluations" })).not.toBeInTheDocument();
   });
 
   it("closes the menu when the close button is clicked", () => {
@@ -61,7 +67,7 @@ describe("HamburgerMenu", () => {
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
 
     const closeButton = screen.getByRole("button", { name: /close navigation menu/i });
-    const lastLink = screen.getByRole("link", { name: "Goalie Resources" });
+    const lastLink = screen.getByRole("link", { name: "About Goalie Gen" });
 
     closeButton.focus();
     fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
