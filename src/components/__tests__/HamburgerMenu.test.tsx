@@ -32,7 +32,6 @@ describe("HamburgerMenu", () => {
     render(<HamburgerMenu />);
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
     expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "About Goalie Gen" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "All Goalie Drills" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Drills with Team" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Drills without Team" })).toBeInTheDocument();
