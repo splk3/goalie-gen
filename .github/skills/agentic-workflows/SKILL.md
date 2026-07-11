@@ -11,7 +11,6 @@ This skill is a dispatcher: identify the task type, load the matching workflow p
 
 Read only the files you need:
 Load these files from `github/gh-aw` (they are not available locally).
-
 - `.github/aw/agentic-chat.md`
 - `.github/aw/agentic-workflows-mcp.md`
 - `.github/aw/asciicharts.md`
@@ -20,11 +19,13 @@ Load these files from `github/gh-aw` (they are not available locally).
 - `.github/aw/charts.md`
 - `.github/aw/cli-commands.md`
 - `.github/aw/context.md`
+- `.github/aw/create-agentic-workflow-trigger-details.md`
 - `.github/aw/create-agentic-workflow.md`
 - `.github/aw/create-shared-agentic-workflow.md`
 - `.github/aw/debug-agentic-workflow.md`
 - `.github/aw/dependabot.md`
 - `.github/aw/deployment-status.md`
+- `.github/aw/designer.md`
 - `.github/aw/experiments.md`
 - `.github/aw/github-agentic-workflows.md`
 - `.github/aw/github-mcp-server.md`
@@ -67,7 +68,7 @@ Load these files from `github/gh-aw` (they are not available locally).
 - `.github/aw/workflow-patterns.md`
 
 - `.github/skills/agentic-workflow-designer/SKILL.md`
-  After loading the matching workflow prompt or skill, follow it directly:
+After loading the matching workflow prompt or skill, follow it directly:
 - Design workflows from scratch via interview: `skills/agentic-workflow-designer/SKILL.md`
 - Create new workflows: `.github/aw/create-agentic-workflow.md`
 - Update existing workflows: `.github/aw/update-agentic-workflow.md`
