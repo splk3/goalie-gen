@@ -74,8 +74,12 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 
-# local super-linter.log
+# Super-linter outputs
+super-linter-output
 super-linter.log
+
+# GitHub Actions leftovers
+github_conf
 
 # local tmp files
 tmp/
