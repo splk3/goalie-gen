@@ -1,4 +1,5 @@
 import * as React from "react";
+import { formatDrillTagValue } from "../utils/drillTagLabels";
 
 interface DrillTags {
   skill_level?: string[];
@@ -160,10 +161,7 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
 
   // Format tag value for display
   const formatTagValue = React.useCallback((value: string) => {
-    return value
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    return formatDrillTagValue(value);
   }, []);
 
   // Get all active filters

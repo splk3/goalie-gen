@@ -18,6 +18,10 @@
 
 [SEASON_OVERVIEW_12U_STARTER]
 
-### 14U+ Starter Content Placeholder
+### 14U Starter Content Placeholder
 
-[SEASON_OVERVIEW_14U_PLUS_STARTER]
+[SEASON_OVERVIEW_14U_STARTER]
+
+### 16U and older Starter Content Placeholder
+
+[SEASON_OVERVIEW_16U_AND_OLDER_STARTER]

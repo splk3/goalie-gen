@@ -31,7 +31,7 @@ export default function AboutPage({ title, subtitle, rawMarkdown }: AboutPagePro
           <div className="flex-shrink-0">
             <ShareButton
               label="Share"
-              className="inline-flex items-center gap-2 justify-center rounded-md bg-white px-4 py-2 font-semibold text-usa-blue transition-colors hover:bg-gray-100"
+              className="inline-flex items-center gap-2 justify-center rounded-md bg-white dark:bg-white/90 px-4 py-2 font-semibold text-usa-blue transition-colors hover:bg-gray-100 dark:hover:bg-white dark:text-usa-blue"
             />
           </div>
         </div>

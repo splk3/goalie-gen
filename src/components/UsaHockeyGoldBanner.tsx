@@ -28,6 +28,28 @@ export default function UsaHockeyGoldBanner({
       }
     }
   `);
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const updateThemeState = () => {
+      setIsDarkMode(document.documentElement.classList.contains("dark"));
+    };
+
+    updateThemeState();
+
+    const observer = new MutationObserver(updateThemeState);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -71,9 +93,17 @@ export default function UsaHockeyGoldBanner({
       </div>
       {(showCopyright || showTerms) && (
         <div className="mt-4 flex items-start justify-center gap-3">
-          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+          <div
+            className={`w-16 h-16 rounded-full ${
+              isDarkMode ? "bg-transparent" : "bg-white"
+            } flex items-center justify-center flex-shrink-0`}
+          >
             <img
-              src={withPrefix("/images/logos/logo-alt-light-whitebg.png")}
+              src={withPrefix(
+                isDarkMode
+                  ? "/images/logos/logo-alt-dark.png"
+                  : "/images/logos/logo-alt-light-whitebg.png"
+              )}
               alt="Goalie Gen"
               width={56}
               height={56}

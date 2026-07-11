@@ -67,7 +67,7 @@ export default function DownloadDrillPdfButton({
     <button
       onClick={handleDownload}
       disabled={isGenerating}
-      className={`${className} bg-usa-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
+      className={`${className} bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900 text-white font-bold py-3 px-6 rounded-lg transition-colors ${
         isGenerating ? "opacity-50 cursor-not-allowed" : ""
       }`}
     >

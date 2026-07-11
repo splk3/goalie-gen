@@ -49,7 +49,7 @@ For detailed guides on setup, directories, schemas, and layouts, see the documen
 - 📄 **[Routing & Pages](docs/pages.md)**: Summary of Gatsby routing, pages structure, dynamic templates, and ingestion pipelines.
 - 🧊 **[Drill Database & Schema](docs/drills.md)**: Full validation guidelines, required tags list, YAML schema details, and video constraints.
 - 🧩 **[UI Components Review](docs/components.md)**: Index and specifications of common reusable UI components.
-- 🖨️ **[Document Generation & Compatibility](document-generators.md)**: PDF layout optimization rules and DOCX Cross-Application Compatibility guidelines.
+- 🖨️ **[Document Generation & Compatibility](docs/document-generators.md)**: PDF layout optimization rules and DOCX Cross-Application Compatibility guidelines.
 - 🧪 **[Testing Guide](docs/testing.md)**: Commands, mocks, Jest setups, and drill pagination verification tests.
 - 🔄 **[CI/CD & Deployments](docs/ci-cd.md)**: Deployment environments, setup links, and GitHub Actions workflow descriptions.
 

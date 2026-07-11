@@ -133,9 +133,9 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
         ref={triggerRef}
         onClick={() => setShowModal(true)}
         className={[
-          "inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-100",
-          "hover:bg-gray-100 dark:hover:bg-gray-200 px-6 py-3 text-lg font-semibold",
-          "text-usa-blue transition-colors",
+          "inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-800",
+          "hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-3 text-lg font-semibold",
+          "text-usa-blue dark:text-blue-400 transition-colors",
           className ?? "",
         ].join(" ")}
       >

@@ -24,6 +24,7 @@ import {
   parseDrillStepsMarkdown,
 } from "./drillMarkdown";
 import type { DrillMarkdownBlock, DrillMarkdownListBlock } from "./drillMarkdown";
+import { formatDrillTagValue } from "./drillTagLabels";
 
 export type { DrillData };
 
@@ -72,12 +73,7 @@ const pruneExpiredPdfCacheEntries = (now: number): void => {
   }
 };
 
-const formatTag = (tag: string): string => {
-  return tag
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
+const formatTag = (tag: string): string => formatDrillTagValue(tag);
 
 const getQrCodeDataURL = async (url: string): Promise<string | null> => {
   const trimmedUrl = url.trim();

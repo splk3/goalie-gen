@@ -131,7 +131,7 @@ body:
       description: Select all that apply.
       options:
         - label: all
-        - label: 10U_below
+        - label: 10_and_under
         - label: 12U
         - label: 14U
         - label: 16U_and_older
