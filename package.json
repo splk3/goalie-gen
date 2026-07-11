@@ -36,8 +36,8 @@
     "react-image-crop": "^11.0.10"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.1",
-    "@babel/preset-typescript": "^8.0.1",
+    "@babel/core": "^7.29.7",
+    "@babel/preset-typescript": "^7.29.7",
     "@tailwindcss/postcss": "^4.2.3",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
