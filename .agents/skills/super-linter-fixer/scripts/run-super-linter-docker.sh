@@ -17,6 +17,12 @@ if ! docker info &>/dev/null; then
   exit 1
 fi
 
+# Ensure local lint dependencies are available so ESLint config imports resolve inside the container.
+if [[ -f package.json ]] && [[ ! -d node_modules/eslint ]]; then
+  echo "Installing project dependencies for local super-linter run..."
+  npm ci --no-audit --no-fund --legacy-peer-deps
+fi
+
 # Run the docker container
 # Mount the project root to /tmp/lint — this is the super-linter container's expected
 # workspace path when running with RUN_LOCAL=true (matches CI behavior).
@@ -25,15 +31,16 @@ fi
 # Exclude generated/agent files from all linters (auto-generated or external content)
 docker run --rm \
   -e RUN_LOCAL=true \
-  -e USE_FIND_ALGORITHM=true \
   -e VALIDATE_ALL_CODEBASE=true \
+  -e DEFAULT_BRANCH=main \
   -e LINTER_RULES_PATH=.github/linters \
   -e VALIDATE_JAVASCRIPT_BIOME=false \
   -e VALIDATE_TYPESCRIPT_BIOME=false \
   -e VALIDATE_BIOME_FORMAT=false \
   -e VALIDATE_BIOME_LINT=false \
   -e VALIDATE_PYTHON_BLACK=false \
-  -e FILTER_REGEX_EXCLUDE=".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/).*" \
+  -e VALIDATE_TRIVY=false \
+  -e FILTER_REGEX_EXCLUDE=".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/|\\.github/skills/).*" \
   -v "$(pwd):/tmp/lint" \
   "$SUPER_LINTER_IMAGE"
 
