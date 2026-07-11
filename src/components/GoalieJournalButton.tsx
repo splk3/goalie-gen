@@ -134,6 +134,8 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
       goalieName,
       teamName,
+      primaryColor: primaryTeamColor,
+      secondaryColor: secondaryTeamColor,
       season,
       entryCount: DEFAULT_JOURNAL_ENTRY_COUNT,
     };

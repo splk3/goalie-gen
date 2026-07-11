@@ -162,6 +162,9 @@ export interface TeamPlanContent {
 export interface GoalieJournalConfig {
   goalieName: string;
   teamName: string;
+  // Colors (raw hex strings, may include a leading #)
+  primaryColor: string;
+  secondaryColor: string;
   /** Season string, e.g. "2026-2027". */
   season: string;
   /** Number of weekly practice/game entry pages to generate. */
