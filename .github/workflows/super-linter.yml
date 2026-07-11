@@ -48,4 +48,4 @@ jobs:
           # Disable Black to avoid conflict with Ruff (Ruff handles both linting and formatting)
           VALIDATE_PYTHON_BLACK: false
           # Exclude generated/agent files from all linters (auto-generated or external content)
-          FILTER_REGEX_EXCLUDE: ".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/).*"
+          FILTER_REGEX_EXCLUDE: ".*(update-docs-agent\\.lock\\.yml|copilot-setup-steps\\.yml|\\.agents/|\\.github/agents/|\\.github/skills/).*"
