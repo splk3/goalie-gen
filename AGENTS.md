@@ -103,6 +103,8 @@ All three use the `docx` library. Shared helpers live in `src/utils/docxContent.
 
 When a logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Colors are reset on form close/cancel.
 
+The Goalie Journal PDF builder receives these colors through `GoalieJournalConfig`: primary is used for journal headings, secondary for entry borders and writing lines, and body/prompts remain black. The Node test generator must keep parity with the browser config and support `--primary` and `--secondary` using the same USA defaults.
+
 #### Custom react-colorful Color Picker & HexColorInput
 
 To resolve cross-platform and browser-specific bugs (such as Chrome on Android's native `<input type="color">` HSV slider initialization issue), we use a custom picker UI:

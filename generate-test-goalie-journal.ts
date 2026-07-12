@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as jsPdfModule from "jspdf";
 import { DEFAULT_JOURNAL_ENTRY_COUNT } from "./src/utils/generatorDefaults";
+import { DEFAULT_PRIMARY_TEAM_COLOR, DEFAULT_SECONDARY_TEAM_COLOR } from "./src/utils/teamColors";
 import { buildGoalieJournalPdf } from "./src/utils/builders/goalieJournalBuilder";
 import { getImageDimensions } from "./generate-utils";
 import type {
@@ -14,6 +15,8 @@ async function run() {
   const args = process.argv.slice(2);
   let goalieName = "Test Goalie";
   let teamName = "Test Team";
+  let primaryColor = DEFAULT_PRIMARY_TEAM_COLOR;
+  let secondaryColor = DEFAULT_SECONDARY_TEAM_COLOR;
   let logoPath = "";
   let outputPath = "test-goalie-journal.pdf";
   let entryCount = DEFAULT_JOURNAL_ENTRY_COUNT;
@@ -24,6 +27,12 @@ async function run() {
       i++;
     } else if (args[i] === "--team" && args[i + 1]) {
       teamName = args[i + 1];
+      i++;
+    } else if (args[i] === "--primary" && args[i + 1]) {
+      primaryColor = args[i + 1];
+      i++;
+    } else if (args[i] === "--secondary" && args[i + 1]) {
+      secondaryColor = args[i + 1];
       i++;
     } else if (args[i] === "--logo" && args[i + 1]) {
       logoPath = args[i + 1];
@@ -44,7 +53,9 @@ Usage: tsx generate-test-goalie-journal.ts [options]
 Options:
   --name <string>      Goalie Name (default: "Test Goalie")
   --team <string>      Team Name (default: "Test Team")
-  --logo <path>        Path to logo image file (optional, PNG/JPEG)
+ --primary <hex>      Primary Color (default: "${DEFAULT_PRIMARY_TEAM_COLOR}")
+ --secondary <hex>    Secondary Color (default: "${DEFAULT_SECONDARY_TEAM_COLOR}")
+ --logo <path>        Path to logo image file (optional, PNG/JPEG)
   --out <path>         Path to output .pdf file (default: "test-goalie-journal.pdf")
   --entries <number>   Number of journal entries (default: ${DEFAULT_JOURNAL_ENTRY_COUNT})
       `);
@@ -66,6 +77,7 @@ Options:
   console.log("Generating test goalie journal with options:");
   console.log(`  Goalie Name: ${goalieName}`);
   console.log(`  Team Name:   ${teamName}`);
+  console.log(`  Colors:      Primary: ${primaryColor}, Secondary: ${secondaryColor}`);
   console.log(`  Logo:        ${logoPath || "None"}`);
   console.log(`  Entries:     ${entryCount}`);
   console.log(`  Output:      ${outputPath}\n`);
@@ -105,6 +117,8 @@ Options:
   const config: GoalieJournalConfig = {
     goalieName,
     teamName,
+    primaryColor,
+    secondaryColor,
     season,
     entryCount,
   };

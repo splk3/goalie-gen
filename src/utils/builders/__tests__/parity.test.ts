@@ -104,6 +104,8 @@ const NULL_QR_GENERATOR: QrGenerator = async () => null;
 const JOURNAL_CONFIG: GoalieJournalConfig = {
   goalieName: "Parity Test Goalie",
   teamName: "Parity Test Team",
+  primaryColor: "#00205B",
+  secondaryColor: "#AF272F",
   season: "2026-2027",
   entryCount: 2,
 };
@@ -121,6 +123,8 @@ const JOURNAL_CONTENT: GoalieJournalContent = {
 // without needing a real rendering engine.
 function makeMockJsPdfModule() {
   const pages: number[] = [1];
+  const textColors: string[] = [];
+  const drawColors: string[] = [];
   class MockJsPDF {
     internal = {
       pageSize: { height: 297 },
@@ -130,6 +134,14 @@ function makeMockJsPdfModule() {
       return this;
     }
     setFont(_name: string, _style?: string) {
+      return this;
+    }
+    setTextColor(color: string) {
+      textColors.push(color);
+      return this;
+    }
+    setDrawColor(color: string) {
+      drawColors.push(color);
       return this;
     }
     setLineWidth(_w: number) {
@@ -158,7 +170,7 @@ function makeMockJsPdfModule() {
       return _type === "blob" ? new Blob() : new ArrayBuffer(0);
     }
   }
-  return { jsPDF: MockJsPDF };
+  return { jsPDF: MockJsPDF, textColors, drawColors };
 }
 
 // ─── Club Plan builder tests ──────────────────────────────────────────────────
@@ -420,6 +432,26 @@ describe("buildGoalieJournalPdf", () => {
         mockModule as unknown as typeof import("jspdf")
       );
     }).not.toThrow();
+  });
+
+  it("uses configured primary and secondary colors for PDF accents", () => {
+    const mockModule = makeMockJsPdfModule();
+    const config: GoalieJournalConfig = {
+      ...JOURNAL_CONFIG,
+      primaryColor: "#123456",
+      secondaryColor: "#ABCDEF",
+    };
+
+    buildGoalieJournalPdf(
+      config,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.textColors).toContain("#123456");
+    expect(mockModule.drawColors).toContain("#ABCDEF");
+    expect(mockModule.textColors).toContain("#000000");
   });
 
   it("accepts entryCount of 1 without error", () => {

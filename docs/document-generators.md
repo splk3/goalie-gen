@@ -26,6 +26,8 @@ Goalie Gen provides three separate document generation workflows:
 3. **Goalie Journal Generator (`src/components/GoalieJournalButton.tsx`)**:
    - Compiles a printable journal for youth goalies as a **PDF document**.
    - Includes game log sheets, practice goals checklists, and self-evaluation templates.
+   - Uses the selected primary color for headings and the secondary color for journal
+     entry borders and writing lines; body text remains black.
 
 ---
 
@@ -80,6 +82,10 @@ To allow quick local iteration and layout/compatibility testing without needing 
 | **Team Plan**      | `npm run generate-test-team-plan`      | `generate-test-team-plan.ts`      | `test-team-plan.docx`     |
 | **Goalie Journal** | `npm run generate-test-goalie-journal` | `generate-test-goalie-journal.ts` | `test-goalie-journal.pdf` |
 
+Convenience helper scripts are also available: `generate-test-club-plan.sh` for club
+plans, `generate-test-team-plan.sh` for team plans, and
+`generate-test-goalie-journal.sh` for goalie journals.
+
 ---
 
 ### Command Line Arguments & Customization
@@ -116,6 +122,8 @@ When `--all` is active (the default), the script generates a 4-month schedule (A
 
 - `--name <string>`: Goalie Name (default: `"Test Goalie"`)
 - `--team <string>`: Team Name (default: `"Test Team"`)
+- `--primary <hex>`: Primary color hex code (default: `"#00205B"`)
+- `--secondary <hex>`: Secondary color hex code (default: `"#AF272F"`)
 - `--logo <path>`: Local file path to a logo image (default: none)
 - `--out <path>`: Destination path of the generated `.pdf` (default: `"test-goalie-journal.pdf"`)
 - `--entries <number>`: Number of blank logs to generate (default: `24`)
@@ -163,6 +171,8 @@ npx tsx generate-test-goalie-journal.ts \
   --name "Jimmy Goldberg" \
   --team "Delaware Stars" \
   --logo static/images/test/logos/stars.jpg \
+  --primary "#1b3a19" \
+  --secondary "#b59b3f" \
   --out stars-goalie-journal.pdf
 ```
 

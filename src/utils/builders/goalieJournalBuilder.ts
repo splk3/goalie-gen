@@ -11,6 +11,11 @@ import type {
   GoalieJournalContent,
   JournalLogoData,
 } from "../../types/generatorConfig";
+import {
+  DEFAULT_PRIMARY_TEAM_COLOR,
+  DEFAULT_SECONDARY_TEAM_COLOR,
+  normalizeHexRgbColor,
+} from "../teamColors";
 
 type JsPdfModule = typeof import("jspdf");
 
@@ -23,7 +28,7 @@ type JsPdfModule = typeof import("jspdf");
  * - Providing the `jspdf` module (either a direct import or a lazy-loaded one).
  * - Calling `doc.output("arraybuffer")` / `doc.output("blob")` for final output.
  *
- * @param config  Journal configuration (goalie name, team name, season, entry count).
+ * @param config  Journal configuration (identity, colors, season, entry count).
  * @param content Pre-loaded markdown strings for each journal section.
  * @param logo    Pre-resolved logo data as a base64 data URL, or `null`.
  * @param jsPdf   The `jspdf` module exports.
@@ -35,8 +40,10 @@ export function buildGoalieJournalPdf(
   jsPdf: JsPdfModule
 ): InstanceType<JsPdfModule["jsPDF"]> {
   const { jsPDF } = jsPdf;
-  const { goalieName, teamName, season, entryCount } = config;
+  const { goalieName, teamName, primaryColor, secondaryColor, season, entryCount } = config;
   const { coverMd, seasonGoalsMd, practiceEntryMd, endOfSeasonMd } = content;
+  const primary = normalizeHexRgbColor(primaryColor) ?? DEFAULT_PRIMARY_TEAM_COLOR;
+  const secondary = normalizeHexRgbColor(secondaryColor) ?? DEFAULT_SECONDARY_TEAM_COLOR;
 
   const doc = new jsPDF();
 
@@ -46,8 +53,10 @@ export function buildGoalieJournalPdf(
   const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
   const coverSubtitle = coverBlocks.find((b) => b.type === "paragraph")?.text ?? "";
 
+  doc.setTextColor(primary);
   doc.setFontSize(28);
   doc.text(coverTitle, 105, 40, { align: "center" });
+  doc.setTextColor("#000000");
   doc.setFontSize(18);
   doc.text(goalieName, 105, 58, { align: "center" });
   doc.text(teamName, 105, 72, { align: "center" });
@@ -79,9 +88,11 @@ export function buildGoalieJournalPdf(
   const goalsTitle = goalsBlocks.find((b) => b.type === "heading")?.text ?? "Season Goals";
   const goalsPrompt = goalsBlocks.find((b) => b.type === "paragraph")?.text ?? "";
 
+  doc.setTextColor(primary);
   doc.setFontSize(20);
   doc.text(goalsTitle, 105, 20, { align: "center" });
   doc.setFontSize(12);
+  doc.setTextColor("#000000");
   if (goalsPrompt) {
     doc.text(goalsPrompt, 20, 40);
   }
@@ -89,6 +100,7 @@ export function buildGoalieJournalPdf(
   for (let i = 0; i < 8; i++) {
     const y = 55 + i * 25;
     doc.text(`${i + 1}.`, 20, y);
+    doc.setDrawColor(secondary);
     doc.line(30, y, 190, y);
     doc.line(30, y + 10, 190, y + 10);
   }
@@ -126,6 +138,7 @@ export function buildGoalieJournalPdf(
 
   for (let page = 0; page < numLogPages; page++) {
     doc.addPage();
+    doc.setTextColor(primary);
     doc.setFontSize(16);
     doc.text(`${entryTitle} - Page ${page + 1}`, 105, 15, { align: "center" });
 
@@ -135,9 +148,11 @@ export function buildGoalieJournalPdf(
       const startY = 25 + (entry - firstEntry) * entryHeight;
       const entryNum = entry + 1;
 
+      doc.setDrawColor(secondary);
       doc.setLineWidth(0.5);
       doc.rect(15, startY, 180, entryHeight - 2);
 
+      doc.setTextColor("#000000");
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
       doc.text(`Entry ${entryNum}`, 20, startY + 7);
@@ -169,6 +184,7 @@ export function buildGoalieJournalPdf(
     .filter((b) => b.type === "paragraph" || b.type === "bullet")
     .map((b) => b.text);
 
+  doc.setTextColor(primary);
   doc.setFontSize(20);
   doc.text(eosTitle, 105, 20, { align: "center" });
 
@@ -177,6 +193,7 @@ export function buildGoalieJournalPdf(
   const eosAnswerLineSpacing = 15;
   const eosBlockHeight = 10 + eosAnswerLines * eosAnswerLineSpacing;
   doc.setFontSize(12);
+  doc.setTextColor("#000000");
   let eosY = 40;
   eosPrompts.forEach((prompt) => {
     if (eosY + eosBlockHeight > eosPageHeight) {
