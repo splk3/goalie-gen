@@ -102,21 +102,22 @@ export interface ClubPlanContent {
 export type AgeGroup = "8U" | "10U" | "12U" | "14U" | "16U and older";
 export type SkillLevel = "beginner" | "intermediate" | "advanced";
 export type ConfigurableEventType =
-  | "On-ice Practice"
-  | "Off-ice Practice"
-  | "Video Review"
-  | "Evaluation"
-  | "Game";
+  "On-ice Practice" | "Off-ice Practice" | "Video Review" | "Evaluation" | "Game";
 export type EventType = ConfigurableEventType | "TBD";
 
 export interface EventDateSelection {
   date: string;
   eventTypes: EventType[];
+  events?: EventSelection[];
 }
 
 export interface EventSelection {
   date: string;
   eventType: EventType;
+  id?: string;
+  title?: string;
+  description?: string;
+  source?: "manual" | "calendar";
 }
 
 /** All configuration options for the Team Plan document generator. */

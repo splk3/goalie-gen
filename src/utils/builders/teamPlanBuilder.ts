@@ -617,11 +617,21 @@ export async function buildTeamPlanDocument(
           })
         );
 
+        const eventStarterMarkdown = getEventStarterMarkdown(event.eventType, eventDetailsMd);
+        const importedEventMarkdown =
+          event.title || event.description
+            ? [
+                event.title ? `**Calendar Event:** ${event.title}` : "",
+                event.description ? `**Description:** ${event.description}` : "",
+                "",
+                eventStarterMarkdown,
+              ]
+                .filter((line, index, lines) => line || index === lines.length - 1)
+                .join("\n")
+            : eventStarterMarkdown;
+
         documentChildren.push(
-          ...blocksToDocxParagraphs(
-            parseMarkdown(getEventStarterMarkdown(event.eventType, eventDetailsMd)),
-            colorOpts
-          )
+          ...blocksToDocxParagraphs(parseMarkdown(importedEventMarkdown), colorOpts)
         );
 
         if (event.eventType === "On-ice Practice" && addSuggestedDrillEachPractice) {

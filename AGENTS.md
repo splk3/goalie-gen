@@ -61,6 +61,20 @@ No MCP servers are currently configured for this repository. A `lsp.json` at the
 
 ## 🏗 Architecture & Core Logic
 
+### Team Plan Calendar Imports
+
+The Team Plan Generator supports manual event dates and one-time browser-side calendar imports through
+`src/utils/calendarImport.ts`. Use `ical.js` for ICS parsing and recurrence expansion; do not add
+additional timezone libraries unless a concrete browser compatibility requirement is demonstrated.
+Imported occurrences are bounded by the user-selected start/end dates, use calendar timezone date
+semantics, are deduplicated, and retain source title/description for generated DOCX event details.
+Keep classification rules ordered and centralized in the calendar import utility so future keyword
+updates do not require UI changes. Direct feed requests may fail because of CORS; the `.ics` upload
+fallback and user-facing explanation are required. After a failed URL request, the UI may offer
+**Download Feed** followed by **Use Downloaded Feed**; the latter must reuse the existing `.ics`
+file picker/import path because browsers do not permit web pages to populate file inputs or access
+downloaded local paths directly.
+
 ### 1. Build-time Drill Ingestion Pipeline
 
 [gatsby-node.ts](file:///home/patrick/github/splk3/goalie-gen/gatsby-node.ts) is the center of the drill system. It exports four Gatsby hooks:

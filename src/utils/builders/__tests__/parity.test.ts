@@ -349,6 +349,33 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
+  it("includes imported calendar title and description in event details", async () => {
+    const config: TeamPlanConfig = {
+      ...MINIMAL_TEAM_CONFIG,
+      addCalendarOfEvents: true,
+      includeEventDetails: true,
+      detailedEventSelections: [
+        {
+          date: "2026-07-11",
+          eventType: "Game",
+          title: "Summer Showcase",
+          description: "Bring video equipment",
+          source: "calendar",
+        },
+      ],
+    };
+    const result = await buildTeamPlanDocument(
+      config,
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+    const buffer = await docx.Packer.toBuffer(result);
+
+    expect(buffer.length).toBeGreaterThan(0);
+  });
+
   it("calls QrGenerator when hasGoalieEvaluations is true", async () => {
     const calledUrls: string[] = [];
     const trackingQrGenerator: QrGenerator = async (url) => {
