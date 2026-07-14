@@ -1,0 +1,49 @@
+---
+name: 3 Cone 6 Shot
+
+description: 6 shot warm up drill.
+
+drill_steps: |-
+  Drill starts with the first three players in line taking off around the cone for a quick shot off. They then circle back down and the coach places a puck off the boards for each of them to pick up. They continue around the dot to then take another quick shot. Opposite sides go at the same time.
+
+coaching_focus_points: |-
+  - Focus on tracking puck all the way in.
+  - You do not have to go down on every shot.
+  - Have active hands.
+
+shooter_focus_points: |-
+  - No hesitation to take off.
+  - Quick releases.
+  - Clean pick ups off boards.
+
+drill_image: 3-cone-6-shot.png
+
+drill_creation_date: 2026-07-13
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - unopposed_practice
+  equipment:
+    - cones
+  space_required:
+    - full_ice
