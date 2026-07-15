@@ -117,6 +117,7 @@ export interface EventSelection {
   id?: string;
   title?: string;
   description?: string;
+  startTime?: string;
   source?: "manual" | "calendar";
 }
 

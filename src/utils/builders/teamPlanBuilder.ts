@@ -11,6 +11,7 @@ import { buildEventCalendarMonths } from "../teamPlanCalendarGrid";
 import type {
   TeamPlanConfig,
   TeamPlanContent,
+  EventSelection,
   ResolvedLogoData,
   QrGenerator,
 } from "../../types/generatorConfig";
@@ -40,6 +41,23 @@ const GAME_EVENT_TIMELINE_WIDTH_TWIPS =
 const GAME_EVENT_PERIOD_WIDTH_TWIPS = Math.floor(GAME_EVENT_TIMELINE_WIDTH_TWIPS * 0.3);
 const GAME_EVENT_OT_WIDTH_TWIPS =
   GAME_EVENT_TIMELINE_WIDTH_TWIPS - GAME_EVENT_PERIOD_WIDTH_TWIPS * 3;
+
+export function buildImportedEventMarkdown(
+  event: Pick<EventSelection, "title">,
+  eventStarterMarkdown: string
+): string {
+  return event.title
+    ? [`**Calendar Event:** ${event.title}`, "", eventStarterMarkdown].join("\n")
+    : eventStarterMarkdown;
+}
+
+export function formatTeamPlanEventHeading(
+  event: Pick<EventSelection, "date" | "startTime" | "eventType">
+): string {
+  return `${formatDisplayDate(event.date)}${event.startTime ? ` at ${event.startTime}` : ""} (${
+    event.eventType
+  })`;
+}
 
 /**
  * Builds a Team Plan `Document` object from the supplied configuration,
@@ -611,24 +629,14 @@ export async function buildTeamPlanDocument(
       for (const event of detailedEventSelections) {
         documentChildren.push(
           new Paragraph({
-            children: [toBlackRun(`${formatDisplayDate(event.date)} (${event.eventType})`)],
+            children: [toBlackRun(formatTeamPlanEventHeading(event))],
             heading: HeadingLevel.HEADING_3,
             spacing: { before: 250, after: 120 },
           })
         );
 
         const eventStarterMarkdown = getEventStarterMarkdown(event.eventType, eventDetailsMd);
-        const importedEventMarkdown =
-          event.title || event.description
-            ? [
-                event.title ? `**Calendar Event:** ${event.title}` : "",
-                event.description ? `**Description:** ${event.description}` : "",
-                "",
-                eventStarterMarkdown,
-              ]
-                .filter((line, index, lines) => line || index === lines.length - 1)
-                .join("\n")
-            : eventStarterMarkdown;
+        const importedEventMarkdown = buildImportedEventMarkdown(event, eventStarterMarkdown);
 
         documentChildren.push(
           ...blocksToDocxParagraphs(parseMarkdown(importedEventMarkdown), colorOpts)

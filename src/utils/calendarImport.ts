@@ -67,6 +67,22 @@ function dateKeyFromTime(time: ICAL.Time): string {
   return `${time.year}-${String(time.month).padStart(2, "0")}-${String(time.day).padStart(2, "0")}`;
 }
 
+function startTimeFromTime(time: ICAL.Time): string | undefined {
+  if (time.isDate) {
+    return undefined;
+  }
+
+  const hour = time.hour ?? 0;
+  const minute = time.minute ?? 0;
+  if (hour === 0 && minute === 0) {
+    return undefined;
+  }
+
+  const displayHour = hour % 12 || 12;
+  const period = hour >= 12 ? "PM" : "AM";
+  return `${displayHour}:${String(minute).padStart(2, "0")} ${period}`;
+}
+
 function isWithinRange(date: string, range: CalendarImportRange): boolean {
   return date >= range.startDate && date <= range.endDate;
 }
@@ -82,8 +98,14 @@ function validateRange(range: CalendarImportRange): void {
   }
 }
 
-function eventId(uid: string, date: string, title: string, description: string): string {
-  return `${uid}|${date}|${title.trim()}|${description.trim()}`;
+function eventId(
+  uid: string,
+  date: string,
+  title: string,
+  description: string,
+  startTime = ""
+): string {
+  return `${uid}|${date}|${startTime.trim()}|${title.trim()}|${description.trim()}`;
 }
 
 function getComponents(calendar: ICAL.Component): ICAL.Component[] {
@@ -142,12 +164,14 @@ export function parseCalendarFeed(
         const details = event.getOccurrenceDetails(occurrence);
         const title = details.item.summary?.trim() ?? "";
         const description = details.item.description?.trim() ?? "";
+        const startTime = startTimeFromTime(occurrence);
         events.push({
-          id: eventId(event.uid || "calendar-event", occurrenceDate, title, description),
+          id: eventId(event.uid || "calendar-event", occurrenceDate, title, description, startTime),
           date: occurrenceDate,
           eventType: inferCalendarEventType(title, description),
           title,
           description,
+          startTime,
           source: "calendar",
         });
       }
@@ -162,7 +186,9 @@ export function parseCalendarFeed(
 function deduplicateCalendarEvents(events: EventSelection[]): EventSelection[] {
   const seen = new Set<string>();
   return events.filter((event) => {
-    const key = event.id ?? eventId("", event.date, event.title ?? "", event.description ?? "");
+    const key =
+      event.id ??
+      eventId("", event.date, event.title ?? "", event.description ?? "", event.startTime ?? "");
     if (seen.has(key)) {
       return false;
     }

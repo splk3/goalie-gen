@@ -7,7 +7,11 @@
  */
 import * as docx from "docx";
 import { buildClubPlanDocument } from "../clubPlanBuilder";
-import { buildTeamPlanDocument } from "../teamPlanBuilder";
+import {
+  buildImportedEventMarkdown,
+  buildTeamPlanDocument,
+  formatTeamPlanEventHeading,
+} from "../teamPlanBuilder";
 import { buildGoalieJournalPdf } from "../goalieJournalBuilder";
 import type {
   ClubPlanConfig,
@@ -266,6 +270,27 @@ describe("buildClubPlanDocument", () => {
 // ─── Team Plan builder tests ──────────────────────────────────────────────────
 
 describe("buildTeamPlanDocument", () => {
+  it("renders imported SUMMARY text without DESCRIPTION text", () => {
+    const markdown = buildImportedEventMarkdown(
+      { title: "Summer Showcase" },
+      "Starter event content."
+    );
+
+    expect(markdown).toContain("**Calendar Event:** Summer Showcase");
+    expect(markdown).not.toContain("Description");
+    expect(markdown).toContain("Starter event content.");
+  });
+
+  it("places an imported start time between the event date and type", () => {
+    expect(
+      formatTeamPlanEventHeading({
+        date: "2026-07-15",
+        startTime: "7:15 PM",
+        eventType: "Game",
+      })
+    ).toBe("Wed, Jul 15, 2026 at 7:15 PM (Game)");
+  });
+
   it("returns a docx.Document instance", async () => {
     const result = await buildTeamPlanDocument(
       MINIMAL_TEAM_CONFIG,
@@ -349,7 +374,7 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
-  it("includes imported calendar title and description in event details", async () => {
+  it("accepts imported calendar metadata in event details", async () => {
     const config: TeamPlanConfig = {
       ...MINIMAL_TEAM_CONFIG,
       addCalendarOfEvents: true,

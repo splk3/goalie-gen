@@ -39,11 +39,48 @@ describe("parseCalendarFeed", () => {
     expect(result.events).toHaveLength(3);
     expect(result.events[0]).toMatchObject({
       date: "2026-07-13",
+      startTime: "6:00 PM",
       eventType: "On-ice Practice",
       title: "Team Practice",
       description: "Goalie work",
       source: "calendar",
     });
+  });
+
+  it("omits start time for all-day events", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:all-day-1",
+        "DTSTART;VALUE=DATE:20260715",
+        "SUMMARY:Team Event",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" }
+    );
+
+    expect(result.events).toMatchObject([{ date: "2026-07-15", startTime: undefined }]);
+  });
+
+  it("omits a midnight start time", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:midnight-1",
+        "DTSTART:20260715T000000Z",
+        "SUMMARY:Overnight Event",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" }
+    );
+
+    expect(result.events).toMatchObject([{ date: "2026-07-15", startTime: undefined }]);
   });
 
   it("supports all-day events and excludes events outside the range", () => {
