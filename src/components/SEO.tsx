@@ -30,7 +30,7 @@ export default function Seo({
 
   // For social media, we need absolute URLs including the site URL
   const siteUrl = data.site.siteMetadata.siteUrl;
-  const imagePathWithPrefix = withPrefix("/images/logos/logo-light.png");
+  const imagePathWithPrefix = withPrefix("/images/logos/share-preview.png");
   const socialImageUrl = new URL(imagePathWithPrefix, siteUrl).toString();
 
   return (
@@ -45,12 +45,16 @@ export default function Seo({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={socialImageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content="Goalie Gen" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={socialImageUrl} />
+      <meta name="twitter:image:alt" content="Goalie Gen" />
 
       {/* Theme color */}
       <meta name="theme-color" content="#00205B" />
