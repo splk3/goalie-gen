@@ -210,10 +210,19 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
   const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
+  const validationErrorRef = React.useRef<HTMLDivElement>(null);
+  const shouldScrollValidationErrorRef = React.useRef<boolean>(false);
   const addEventDatesButtonRef = React.useRef<HTMLButtonElement>(null);
   const addCalendarEventsButtonRef = React.useRef<HTMLButtonElement>(null);
   const calendarFileInputRef = React.useRef<HTMLInputElement>(null);
   const deleteDateTriggerRef = React.useRef<HTMLButtonElement | null>(null);
+
+  React.useEffect(() => {
+    if (validationError && shouldScrollValidationErrorRef.current) {
+      validationErrorRef.current?.scrollIntoView?.({ block: "nearest" });
+      shouldScrollValidationErrorRef.current = false;
+    }
+  }, [validationError]);
 
   const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U", "16U and older"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
@@ -484,24 +493,29 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
   const validateInputs = (): boolean => {
     setValidationError("");
+    shouldScrollValidationErrorRef.current = false;
 
     if (!teamName.trim()) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a team name");
       return false;
     }
 
     if (!ageGroup) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please select an age group");
       return false;
     }
 
     if (!skillLevel) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please select a skill level");
       return false;
     }
 
     if (hasGoalieEvaluations) {
       if (goalieEvaluationTimes.includes(".") || goalieEvaluationTimes.includes(",")) {
+        shouldScrollValidationErrorRef.current = true;
         setValidationError("Evaluation times must be a positive whole number");
         return false;
       }
@@ -512,6 +526,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         evaluationsNum <= 0 ||
         evaluationsNum.toString() !== goalieEvaluationTimes.trim()
       ) {
+        shouldScrollValidationErrorRef.current = true;
         setValidationError("Evaluation times must be a positive whole number");
         return false;
       }
@@ -1354,7 +1369,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           )}
 
           {validationError && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
+            <div
+              ref={validationErrorRef}
+              className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm"
+            >
               {validationError}
             </div>
           )}
