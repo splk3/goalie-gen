@@ -286,9 +286,10 @@ describe("buildTeamPlanDocument", () => {
       formatTeamPlanEventHeading({
         date: "2026-07-15",
         startTime: "7:15 PM",
+        timeZone: "EDT",
         eventType: "Game",
       })
-    ).toBe("Wed, Jul 15, 2026 at 7:15 PM (Game)");
+    ).toBe("Wed, Jul 15, 2026 at 7:15 PM EDT (Game)");
   });
 
   it("returns a docx.Document instance", async () => {

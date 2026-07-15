@@ -118,6 +118,7 @@ export interface EventSelection {
   title?: string;
   description?: string;
   startTime?: string;
+  timeZone?: string;
   source?: "manual" | "calendar";
 }
 

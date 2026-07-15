@@ -52,11 +52,12 @@ export function buildImportedEventMarkdown(
 }
 
 export function formatTeamPlanEventHeading(
-  event: Pick<EventSelection, "date" | "startTime" | "eventType">
+  event: Pick<EventSelection, "date" | "startTime" | "timeZone" | "eventType">
 ): string {
-  return `${formatDisplayDate(event.date)}${event.startTime ? ` at ${event.startTime}` : ""} (${
-    event.eventType
-  })`;
+  const time = event.startTime
+    ? ` at ${event.startTime}${event.timeZone ? ` ${event.timeZone}` : ""}`
+    : "";
+  return `${formatDisplayDate(event.date)}${time} (${event.eventType})`;
 }
 
 /**

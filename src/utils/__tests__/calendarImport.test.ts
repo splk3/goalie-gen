@@ -40,6 +40,7 @@ describe("parseCalendarFeed", () => {
     expect(result.events[0]).toMatchObject({
       date: "2026-07-13",
       startTime: "6:00 PM",
+      timeZone: "EDT",
       eventType: "On-ice Practice",
       title: "Team Practice",
       description: "Goalie work",
@@ -81,6 +82,66 @@ describe("parseCalendarFeed", () => {
     );
 
     expect(result.events).toMatchObject([{ date: "2026-07-15", startTime: undefined }]);
+  });
+
+  it("keeps UTC event times in UTC", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:utc-1",
+        "DTSTART:20260715T180000Z",
+        "SUMMARY:Game",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" }
+    );
+
+    expect(result.events).toMatchObject([
+      { date: "2026-07-15", startTime: "6:00 PM", timeZone: "UTC" },
+    ]);
+  });
+
+  it("uses the event timezone when it changes the local calendar date", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:timezone-boundary-1",
+        "DTSTART;TZID=America/Los_Angeles:20260701T003000",
+        "SUMMARY:Practice",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-01" }
+    );
+
+    expect(result.events).toMatchObject([
+      { date: "2026-07-01", startTime: "12:30 AM", timeZone: "PDT" },
+    ]);
+  });
+
+  it("accepts feeds containing lone carriage-return line endings", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:lone-cr-1",
+        "DTSTART:20260715T180000Z",
+        "SUMMARY:Team Practice",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" }
+    );
+
+    expect(result.events).toMatchObject([
+      { date: "2026-07-15", startTime: "6:00 PM", title: "Team Practice" },
+    ]);
   });
 
   it("supports all-day events and excludes events outside the range", () => {
