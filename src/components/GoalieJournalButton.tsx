@@ -359,7 +359,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
         </div>
 
         {/* Non-scrolling footer — action buttons always visible */}
-        <div className="px-8 pb-8 flex gap-4 flex-shrink-0">
+        <div className="px-8 pt-4 pb-8 flex gap-4 flex-shrink-0">
           {!generatedBlob ? (
             <>
               <button
