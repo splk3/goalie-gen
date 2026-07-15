@@ -104,6 +104,27 @@ describe("parseCalendarFeed", () => {
     ]);
   });
 
+  it("uses GEO coordinates to localize UTC event times", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:geo-1",
+        "DTSTART:20260715T220000Z",
+        "GEO:39.6821983;-75.7285385",
+        "SUMMARY:Practice",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" }
+    );
+
+    expect(result.events).toMatchObject([
+      { date: "2026-07-15", startTime: "6:00 PM", timeZone: "EDT" },
+    ]);
+  });
+
   it("uses the event timezone when it changes the local calendar date", () => {
     const result = parseCalendarFeed(
       [

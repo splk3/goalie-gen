@@ -1,4 +1,5 @@
 import ICAL from "ical.js";
+import tzLookup from "@photostructure/tz-lookup";
 import type { EventDateSelection, EventSelection, EventType } from "../types/generatorConfig";
 
 export interface CalendarImportRange {
@@ -135,6 +136,15 @@ function localizedEventTime(time: ICAL.Time, timeZone: string | undefined): Loca
     };
   }
 
+  if (time.zone?.tzid === "UTC" && timeZone !== "UTC") {
+    const parts = formatPartsInTimeZone(time.toJSDate(), timeZone);
+    return {
+      date: `${parts.year}-${parts.month}-${parts.day}`,
+      startTime: formatStartTime(Number(parts.hour), Number(parts.minute)),
+      timeZone: parts.timeZoneName,
+    };
+  }
+
   if (timeZone === "UTC") {
     return {
       date: dateKeyFromTime(time),
@@ -165,11 +175,36 @@ function localizedEventTime(time: ICAL.Time, timeZone: string | undefined): Loca
 
 function eventTimeZone(event: ICAL.Event): string | undefined {
   const timeZone = event.startDate.zone?.tzid;
+  const parameter = event.component.getFirstProperty("dtstart")?.getParameter("tzid");
+  const explicitTimeZone = typeof parameter === "string" ? parameter : timeZone;
+  if (explicitTimeZone && explicitTimeZone !== "floating" && explicitTimeZone !== "UTC") {
+    return explicitTimeZone;
+  }
+
+  const geo = event.component.getFirstPropertyValue("geo");
+  if (Array.isArray(geo) && geo.length >= 2) {
+    const latitude = Number(geo[0]);
+    const longitude = Number(geo[1]);
+    if (
+      Number.isFinite(latitude) &&
+      Number.isFinite(longitude) &&
+      latitude >= -90 &&
+      latitude <= 90 &&
+      longitude >= -180 &&
+      longitude <= 180
+    ) {
+      return tzLookup(latitude, longitude);
+    }
+  }
+
+  if (explicitTimeZone) {
+    return explicitTimeZone;
+  }
+
   if (timeZone && timeZone !== "floating") {
     return timeZone;
   }
-  const parameter = event.component.getFirstProperty("dtstart")?.getParameter("tzid");
-  return typeof parameter === "string" ? parameter : timeZone;
+  return undefined;
 }
 
 function isWithinRange(date: string, range: CalendarImportRange): boolean {
