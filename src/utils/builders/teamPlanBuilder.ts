@@ -672,7 +672,9 @@ export async function buildTeamPlanDocument(
         if (event.eventType === "Evaluation") {
           await addResourceLinkWithQr(
             "Evaluation forms available at ",
-            "https://goaliegen.com/goalie-evals/"
+            "https://goaliegen.com/goalie-evals/",
+            60,
+            true
           );
         }
       }
