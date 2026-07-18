@@ -22,21 +22,6 @@ export const DEFAULT_EVALUATION_WHEN =
 
 export const DEFAULT_GOALIE_DISCOUNT = "ex. 50%, $500";
 
-/**
- * The list of named introduction section headings inside
- * `src/content/club-plan/introduction.md`.
- * The web component picks one at random; the CLI defaults to the first entry.
- */
-export const CLUB_PLAN_INTRO_OPTIONS = [
-  "Option 1",
-  "Option 2",
-  "Option 3",
-  "Option 4",
-  "Option 5",
-] as const;
-
-export type ClubPlanIntroOption = (typeof CLUB_PLAN_INTRO_OPTIONS)[number];
-
 // ─── Journal defaults ─────────────────────────────────────────────────────────
 
 /** Default number of weekly practice/game log entry pages in the journal. */
@@ -71,6 +56,60 @@ export function extractLevel3Section(markdown: string, heading: string): string 
   }
 
   return sectionLines.join("\n").trim();
+}
+
+/**
+ * Extracts the non-empty bodies of all level-3 sections whose heading starts
+ * with the supplied prefix. Matching is case-sensitive and preserves source
+ * order so callers can choose from the returned options.
+ */
+export function extractLevel3SectionsByPrefix(markdown: string, headingPrefix: string): string[] {
+  const lines = markdown.split(/\r?\n/);
+  const sections: string[] = [];
+  let currentHeadingMatches = false;
+  let sectionLines: string[] = [];
+
+  const flushSection = () => {
+    if (currentHeadingMatches) {
+      const section = sectionLines.join("\n").trim();
+      if (section) {
+        sections.push(section);
+      }
+    }
+  };
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^###\s+(.+)$/);
+    if (headingMatch) {
+      flushSection();
+      currentHeadingMatches = headingMatch[1].trim().startsWith(headingPrefix);
+      sectionLines = [];
+      continue;
+    }
+
+    if (currentHeadingMatches) {
+      sectionLines.push(line);
+    }
+  }
+
+  flushSection();
+  return sections;
+}
+
+/**
+ * Selects a random non-empty level-3 section whose heading starts with the
+ * supplied prefix, falling back to the named level-3 section when none exist.
+ */
+export function selectRandomLevel3Section(
+  markdown: string,
+  headingPrefix: string,
+  fallbackHeading: string,
+  useSampleContent = true
+): string {
+  const options = useSampleContent ? extractLevel3SectionsByPrefix(markdown, headingPrefix) : [];
+  return options.length > 0
+    ? options[Math.floor(Math.random() * options.length)]
+    : extractLevel3Section(markdown, fallbackHeading);
 }
 
 /**

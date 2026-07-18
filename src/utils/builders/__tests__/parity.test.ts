@@ -65,7 +65,7 @@ const MINIMAL_CLUB_CONFIG: ClubPlanConfig = {
 
 const MINIMAL_CLUB_CONTENT: ClubPlanContent = {
   introductionMd:
-    "## Introduction\n\n### Placeholder\nTest placeholder intro.\n\n### Option 1\nTest option 1 intro.",
+    "## Introduction\n\n### Placeholder\nTest placeholder intro.\n\n### Sample Content 1\nTest option 1 intro.",
   seasonGoalsMd: "## Season Goals\n\n### Placeholder\nTest placeholder goals.",
   benefitsForClubGoaliesMd: "## Benefits\n\nSome benefits text.",
   skillDevelopmentMd: "## Skill Development\n\nSome skill development text.",
@@ -180,6 +180,61 @@ function makeMockJsPdfModule() {
 // ─── Club Plan builder tests ──────────────────────────────────────────────────
 
 describe("buildClubPlanDocument", () => {
+  it("uses starter content for both introduction and season goals", async () => {
+    const config: ClubPlanConfig = {
+      ...MINIMAL_CLUB_CONFIG,
+      includeStarterIntroduction: true,
+      includeStarterSeasonGoals: true,
+    };
+    const content: ClubPlanContent = {
+      ...MINIMAL_CLUB_CONTENT,
+      introductionMd:
+        "## Introduction\n\n### Placeholder\nPlaceholder intro.\n\n### Sample Content 1\nFirst intro.\n\n### Sample Content 2\nSecond intro.",
+      seasonGoalsMd:
+        "## Season Goals\n\n### Placeholder\nPlaceholder goals.\n\n### Sample Content 1\nFirst goals.\n\n### Sample Content 2\nSecond goals.",
+    };
+    const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0.99);
+
+    try {
+      const result = await buildClubPlanDocument(config, content, null, docx);
+      const buffer = await docx.Packer.toBuffer(result);
+
+      expect(buffer.length).toBeGreaterThan(0);
+    } finally {
+      randomSpy.mockRestore();
+    }
+  });
+
+  it("falls back to Placeholder when starter season-goals content has no usable options", async () => {
+    const config: ClubPlanConfig = {
+      ...MINIMAL_CLUB_CONFIG,
+      includeStarterSeasonGoals: true,
+    };
+    const content: ClubPlanContent = {
+      ...MINIMAL_CLUB_CONTENT,
+      seasonGoalsMd:
+        "## Season Goals\n\n### Placeholder\nPlaceholder goals.\n\n### Sample Content 1\n   ",
+    };
+
+    const result = await buildClubPlanDocument(config, content, null, docx);
+    expect(result).toBeInstanceOf(docx.Document);
+  });
+
+  it("falls back to Placeholder when starter introduction content has no usable options", async () => {
+    const config: ClubPlanConfig = {
+      ...MINIMAL_CLUB_CONFIG,
+      includeStarterIntroduction: true,
+    };
+    const content: ClubPlanContent = {
+      ...MINIMAL_CLUB_CONTENT,
+      introductionMd:
+        "## Introduction\n\n### Placeholder\nPlaceholder intro.\n\n### Sample Content 1\n   ",
+    };
+
+    const result = await buildClubPlanDocument(config, content, null, docx);
+    expect(result).toBeInstanceOf(docx.Document);
+  });
+
   it("returns a docx.Document instance", async () => {
     const result = await buildClubPlanDocument(
       MINIMAL_CLUB_CONFIG,
