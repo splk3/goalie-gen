@@ -92,6 +92,9 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
     defaultFilters: POPUP_FILTER_DEFAULTS,
     spaceMatching: "capacity",
   });
+  const visibleActiveFilters = activeFilters.filter(
+    ({ category, value }) => category !== "equipment" || value !== "none"
+  );
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -194,6 +197,7 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
               Use the filters below to find a drill for your goalie - FAST!
             </p>
             <p>Drills are designed to be effective using only 10-15 minutes of practice time.</p>
+            <p>The only equipment needed is a net and pucks.</p>
             <p className="text-sm italic">
               Tip: If you don&apos;t have a net available, use a side wall!
             </p>
@@ -234,7 +238,12 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
                             team_drill: [value],
                           }))
                         }
-                        className="h-5 w-5 accent-white"
+                        className={[
+                          "h-5 w-5 appearance-none rounded-full border-2 transition-colors",
+                          isSelected
+                            ? "border-white bg-usa-blue checked:bg-usa-blue dark:bg-blue-600 dark:checked:bg-blue-600"
+                            : "border-current bg-transparent checked:bg-current",
+                        ].join(" ")}
                       />
                       <span>{label}</span>
                     </label>
@@ -309,13 +318,13 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
           </div>
 
           {/* Active Filters Display */}
-          {activeFilters.length > 0 && (
+          {visibleActiveFilters.length > 0 && (
             <div className="mb-6 pb-6 border-b border-gray-300 dark:border-gray-600">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Active Filters:
               </h3>
               <div className="flex flex-wrap gap-2">
-                {activeFilters.map(({ category, value }) => (
+                {visibleActiveFilters.map(({ category, value }) => (
                   <div
                     key={`${category}-${value}`}
                     className="bg-usa-blue dark:bg-blue-700 text-white px-3 py-1 rounded-full flex items-center gap-2 text-sm"
