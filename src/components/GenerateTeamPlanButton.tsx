@@ -333,13 +333,34 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   };
 
   const handleDownloadCalendarFeed = () => {
-    const url = calendarFeedUrl.trim();
-    if (!url) {
+    setCalendarImportError("");
+    const rawUrl = calendarFeedUrl.trim();
+    if (!rawUrl) {
       return;
     }
 
+    const normalizedUrl = normalizeUrl(rawUrl);
+    if (!normalizedUrl) {
+      setCalendarImportError("Enter a valid calendar feed URL.");
+      return;
+    }
+
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(normalizedUrl);
+    } catch {
+      setCalendarImportError("Enter a valid calendar feed URL.");
+      return;
+    }
+
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      setCalendarImportError("Only http(s) calendar feed URLs are allowed.");
+      return;
+    }
+
+    const safeUrl = parsedUrl.toString();
     const link = document.createElement("a");
-    link.href = url;
+    link.href = safeUrl;
     link.download = "calendar-feed.ics";
     link.target = "_blank";
     link.rel = "noopener noreferrer";
@@ -348,7 +369,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     document.body.removeChild(link);
 
     window.setTimeout(() => {
-      window.open(url, "_blank", "noopener,noreferrer");
+      window.open(safeUrl, "_blank", "noopener,noreferrer");
     }, 0);
   };
 
