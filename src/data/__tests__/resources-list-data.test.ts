@@ -137,16 +137,16 @@ describe("resources-list YAML source files", () => {
     it("each file starts with its expected lead resource", () => {
       const expectedFirstItems = {
         "club-resources-list.yml": {
-          name: "USA Hockey Goaltending Stance and Movement Basics",
-          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+          name: "USA Hockey Goaltending Homepage",
+          link: "https://www.usahockey.com/goaltending",
         },
         "coach-resources-list.yml": {
-          name: "USA Hockey Goaltending Stance and Movement Basics",
-          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+          name: "USA Hockey Goaltending Homepage",
+          link: "https://www.usahockey.com/goaltending",
         },
         "goalie-resources-list.yml": {
-          name: "USA Hockey Goaltending Stance and Movement Basics",
-          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+          name: "USA Hockey Goaltending Homepage",
+          link: "https://www.usahockey.com/goaltending",
         },
         "equipment-fitting-resources-list.yml": {
           name: "USA Hockey Goaltending Equipment Fitting Guidance",
