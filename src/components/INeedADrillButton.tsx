@@ -188,7 +188,7 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
             <p className="font-semibold">
               Use the filters below to find a drill for your goalie - FAST!
             </p>
-            <p>Drills are designed to be effective using only 10-15 minutes of practice time.</p>
+            <p>Drills require only 10-15 minutes of practice time.</p>
             <p>The only equipment needed is a net and pucks.</p>
             <p className="text-sm italic">
               Tip: If you don&apos;t have a net available, use a side wall!

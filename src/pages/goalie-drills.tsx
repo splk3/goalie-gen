@@ -418,7 +418,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               Develop your goalies during goalie-focused time or involve the whole team!
             </p>
             <p className="text-lg mb-4">
-              All drills are designed to be effective using only 10-15 minutes of practice time.
+              Drills require only 10-15 minutes of practice time.
             </p>
             <p className="text-lg">
               All drills created and organized in CoachThem. CoachThem has generously sponsored the
