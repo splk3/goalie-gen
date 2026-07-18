@@ -120,8 +120,8 @@ function parseInline(text: string, inheritedStyle: InlineStyle): InlineMarkdownS
           bold: inheritedStyle.bold || marker === "**" || marker === "__",
           italics: inheritedStyle.italics || marker === "*" || marker === "_",
         };
-        parseInline(text.slice(index + marker.length, closingIndex), nestedStyle).forEach((segment) =>
-          pushSegment(segments, segment)
+        parseInline(text.slice(index + marker.length, closingIndex), nestedStyle).forEach(
+          (segment) => pushSegment(segments, segment)
         );
         index = closingIndex + marker.length;
         continue;
