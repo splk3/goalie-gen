@@ -52,6 +52,15 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   space_required: [],
 };
 
+export const SPACE_AVAILABLE_VALUES = [
+  "full_ice",
+  "half_ice",
+  "whole_zone",
+  "flexible",
+  "half_zone",
+  "crease_only",
+];
+
 const SPACE_CAPACITY_RANK: Record<string, number> = {
   crease_only: 0,
   half_zone: 1,

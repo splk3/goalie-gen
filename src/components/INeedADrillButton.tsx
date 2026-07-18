@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
 import {
   DEFAULT_FILTER_STATE,
+  SPACE_AVAILABLE_VALUES,
   useDrillFilters,
   type FilterCategory,
   type FilterState,
@@ -34,15 +35,6 @@ const POPUP_FILTER_CATEGORIES: FilterCategory[] = [
   "fundamental_skill",
   "skating_skill",
   "space_required",
-];
-
-const SPACE_AVAILABLE_ORDER = [
-  "full_ice",
-  "half_ice",
-  "whole_zone",
-  "flexible",
-  "half_zone",
-  "crease_only",
 ];
 
 interface INeedADrillButtonProps {
@@ -262,7 +254,7 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
                 const dropdownId = `filter-${category}-menu`;
                 const displayValues =
                   category === "space_required"
-                    ? SPACE_AVAILABLE_ORDER.filter((value) => values.includes(value))
+                    ? SPACE_AVAILABLE_VALUES.filter((value) => values.includes(value))
                     : values;
 
                 return (

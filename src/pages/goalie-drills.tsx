@@ -5,7 +5,12 @@ import PageLayout from "../components/PageLayout";
 import Pagination from "../components/Pagination";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import { FRESH_CONTENT_WINDOW_MS } from "../utils/constants";
-import { DEFAULT_FILTER_STATE, FilterState, useDrillFilters } from "../hooks/useDrillFilters";
+import {
+  DEFAULT_FILTER_STATE,
+  FilterState,
+  SPACE_AVAILABLE_VALUES,
+  useDrillFilters,
+} from "../hooks/useDrillFilters";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
 import { drillMarkdownToSearchText } from "../utils/drillMarkdown";
@@ -63,14 +68,6 @@ const FILTER_STATE_KEYS: Array<keyof FilterState> = [
   "space_required",
 ];
 
-const normalizeFilterValue = (category: keyof FilterState, value: string): string => {
-  if (category === "space_required" && value === "single_zone") {
-    return "whole_zone";
-  }
-
-  return value;
-};
-
 const parseTimestamp = (value?: string): number | null => {
   if (!value) {
     return null;
@@ -101,8 +98,10 @@ const parseFiltersFromSearchParams = (searchParams: URLSearchParams): FilterStat
 
     parsedFilters[category] = paramValue
       .split(",")
-      .map((value) => normalizeFilterValue(category, value.trim()))
-      .filter(Boolean)
+      .map((value) => value.trim())
+      .filter((value) =>
+        category === "space_required" ? SPACE_AVAILABLE_VALUES.includes(value) : Boolean(value)
+      )
       .sort();
   });
 
@@ -217,7 +216,9 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
     formatTagName,
     formatTagValue,
     activeFilters,
-  } = useDrillFilters(drills, initialFilters);
+  } = useDrillFilters(drills, initialFilters, {
+    spaceMatching: "capacity",
+  });
 
   // State for pagination - initialize from URL if present
   const [currentPage, setCurrentPage] = React.useState<number>(initialPage);
@@ -417,8 +418,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               Develop your goalies during goalie-focused time or involve the whole team!
             </p>
             <p className="text-lg mb-4">
-              All drills are designed to be effective using only 10-15 minutes of practice
-              time.
+              All drills are designed to be effective using only 10-15 minutes of practice time.
             </p>
             <p className="text-lg">
               All drills created and organized in CoachThem. CoachThem has generously sponsored the
@@ -493,6 +493,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
           {Object.entries(tagCategories).map(([category, values]) => {
             const filterCategory = category as keyof FilterState;
             const dropdownId = `filter-${category}-menu`;
+            const displayValues =
+              category === "space_required"
+                ? SPACE_AVAILABLE_VALUES.filter((value) => values.includes(value))
+                : values;
 
             return (
               <div key={category} className="relative">
@@ -504,7 +508,9 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                   aria-haspopup="listbox"
                   aria-controls={dropdownId}
                 >
-                  <span className="font-semibold">{formatTagName(category)}</span>
+                  <span className="font-semibold">
+                    {category === "space_required" ? "Space Available" : formatTagName(category)}
+                  </span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {selectedFilters[filterCategory].length > 0 &&
                       `(${selectedFilters[filterCategory].length})`}
@@ -518,7 +524,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                     role="listbox"
                     className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto"
                   >
-                    {values.map((value) => (
+                    {displayValues.map((value) => (
                       <label
                         key={value}
                         className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
@@ -581,7 +587,8 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
                   className="bg-usa-blue dark:bg-blue-700 text-white px-3 py-1 rounded-full flex items-center gap-2"
                 >
                   <span className="text-sm">
-                    {formatTagName(category)}: {formatTagValue(value)}
+                    {category === "space_required" ? "Space Available" : formatTagName(category)}:{" "}
+                    {formatTagValue(value)}
                   </span>
                   <button
                     onClick={() => removeFilter(category, value)}

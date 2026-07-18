@@ -221,12 +221,25 @@ describe("GoalieDrills page", () => {
     });
   });
 
-  it("normalizes legacy single_zone URL filters to whole_zone", async () => {
+  it("ignores unknown space URL filters", async () => {
     window.history.replaceState(null, "", "/goalie-drills");
-    render(<GoalieDrills data={data} location={{ search: "?space_required=single_zone" }} />);
+    render(<GoalieDrills data={data} location={{ search: "?space_required=unknown_space" }} />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Space Required/i })).toHaveTextContent("(1)");
+      expect(screen.getByRole("button", { name: /Space Available/i })).not.toHaveTextContent("(1)");
+      expect(screen.getByRole("link", { name: "Team Drill" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Goalie Drill" })).toBeInTheDocument();
+      expect(window.location.search).not.toContain("unknown_space");
+    });
+  });
+
+  it("matches smaller spaces when filtering by available space", async () => {
+    render(<GoalieDrills data={data} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Space Available/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Whole Zone" }));
+
+    await waitFor(() => {
       expect(screen.getByRole("link", { name: "Goalie Drill" })).toBeInTheDocument();
       expect(screen.queryByRole("link", { name: "Team Drill" })).not.toBeInTheDocument();
       expect(window.location.search).toContain("space_required=whole_zone");
