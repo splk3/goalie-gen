@@ -200,56 +200,50 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
           </div>
 
           <div ref={dropdownRef}>
-            {/* Team Drill dropdown */}
-            <div className="relative mb-4">
-              <button
-                type="button"
-                onClick={() => setOpenDropdown(openDropdown === "team_drill" ? null : "team_drill")}
-                className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
-                aria-expanded={openDropdown === "team_drill"}
-                aria-controls="filter-team-drill-menu"
-              >
-                <span className="font-semibold">Team Drill</span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {selectedFilters.team_drill.length > 0 &&
-                    `(${selectedFilters.team_drill.length})`}
-                  <span className="ml-2">{openDropdown === "team_drill" ? "▲" : "▼"}</span>
-                </span>
-              </button>
+            {/* Drill Type radio buttons */}
+            <fieldset className="mb-6">
+              <legend className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Drill Type
+              </legend>
+              <div className="grid md:grid-cols-2 gap-3">
+                {[
+                  { value: "no", label: "Drill for Goalies Only" },
+                  { value: "yes", label: "Drill for Whole Team" },
+                ].map(({ value, label }) => {
+                  const isSelected = selectedFilters.team_drill.includes(value);
 
-              {openDropdown === "team_drill" && (
-                <div
-                  id="filter-team-drill-menu"
-                  role="group"
-                  aria-label="Team Drill filters"
-                  className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg"
-                >
-                  {["no", "yes"].map((value) => (
+                  return (
                     <label
                       key={value}
-                      className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                      className={[
+                        "flex items-center gap-3 rounded-lg border-2 px-4 py-4",
+                        "font-semibold cursor-pointer transition-colors",
+                        isSelected
+                          ? "bg-usa-blue border-usa-blue text-white dark:bg-blue-600 dark:border-blue-600"
+                          : "bg-gray-200 border-gray-300 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-600",
+                      ].join(" ")}
                     >
                       <input
                         type="radio"
                         name="team-drill-filter"
                         value={value}
-                        checked={selectedFilters.team_drill.includes(value)}
+                        checked={isSelected}
                         onChange={() =>
                           setSelectedFilters((previous) => ({
                             ...previous,
                             team_drill: [value],
                           }))
                         }
-                        className="mr-3 w-4 h-4"
+                        className="h-5 w-5 accent-white"
                       />
-                      <span className="text-gray-900 dark:text-gray-100">
-                        {formatTagValue(value)}
-                      </span>
+                      <span>{label}</span>
                     </label>
-                  ))}
-                </div>
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Drill Options</h3>
 
             {/* Filter Dropdowns */}
             <div className="grid md:grid-cols-2 gap-4 mb-6">
