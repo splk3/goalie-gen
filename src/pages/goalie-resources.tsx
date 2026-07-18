@@ -4,7 +4,7 @@ import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import ResourceList from "../components/ResourceList";
 import DownloadMaterialButton from "../components/DownloadMaterialButton";
-import GoalieJournalButton from "../components/GoalieJournalButton";
+import NavigationButton from "../components/NavigationButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
 import rawResourceList from "../data/goalie-resources-list.yml";
@@ -35,7 +35,16 @@ export default function GoalieResources() {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-8">
-        <ResourceList items={resourceData["resource-list"]} />
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Goalie Tools</h2>
+          <div className="flex flex-col gap-3">
+            <NavigationButton to="/about-goalie-journals">Goalie Journal</NavigationButton>
+            <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
+            <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
+          </div>
+        </div>
+
+        <ResourceList items={resourceData["resource-list"]} heading="Helpful External Resources" />
 
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
@@ -43,32 +52,13 @@ export default function GoalieResources() {
           </h2>
           <div className="text-gray-700 dark:text-gray-300 space-y-4">
             <p>
-              This section is dedicated to providing resources specifically for young goalies and
-              their parents.
+              This section is dedicated to providing resources specifically for goalies and
+              their families.
             </p>
             <p>
               Whether you&apos;re new to playing goal or looking to take your game to the next
               level, these resources will help support your development journey.
             </p>
-            <p>Future content will include:</p>
-            <ul className="list-disc list-inside ml-4 space-y-2">
-              <li>Mental preparation tips and techniques</li>
-              <li>Equipment guides and maintenance advice</li>
-              <li>At-home training exercises</li>
-              <li>Nutrition and fitness recommendations</li>
-              <li>Goal-setting worksheets</li>
-              <li>Parent guides for supporting young goalies</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">
-            Available Tools
-          </h2>
-          <div className="space-y-3">
-            <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
-            <GoalieJournalButton />
           </div>
         </div>
 

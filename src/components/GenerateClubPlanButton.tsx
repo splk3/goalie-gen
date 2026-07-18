@@ -25,6 +25,7 @@ import {
   DEFAULT_GOALIE_DISCOUNT,
 } from "../utils/generatorDefaults";
 import { buildClubPlanDocument } from "../utils/builders/clubPlanBuilder";
+import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import introductionMd from "../content/club-plan/introduction.md";
 import seasonGoalsMd from "../content/club-plan/season-goals.md";
 import benefitsForClubGoaliesMd from "../content/club-plan/benefits-for-club-goalies.md";
@@ -478,6 +479,19 @@ export default function GenerateClubPlanButton() {
       equipmentMd,
       progressTrackingMd,
       resourcesMd,
+    };
+
+    const skillDevelopmentImageResponse = await fetch(
+      buildCacheBustedAssetPath("/images/drill-design/goaltending-skills-cycle.png")
+    );
+    if (!skillDevelopmentImageResponse.ok) {
+      throw new Error("Failed to load the goaltending skills cycle image.");
+    }
+    content.skillDevelopmentImage = {
+      data: await skillDevelopmentImageResponse.arrayBuffer(),
+      type: "png",
+      width: 280,
+      height: 249,
     };
 
     const doc = await buildClubPlanDocument(config, content, resolvedLogo, docxModule);

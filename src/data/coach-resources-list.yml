@@ -1,9 +1,15 @@
+---
 resource-list:
-  - name: "USA Hockey Goaltender Basics"
+  - name: "USA Hockey Goaltending Homepage"
     description: >-
-      This is a great resource for coaches to learn the basic goaltending terms
-      and techniques for stance, movement, and positioning to help instruct
-      their team's goalies.
+      Official Home for USA Hockey Goaltending,
+      including certification, coaching materials, and development guidelines.
+    link: "https://www.usahockey.com/goaltending"
+  - name: "USA Hockey Goaltending Stance and Movement Basics"
+    description: >-
+      Detailed descriptions and video demonstrations of the primary stance,
+      positioning, and movement techniques that serve as the foundation for all
+      goalie development.
     link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics"
   - name: "USA Hockey Goaltender Season Development Practice Plans"
     description: "USA Hockey practice plans for coaches to help develop their team's goalies during each practice."

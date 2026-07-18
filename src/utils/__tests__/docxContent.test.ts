@@ -12,6 +12,14 @@ import type { DocxHeaderFooterClasses } from "../docxContent";
 import type { MarkdownBlock } from "../markdownParser";
 
 describe("parseRunData", () => {
+  it("parses Markdown bold and italic styles", () => {
+    expect(parseRunData("**Bold** and _italic_")).toEqual([
+      { text: "Bold", italics: false, bold: true },
+      { text: " and ", italics: false },
+      { text: "italic", italics: true },
+    ]);
+  });
+
   it("returns a single plain run when there are no brackets", () => {
     const runs = parseRunData("Hello world");
     expect(runs).toEqual([{ text: "Hello world", italics: false }]);
@@ -78,6 +86,14 @@ describe("textToRuns", () => {
 });
 
 describe("parseSegments", () => {
+  it("retains inline bold and italic styles", () => {
+    expect(parseSegments("**Bold** and _italic_")).toEqual([
+      { type: "text", text: "Bold", bold: true },
+      { type: "text", text: " and " },
+      { type: "text", text: "italic", italics: true },
+    ]);
+  });
+
   it("handles plain text", () => {
     expect(parseSegments("Plain text")).toEqual([{ type: "text", text: "Plain text" }]);
   });
@@ -111,6 +127,13 @@ describe("parseSegments", () => {
 });
 
 describe("textToParagraphChildren", () => {
+  it("creates styled TextRuns for Markdown bold and italic segments", () => {
+    const children = textToParagraphChildren("**Bold** and _italic_");
+
+    expect(children).toHaveLength(3);
+    children.forEach((child) => expect(child).toBeInstanceOf(TextRun));
+  });
+
   it("converts parsed segments to appropriate docx instances", () => {
     const text = "Prefix [Placeholder] middle [Link](https://google.com) suffix";
     const children = textToParagraphChildren(text, "00205B", "000000");

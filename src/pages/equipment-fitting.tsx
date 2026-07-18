@@ -3,26 +3,25 @@ import * as yaml from "js-yaml";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import ResourceList from "../components/ResourceList";
-import DownloadMaterialButton from "../components/DownloadMaterialButton";
-import NavigationButton from "../components/NavigationButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
-import rawResourceList from "../data/coach-resources-list.yml";
+import rawResourceList from "../data/equipment-fitting-resources-list.yml";
 import type { ResourceListData } from "../types/resources";
 
 const resourceData = yaml.load(rawResourceList, {
   schema: yaml.FAILSAFE_SCHEMA,
 }) as ResourceListData;
 
-export default function CoachResources() {
+export default function EquipmentFitting() {
   return (
     <PageLayout>
       <div className="bg-usa-red dark:bg-red-900 text-usa-white p-8 rounded-lg shadow-lg mb-8">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold mb-4">Coach Resources</h1>
+            <h1 className="text-4xl font-bold mb-4">Equipment Fitting</h1>
             <p className="text-lg">
-              Essential tools and resources for coaching youth hockey goalies.
+              Guides and resources to help goalies and families find properly fitted goaltending
+              equipment.
             </p>
           </div>
           <div className="flex-shrink-0">
@@ -34,29 +33,24 @@ export default function CoachResources() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Coach Tools</h2>
-          <div className="flex flex-col gap-3">
-            <NavigationButton to="/about-team-plans">Team Goalie Development</NavigationButton>
-            <NavigationButton to="/about-goalie-journals">Goalie Journal</NavigationButton>
-            <NavigationButton to="/goalie-evals">Goalie Evaluations</NavigationButton>
-            <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
-            <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
-          </div>
-        </div>
-
-        <ResourceList items={resourceData["resource-list"]} heading="Helpful External Resources" />
+      <div className="max-w-2xl mx-auto space-y-8">
+        <ResourceList items={resourceData["resource-list"]} />
 
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
-            About Coach Resources
+            About Equipment Fitting
           </h2>
           <div className="text-gray-700 dark:text-gray-300 space-y-4">
             <p>
-              This page provides coaches with practical tools and resources to support goalie
-              development, evaluate progress, and build consistent training experiences for their
-              goalies and teams.
+              Properly fitted equipment helps goalies move safely, perform effectively, and get the
+              most from their development. Use these resources as a starting point when comparing
+              equipment and preparing for a fitting.
+            </p>
+            <p>
+              Manufacturer guidance can vary by product and model. When a manufacturer does not
+              publish a dedicated sizing guide, consult the product information and retailer
+              measurement charts, and work with an experienced goalie equipment fitter when
+              possible.
             </p>
           </div>
         </div>
@@ -71,4 +65,4 @@ export default function CoachResources() {
   );
 }
 
-export const Head = () => <Seo title="Coach Resources" />;
+export const Head = () => <Seo title="Equipment Fitting" />;

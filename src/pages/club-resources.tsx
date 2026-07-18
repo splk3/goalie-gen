@@ -3,6 +3,7 @@ import * as yaml from "js-yaml";
 import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import ResourceList from "../components/ResourceList";
+import NavigationButton from "../components/NavigationButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
 import rawResourceList from "../data/club-resources-list.yml";
@@ -32,8 +33,18 @@ export default function ClubResources() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto">
-        <ResourceList items={resourceData["resource-list"]} />
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Club Tools</h2>
+          <div className="flex flex-col gap-3">
+            <NavigationButton to="/about-club-plans">Club Goalie Development</NavigationButton>
+            <NavigationButton to="/about-team-plans">Team Goalie Development</NavigationButton>
+            <NavigationButton to="/goalie-evals">Goalie Evaluations</NavigationButton>
+            <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
+          </div>
+        </div>
+
+        <ResourceList items={resourceData["resource-list"]} heading="Helpful External Resources" />
 
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
@@ -42,7 +53,7 @@ export default function ClubResources() {
           <div className="text-gray-700 dark:text-gray-300 space-y-4">
             <p>
               This page is dedicated to providing resources for hockey clubs managing multiple teams
-              and coordinating goaltending development across age groups.
+              and coordinating goaltending development across teams and age groups.
             </p>
           </div>
         </div>

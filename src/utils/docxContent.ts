@@ -1,5 +1,6 @@
-import { HeadingLevel, Paragraph, TextRun, ExternalHyperlink } from "docx";
+import { AlignmentType, HeadingLevel, ImageRun, Paragraph, TextRun, ExternalHyperlink } from "docx";
 import type { MarkdownBlock } from "./markdownParser";
+import { parseInlineMarkdown } from "./inlineMarkdown";
 
 /**
  * Data representation of a single text run before it is converted to a docx
@@ -9,6 +10,7 @@ import type { MarkdownBlock } from "./markdownParser";
 export interface RunData {
   text: string;
   italics: boolean;
+  bold?: boolean;
 }
 
 export interface DocxColorOptions {
@@ -16,6 +18,14 @@ export interface DocxColorOptions {
   primaryColor?: string;
   /** Raw hex color string — may include or omit a leading `#`. */
   secondaryColor?: string;
+  images?: Record<string, DocxImageData>;
+}
+
+export interface DocxImageData {
+  data: ArrayBuffer | Buffer;
+  type: "png" | "jpg" | "gif" | "bmp";
+  width: number;
+  height: number;
 }
 
 /**
@@ -33,28 +43,15 @@ export function cleanHexColor(color?: string): string {
  * text and inline brackets within larger text such as "Focus: [Placeholder]".
  */
 export function parseRunData(text: string): RunData[] {
-  const runs: RunData[] = [];
-  const regex = /\[[^\]]+\]/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      runs.push({ text: text.slice(lastIndex, match.index), italics: false });
-    }
-    runs.push({ text: match[0], italics: true });
-    lastIndex = regex.lastIndex;
+  const segments = parseInlineMarkdown(text);
+  if (segments.length === 0) {
+    return [{ text: "", italics: false }];
   }
-
-  if (lastIndex < text.length) {
-    runs.push({ text: text.slice(lastIndex), italics: false });
-  }
-
-  if (runs.length === 0) {
-    runs.push({ text, italics: false });
-  }
-
-  return runs;
+  return segments.map((segment) => ({
+    text: segment.text,
+    italics: segment.italics === true || segment.type === "placeholder",
+    ...(segment.bold ? { bold: true } : {}),
+  }));
 }
 
 /**
@@ -71,6 +68,8 @@ export interface ParsedSegment {
   type: "text" | "placeholder" | "link";
   text: string;
   url?: string;
+  bold?: boolean;
+  italics?: boolean;
 }
 
 /**
@@ -78,55 +77,14 @@ export interface ParsedSegment {
  * and markdown links of the format [text](url).
  */
 export function parseSegments(text: string): ParsedSegment[] {
-  const segments: ParsedSegment[] = [];
-  const regex = /\[([^\]]+)\]\(([^)]+)\)|\[([^\]]+)\]/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      segments.push({
-        type: "text",
-        text: text.slice(lastIndex, match.index),
-      });
-    }
-
-    if (match[1] !== undefined && match[2] !== undefined) {
-      segments.push({
-        type: "link",
-        text: match[1],
-        url: match[2],
-      });
-    } else if (match[3] !== undefined) {
-      segments.push({
-        type: "placeholder",
-        text: `[${match[3]}]`,
-      });
-    }
-    lastIndex = regex.lastIndex;
-  }
-
-  if (lastIndex < text.length) {
-    segments.push({
-      type: "text",
-      text: text.slice(lastIndex),
-    });
-  }
-
-  if (segments.length === 0) {
-    segments.push({
-      type: "text",
-      text,
-    });
-  }
-
-  return segments;
+  const segments = parseInlineMarkdown(text);
+  return segments.length > 0 ? segments : [{ type: "text", text }];
 }
 
 /**
  * Converts a text string into an array of docx ParagraphChild objects (either TextRun
- * or ExternalHyperlink). Italicizes placeholder text in square brackets (e.g. [Placeholder]),
- * and converts markdown links (e.g. [text](url)) into clickable ExternalHyperlinks.
+ * or ExternalHyperlink). Supports Markdown bold and italics, italicizes placeholder text
+ * in square brackets, and converts markdown links into clickable ExternalHyperlinks.
  */
 export function textToParagraphChildren(
   text: string,
@@ -142,13 +100,16 @@ export function textToParagraphChildren(
             text: segment.text,
             color: primaryColor,
             underline: { type: "single" },
+            bold: segment.bold || undefined,
+            italics: segment.italics || undefined,
           }),
         ],
       });
     }
     return new TextRun({
       text: segment.text,
-      italics: segment.type === "placeholder" ? true : undefined,
+      italics: segment.italics || segment.type === "placeholder" || undefined,
+      bold: segment.bold || undefined,
       color: textColor,
     });
   });
@@ -207,6 +168,30 @@ export function blocksToDocxParagraphs(
             spacing: { after: 100 },
           }),
         ];
+      case "image": {
+        const image = options?.images?.[block.src];
+        if (!image) {
+          return [
+            new Paragraph({
+              children: [new TextRun({ text: block.alt, color: "000000" })],
+              spacing: { after: 300 },
+            }),
+          ];
+        }
+        return [
+          new Paragraph({
+            children: [
+              new ImageRun({
+                type: image.type,
+                data: image.data,
+                transformation: { width: image.width, height: image.height },
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 100, after: 300 },
+          }),
+        ];
+      }
     }
   });
 }

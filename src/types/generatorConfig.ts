@@ -91,6 +91,7 @@ export interface ClubPlanContent {
   seasonGoalsMd: string;
   benefitsForClubGoaliesMd: string;
   skillDevelopmentMd: string;
+  skillDevelopmentImage?: ResolvedLogoData | null;
   contactInformationMd: string;
   equipmentMd: string;
   progressTrackingMd: string;

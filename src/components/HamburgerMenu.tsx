@@ -19,6 +19,7 @@ const NAV_LINKS: (NavLink | null)[] = [
   { label: "Club Resources", to: "/club-resources" },
   { label: "Coach Resources", to: "/coach-resources" },
   { label: "Goalie Resources", to: "/goalie-resources" },
+  { label: "Equipment Fitting", to: "/equipment-fitting" },
   null,
   { label: "Patrick Boyle's Project", to: "/patrick-boyle-project" },
   { label: "Katie Jablynski's Project", to: "/katie-jablynski-project" },

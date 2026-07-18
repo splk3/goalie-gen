@@ -1,12 +1,45 @@
 import * as React from "react";
 import type { DrillMarkdownBlock, DrillMarkdownListBlock } from "../utils/drillMarkdown";
 import { parseDrillMarkdown, parseDrillStepsMarkdown } from "../utils/drillMarkdown";
+import { parseInlineMarkdown } from "../utils/inlineMarkdown";
 import type { LegacyCoachingFocusPoint } from "../types/drill";
 
 interface DrillMarkdownProps {
   markdown: string | string[] | LegacyCoachingFocusPoint[];
   className?: string;
   treatAsDrillSteps?: boolean;
+}
+
+function renderInlineMarkdown(text: string, keyPrefix: string): React.ReactNode {
+  return parseInlineMarkdown(text).map((segment, index) => {
+    const className = [
+      segment.bold ? "font-bold" : "",
+      segment.italics || segment.type === "placeholder" ? "italic" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    const key = `${keyPrefix}-inline-${index}`;
+
+    if (segment.type === "link") {
+      return (
+        <a
+          key={key}
+          href={segment.url}
+          target="_blank"
+          rel="noreferrer"
+          className={`${className} underline`}
+        >
+          {segment.text}
+        </a>
+      );
+    }
+
+    return (
+      <span key={key} className={className || undefined}>
+        {segment.text}
+      </span>
+    );
+  });
 }
 
 function renderListBlock(
@@ -25,7 +58,7 @@ function renderListBlock(
     <ListTag key={keyPrefix} className={listClassName}>
       {list.items.map((item, itemIndex) => (
         <li key={`${keyPrefix}-item-${itemIndex}`}>
-          {item.text}
+          {renderInlineMarkdown(item.text, `${keyPrefix}-item-${itemIndex}`)}
           {item.children.map((child, childIndex) =>
             renderListBlock(child, `${keyPrefix}-item-${itemIndex}-child-${childIndex}`, depth + 1)
           )}
@@ -40,26 +73,26 @@ function renderBlock(block: DrillMarkdownBlock, keyPrefix: string): React.ReactE
     if (block.level === 1) {
       return (
         <h3 className="font-bold text-gray-800 dark:text-gray-200 print:text-gray-900">
-          {block.text}
+          {renderInlineMarkdown(block.text, keyPrefix)}
         </h3>
       );
     }
     if (block.level === 2) {
       return (
         <h4 className="font-semibold text-gray-800 dark:text-gray-200 print:text-gray-900">
-          {block.text}
+          {renderInlineMarkdown(block.text, keyPrefix)}
         </h4>
       );
     }
     return (
       <h5 className="font-semibold text-gray-800 dark:text-gray-200 print:text-gray-900">
-        {block.text}
+        {renderInlineMarkdown(block.text, keyPrefix)}
       </h5>
     );
   }
 
   if (block.type === "paragraph") {
-    return <p className="whitespace-pre-wrap">{block.text}</p>;
+    return <p className="whitespace-pre-wrap">{renderInlineMarkdown(block.text, keyPrefix)}</p>;
   }
 
   return renderListBlock(block, keyPrefix);

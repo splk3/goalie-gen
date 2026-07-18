@@ -38,6 +38,7 @@ describe("HamburgerMenu", () => {
     expect(screen.getByRole("link", { name: "Club Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Coach Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Resources" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Equipment Fitting" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Patrick Boyle's Project" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Katie Jablynski's Project" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "James Kujawski's Project" })).toBeInTheDocument();

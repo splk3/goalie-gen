@@ -1,0 +1,34 @@
+---
+resource-list:
+  - name: "USA Hockey Goaltending Equipment Fitting Guidance"
+    description: >-
+      USA Hockey's goaltending equipment guidance covering fit considerations
+      and how equipment should support safe, effective movement.
+    link: "https://www.usahockeygoaltending.com/page/show/866196-equipment"
+  - name: "Bauer Goalie Pad Size Guide"
+    description: "Bauer's official sizing information for sizing their goalie pads."
+    link: "https://www.bauer.com/pages/size-guide-goalie-pads"
+  - name: "Brian's Goalie Pad Fit Guide"
+    description: "Official Brian's goalie pad sizing and the measurement guilde."
+    link: "https://www.goalies-only.com/fit-guide/"
+  - name: "CCM Goalie Pad Sizing Information"
+    description: >-
+      CCM goalie pad sizing information is available through the 'Size Guide'
+      button on individual product pages.
+    link: "https://us.ccmhockey.com/Goalie/Category/Pads"
+  - name: "True Sports"
+    description: >-
+      True's manufacturer homepage. True does publish sizing information, so we
+      recommend using retailer-provided size charts.
+    link: "https://www.true-sports.com/"
+  - name: "Vaughn Hockey"
+    description: >-
+      Vaughn's manufacturer homepage. Vaughn does not provide a dedicated goalie
+      pad sizing page, but the 'Catalog' link in the top menu includes sizing
+      information.
+    link: "https://vaughnhockey.com/"
+  - name: "Warrior Goalie Leg Pad Sizing Guide"
+    description: >-
+      Warrior's product-line breakdown and sizing walkthrough for choosing
+      goalie leg pads.
+    link: "https://www.warrior.com/en/guide/hockey-goalie-leg-pad-sizing"

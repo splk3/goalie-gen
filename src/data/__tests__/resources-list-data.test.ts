@@ -79,7 +79,7 @@ function validateResourceListFile(fileName: string) {
       }
     });
 
-    it("every item has a 'link' that is a valid HTTPS URL", () => {
+    it("every item has a valid external HTTPS URL", () => {
       for (const item of items) {
         expect(typeof item.link).toBe("string");
         expect(isValidHttpsUrl(item.link)).toBe(true);
@@ -117,6 +117,7 @@ describe("resources-list YAML source files", () => {
   validateResourceListFile("club-resources-list.yml");
   validateResourceListFile("coach-resources-list.yml");
   validateResourceListFile("goalie-resources-list.yml");
+  validateResourceListFile("equipment-fitting-resources-list.yml");
 
   // ── Cross-file consistency ────────────────────────────────────────────────
   describe("cross-file consistency", () => {
@@ -124,6 +125,7 @@ describe("resources-list YAML source files", () => {
       "club-resources-list.yml",
       "coach-resources-list.yml",
       "goalie-resources-list.yml",
+      "equipment-fitting-resources-list.yml",
     ] as const;
 
     it("all three resource list files are present in src/data/", () => {
@@ -135,16 +137,20 @@ describe("resources-list YAML source files", () => {
     it("each file starts with its expected lead resource", () => {
       const expectedFirstItems = {
         "club-resources-list.yml": {
-          name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi",
-          link: "https://worldhockeylab.com/how_to_structure_a_goaltending_development_program/",
+          name: "USA Hockey Goaltending Homepage",
+          link: "https://www.usahockey.com/goaltending",
         },
         "coach-resources-list.yml": {
-          name: "USA Hockey Goaltender Basics",
-          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+          name: "USA Hockey Goaltending Homepage",
+          link: "https://www.usahockey.com/goaltending",
         },
         "goalie-resources-list.yml": {
-          name: "USA Hockey Goaltender Basics",
-          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+          name: "USA Hockey Goaltending Homepage",
+          link: "https://www.usahockey.com/goaltending",
+        },
+        "equipment-fitting-resources-list.yml": {
+          name: "USA Hockey Goaltending Equipment Fitting Guidance",
+          link: "https://www.usahockeygoaltending.com/page/show/866196-equipment",
         },
       } as const;
 
@@ -171,6 +177,60 @@ describe("resources-list YAML source files", () => {
       const data = loadResourceList("coach-resources-list.yml");
       const links = data["resource-list"].map((i) => i.link);
       expect(links).toContain("https://www.usahockey.com/goaltendingplans");
+    });
+  });
+
+  describe("stance and movement basics resource", () => {
+    it("uses the requested name and description in all resource lists", () => {
+      const expected = {
+        name: "USA Hockey Goaltending Stance and Movement Basics",
+        description:
+          "Detailed descriptions and video demonstrations of the primary stance, positioning, and movement techniques that serve as the foundation for all goalie development.",
+        link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+      };
+
+      for (const file of [
+        "club-resources-list.yml",
+        "coach-resources-list.yml",
+        "goalie-resources-list.yml",
+      ]) {
+        const item = loadResourceList(file)["resource-list"].find(
+          (resource) => resource.link === expected.link
+        );
+        expect(item).toEqual(expected);
+      }
+    });
+  });
+
+  describe("equipment-fitting-resources-list.yml known content", () => {
+    it("contains the supplied manufacturer and fitting resources", () => {
+      const data = loadResourceList("equipment-fitting-resources-list.yml");
+      const links = data["resource-list"].map((i) => i.link);
+
+      expect(links).toEqual(
+        expect.arrayContaining([
+          "https://www.usahockeygoaltending.com/page/show/866196-equipment",
+          "https://www.bauer.com/pages/size-guide-goalie-pads",
+          "https://www.goalies-only.com/fit-guide/",
+          "https://us.ccmhockey.com/Goalie/Category/Pads",
+          "https://www.true-sports.com/",
+          "https://vaughnhockey.com/",
+          "https://www.warrior.com/en/guide/hockey-goalie-leg-pad-sizing",
+        ])
+      );
+    });
+  });
+
+  describe("equipment-fitting page links", () => {
+    it("is excluded from all external resource lists", () => {
+      for (const file of [
+        "club-resources-list.yml",
+        "coach-resources-list.yml",
+        "goalie-resources-list.yml",
+      ]) {
+        const data = loadResourceList(file);
+        expect(data["resource-list"].map((item) => item.link)).not.toContain("/equipment-fitting");
+      }
     });
   });
 });

@@ -3,6 +3,18 @@ import { render } from "@testing-library/react";
 import DrillMarkdown from "../DrillMarkdown";
 
 describe("DrillMarkdown", () => {
+  it("renders bold, italic, and links from inline Markdown", () => {
+    const { container } = render(
+      <DrillMarkdown markdown="**Bold** and *italic* [guide](https://example.com)" />
+    );
+
+    expect(container.textContent).toContain("Bold");
+    expect(container.textContent).toContain("italic");
+    expect(container.querySelectorAll(".font-bold")).toHaveLength(1);
+    expect(container.querySelectorAll(".italic")).toHaveLength(1);
+    expect(container.querySelector("a")).toHaveAttribute("href", "https://example.com");
+  });
+
   it("adds progressively deeper indentation classes for nested lists", () => {
     const { container } = render(
       <DrillMarkdown

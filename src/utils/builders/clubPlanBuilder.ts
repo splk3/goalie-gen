@@ -13,11 +13,10 @@ import type {
   ResolvedLogoData,
 } from "../../types/generatorConfig";
 import {
-  extractLevel3Section,
+  selectRandomLevel3Section,
   valueOrPlaceholder,
   withSectionHeading,
   buildTrainingDetailsBlock,
-  CLUB_PLAN_INTRO_OPTIONS,
 } from "../generatorDefaults";
 
 type DocxModule = typeof import("docx");
@@ -119,16 +118,19 @@ export async function buildClubPlanDocument(
 
   // ── Content selection ──────────────────────────────────────────────────────
 
-  const selectedIntroMarkdown = includeStarterIntroduction
-    ? extractLevel3Section(
-        introductionMd,
-        CLUB_PLAN_INTRO_OPTIONS[Math.floor(Math.random() * CLUB_PLAN_INTRO_OPTIONS.length)]
-      )
-    : extractLevel3Section(introductionMd, "Placeholder");
+  const selectedIntroMarkdown = selectRandomLevel3Section(
+    introductionMd,
+    "Sample Content",
+    "Placeholder",
+    includeStarterIntroduction
+  );
 
-  const selectedSeasonGoalsMarkdown = includeStarterSeasonGoals
-    ? extractLevel3Section(seasonGoalsMd, "Sample Content")
-    : extractLevel3Section(seasonGoalsMd, "Placeholder");
+  const selectedSeasonGoalsMarkdown = selectRandomLevel3Section(
+    seasonGoalsMd,
+    "Sample Content",
+    "Placeholder",
+    includeStarterSeasonGoals
+  );
 
   // ── Document children ──────────────────────────────────────────────────────
 
@@ -306,7 +308,18 @@ export async function buildClubPlanDocument(
   }
 
   // Skill Development section
-  documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd), colorOpts));
+  documentChildren.push(
+    ...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd), {
+      ...colorOpts,
+      ...(content.skillDevelopmentImage
+        ? {
+            images: {
+              "/images/drill-design/goaltending-skills-cycle.png": content.skillDevelopmentImage,
+            },
+          }
+        : {}),
+    })
+  );
 
   // Equipment section (optional)
   if (includeRequiredEquipmentSection) {

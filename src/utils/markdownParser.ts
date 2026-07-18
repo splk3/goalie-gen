@@ -1,7 +1,8 @@
 export type MarkdownBlock =
   | { type: "heading"; level: 1 | 2 | 3; text: string }
   | { type: "paragraph"; text: string }
-  | { type: "bullet"; text: string };
+  | { type: "bullet"; text: string }
+  | { type: "image"; alt: string; src: string };
 
 /**
  * Parses a simple markdown string into structured blocks.
@@ -25,6 +26,13 @@ export function parseMarkdown(markdown: string): MarkdownBlock[] {
     // directives like <!-- markdownlint-disable MD041 -->). Multi-line HTML comments
     // are not tracked since content fragments only use single-line disable directives.
     if (line.trim().startsWith("<!--") && line.trim().endsWith("-->")) {
+      continue;
+    }
+
+    const imageMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imageMatch) {
+      flushParagraph();
+      blocks.push({ type: "image", alt: imageMatch[1], src: imageMatch[2] });
       continue;
     }
 
