@@ -160,6 +160,15 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
             </h2>
           </div>
 
+          <div className="mb-6 space-y-2 text-gray-700 dark:text-gray-300">
+            <p className="font-semibold">
+              Use the filters below to find a drill for your goalie - FAST!
+            </p>
+            <p className="text-sm italic">
+              Tip: If you don&apos;t have a net available, use a side wall!
+            </p>
+          </div>
+
           {/* Filter Dropdowns */}
           <div ref={dropdownRef} className="grid md:grid-cols-2 gap-4 mb-6">
             {(Object.keys(tagCategories) as FilterCategory[]).map((category) => {
