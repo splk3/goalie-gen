@@ -6,6 +6,7 @@
  * data so the same builder runs unchanged in both the browser and Node.
  */
 import { parseMarkdown } from "../markdownParser";
+import { parseInlineMarkdown, type InlineMarkdownSegment } from "../inlineMarkdown";
 import type {
   GoalieJournalConfig,
   GoalieJournalContent,
@@ -18,6 +19,79 @@ import {
 } from "../teamColors";
 
 type JsPdfModule = typeof import("jspdf");
+
+type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
+
+function setInlineFont(doc: JournalDocument, segment: InlineMarkdownSegment): void {
+  const bold = segment.bold === true;
+  const italics = segment.italics === true || segment.type === "placeholder";
+  const style = bold && italics ? "bolditalic" : bold ? "bold" : italics ? "italic" : "normal";
+  doc.setFont("helvetica", style);
+}
+
+function inlineTextLines(
+  doc: JournalDocument,
+  text: string,
+  maxWidth: number
+): InlineMarkdownSegment[][] {
+  const lines: InlineMarkdownSegment[][] = [[]];
+  let lineWidth = 0;
+
+  parseInlineMarkdown(text).forEach((segment) => {
+    const words = segment.text.split(/(\s+)/);
+    words.forEach((word) => {
+      if (!word) return;
+      setInlineFont(doc, segment);
+      const wordWidth = doc.getTextWidth(word);
+      if (lineWidth > 0 && !/^\s+$/.test(word) && lineWidth + wordWidth > maxWidth) {
+        lines.push([]);
+        lineWidth = 0;
+      }
+      const currentLine = lines[lines.length - 1];
+      const previous = currentLine[currentLine.length - 1];
+      if (
+        previous &&
+        previous.type === segment.type &&
+        previous.url === segment.url &&
+        previous.bold === segment.bold &&
+        previous.italics === segment.italics
+      ) {
+        previous.text += word;
+      } else {
+        currentLine.push({ ...segment, text: word });
+      }
+      lineWidth += wordWidth;
+    });
+  });
+
+  return lines.filter((line) => line.length > 0);
+}
+
+function drawInlineText(
+  doc: JournalDocument,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+  align: "left" | "center" = "left"
+): number {
+  const lines = inlineTextLines(doc, text, maxWidth);
+  lines.forEach((line, lineIndex) => {
+    const totalWidth = line.reduce((width, segment) => {
+      setInlineFont(doc, segment);
+      return width + doc.getTextWidth(segment.text);
+    }, 0);
+    let currentX = align === "center" ? x - totalWidth / 2 : x;
+    line.forEach((segment) => {
+      setInlineFont(doc, segment);
+      doc.text(segment.text, currentX, y + lineIndex * lineHeight);
+      currentX += doc.getTextWidth(segment.text);
+    });
+  });
+  doc.setFont("helvetica", "normal");
+  return lines.length;
+}
 
 /**
  * Builds a Goalie Journal PDF and returns the `jsPDF` document instance.
@@ -55,7 +129,7 @@ export function buildGoalieJournalPdf(
 
   doc.setTextColor(primary);
   doc.setFontSize(28);
-  doc.text(coverTitle, 105, 40, { align: "center" });
+  drawInlineText(doc, coverTitle, 105, 40, 170, 6, "center");
   doc.setTextColor("#000000");
   doc.setFontSize(18);
   doc.text(goalieName, 105, 58, { align: "center" });
@@ -63,7 +137,7 @@ export function buildGoalieJournalPdf(
   doc.text(`Season ${season}`, 105, 86, { align: "center" });
   if (coverSubtitle) {
     doc.setFontSize(10);
-    doc.text(coverSubtitle, 105, 97, { align: "center" });
+    drawInlineText(doc, coverSubtitle, 105, 97, 170, 5, "center");
   }
 
   if (logo) {
@@ -90,11 +164,11 @@ export function buildGoalieJournalPdf(
 
   doc.setTextColor(primary);
   doc.setFontSize(20);
-  doc.text(goalsTitle, 105, 20, { align: "center" });
+  drawInlineText(doc, goalsTitle, 105, 20, 170, 6, "center");
   doc.setFontSize(12);
   doc.setTextColor("#000000");
   if (goalsPrompt) {
-    doc.text(goalsPrompt, 20, 40);
+    drawInlineText(doc, goalsPrompt, 20, 40, 170, 5);
   }
 
   for (let i = 0; i < 8; i++) {
@@ -123,9 +197,7 @@ export function buildGoalieJournalPdf(
   const entryMinHeight = 50; // mm minimum so the box is always readable
 
   doc.setFontSize(9);
-  const labelWrapped = entryLabels.map(
-    (label) => doc.splitTextToSize(label, labelMaxWidth) as string[]
-  );
+  const labelWrapped = entryLabels.map((label) => inlineTextLines(doc, label, labelMaxWidth));
   const computedEntryHeight =
     entryHeaderHeight +
     labelWrapped.reduce((sum, lines) => sum + lines.length * labelLineHeight + labelRowGap, 0) +
@@ -164,9 +236,15 @@ export function buildGoalieJournalPdf(
       doc.text("Opponent: _______________", 135, startY + 15);
 
       let promptY = startY + entryHeaderHeight;
-      labelWrapped.forEach((lines) => {
+      entryLabels.forEach((label) => {
+        const lines = inlineTextLines(doc, label, labelMaxWidth);
         lines.forEach((line, lineIdx) => {
-          doc.text(line, 20, promptY + lineIdx * labelLineHeight);
+          let promptX = 20;
+          line.forEach((segment) => {
+            setInlineFont(doc, segment);
+            doc.text(segment.text, promptX, promptY + lineIdx * labelLineHeight);
+            promptX += doc.getTextWidth(segment.text);
+          });
         });
         const underlineY = promptY + lines.length * labelLineHeight + 1;
         doc.line(20, underlineY, 190, underlineY);
@@ -186,7 +264,7 @@ export function buildGoalieJournalPdf(
 
   doc.setTextColor(primary);
   doc.setFontSize(20);
-  doc.text(eosTitle, 105, 20, { align: "center" });
+  drawInlineText(doc, eosTitle, 105, 20, 170, 6, "center");
 
   const eosPageHeight = doc.internal.pageSize.height - 15;
   const eosAnswerLines = 3;
@@ -200,9 +278,14 @@ export function buildGoalieJournalPdf(
       doc.addPage();
       eosY = 20;
     }
-    const promptLines = doc.splitTextToSize(prompt, 170) as string[];
+    const promptLines = inlineTextLines(doc, prompt, 170);
     promptLines.forEach((line, lineIdx) => {
-      doc.text(line, 20, eosY + lineIdx * 6);
+      let promptX = 20;
+      line.forEach((segment) => {
+        setInlineFont(doc, segment);
+        doc.text(segment.text, promptX, eosY + lineIdx * 6);
+        promptX += doc.getTextWidth(segment.text);
+      });
     });
     const eosAnswerStart = eosY + promptLines.length * 6 + 2;
     for (let i = 0; i < eosAnswerLines; i++) {

@@ -129,6 +129,7 @@ function makeMockJsPdfModule() {
   const pages: number[] = [1];
   const textColors: string[] = [];
   const drawColors: string[] = [];
+  const fonts: string[] = [];
   class MockJsPDF {
     internal = {
       pageSize: { height: 297 },
@@ -138,6 +139,7 @@ function makeMockJsPdfModule() {
       return this;
     }
     setFont(_name: string, _style?: string) {
+      fonts.push(_style || "normal");
       return this;
     }
     setTextColor(color: string) {
@@ -163,6 +165,9 @@ function makeMockJsPdfModule() {
     splitTextToSize(text: string, _maxWidth: number): string[] {
       return [text];
     }
+    getTextWidth(text: string): number {
+      return text.length;
+    }
     addPage() {
       pages.push(pages.length + 1);
       return this;
@@ -174,7 +179,7 @@ function makeMockJsPdfModule() {
       return _type === "blob" ? new Blob() : new ArrayBuffer(0);
     }
   }
-  return { jsPDF: MockJsPDF, textColors, drawColors };
+  return { jsPDF: MockJsPDF, textColors, drawColors, fonts };
 }
 
 // ─── Club Plan builder tests ──────────────────────────────────────────────────
@@ -560,6 +565,25 @@ describe("buildGoalieJournalPdf", () => {
     expect(mockModule.textColors).toContain("#123456");
     expect(mockModule.drawColors).toContain("#ABCDEF");
     expect(mockModule.textColors).toContain("#000000");
+  });
+
+  it("renders Markdown bold and italic styles in PDF text", () => {
+    const mockModule = makeMockJsPdfModule();
+    const content: GoalieJournalContent = {
+      ...JOURNAL_CONTENT,
+      coverMd: "# **Bold Journal**\n\n*Italic subtitle*",
+      practiceEntryMd: "# Practice & Game Log\n\n**Bold prompt** and _italic prompt_.",
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      content,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.fonts).toContain("bold");
+    expect(mockModule.fonts).toContain("italic");
   });
 
   it("accepts entryCount of 1 without error", () => {
