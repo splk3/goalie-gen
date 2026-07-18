@@ -19,6 +19,7 @@ Goalie Gen provides three separate document generation workflows:
 1. **Team Plan Generator (`src/components/GenerateTeamPlanButton.tsx`)**:
    - Compiles a weekly development calendar and goalie assignments.
    - Separates **Calendar Event Types** (calendar visibility) from **Event Types for Detailed Entries** (which event detail sections are generated).
+   - Supports manual event dates and one-time calendar feed / `.ics` imports. Imported events expand within the editable import date range (default: today through six months), preserve source title/description for DOCX event details, and fall back to upload guidance when browser CORS blocks a feed URL.
    - Embeds goalie evaluation sheets and team-level goaltending practice guidelines.
 2. **Club Plan Generator (`src/components/GenerateClubPlanButton.tsx`)**:
    - Produces institutional club-wide plans for goalie training and development pathways.
@@ -28,6 +29,33 @@ Goalie Gen provides three separate document generation workflows:
    - Includes game log sheets, practice goals checklists, and self-evaluation templates.
    - Uses the selected primary color for headings and the secondary color for journal
      entry borders and writing lines; body text remains black.
+
+### Team Plan Calendar Feed Import
+
+The Team Plan Generator imports a calendar once from a directly fetchable feed URL or a downloaded `.ics` file.
+URL requests are browser-side and may be blocked by provider CORS policies;
+the import dialog explains the limitation and provides the upload fallback.
+Recurring events expand between the user-selected start and end dates,
+which default to the current date through six months later.
+After a failed URL request, **Download Feed** attempts to save the original URL as an `.ics` file and
+opens the URL in a new tab as a fallback when the browser does not honor cross-origin downloads.
+The adjacent **Use Downloaded Feed** action opens the existing `.ics` picker and imports the selected
+file through the same path as **Upload an .ics file**. Browsers intentionally do not allow a web page
+to populate a file input or read the local path of a file that was downloaded automatically.
+
+Imported event types use the first matching, case-insensitive rule:
+
+- game plus film/video becomes **Video Review**
+- game/vs/showcase/show case/tourney/tournament becomes **Game**
+- practice becomes **On-ice Practice**
+- review/video/film becomes **Video Review**
+- evaluation/eval/evals becomes **Evaluation**
+- off ice/off-ice/dryland/dry land becomes **Off-ice Practice**
+- unmatched events become **TBD**.
+
+Rules are centralized in `src/utils/calendarImport.ts`.
+Imported title and description remain hidden in the event list but populate the corresponding generated DOCX event details;
+manually added events retain the existing blank starter content.
 
 ---
 

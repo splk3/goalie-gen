@@ -15,6 +15,12 @@ import {
 } from "../utils/teamColors";
 import { normalizeUrl } from "../utils/generatorDefaults";
 import { buildTeamPlanDocument } from "../utils/builders/teamPlanBuilder";
+import {
+  fetchCalendarFeed,
+  mergeCalendarEvents,
+  parseCalendarFeed,
+  CalendarImportError,
+} from "../utils/calendarImport";
 import coverMd from "../content/team-plan/cover.md";
 import seasonOverviewMd from "../content/team-plan/season-overview.md";
 import eventDetailsMd from "../content/team-plan/event-details.md";
@@ -85,6 +91,14 @@ function formatDisplayDate(dateKey: string): string {
     year: "numeric",
     timeZone: "UTC",
   });
+}
+
+function addMonths(date: Date, months: number): Date {
+  const result = new Date(date.getFullYear(), date.getMonth() + months, date.getDate());
+  if (result.getDate() !== date.getDate()) {
+    result.setDate(0);
+  }
+  return result;
 }
 
 function reconcileEventTypes(
@@ -176,7 +190,19 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     TBD: true,
   });
   const [selectedEventDates, setSelectedEventDates] = React.useState<EventDateSelection[]>([]);
+  const [calendarImportStartDate, setCalendarImportStartDate] = React.useState<string>(() =>
+    toDateKey(new Date())
+  );
+  const [calendarImportEndDate, setCalendarImportEndDate] = React.useState<string>(() =>
+    toDateKey(addMonths(new Date(), 6))
+  );
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
+  const [isCalendarImportOpen, setIsCalendarImportOpen] = React.useState<boolean>(false);
+  const [calendarFeedUrl, setCalendarFeedUrl] = React.useState<string>("");
+  const [isImportingCalendar, setIsImportingCalendar] = React.useState<boolean>(false);
+  const [calendarImportStatus, setCalendarImportStatus] = React.useState<string>("");
+  const [calendarImportError, setCalendarImportError] = React.useState<string>("");
+  const [canDownloadCalendarFeed, setCanDownloadCalendarFeed] = React.useState<boolean>(false);
   const [datePickerMonth, setDatePickerMonth] = React.useState<Date>(getMonthStart(new Date()));
   const [draftSelectedDateKeys, setDraftSelectedDateKeys] = React.useState<string[]>([]);
   const [datePendingDeletion, setDatePendingDeletion] = React.useState<string | null>(null);
@@ -184,8 +210,19 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
   const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
+  const validationErrorRef = React.useRef<HTMLDivElement>(null);
+  const shouldScrollValidationErrorRef = React.useRef<boolean>(false);
   const addEventDatesButtonRef = React.useRef<HTMLButtonElement>(null);
+  const addCalendarEventsButtonRef = React.useRef<HTMLButtonElement>(null);
+  const calendarFileInputRef = React.useRef<HTMLInputElement>(null);
   const deleteDateTriggerRef = React.useRef<HTMLButtonElement | null>(null);
+
+  React.useEffect(() => {
+    if (validationError && shouldScrollValidationErrorRef.current) {
+      validationErrorRef.current?.scrollIntoView?.({ block: "nearest" });
+      shouldScrollValidationErrorRef.current = false;
+    }
+  }, [validationError]);
 
   const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U", "16U and older"];
   const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
@@ -217,6 +254,136 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setDraftSelectedDateKeys(selectedEventDates.map((entry) => entry.date));
     setDatePickerMonth(getMonthStart(new Date()));
     setIsDatePickerOpen(true);
+  };
+
+  const openCalendarImport = () => {
+    setCalendarImportError("");
+    setCalendarImportStatus("");
+    setCanDownloadCalendarFeed(false);
+    setIsCalendarImportOpen(true);
+  };
+
+  const closeCalendarImport = React.useCallback(() => {
+    if (isImportingCalendar) {
+      return;
+    }
+    setIsCalendarImportOpen(false);
+    setCalendarFeedUrl("");
+    setCalendarImportError("");
+    setCalendarImportStatus("");
+    setCanDownloadCalendarFeed(false);
+    requestAnimationFrame(() => addCalendarEventsButtonRef.current?.focus());
+  }, [isImportingCalendar]);
+
+  const importCalendarText = async (icsText: string) => {
+    setCalendarImportError("");
+    setCalendarImportStatus("");
+    setCanDownloadCalendarFeed(false);
+    setIsImportingCalendar(true);
+    try {
+      const result = parseCalendarFeed(icsText, {
+        startDate: calendarImportStartDate,
+        endDate: calendarImportEndDate,
+      });
+      setSelectedEventDates((previous) => mergeCalendarEvents(previous, result.events));
+      setCalendarImportStatus(
+        `Imported ${result.events.length} event${result.events.length === 1 ? "" : "s"}${
+          result.skippedEvents ? `; skipped ${result.skippedEvents}` : ""
+        }.`
+      );
+    } catch (error) {
+      setCanDownloadCalendarFeed(error instanceof CalendarImportError && error.canDownloadFeed);
+      setCalendarImportError(
+        error instanceof CalendarImportError
+          ? error.message
+          : "The calendar could not be imported. Check the feed and try again."
+      );
+    } finally {
+      setIsImportingCalendar(false);
+    }
+  };
+
+  const handleCalendarFeedImport = async () => {
+    setCalendarImportError("");
+    setCalendarImportStatus("");
+    setCanDownloadCalendarFeed(false);
+    setIsImportingCalendar(true);
+    try {
+      const icsText = await fetchCalendarFeed(calendarFeedUrl);
+      const result = parseCalendarFeed(icsText, {
+        startDate: calendarImportStartDate,
+        endDate: calendarImportEndDate,
+      });
+      setSelectedEventDates((previous) => mergeCalendarEvents(previous, result.events));
+      setCalendarImportStatus(
+        `Imported ${result.events.length} event${result.events.length === 1 ? "" : "s"}${
+          result.skippedEvents ? `; skipped ${result.skippedEvents}` : ""
+        }.`
+      );
+    } catch (error) {
+      setCanDownloadCalendarFeed(error instanceof CalendarImportError && error.canDownloadFeed);
+      setCalendarImportError(
+        error instanceof CalendarImportError
+          ? error.message
+          : "The calendar could not be imported. Check the feed and try again."
+      );
+    } finally {
+      setIsImportingCalendar(false);
+    }
+  };
+
+  const handleDownloadCalendarFeed = () => {
+    setCalendarImportError("");
+    const rawUrl = calendarFeedUrl.trim();
+    if (!rawUrl) {
+      return;
+    }
+
+    const normalizedUrl = normalizeUrl(rawUrl);
+    if (!normalizedUrl) {
+      setCalendarImportError("Enter a valid calendar feed URL.");
+      return;
+    }
+
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(normalizedUrl);
+    } catch {
+      setCalendarImportError("Enter a valid calendar feed URL.");
+      return;
+    }
+
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      setCalendarImportError("Only http(s) calendar feed URLs are allowed.");
+      return;
+    }
+
+    const safeUrl = parsedUrl.toString();
+    const link = document.createElement("a");
+    link.href = safeUrl;
+    link.download = "calendar-feed.ics";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.setTimeout(() => {
+      window.open(safeUrl, "_blank", "noopener,noreferrer");
+    }, 0);
+  };
+
+  const handleUseDownloadedFeed = () => {
+    calendarFileInputRef.current?.click();
+  };
+
+  const handleCalendarFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) {
+      return;
+    }
+    await importCalendarText(await file.text());
   };
 
   const closeDatePickerWithoutSaving = React.useCallback(() => {
@@ -270,6 +437,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             availableEventTypeOptions,
             defaultEventType
           ),
+          events: previousEventTypes ? previous.find((entry) => entry.date === date)?.events : [],
         };
       });
     });
@@ -323,9 +491,22 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const updateSelectionEventTypes = React.useCallback(
     (selectionDate: string, updater: (eventTypes: EventType[]) => EventType[]) => {
       setSelectedEventDates((previous) =>
-        previous.map((entry) =>
-          entry.date === selectionDate ? { ...entry, eventTypes: updater(entry.eventTypes) } : entry
-        )
+        previous.map((entry) => {
+          if (entry.date !== selectionDate) {
+            return entry;
+          }
+          const eventTypes = updater(entry.eventTypes);
+          return {
+            ...entry,
+            eventTypes,
+            events: entry.events
+              ?.map((event, index) => ({
+                ...event,
+                eventType: eventTypes[index] ?? event.eventType,
+              }))
+              .slice(0, eventTypes.length),
+          };
+        })
       );
     },
     []
@@ -333,24 +514,29 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
 
   const validateInputs = (): boolean => {
     setValidationError("");
+    shouldScrollValidationErrorRef.current = false;
 
     if (!teamName.trim()) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a team name");
       return false;
     }
 
     if (!ageGroup) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please select an age group");
       return false;
     }
 
     if (!skillLevel) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please select a skill level");
       return false;
     }
 
     if (hasGoalieEvaluations) {
       if (goalieEvaluationTimes.includes(".") || goalieEvaluationTimes.includes(",")) {
+        shouldScrollValidationErrorRef.current = true;
         setValidationError("Evaluation times must be a positive whole number");
         return false;
       }
@@ -361,6 +547,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         evaluationsNum <= 0 ||
         evaluationsNum.toString() !== goalieEvaluationTimes.trim()
       ) {
+        shouldScrollValidationErrorRef.current = true;
         setValidationError("Evaluation times must be a positive whole number");
         return false;
       }
@@ -376,7 +563,14 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     // ── Sort / reconcile event data ─────────────────────────────────────────
     const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
     const eventSelections = sortedEventDates.flatMap<EventSelection>((eventDate) =>
-      eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
+      eventDate.eventTypes.map((eventType, index) => {
+        const event = eventDate.events?.[index] ?? {
+          date: eventDate.date,
+          eventType,
+          source: "manual" as const,
+        };
+        return { ...event, eventType };
+      })
     );
     const detailedEventSelections = eventSelections.filter(
       (event) => detailedEntryEventTypes[event.eventType]
@@ -528,6 +722,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         TBD: true,
       });
       setSelectedEventDates([]);
+      setCalendarImportStartDate(toDateKey(new Date()));
+      setCalendarImportEndDate(toDateKey(addMonths(new Date(), 6)));
+      setIsCalendarImportOpen(false);
+      setCalendarFeedUrl("");
+      setCalendarImportStatus("");
+      setCalendarImportError("");
+      setCanDownloadCalendarFeed(false);
       setIsDatePickerOpen(false);
       setDatePickerMonth(getMonthStart(new Date()));
       setDraftSelectedDateKeys([]);
@@ -574,6 +775,13 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       TBD: true,
     });
     setSelectedEventDates([]);
+    setCalendarImportStartDate(toDateKey(new Date()));
+    setCalendarImportEndDate(toDateKey(addMonths(new Date(), 6)));
+    setIsCalendarImportOpen(false);
+    setCalendarFeedUrl("");
+    setCalendarImportStatus("");
+    setCalendarImportError("");
+    setCanDownloadCalendarFeed(false);
     setIsDatePickerOpen(false);
     setDatePickerMonth(getMonthStart(new Date()));
     setDraftSelectedDateKeys([]);
@@ -602,6 +810,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       if (event.key === "Escape" && showModal && !isGenerating && !generatedBlob) {
         if (datePendingDeletion) {
           cancelDeleteDateConfirmation();
+        } else if (isCalendarImportOpen) {
+          closeCalendarImport();
         } else if (isDatePickerOpen) {
           closeDatePickerWithoutSaving();
         } else {
@@ -621,6 +831,8 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     handleCancel,
     datePendingDeletion,
     cancelDeleteDateConfirmation,
+    isCalendarImportOpen,
+    closeCalendarImport,
     isDatePickerOpen,
     closeDatePickerWithoutSaving,
   ]);
@@ -849,6 +1061,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                 setAddCalendarOfEvents(enabled);
                 if (!enabled) {
                   closeDatePickerWithoutSaving();
+                  setIsCalendarImportOpen(false);
                   setDatePendingDeletion(null);
                 }
               }}
@@ -861,6 +1074,40 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">
                 Event Planning
               </legend>
+              <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="calendar-import-start-date"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Calendar import start date
+                  </label>
+                  <input
+                    id="calendar-import-start-date"
+                    type="date"
+                    value={calendarImportStartDate}
+                    onChange={(event) => setCalendarImportStartDate(event.target.value)}
+                    disabled={!canEditEventPlanning}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="calendar-import-end-date"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Calendar import end date
+                  </label>
+                  <input
+                    id="calendar-import-end-date"
+                    type="date"
+                    value={calendarImportEndDate}
+                    onChange={(event) => setCalendarImportEndDate(event.target.value)}
+                    disabled={!canEditEventPlanning}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
               <SliderToggle
                 id="include-calendar-view"
                 label="Include calendar view?"
@@ -958,19 +1205,34 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                 </fieldset>
               )}
 
-              <button
-                type="button"
-                ref={addEventDatesButtonRef}
-                onClick={openDatePicker}
-                disabled={!canEditEventPlanning}
-                className={`mb-4 w-full rounded-lg px-4 py-2 font-semibold text-white transition-colors ${
-                  canEditEventPlanning
-                    ? "bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700"
-                    : "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
-                }`}
-              >
-                Add Event Dates
-              </button>
+              <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  ref={addEventDatesButtonRef}
+                  onClick={openDatePicker}
+                  disabled={!canEditEventPlanning}
+                  className={`w-full rounded-lg px-4 py-2 font-semibold text-white transition-colors ${
+                    canEditEventPlanning
+                      ? "bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700"
+                      : "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                  }`}
+                >
+                  Add Event Dates Manually
+                </button>
+                <button
+                  type="button"
+                  ref={addCalendarEventsButtonRef}
+                  onClick={openCalendarImport}
+                  disabled={!canEditEventPlanning}
+                  className={`w-full rounded-lg px-4 py-2 font-semibold text-white transition-colors ${
+                    canEditEventPlanning
+                      ? "bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700"
+                      : "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                  }`}
+                >
+                  Add Event Dates from Calendar Feed
+                </button>
+              </div>
 
               {selectedEventDates.length > 0 && (
                 <div>
@@ -1128,7 +1390,10 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           )}
 
           {validationError && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
+            <div
+              ref={validationErrorRef}
+              className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm"
+            >
               {validationError}
             </div>
           )}
@@ -1141,7 +1406,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         </div>
 
         {/* Non-scrolling footer — action buttons always visible */}
-        <div className="px-8 pb-8 flex gap-4 flex-shrink-0">
+        <div className="px-8 pt-4 pb-8 flex gap-4 flex-shrink-0">
           {!generatedBlob ? (
             <>
               <button
@@ -1181,6 +1446,116 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
           )}
         </div>
       </Modal>
+
+      {showModal && isCalendarImportOpen && (
+        <>
+          <div aria-hidden="true" className="fixed inset-0 bg-black/70 z-[60]" />
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="calendar-import-title"
+              className="w-full max-w-lg rounded-lg bg-white p-5 shadow-2xl dark:bg-gray-800"
+            >
+              <h3
+                id="calendar-import-title"
+                className="mb-2 text-xl font-bold text-usa-blue dark:text-blue-400"
+              >
+                Import Calendar Events
+              </h3>
+              <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+                Paste a calendar feed URL, or download the feed from your calendar provider and
+                upload the .ics file below. Imported events are added to the existing events.
+              </p>
+              <label
+                htmlFor="calendar-feed-url"
+                className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Calendar feed URL
+              </label>
+              <input
+                id="calendar-feed-url"
+                type="url"
+                value={calendarFeedUrl}
+                onChange={(event) => setCalendarFeedUrl(event.target.value)}
+                placeholder="https://..."
+                disabled={isImportingCalendar}
+                className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              />
+              <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={handleCalendarFeedImport}
+                  disabled={isImportingCalendar || !calendarFeedUrl.trim()}
+                  className="rounded-lg bg-usa-blue px-4 py-2 font-semibold text-white hover:bg-blue-900 disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-blue-600 dark:hover:bg-blue-700"
+                >
+                  {isImportingCalendar ? "Importing..." : "Import from URL"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => calendarFileInputRef.current?.click()}
+                  disabled={isImportingCalendar}
+                  className="rounded-lg bg-gray-600 px-4 py-2 font-semibold text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+                >
+                  Upload an .ics file
+                </button>
+              </div>
+              <input
+                ref={calendarFileInputRef}
+                type="file"
+                accept=".ics,text/calendar"
+                onChange={handleCalendarFileChange}
+                className="hidden"
+                aria-label="Upload an .ics file"
+              />
+              {calendarImportError && (
+                <div role="alert" className="mb-3 rounded-lg bg-red-100 p-3 text-sm text-red-800">
+                  <p>{calendarImportError}</p>
+                  {canDownloadCalendarFeed && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleDownloadCalendarFeed}
+                        className="rounded-lg bg-usa-blue px-3 py-2 font-semibold text-white hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700"
+                      >
+                        Download Feed
+                      </button>
+                      <span aria-hidden="true" className="text-lg font-bold text-gray-600">
+                        →
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleUseDownloadedFeed}
+                        disabled={isImportingCalendar}
+                        className="rounded-lg bg-gray-600 px-3 py-2 font-semibold text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+                      >
+                        Use Downloaded Feed
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+              {calendarImportStatus && (
+                <p className="mb-3 rounded-lg bg-green-100 p-3 text-sm text-green-800">
+                  {calendarImportStatus}
+                </p>
+              )}
+              <p className="mb-4 text-xs text-gray-600 dark:text-gray-400">
+                If URL import fails because the provider blocks browser access (CORS), download the
+                calendar as an .ics file from that application and upload it here.
+              </p>
+              <button
+                type="button"
+                onClick={closeCalendarImport}
+                disabled={isImportingCalendar}
+                className="w-full rounded-lg bg-gray-400 px-4 py-2 font-semibold text-white hover:bg-gray-500 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {showModal && isDatePickerOpen && (
         <>

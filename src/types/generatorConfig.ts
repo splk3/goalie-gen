@@ -112,11 +112,18 @@ export type EventType = ConfigurableEventType | "TBD";
 export interface EventDateSelection {
   date: string;
   eventTypes: EventType[];
+  events?: EventSelection[];
 }
 
 export interface EventSelection {
   date: string;
   eventType: EventType;
+  id?: string;
+  title?: string;
+  description?: string;
+  startTime?: string;
+  timeZone?: string;
+  source?: "manual" | "calendar";
 }
 
 /** All configuration options for the Team Plan document generator. */

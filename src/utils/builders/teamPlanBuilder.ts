@@ -11,6 +11,7 @@ import { buildEventCalendarMonths } from "../teamPlanCalendarGrid";
 import type {
   TeamPlanConfig,
   TeamPlanContent,
+  EventSelection,
   ResolvedLogoData,
   QrGenerator,
 } from "../../types/generatorConfig";
@@ -40,6 +41,24 @@ const GAME_EVENT_TIMELINE_WIDTH_TWIPS =
 const GAME_EVENT_PERIOD_WIDTH_TWIPS = Math.floor(GAME_EVENT_TIMELINE_WIDTH_TWIPS * 0.3);
 const GAME_EVENT_OT_WIDTH_TWIPS =
   GAME_EVENT_TIMELINE_WIDTH_TWIPS - GAME_EVENT_PERIOD_WIDTH_TWIPS * 3;
+
+export function buildImportedEventMarkdown(
+  event: Pick<EventSelection, "title">,
+  eventStarterMarkdown: string
+): string {
+  return event.title
+    ? [`**Calendar Event:** ${event.title}`, "", eventStarterMarkdown].join("\n")
+    : eventStarterMarkdown;
+}
+
+export function formatTeamPlanEventHeading(
+  event: Pick<EventSelection, "date" | "startTime" | "timeZone" | "eventType">
+): string {
+  const time = event.startTime
+    ? ` at ${event.startTime}${event.timeZone ? ` ${event.timeZone}` : ""}`
+    : "";
+  return `${formatDisplayDate(event.date)}${time} (${event.eventType})`;
+}
 
 /**
  * Builds a Team Plan `Document` object from the supplied configuration,
@@ -611,17 +630,17 @@ export async function buildTeamPlanDocument(
       for (const event of detailedEventSelections) {
         documentChildren.push(
           new Paragraph({
-            children: [toBlackRun(`${formatDisplayDate(event.date)} (${event.eventType})`)],
+            children: [toBlackRun(formatTeamPlanEventHeading(event))],
             heading: HeadingLevel.HEADING_3,
             spacing: { before: 250, after: 120 },
           })
         );
 
+        const eventStarterMarkdown = getEventStarterMarkdown(event.eventType, eventDetailsMd);
+        const importedEventMarkdown = buildImportedEventMarkdown(event, eventStarterMarkdown);
+
         documentChildren.push(
-          ...blocksToDocxParagraphs(
-            parseMarkdown(getEventStarterMarkdown(event.eventType, eventDetailsMd)),
-            colorOpts
-          )
+          ...blocksToDocxParagraphs(parseMarkdown(importedEventMarkdown), colorOpts)
         );
 
         if (event.eventType === "On-ice Practice" && addSuggestedDrillEachPractice) {
@@ -653,7 +672,9 @@ export async function buildTeamPlanDocument(
         if (event.eventType === "Evaluation") {
           await addResourceLinkWithQr(
             "Evaluation forms available at ",
-            "https://goaliegen.com/goalie-evals/"
+            "https://goaliegen.com/goalie-evals/",
+            60,
+            true
           );
         }
       }

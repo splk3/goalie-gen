@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GenerateTeamPlanButton from "../GenerateTeamPlanButton";
 import { loadDocxModule } from "../../utils/loadExportModules";
@@ -65,6 +65,15 @@ function getDetailedEntryEventTypesFieldset(): HTMLElement {
     throw new Error("Event Types for Detailed Entries fieldset not found");
   }
   return fieldset;
+}
+
+function getTestIcsDateTime(daysFromToday: number, hour: number): string {
+  const today = new Date();
+  const date = new Date(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + daysFromToday, hour)
+  );
+  const datePart = date.toISOString().slice(0, 10).replace(/-/g, "");
+  return `${datePart}T${String(hour).padStart(2, "0")}0000Z`;
 }
 
 describe("GenerateTeamPlanButton", () => {
@@ -350,7 +359,7 @@ describe("GenerateTeamPlanButton", () => {
     await openModal(user);
     await fillRequiredFields(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 1,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("button", { name: "Generate" }));
@@ -398,7 +407,7 @@ describe("GenerateTeamPlanButton", () => {
     await openModal(user);
     await fillRequiredFields(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 8,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
@@ -453,7 +462,7 @@ describe("GenerateTeamPlanButton", () => {
     await openModal(user);
     await fillRequiredFields(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 9,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.selectOptions(screen.getByRole("combobox", { name: /event type for/i }), "Game");
@@ -479,6 +488,161 @@ describe("GenerateTeamPlanButton", () => {
 });
 
 describe("GenerateTeamPlanButton event planning UI", () => {
+  it("renders manual and calendar-feed event actions with default import dates", async () => {
+    const user = userEvent.setup();
+    render(<GenerateTeamPlanButton />);
+
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+
+    expect(screen.getByRole("button", { name: "Add Event Dates Manually" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+
+    expect(screen.getByRole("dialog", { name: "Import Calendar Events" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Calendar feed URL")).toBeInTheDocument();
+    expect(screen.getByLabelText("Calendar import start date")).toHaveValue(
+      new Date().toISOString().slice(0, 10)
+    );
+    expect(screen.getByRole("button", { name: "Upload an .ics file" })).toBeInTheDocument();
+  });
+
+  it("imports feed events and merges them into the existing event set", async () => {
+    const user = userEvent.setup();
+    const originalFetch = global.fetch;
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () =>
+        [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "BEGIN:VEVENT",
+          "UID:imported-game",
+          `DTSTART:${getTestIcsDateTime(1, 18)}`,
+          `DTEND:${getTestIcsDateTime(1, 19)}`,
+          "SUMMARY:Summer Showcase",
+          "DESCRIPTION:Team game",
+          "END:VEVENT",
+          "END:VCALENDAR",
+        ].join("\r\n"),
+    });
+    global.fetch = fetchMock;
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
+    await user.click(screen.getByRole("button", { name: / 1,/ }));
+    await user.click(screen.getByRole("button", { name: "OK" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+    await user.type(
+      screen.getByLabelText("Calendar feed URL"),
+      "https://calendar.example/feed.ics"
+    );
+    await user.click(screen.getByRole("button", { name: "Import from URL" }));
+
+    await waitFor(() => expect(screen.getByText(/Imported 1 event/)).toBeInTheDocument());
+    expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(2);
+    expect(fetchMock).toHaveBeenCalledWith("https://calendar.example/feed.ics");
+    global.fetch = originalFetch;
+  });
+
+  it("imports an uploaded .ics file when URL access is unavailable", async () => {
+    const user = userEvent.setup();
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+
+    const file = new File(["calendar"], "team.ics", { type: "text/calendar" });
+    Object.defineProperty(file, "text", {
+      value: async () =>
+        [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "BEGIN:VEVENT",
+          "UID:uploaded-practice",
+          `DTSTART:${getTestIcsDateTime(2, 18)}`,
+          "SUMMARY:Practice",
+          "END:VEVENT",
+          "END:VCALENDAR",
+        ].join("\r\n"),
+    });
+    fireEvent.change(screen.getByLabelText("Upload an .ics file"), { target: { files: [file] } });
+
+    await waitFor(() => expect(screen.getByText("Imported 1 event.")).toBeInTheDocument());
+  });
+
+  it("offers the original feed URL for download after a CORS-style fetch failure", async () => {
+    const user = userEvent.setup();
+    const originalFetch = global.fetch;
+    const fetchMock = jest.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+    const openMock = jest.spyOn(window, "open").mockImplementation(() => null);
+    global.fetch = fetchMock;
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+    await user.type(
+      screen.getByLabelText("Calendar feed URL"),
+      "https://calendar.example/feed.ics"
+    );
+    await user.click(screen.getByRole("button", { name: "Import from URL" }));
+
+    const downloadButton = await screen.findByRole("button", { name: "Download Feed" });
+    expect(screen.getByRole("alert")).toHaveTextContent(/CORS/i);
+    await user.click(downloadButton);
+    await waitFor(() =>
+      expect(openMock).toHaveBeenCalledWith(
+        "https://calendar.example/feed.ics",
+        "_blank",
+        "noopener,noreferrer"
+      )
+    );
+
+    global.fetch = originalFetch;
+    openMock.mockRestore();
+  });
+
+  it("opens the existing file picker from the downloaded-feed action", async () => {
+    const user = userEvent.setup();
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+    await user.type(
+      screen.getByLabelText("Calendar feed URL"),
+      "https://calendar.example/feed.ics"
+    );
+    await user.click(screen.getByRole("button", { name: "Import from URL" }));
+
+    await screen.findByRole("button", { name: "Use Downloaded Feed" });
+    await user.click(screen.getByRole("button", { name: "Use Downloaded Feed" }));
+
+    const file = new File(["calendar"], "calendar-feed.ics", { type: "text/calendar" });
+    Object.defineProperty(file, "text", {
+      value: async () =>
+        [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "BEGIN:VEVENT",
+          "UID:downloaded-feed-event",
+          `DTSTART:${getTestIcsDateTime(3, 18)}`,
+          "SUMMARY:Downloaded Practice",
+          "END:VEVENT",
+          "END:VCALENDAR",
+        ].join("\r\n"),
+    });
+    fireEvent.change(screen.getByLabelText("Upload an .ics file"), { target: { files: [file] } });
+
+    await waitFor(() => expect(screen.getByText("Imported 1 event.")).toBeInTheDocument());
+    global.fetch = originalFetch;
+  });
+
   it("shows event planning section only when calendar of events is enabled", async () => {
     const user = userEvent.setup();
     render(<GenerateTeamPlanButton />);
@@ -512,7 +676,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 1,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
@@ -549,7 +713,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 2,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
@@ -586,7 +750,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 3,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 
@@ -616,7 +780,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 4,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
     await user.click(screen.getByRole("checkbox", { name: /more than one event on this date/i }));
@@ -714,7 +878,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 5,/ }));
     await user.click(screen.getByRole("button", { name: / 6,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
@@ -742,7 +906,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     ).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(1);
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Add Event Dates" })).toHaveFocus()
+      expect(screen.getByRole("button", { name: "Add Event Dates Manually" })).toHaveFocus()
     );
   });
 
@@ -752,7 +916,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
 
     await openModal(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
-    await user.click(screen.getByRole("button", { name: "Add Event Dates" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 7,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
 

@@ -36,6 +36,15 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
   const [validationError, setValidationError] = React.useState<string>("");
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
   const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
+  const validationErrorRef = React.useRef<HTMLDivElement>(null);
+  const shouldScrollValidationErrorRef = React.useRef<boolean>(false);
+
+  React.useEffect(() => {
+    if (validationError && shouldScrollValidationErrorRef.current) {
+      validationErrorRef.current?.scrollIntoView?.({ block: "nearest" });
+      shouldScrollValidationErrorRef.current = false;
+    }
+  }, [validationError]);
 
   const handleImageCropped = React.useCallback((_file: File | null, previewUrl: string | null) => {
     setLogoPreview(previewUrl);
@@ -162,13 +171,16 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
 
   const generateJournal = async () => {
     setValidationError("");
+    shouldScrollValidationErrorRef.current = false;
 
     if (!goalieName.trim()) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a goalie name");
       return;
     }
 
     if (!teamName.trim()) {
+      shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a team name");
       return;
     }
@@ -331,7 +343,10 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
           />
 
           {validationError && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm">
+            <div
+              ref={validationErrorRef}
+              className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg text-sm"
+            >
               {validationError}
             </div>
           )}
@@ -344,7 +359,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
         </div>
 
         {/* Non-scrolling footer — action buttons always visible */}
-        <div className="px-8 pb-8 flex gap-4 flex-shrink-0">
+        <div className="px-8 pt-4 pb-8 flex gap-4 flex-shrink-0">
           {!generatedBlob ? (
             <>
               <button

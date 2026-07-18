@@ -124,7 +124,7 @@ describe("resources-list YAML source files", () => {
       "club-resources-list.yml",
       "coach-resources-list.yml",
       "goalie-resources-list.yml",
-    ];
+    ] as const;
 
     it("all three resource list files are present in src/data/", () => {
       for (const file of FILES) {
