@@ -3,13 +3,18 @@ import { useStaticQuery, graphql, navigate } from "gatsby";
 import Logo from "./Logo";
 import Modal from "./Modal";
 import { trackEvent } from "../utils/analytics";
-import { useDrillFilters, type FilterCategory } from "../hooks/useDrillFilters";
+import {
+  DEFAULT_FILTER_STATE,
+  SPACE_AVAILABLE_VALUES,
+  useDrillFilters,
+  type FilterCategory,
+  type FilterState,
+} from "../hooks/useDrillFilters";
 
 interface DrillNode {
   slug: string;
   name: string;
   tags: {
-    skill_level?: string[];
     team_drill?: string;
     age_level?: string[];
     fundamental_skill?: string[];
@@ -18,6 +23,19 @@ interface DrillNode {
     space_required?: string[];
   };
 }
+
+const POPUP_FILTER_DEFAULTS: FilterState = {
+  ...DEFAULT_FILTER_STATE,
+  team_drill: ["no"],
+  equipment: ["none"],
+};
+
+const POPUP_FILTER_CATEGORIES: FilterCategory[] = [
+  "age_level",
+  "fundamental_skill",
+  "skating_skill",
+  "space_required",
+];
 
 interface INeedADrillButtonProps {
   className?: string;
@@ -31,7 +49,6 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
           slug
           name
           tags {
-            skill_level
             team_drill
             age_level
             fundamental_skill
@@ -57,12 +74,19 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
     tagCategories,
     filteredDrills,
     toggleFilter,
+    setSelectedFilters,
     removeFilter,
     resetFilters,
     formatTagName,
     formatTagValue,
     activeFilters,
-  } = useDrillFilters(drills);
+  } = useDrillFilters(drills, POPUP_FILTER_DEFAULTS, {
+    defaultFilters: POPUP_FILTER_DEFAULTS,
+    spaceMatching: "capacity",
+  });
+  const visibleActiveFilters = activeFilters.filter(
+    ({ category, value }) => category !== "equipment" || value !== "none"
+  );
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -160,68 +184,139 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
             </h2>
           </div>
 
-          {/* Filter Dropdowns */}
-          <div ref={dropdownRef} className="grid md:grid-cols-2 gap-4 mb-6">
-            {(Object.keys(tagCategories) as FilterCategory[]).map((category) => {
-              const values = tagCategories[category];
-              if (values.length === 0) return null;
-              const dropdownId = `filter-${category}-menu`;
+          <div className="mb-6 space-y-2 text-gray-700 dark:text-gray-300">
+            <p className="font-semibold">
+              Use the filters below to find a drill for your goalie - FAST!
+            </p>
+            <p>Drills require only 10-15 minutes of practice time.</p>
+            <p>The only equipment needed is a net and pucks.</p>
+            <p className="text-sm italic">
+              Tip: If you don&apos;t have a net available, use a side wall!
+            </p>
+          </div>
 
-              return (
-                <div key={category} className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setOpenDropdown(openDropdown === category ? null : category)}
-                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
-                    aria-expanded={openDropdown === category}
-                    aria-controls={dropdownId}
-                  >
-                    <span className="font-semibold">{formatTagName(category)}</span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {selectedFilters[category].length > 0 &&
-                        `(${selectedFilters[category].length})`}
-                      <span className="ml-2">{openDropdown === category ? "▲" : "▼"}</span>
-                    </span>
-                  </button>
+          <div ref={dropdownRef}>
+            {/* Drill Type radio buttons */}
+            <fieldset className="mb-6">
+              <legend className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Drill Type
+              </legend>
+              <div className="grid md:grid-cols-2 gap-3">
+                {[
+                  { value: "no", label: "Drill for Goalies Only" },
+                  { value: "yes", label: "Drill for Whole Team" },
+                ].map(({ value, label }) => {
+                  const isSelected = selectedFilters.team_drill.includes(value);
 
-                  {openDropdown === category && (
-                    <div
-                      id={dropdownId}
-                      role="group"
-                      aria-label={`${formatTagName(category)} filters`}
-                      className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto"
+                  return (
+                    <label
+                      key={value}
+                      className={[
+                        "flex items-center gap-3 rounded-lg border-2 px-4 py-4",
+                        "font-semibold cursor-pointer transition-colors",
+                        isSelected
+                          ? "bg-usa-blue border-usa-blue text-white dark:bg-blue-600 dark:border-blue-600"
+                          : "bg-gray-200 border-gray-300 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-600",
+                      ].join(" ")}
                     >
-                      {values.map((value) => (
-                        <label
-                          key={value}
-                          className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedFilters[category].includes(value)}
-                            onChange={() => toggleFilter(category, value)}
-                            className="mr-3 w-4 h-4"
-                          />
-                          <span className="text-gray-900 dark:text-gray-100">
-                            {formatTagValue(value)}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                      <input
+                        type="radio"
+                        name="team-drill-filter"
+                        value={value}
+                        checked={isSelected}
+                        onChange={() =>
+                          setSelectedFilters((previous) => ({
+                            ...previous,
+                            team_drill: [value],
+                          }))
+                        }
+                        className={[
+                          "h-5 w-5 appearance-none rounded-full border-2 transition-colors",
+                          isSelected
+                            ? "border-white bg-usa-blue checked:bg-usa-blue dark:bg-blue-600 dark:checked:bg-blue-600"
+                            : "border-current bg-transparent checked:bg-current",
+                        ].join(" ")}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Drill Options</h3>
+
+            {/* Filter Dropdowns */}
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              {POPUP_FILTER_CATEGORIES.map((category) => {
+                const values = tagCategories[category];
+                if (values.length === 0) return null;
+                const dropdownId = `filter-${category}-menu`;
+                const displayValues =
+                  category === "space_required"
+                    ? SPACE_AVAILABLE_VALUES.filter((value) => values.includes(value))
+                    : values;
+
+                return (
+                  <div key={category} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setOpenDropdown(openDropdown === category ? null : category)}
+                      className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-left flex justify-between items-center"
+                      aria-expanded={openDropdown === category}
+                      aria-controls={dropdownId}
+                    >
+                      <span className="font-semibold">
+                        {category === "space_required"
+                          ? "Space Available"
+                          : formatTagName(category)}
+                      </span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {selectedFilters[category].length > 0 &&
+                          `(${selectedFilters[category].length})`}
+                        <span className="ml-2">{openDropdown === category ? "▲" : "▼"}</span>
+                      </span>
+                    </button>
+
+                    {openDropdown === category && (
+                      <div
+                        id={dropdownId}
+                        role="group"
+                        aria-label={`${category === "space_required" ? "Space Available" : formatTagName(category)} filters`}
+                        className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto"
+                      >
+                        {displayValues.map((value) => (
+                          <label
+                            key={value}
+                            className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedFilters[category].includes(value)}
+                              onChange={() => toggleFilter(category, value)}
+                              className="mr-3 w-4 h-4"
+                            />
+                            <span className="text-gray-900 dark:text-gray-100">
+                              {formatTagValue(value)}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Active Filters Display */}
-          {activeFilters.length > 0 && (
+          {visibleActiveFilters.length > 0 && (
             <div className="mb-6 pb-6 border-b border-gray-300 dark:border-gray-600">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Active Filters:
               </h3>
               <div className="flex flex-wrap gap-2">
-                {activeFilters.map(({ category, value }) => (
+                {visibleActiveFilters.map(({ category, value }) => (
                   <div
                     key={`${category}-${value}`}
                     className="bg-usa-blue dark:bg-blue-700 text-white px-3 py-1 rounded-full flex items-center gap-2 text-sm"
