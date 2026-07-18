@@ -27,6 +27,11 @@ export interface FilterState {
 
 export type FilterCategory = keyof FilterState;
 
+export interface DrillFilterOptions {
+  defaultFilters?: Partial<FilterState>;
+  spaceMatching?: "exact" | "capacity";
+}
+
 const FILTER_CATEGORIES: FilterCategory[] = [
   "skill_level",
   "team_drill",
@@ -47,22 +52,44 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   space_required: [],
 };
 
+const SPACE_CAPACITY_RANK: Record<string, number> = {
+  crease_only: 0,
+  half_zone: 1,
+  flexible: 2,
+  whole_zone: 3,
+  half_ice: 4,
+  full_ice: 5,
+};
+
+const AGE_LEVEL_RANK: Record<string, number> = {
+  "10_and_under": 0,
+  "12U": 1,
+  "14U": 2,
+  "16U_and_older": 3,
+};
+
 /**
  * Custom hook for managing drill filtering functionality
  * Extracts shared logic between goalie-drills page and INeedADrillButton component
  */
-export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: FilterState) {
-  const [selectedFilters, setSelectedFilters] = React.useState<FilterState>(() => ({
-    ...DEFAULT_FILTER_STATE,
-    ...(initialFilters || {}),
-  }));
-
+export function useDrillFilters<T extends Drill>(
+  drills: T[],
+  initialFilters?: FilterState,
+  options: DrillFilterOptions = {}
+) {
+  const { defaultFilters: configuredDefaults, spaceMatching = "exact" } = options;
   const defaultFilters = React.useMemo(
     () => ({
       ...DEFAULT_FILTER_STATE,
+      ...configuredDefaults,
     }),
-    []
+    [configuredDefaults]
   );
+
+  const [selectedFilters, setSelectedFilters] = React.useState<FilterState>(() => ({
+    ...defaultFilters,
+    ...(initialFilters || {}),
+  }));
 
   const activeFilterEntries = React.useMemo(
     () =>
@@ -118,14 +145,50 @@ export function useDrillFilters<T extends Drill>(drills: T[], initialFilters?: F
           : rawTagValue
             ? [rawTagValue]
             : [];
-        const hasMatch = drillTagValues.some((value) => activeFilter.valueSet.has(value));
+        const hasMatch =
+          activeFilter.category === "age_level"
+            ? drillTagValues.some((drillValue) => {
+                if (activeFilter.valueSet.has(drillValue)) {
+                  return true;
+                }
+
+                if (drillValue === "all") {
+                  return activeFilter.values.some((selectedValue) => selectedValue !== "all");
+                }
+
+                const drillRank = AGE_LEVEL_RANK[drillValue];
+                return activeFilter.values.some((selectedValue) => {
+                  const selectedRank = AGE_LEVEL_RANK[selectedValue];
+                  return (
+                    selectedRank !== undefined &&
+                    drillRank !== undefined &&
+                    selectedRank >= drillRank
+                  );
+                });
+              })
+            : activeFilter.category === "equipment" && activeFilter.valueSet.has("none")
+              ? drillTagValues.length === 0 ||
+                drillTagValues.some((value) => activeFilter.valueSet.has(value))
+              : activeFilter.category === "space_required" && spaceMatching === "capacity"
+                ? drillTagValues.some((drillValue) =>
+                    activeFilter.values.some((selectedValue) => {
+                      const selectedRank = SPACE_CAPACITY_RANK[selectedValue];
+                      const drillRank = SPACE_CAPACITY_RANK[drillValue];
+                      return (
+                        selectedRank !== undefined &&
+                        drillRank !== undefined &&
+                        selectedRank >= drillRank
+                      );
+                    })
+                  )
+                : drillTagValues.some((value) => activeFilter.valueSet.has(value));
         if (!hasMatch) {
           return false;
         }
       }
       return true;
     });
-  }, [activeFilterEntries, drills]);
+  }, [activeFilterEntries, drills, spaceMatching]);
 
   // Toggle filter selection
   const toggleFilter = React.useCallback((category: FilterCategory, value: string) => {

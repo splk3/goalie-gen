@@ -416,6 +416,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
             <p className="text-lg mb-4">
               Develop your goalies during goalie-focused time or involve the whole team!
             </p>
+            <p className="text-lg mb-4">
+              All drills are designed to be effective using only 10-15 minutes of practice
+              time.
+            </p>
             <p className="text-lg">
               All drills created and organized in CoachThem. CoachThem has generously sponsored the
               projects on this site to enable the team to collaborate on drill design using
@@ -466,10 +470,7 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
               onChange={(e) =>
                 setSortOrder(
                   e.target.value as
-                    | "created_newest"
-                    | "created_oldest"
-                    | "updated_newest"
-                    | "updated_oldest"
+                    "created_newest" | "created_oldest" | "updated_newest" | "updated_oldest"
                 )
               }
               className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
@@ -693,7 +694,11 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
 
       <div className="mt-8">
         <a href="https://coachthem.com/sports/ice-hockey" target="_blank" rel="noopener noreferrer">
-          <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto dark:opacity-90 dark:brightness-90" />
+          <img
+            src="/images/coachthem/ct-banner.png"
+            alt="CoachThem"
+            className="w-full h-auto dark:opacity-90 dark:brightness-90"
+          />
         </a>
       </div>
     </PageLayout>
