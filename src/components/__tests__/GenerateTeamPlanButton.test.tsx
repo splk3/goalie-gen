@@ -67,6 +67,15 @@ function getDetailedEntryEventTypesFieldset(): HTMLElement {
   return fieldset;
 }
 
+function getTestIcsDateTime(daysFromToday: number, hour: number): string {
+  const today = new Date();
+  const date = new Date(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + daysFromToday, hour)
+  );
+  const datePart = date.toISOString().slice(0, 10).replaceAll("-", "");
+  return `${datePart}T${String(hour).padStart(2, "0")}0000Z`;
+}
+
 describe("GenerateTeamPlanButton", () => {
   it("shows DOCX-only UI and team-specific fields", async () => {
     const user = userEvent.setup();
@@ -509,8 +518,8 @@ describe("GenerateTeamPlanButton event planning UI", () => {
           "VERSION:2.0",
           "BEGIN:VEVENT",
           "UID:imported-game",
-          "DTSTART:20260715T180000Z",
-          "DTEND:20260715T190000Z",
+          `DTSTART:${getTestIcsDateTime(1, 18)}`,
+          `DTEND:${getTestIcsDateTime(1, 19)}`,
           "SUMMARY:Summer Showcase",
           "DESCRIPTION:Team game",
           "END:VEVENT",
@@ -553,7 +562,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
           "VERSION:2.0",
           "BEGIN:VEVENT",
           "UID:uploaded-practice",
-          "DTSTART:20260716T180000Z",
+          `DTSTART:${getTestIcsDateTime(2, 18)}`,
           "SUMMARY:Practice",
           "END:VEVENT",
           "END:VCALENDAR",
@@ -622,7 +631,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
           "VERSION:2.0",
           "BEGIN:VEVENT",
           "UID:downloaded-feed-event",
-          "DTSTART:20260717T180000Z",
+          `DTSTART:${getTestIcsDateTime(3, 18)}`,
           "SUMMARY:Downloaded Practice",
           "END:VEVENT",
           "END:VCALENDAR",
