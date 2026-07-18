@@ -137,15 +137,15 @@ describe("resources-list YAML source files", () => {
     it("each file starts with its expected lead resource", () => {
       const expectedFirstItems = {
         "club-resources-list.yml": {
-          name: "USA Hockey Goaltending Resources",
-          link: "https://www.usahockey.com/goaltending",
+          name: "USA Hockey Goaltending Stance and Movement Basics",
+          link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
         },
         "coach-resources-list.yml": {
-          name: "USA Hockey Goaltender Basics",
+          name: "USA Hockey Goaltending Stance and Movement Basics",
           link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
         },
         "goalie-resources-list.yml": {
-          name: "USA Hockey Goaltender Basics",
+          name: "USA Hockey Goaltending Stance and Movement Basics",
           link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
         },
         "equipment-fitting-resources-list.yml": {
@@ -177,6 +177,28 @@ describe("resources-list YAML source files", () => {
       const data = loadResourceList("coach-resources-list.yml");
       const links = data["resource-list"].map((i) => i.link);
       expect(links).toContain("https://www.usahockey.com/goaltendingplans");
+    });
+  });
+
+  describe("stance and movement basics resource", () => {
+    it("uses the requested name and description in all resource lists", () => {
+      const expected = {
+        name: "USA Hockey Goaltending Stance and Movement Basics",
+        description:
+          "Detailed descriptions and video demonstrations of the primary stance, positioning, and movement techniques that serve as the foundation for all goalie development.",
+        link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+      };
+
+      for (const file of [
+        "club-resources-list.yml",
+        "coach-resources-list.yml",
+        "goalie-resources-list.yml",
+      ]) {
+        const item = loadResourceList(file)["resource-list"].find(
+          (resource) => resource.link === expected.link
+        );
+        expect(item).toEqual(expected);
+      }
     });
   });
 

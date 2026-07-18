@@ -1,10 +1,16 @@
 ---
 resource-list:
-  - name: "USA Hockey Goaltending Resources"
+  - name: "USA Hockey Goaltending Homepage"
     description: >-
-      Official USA Hockey resources and information for goaltending programs,
+      Official Home for USA Hockey Goaltending,
       including certification, coaching materials, and development guidelines.
     link: "https://www.usahockey.com/goaltending"
+  - name: "USA Hockey Goaltending Stance and Movement Basics"
+    description: >-
+      Detailed descriptions and video demonstrations of the primary stance,
+      positioning, and movement techniques that serve as the foundation for all
+      goalie development.
+    link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics"
   - name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi"
     description: >-
       Learn how to develop a goaltending development plan for your club
