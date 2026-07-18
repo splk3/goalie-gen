@@ -118,7 +118,14 @@ function timezoneOffsetMilliseconds(date: Date, timeZone: string): number {
 }
 
 function dateForTimeZone(time: ICAL.Time, timeZone: string): Date {
-  const wallTime = Date.UTC(time.year, time.month - 1, time.day, time.hour, time.minute, time.second);
+  const wallTime = Date.UTC(
+    time.year,
+    time.month - 1,
+    time.day,
+    time.hour,
+    time.minute,
+    time.second
+  );
   let instant = new Date(wallTime - timezoneOffsetMilliseconds(new Date(wallTime), timeZone));
   instant = new Date(wallTime - timezoneOffsetMilliseconds(instant, timeZone));
   return instant;

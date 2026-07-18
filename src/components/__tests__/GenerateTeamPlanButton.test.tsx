@@ -72,7 +72,7 @@ function getTestIcsDateTime(daysFromToday: number, hour: number): string {
   const date = new Date(
     Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + daysFromToday, hour)
   );
-  const datePart = date.toISOString().slice(0, 10).replaceAll("-", "");
+  const datePart = date.toISOString().slice(0, 10).replace(/-/g, "");
   return `${datePart}T${String(hour).padStart(2, "0")}0000Z`;
 }
 
