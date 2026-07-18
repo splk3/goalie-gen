@@ -435,6 +435,39 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
+  it("renders same-day calendar events as separate lines without commas", async () => {
+    const config: TeamPlanConfig = {
+      ...MINIMAL_TEAM_CONFIG,
+      addCalendarOfEvents: true,
+      includeCalendarView: true,
+      sortedEventDates: [
+        {
+          date: "2026-07-11",
+          eventTypes: ["On-ice Practice", "Game"],
+        },
+      ],
+      eventSelections: [
+        { date: "2026-07-11", eventType: "On-ice Practice" },
+        { date: "2026-07-11", eventType: "Game" },
+      ],
+    };
+    const result = await buildTeamPlanDocument(
+      config,
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain("On-ice Practice");
+    expect(serializedDocument).toContain("Game");
+    expect(serializedDocument).not.toContain("On-ice Practice, Game");
+    expect(serializedDocument).toContain('"root":{"val":16}');
+    expect(serializedDocument).not.toContain('"root":{"val":14}');
+    expect(serializedDocument).toContain('"after":{"key":"w:after","value":40}');
+  });
+
   it("accepts imported calendar metadata in event details", async () => {
     const config: TeamPlanConfig = {
       ...MINIMAL_TEAM_CONFIG,

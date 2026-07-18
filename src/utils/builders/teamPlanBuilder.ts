@@ -31,6 +31,8 @@ type DocxModule = typeof import("docx");
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 // Keep each month table contiguous by forcing one calendar month per page.
 const MONTH_CALENDARS_PER_PAGE = 1;
+const CALENDAR_EVENT_FONT_SIZE = 16;
+const CALENDAR_EVENT_BOTTOM_SPACING = 40;
 const DOCX_CONTENT_WIDTH_TWIPS = 9360;
 const GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS = 1200;
 const GAME_EVENT_TOTALS_COLUMN_WIDTH_TWIPS = 900;
@@ -578,7 +580,6 @@ export async function buildTeamPlanDocument(
                 cantSplit: true,
                 children: week.map((cell, index) => {
                   const dateLabel = cell.dayOfMonth ? `${cell.dayOfMonth}` : "";
-                  const eventTypeLabel = cell.hasEvents ? cell.eventTypes.join(", ") : "";
                   return new TableCell({
                     width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
                     verticalAlign: VerticalAlign.TOP,
@@ -588,13 +589,21 @@ export async function buildTeamPlanDocument(
                         spacing: { after: cell.hasEvents ? 30 : 80 },
                         children: [toBlackRun(dateLabel, { bold: cell.hasEvents })],
                       }),
-                      ...(eventTypeLabel
-                        ? [
-                            new Paragraph({
-                              spacing: { after: 40 },
-                              children: [toBlackRun(eventTypeLabel, { size: 16 })],
-                            }),
-                          ]
+                      ...(cell.hasEvents
+                        ? cell.eventTypes.map(
+                            (eventType, eventIndex) =>
+                              new Paragraph({
+                                spacing: {
+                                  after:
+                                    eventIndex === cell.eventTypes.length - 1
+                                      ? CALENDAR_EVENT_BOTTOM_SPACING
+                                      : 0,
+                                },
+                                children: [
+                                  toBlackRun(eventType, { size: CALENDAR_EVENT_FONT_SIZE }),
+                                ],
+                              })
+                          )
                         : [new Paragraph({ children: [toBlackRun("")] })]),
                     ],
                   });

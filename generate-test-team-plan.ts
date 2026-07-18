@@ -187,7 +187,7 @@ Options:
   const selectedEventDates: EventDateSelection[] = enableAll
     ? [
         // August 2026
-        { date: "2026-08-03", eventTypes: ["On-ice Practice"] },
+        { date: "2026-08-03", eventTypes: ["On-ice Practice", "Off-ice Practice"] },
         { date: "2026-08-08", eventTypes: ["Game"] },
         { date: "2026-08-12", eventTypes: ["Off-ice Practice"] },
         { date: "2026-08-17", eventTypes: ["Video Review"] },
@@ -199,7 +199,7 @@ Options:
         // October 2026
         { date: "2026-10-01", eventTypes: ["On-ice Practice"] },
         { date: "2026-10-06", eventTypes: ["Video Review"] },
-        { date: "2026-10-10", eventTypes: ["Game"] },
+        { date: "2026-10-10", eventTypes: ["Game", "Video Review"] },
         { date: "2026-10-14", eventTypes: ["Evaluation"] },
         // November 2026
         { date: "2026-11-02", eventTypes: ["On-ice Practice"] },

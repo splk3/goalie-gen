@@ -547,6 +547,48 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     global.fetch = originalFetch;
   });
 
+  it("expands the import dates when finite feed events fall outside the defaults", async () => {
+    const user = userEvent.setup();
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () =>
+        [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "BEGIN:VEVENT",
+          "UID:outside-range-early",
+          "DTSTART;VALUE=DATE:20200101",
+          "SUMMARY:Early Event",
+          "END:VEVENT",
+          "BEGIN:VEVENT",
+          "UID:outside-range-late",
+          "DTSTART;VALUE=DATE:20300101",
+          "SUMMARY:Late Event",
+          "END:VEVENT",
+          "END:VCALENDAR",
+        ].join("\r\n"),
+    });
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+    await user.type(
+      screen.getByLabelText("Calendar feed URL"),
+      "https://calendar.example/feed.ics"
+    );
+    await user.click(screen.getByRole("button", { name: "Import from URL" }));
+
+    await waitFor(() => expect(screen.getByText("Imported 2 events.")).toBeInTheDocument());
+    expect(screen.getByLabelText("Calendar import start date")).toHaveValue("2020-01-01");
+    expect(screen.getByLabelText("Calendar import end date")).toHaveValue("2030-01-01");
+    expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(2);
+
+    global.fetch = originalFetch;
+  });
+
   it("imports an uploaded .ics file when URL access is unavailable", async () => {
     const user = userEvent.setup();
     render(<GenerateTeamPlanButton />);

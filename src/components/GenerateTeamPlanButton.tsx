@@ -281,10 +281,18 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setCanDownloadCalendarFeed(false);
     setIsImportingCalendar(true);
     try {
-      const result = parseCalendarFeed(icsText, {
-        startDate: calendarImportStartDate,
-        endDate: calendarImportEndDate,
-      });
+      const result = parseCalendarFeed(
+        icsText,
+        {
+          startDate: calendarImportStartDate,
+          endDate: calendarImportEndDate,
+        },
+        { expandFiniteEvents: true }
+      );
+      if (result.effectiveRange) {
+        setCalendarImportStartDate(result.effectiveRange.startDate);
+        setCalendarImportEndDate(result.effectiveRange.endDate);
+      }
       setSelectedEventDates((previous) => mergeCalendarEvents(previous, result.events));
       setCalendarImportStatus(
         `Imported ${result.events.length} event${result.events.length === 1 ? "" : "s"}${
@@ -310,10 +318,18 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setIsImportingCalendar(true);
     try {
       const icsText = await fetchCalendarFeed(calendarFeedUrl);
-      const result = parseCalendarFeed(icsText, {
-        startDate: calendarImportStartDate,
-        endDate: calendarImportEndDate,
-      });
+      const result = parseCalendarFeed(
+        icsText,
+        {
+          startDate: calendarImportStartDate,
+          endDate: calendarImportEndDate,
+        },
+        { expandFiniteEvents: true }
+      );
+      if (result.effectiveRange) {
+        setCalendarImportStartDate(result.effectiveRange.startDate);
+        setCalendarImportEndDate(result.effectiveRange.endDate);
+      }
       setSelectedEventDates((previous) => mergeCalendarEvents(previous, result.events));
       setCalendarImportStatus(
         `Imported ${result.events.length} event${result.events.length === 1 ? "" : "s"}${

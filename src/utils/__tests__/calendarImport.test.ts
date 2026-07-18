@@ -182,6 +182,71 @@ describe("parseCalendarFeed", () => {
 
     expect(result.events).toHaveLength(0);
   });
+
+  it("expands the effective range to include finite events outside the selected range", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:early-event",
+        "DTSTART;VALUE=DATE:20260615",
+        "SUMMARY:Early Event",
+        "END:VEVENT",
+        "BEGIN:VEVENT",
+        "UID:late-event",
+        "DTSTART;VALUE=DATE:20260815",
+        "SUMMARY:Late Event",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" },
+      { expandFiniteEvents: true }
+    );
+
+    expect(result.events.map((event) => event.date)).toEqual(["2026-06-15", "2026-08-15"]);
+    expect(result.effectiveRange).toEqual({
+      startDate: "2026-06-15",
+      endDate: "2026-08-15",
+    });
+  });
+
+  it("expands finite recurring events but bounds unbounded recurrences at the selected end date", () => {
+    const result = parseCalendarFeed(
+      [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "UID:finite-recurrence",
+        "DTSTART;VALUE=DATE:20260615",
+        "RRULE:FREQ=WEEKLY;COUNT=4",
+        "SUMMARY:Finite Practice",
+        "END:VEVENT",
+        "BEGIN:VEVENT",
+        "UID:unbounded-recurrence",
+        "DTSTART;VALUE=DATE:20260715",
+        "RRULE:FREQ=WEEKLY",
+        "SUMMARY:Ongoing Practice",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n"),
+      { startDate: "2026-07-01", endDate: "2026-07-31" },
+      { expandFiniteEvents: true }
+    );
+
+    expect(result.events.filter((event) => event.id?.startsWith("finite-recurrence"))).toHaveLength(
+      4
+    );
+    expect(
+      result.events
+        .filter((event) => event.id?.startsWith("unbounded-recurrence"))
+        .map((event) => event.date)
+    ).toEqual(["2026-07-15", "2026-07-22", "2026-07-29"]);
+    expect(result.effectiveRange).toEqual({
+      startDate: "2026-06-15",
+      endDate: "2026-07-31",
+    });
+  });
 });
 
 describe("mergeCalendarEvents", () => {
