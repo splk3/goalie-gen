@@ -31,14 +31,9 @@ function loadResourceList(fileName: string): ResourceListData {
 }
 
 /**
- * Returns true if the string is a syntactically valid absolute HTTPS URL or a
- * site-relative internal path.
+ * Returns true if the string is a syntactically valid, absolute HTTPS URL.
  */
-function isValidResourceLink(value: string): boolean {
-  if (value.startsWith("/") && !value.startsWith("//")) {
-    return true;
-  }
-
+function isValidHttpsUrl(value: string): boolean {
   try {
     const url = new URL(value);
     return url.protocol === "https:";
@@ -84,10 +79,10 @@ function validateResourceListFile(fileName: string) {
       }
     });
 
-    it("every item has a valid external or internal resource link", () => {
+    it("every item has a valid external HTTPS URL", () => {
       for (const item of items) {
         expect(typeof item.link).toBe("string");
-        expect(isValidResourceLink(item.link)).toBe(true);
+        expect(isValidHttpsUrl(item.link)).toBe(true);
       }
     });
 
@@ -205,16 +200,14 @@ describe("resources-list YAML source files", () => {
   });
 
   describe("equipment-fitting page links", () => {
-    it("is included in the club, coach, and goalie resource lists", () => {
-      const equipmentFittingUrl = "/equipment-fitting";
-
+    it("is excluded from all external resource lists", () => {
       for (const file of [
         "club-resources-list.yml",
         "coach-resources-list.yml",
         "goalie-resources-list.yml",
       ]) {
         const data = loadResourceList(file);
-        expect(data["resource-list"].map((item) => item.link)).toContain(equipmentFittingUrl);
+        expect(data["resource-list"].map((item) => item.link)).not.toContain("/equipment-fitting");
       }
     });
   });

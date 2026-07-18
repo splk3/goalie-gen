@@ -5,9 +5,6 @@ resource-list:
       Official USA Hockey resources and information for goaltending programs,
       including certification, coaching materials, and development guidelines.
     link: "https://www.usahockey.com/goaltending"
-  - name: "Equipment Fitting Resources"
-    description: "Guides and manufacturer resources to help clubs and goalie families find properly fitted goaltending equipment."
-    link: "/equipment-fitting"
   - name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi"
     description: >-
       Learn how to develop a goaltending development plan for your club

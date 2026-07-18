@@ -4,7 +4,7 @@ import Seo from "../components/SEO";
 import PageLayout from "../components/PageLayout";
 import ResourceList from "../components/ResourceList";
 import DownloadMaterialButton from "../components/DownloadMaterialButton";
-import GoalieJournalButton from "../components/GoalieJournalButton";
+import NavigationButton from "../components/NavigationButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
 import rawResourceList from "../data/coach-resources-list.yml";
@@ -35,31 +35,29 @@ export default function CoachResources() {
       </div>
 
       <div className="max-w-3xl mx-auto space-y-8">
-        <ResourceList items={resourceData["resource-list"]} />
-
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">
-            Evaluation Forms
-          </h2>
-          <div className="space-y-3">
-            <DownloadMaterialButton
-              title="Goalie Evaluation Form"
-              fileName="goalie-evaluation-form.pdf"
-            />
-            <DownloadMaterialButton
-              title="Single-Game Review Form"
-              fileName="goalie-single-game-review.pdf"
-            />
+          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Coach Tools</h2>
+          <div className="flex flex-col gap-3">
+            <NavigationButton to="/about-team-plans">Team Goalie Development</NavigationButton>
+            <NavigationButton to="/about-goalie-journals">Goalie Journal</NavigationButton>
+            <NavigationButton to="/goalie-evals">Goalie Evaluations</NavigationButton>
+            <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
+            <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
           </div>
         </div>
 
+        <ResourceList items={resourceData["resource-list"]} heading="Helpful External Resources" />
+
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">
-            Additional Tools
+          <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4">
+            About Coach Resources
           </h2>
-          <div className="space-y-3">
-            <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
-            <GoalieJournalButton />
+          <div className="text-gray-700 dark:text-gray-300 space-y-4">
+            <p>
+              This page provides coaches with practical tools and resources to support goalie
+              development, evaluate progress, and build consistent training experiences for their
+              goalies and teams.
+            </p>
           </div>
         </div>
 
