@@ -134,6 +134,7 @@ export default function Home() {
               <GoalieJournalButton label="Generate Goalie Journal" />
               <NavigationButton to="/about-goalie-journals">About Goalie Journals</NavigationButton>
               <NavigationButton to="/goalie-resources">Goalie Resources</NavigationButton>
+              <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
             </div>
           </div>
         </div>

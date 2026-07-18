@@ -31,9 +31,14 @@ function loadResourceList(fileName: string): ResourceListData {
 }
 
 /**
- * Returns true if the string is a syntactically valid, absolute HTTPS URL.
+ * Returns true if the string is a syntactically valid absolute HTTPS URL or a
+ * site-relative internal path.
  */
-function isValidHttpsUrl(value: string): boolean {
+function isValidResourceLink(value: string): boolean {
+  if (value.startsWith("/") && !value.startsWith("//")) {
+    return true;
+  }
+
   try {
     const url = new URL(value);
     return url.protocol === "https:";
@@ -79,10 +84,10 @@ function validateResourceListFile(fileName: string) {
       }
     });
 
-    it("every item has a 'link' that is a valid HTTPS URL", () => {
+    it("every item has a valid external or internal resource link", () => {
       for (const item of items) {
         expect(typeof item.link).toBe("string");
-        expect(isValidHttpsUrl(item.link)).toBe(true);
+        expect(isValidResourceLink(item.link)).toBe(true);
       }
     });
 
@@ -117,6 +122,7 @@ describe("resources-list YAML source files", () => {
   validateResourceListFile("club-resources-list.yml");
   validateResourceListFile("coach-resources-list.yml");
   validateResourceListFile("goalie-resources-list.yml");
+  validateResourceListFile("equipment-fitting-resources-list.yml");
 
   // ── Cross-file consistency ────────────────────────────────────────────────
   describe("cross-file consistency", () => {
@@ -124,6 +130,7 @@ describe("resources-list YAML source files", () => {
       "club-resources-list.yml",
       "coach-resources-list.yml",
       "goalie-resources-list.yml",
+      "equipment-fitting-resources-list.yml",
     ] as const;
 
     it("all three resource list files are present in src/data/", () => {
@@ -135,8 +142,8 @@ describe("resources-list YAML source files", () => {
     it("each file starts with its expected lead resource", () => {
       const expectedFirstItems = {
         "club-resources-list.yml": {
-          name: "How to Structure a Goaltending Development Program - Hiroki Wakabayashi",
-          link: "https://worldhockeylab.com/how_to_structure_a_goaltending_development_program/",
+          name: "USA Hockey Goaltending Resources",
+          link: "https://www.usahockey.com/goaltending",
         },
         "coach-resources-list.yml": {
           name: "USA Hockey Goaltender Basics",
@@ -145,6 +152,10 @@ describe("resources-list YAML source files", () => {
         "goalie-resources-list.yml": {
           name: "USA Hockey Goaltender Basics",
           link: "https://www.usahockeygoaltending.com/page/show/866192-goaltender-basics",
+        },
+        "equipment-fitting-resources-list.yml": {
+          name: "USA Hockey Goaltending Equipment Fitting Guidance",
+          link: "https://www.usahockeygoaltending.com/page/show/866196-equipment",
         },
       } as const;
 
@@ -171,6 +182,40 @@ describe("resources-list YAML source files", () => {
       const data = loadResourceList("coach-resources-list.yml");
       const links = data["resource-list"].map((i) => i.link);
       expect(links).toContain("https://www.usahockey.com/goaltendingplans");
+    });
+  });
+
+  describe("equipment-fitting-resources-list.yml known content", () => {
+    it("contains the supplied manufacturer and fitting resources", () => {
+      const data = loadResourceList("equipment-fitting-resources-list.yml");
+      const links = data["resource-list"].map((i) => i.link);
+
+      expect(links).toEqual(
+        expect.arrayContaining([
+          "https://www.usahockeygoaltending.com/page/show/866196-equipment",
+          "https://www.bauer.com/pages/size-guide-goalie-pads",
+          "https://www.goalies-only.com/fit-guide/",
+          "https://us.ccmhockey.com/Goalie/Category/Pads",
+          "https://www.true-sports.com/",
+          "https://vaughnhockey.com/",
+          "https://www.warrior.com/en/guide/hockey-goalie-leg-pad-sizing",
+        ])
+      );
+    });
+  });
+
+  describe("equipment-fitting page links", () => {
+    it("is included in the club, coach, and goalie resource lists", () => {
+      const equipmentFittingUrl = "/equipment-fitting";
+
+      for (const file of [
+        "club-resources-list.yml",
+        "coach-resources-list.yml",
+        "goalie-resources-list.yml",
+      ]) {
+        const data = loadResourceList(file);
+        expect(data["resource-list"].map((item) => item.link)).toContain(equipmentFittingUrl);
+      }
     });
   });
 });

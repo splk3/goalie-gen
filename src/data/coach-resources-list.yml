@@ -1,3 +1,4 @@
+---
 resource-list:
   - name: "USA Hockey Goaltender Basics"
     description: >-
@@ -20,3 +21,6 @@ resource-list:
   - name: "USA Hockey Video - Mental Preparation - Pre-Game"
     description: "A video resource that provides insights into the mental preparation and pre-game routines for goaltenders."
     link: "https://www.usahockeygoaltending.com/video/mental-preparation-pre-game-routine"
+  - name: "Equipment Fitting Resources"
+    description: "Sizing and fitting guides to help coaches support goalies in selecting safe, properly fitted equipment."
+    link: "/equipment-fitting"
