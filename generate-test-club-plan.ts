@@ -114,6 +114,29 @@ Options:
     resourcesMd: fs.readFileSync(path.join(contentDir, "resources.md"), "utf8"),
   };
 
+  const skillDevelopmentImagePath = path.join(
+    __dirname,
+    "static/images/drill-design/goaltending-skills-cycle.png"
+  );
+  const skillDevelopmentImageBuffer = fs.readFileSync(skillDevelopmentImagePath);
+  const skillDevelopmentImageDimensions = getImageDimensions(skillDevelopmentImagePath);
+  if (!skillDevelopmentImageDimensions) {
+    throw new Error(`Unable to read image dimensions: ${skillDevelopmentImagePath}`);
+  }
+  const skillDevelopmentImageWidth = 280;
+  content.skillDevelopmentImage = {
+    data: skillDevelopmentImageBuffer.buffer.slice(
+      skillDevelopmentImageBuffer.byteOffset,
+      skillDevelopmentImageBuffer.byteOffset + skillDevelopmentImageBuffer.byteLength
+    ),
+    type: "png",
+    width: skillDevelopmentImageWidth,
+    height: Math.round(
+      (skillDevelopmentImageWidth * skillDevelopmentImageDimensions.height) /
+        skillDevelopmentImageDimensions.width
+    ),
+  };
+
   // Resolve logo image
   let resolvedLogo: ResolvedLogoData | null = null;
   if (logoPath) {

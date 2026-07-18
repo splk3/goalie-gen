@@ -308,7 +308,18 @@ export async function buildClubPlanDocument(
   }
 
   // Skill Development section
-  documentChildren.push(...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd), colorOpts));
+  documentChildren.push(
+    ...blocksToDocxParagraphs(parseMarkdown(skillDevelopmentMd), {
+      ...colorOpts,
+      ...(content.skillDevelopmentImage
+        ? {
+            images: {
+              "/images/drill-design/goaltending-skills-cycle.png": content.skillDevelopmentImage,
+            },
+          }
+        : {}),
+    })
+  );
 
   // Equipment section (optional)
   if (includeRequiredEquipmentSection) {

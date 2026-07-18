@@ -21,6 +21,12 @@ describe("parseMarkdown", () => {
     expect(blocks).toEqual([{ type: "paragraph", text: "Hello world" }]);
   });
 
+  it("parses a standalone image", () => {
+    expect(parseMarkdown("![Skills cycle](/images/skills.png)")).toEqual([
+      { type: "image", alt: "Skills cycle", src: "/images/skills.png" },
+    ]);
+  });
+
   it("parses bullet items with dash", () => {
     const blocks = parseMarkdown("- Item one\n- Item two");
     expect(blocks).toEqual([

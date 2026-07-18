@@ -1,4 +1,4 @@
-import { HeadingLevel, Paragraph, TextRun, ExternalHyperlink } from "docx";
+import { AlignmentType, HeadingLevel, ImageRun, Paragraph, TextRun, ExternalHyperlink } from "docx";
 import type { MarkdownBlock } from "./markdownParser";
 
 /**
@@ -16,6 +16,14 @@ export interface DocxColorOptions {
   primaryColor?: string;
   /** Raw hex color string — may include or omit a leading `#`. */
   secondaryColor?: string;
+  images?: Record<string, DocxImageData>;
+}
+
+export interface DocxImageData {
+  data: ArrayBuffer | Buffer;
+  type: "png" | "jpg" | "gif" | "bmp";
+  width: number;
+  height: number;
 }
 
 /**
@@ -207,6 +215,30 @@ export function blocksToDocxParagraphs(
             spacing: { after: 100 },
           }),
         ];
+      case "image": {
+        const image = options?.images?.[block.src];
+        if (!image) {
+          return [
+            new Paragraph({
+              children: [new TextRun({ text: block.alt, color: "000000" })],
+              spacing: { after: 300 },
+            }),
+          ];
+        }
+        return [
+          new Paragraph({
+            children: [
+              new ImageRun({
+                type: image.type,
+                data: image.data,
+                transformation: { width: image.width, height: image.height },
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 100, after: 300 },
+          }),
+        ];
+      }
     }
   });
 }
