@@ -537,6 +537,32 @@ describe("buildTeamPlanDocument", () => {
     expect(calledUrls.length).toBeGreaterThan(0);
     expect(calledUrls.some((url) => url === "https://goaliegen.com/goalie-evals/")).toBe(true);
   });
+
+  it("renders evaluation sessions, link, and QR in a compact three-column block", async () => {
+    const qrData = new Uint8Array([1, 2, 3]);
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        hasGoalieEvaluations: true,
+        goalieEvaluationTimes: "2",
+      },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      async () => qrData,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain('"rootKey":"w:tbl"');
+    expect(serializedDocument).toContain("Planned evaluation sessions:");
+    expect(serializedDocument).toContain("Evaluation forms available at");
+    expect(serializedDocument).toContain(
+      '"x":{"key":"cx","value":571500},"y":{"key":"cy","value":571500}'
+    );
+    expect(serializedDocument).toContain('"value":6000');
+    expect(serializedDocument).toContain('"value":2160');
+    expect(serializedDocument).toContain('"value":1200');
+  });
 });
 
 // ─── Goalie Journal builder tests ─────────────────────────────────────────────

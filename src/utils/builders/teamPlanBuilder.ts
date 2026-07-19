@@ -41,6 +41,11 @@ const GAME_EVENT_TIMELINE_WIDTH_TWIPS =
 const GAME_EVENT_PERIOD_WIDTH_TWIPS = Math.floor(GAME_EVENT_TIMELINE_WIDTH_TWIPS * 0.3);
 const GAME_EVENT_OT_WIDTH_TWIPS =
   GAME_EVENT_TIMELINE_WIDTH_TWIPS - GAME_EVENT_PERIOD_WIDTH_TWIPS * 3;
+const EVALUATION_QR_COLUMN_WIDTH_TWIPS = 1200;
+const EVALUATION_LINK_COLUMN_WIDTH_TWIPS = 2160;
+const EVALUATION_LIST_COLUMN_WIDTH_TWIPS =
+  DOCX_CONTENT_WIDTH_TWIPS - EVALUATION_LINK_COLUMN_WIDTH_TWIPS - EVALUATION_QR_COLUMN_WIDTH_TWIPS;
+const INLINE_RESOURCE_QR_SIZE_TWIPS = 60;
 
 export function buildImportedEventMarkdown(
   event: Pick<EventSelection, "title">,
@@ -489,31 +494,118 @@ export async function buildTeamPlanDocument(
   // Goalie Evaluations section (optional)
   if (hasGoalieEvaluations) {
     const evaluationsCount = parseInt(goalieEvaluationTimes, 10);
+    const evaluationLink = normalizeUrl("https://goaliegen.com/goalie-evals/");
+    const evaluationQrData = evaluationLink ? await qrGenerator(evaluationLink) : null;
     documentChildren.push(
       new Paragraph({
         children: [toPrimaryRun("Goalie Evaluations", { bold: true })],
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 400, after: 200 },
-      }),
-      new Paragraph({
-        children: [toBlackRun("Planned evaluation sessions:")],
-        spacing: { after: 120 },
       })
     );
 
-    for (let i = 1; i <= evaluationsCount; i += 1) {
-      documentChildren.push(
-        new Paragraph({
-          children: [toBlackRun(`Evaluation ${i}: [EVALUATION_${i}_DATE]`)],
-          bullet: { level: 0 },
-          spacing: { after: 100 },
-        })
-      );
-    }
-
-    await addResourceLinkWithQr(
-      "Evaluation forms available at ",
-      "https://goaliegen.com/goalie-evals/"
+    documentChildren.push(
+      new Table({
+        width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+        layout: TableLayoutType.FIXED,
+        columnWidths: [
+          EVALUATION_LIST_COLUMN_WIDTH_TWIPS,
+          EVALUATION_LINK_COLUMN_WIDTH_TWIPS,
+          EVALUATION_QR_COLUMN_WIDTH_TWIPS,
+        ],
+        rows: [
+          new TableRow({
+            cantSplit: true,
+            children: [
+              new TableCell({
+                width: { size: EVALUATION_LIST_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                verticalAlign: VerticalAlign.TOP,
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: [
+                  new Paragraph({
+                    children: [toBlackRun("Planned evaluation sessions:")],
+                    spacing: { after: 120 },
+                  }),
+                  ...Array.from({ length: evaluationsCount }, (_, index) => {
+                    const evaluationNumber = index + 1;
+                    return new Paragraph({
+                      children: [
+                        toBlackRun(
+                          `Evaluation ${evaluationNumber}: [EVALUATION_${evaluationNumber}_DATE]`
+                        ),
+                      ],
+                      bullet: { level: 0 },
+                      spacing: { after: 100 },
+                    });
+                  }),
+                ],
+              }),
+              new TableCell({
+                width: { size: EVALUATION_LINK_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                verticalAlign: VerticalAlign.TOP,
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: [
+                  new Paragraph({
+                    children: [
+                      toBlackRun("Evaluation forms available at "),
+                      ...(evaluationLink
+                        ? [
+                            new ExternalHyperlink({
+                              link: evaluationLink,
+                              children: [
+                                toPrimaryRun(evaluationLink, {
+                                  underline: { type: "single" },
+                                }),
+                              ],
+                            }),
+                          ]
+                        : []),
+                    ],
+                    spacing: { after: evaluationQrData ? 80 : 200 },
+                  }),
+                ],
+              }),
+              new TableCell({
+                width: { size: EVALUATION_QR_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                verticalAlign: VerticalAlign.TOP,
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: evaluationQrData
+                  ? [
+                      new Paragraph({
+                        children: [
+                          new ImageRun({
+                            type: "png",
+                            data: evaluationQrData,
+                            transformation: {
+                              width: INLINE_RESOURCE_QR_SIZE_TWIPS,
+                              height: INLINE_RESOURCE_QR_SIZE_TWIPS,
+                            },
+                          }),
+                        ],
+                        spacing: { after: 200 },
+                      }),
+                    ]
+                  : [],
+              }),
+            ],
+          }),
+        ],
+      })
     );
   }
 
