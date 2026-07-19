@@ -192,6 +192,13 @@ export function blocksToDocxParagraphs(
           }),
         ];
       }
+      case "spacer":
+        return [
+          new Paragraph({
+            children: [new TextRun({ text: "" })],
+            spacing: { after: 300 },
+          }),
+        ];
     }
   });
 }

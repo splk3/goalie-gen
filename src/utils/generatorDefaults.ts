@@ -368,9 +368,9 @@ export function buildTrainingDetailsBlock(
 
 /**
  * Builds the "Season Overview" markdown section for the Team Plan, optionally
- * including age-group–specific starter content.
+ * including shared and age-group–specific starter content.
  *
- * @param includeStarter   Whether to embed the age-group–specific starter block.
+ * @param includeStarter   Whether to embed the shared and age-group–specific starter blocks.
  * @param selectedAgeGroup Age group string from the form/CLI (e.g. `"12U"`).
  * @param seasonOverviewMd Pre-loaded content from
  *   `src/content/team-plan/season-overview.md`.
@@ -381,21 +381,25 @@ export function getSeasonOverviewMarkdown(
   seasonOverviewMd: string
 ): string {
   const ageGroupHeadingMap: Record<string, string> = {
-    "8U": "8U Starter Content Placeholder",
-    "10U": "10U Starter Content Placeholder",
-    "12U": "12U Starter Content Placeholder",
-    "14U": "14U Starter Content Placeholder",
-    "16U and older": "16U and older Starter Content Placeholder",
+    "8U": "8U Starter Content",
+    "10U": "10U Starter Content",
+    "12U": "12U Starter Content",
+    "14U": "14U Starter Content",
+    "16U and older": "16U and older Starter Content",
   };
 
   const selectedPlaceholderSection = extractLevel3Section(
     seasonOverviewMd,
-    "Selected Overview Placeholder"
+    "Season Overview Placeholder"
   );
+  const allAgesStarterSection = extractLevel3Section(seasonOverviewMd, "All Ages Starter Content");
   const starterHeading = ageGroupHeadingMap[selectedAgeGroup];
-  const starterSection = starterHeading
+  const ageGroupStarterSection = starterHeading
     ? extractLevel3Section(seasonOverviewMd, starterHeading)
     : "";
+  const starterSection = [allAgesStarterSection, ageGroupStarterSection]
+    .filter((section) => section.length > 0)
+    .join("\n\n\n");
 
   const sectionBody = includeStarter
     ? starterSection || selectedPlaceholderSection || "[SEASON_OVERVIEW_SELECTED]"

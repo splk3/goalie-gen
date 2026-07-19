@@ -6,35 +6,53 @@ import {
 
 const seasonOverviewMd = `## Season Overview
 
-### Selected Overview Placeholder
+### Season Overview Placeholder
 
 [SEASON_OVERVIEW_SELECTED]
 
-### 8U Starter Content Placeholder
+### All Ages Starter Content
+
+[SEASON_OVERVIEW_ALL_AGES_STARTER]
+
+### 8U Starter Content
 
 [SEASON_OVERVIEW_8U_STARTER]
 
-### 10U Starter Content Placeholder
+### 10U Starter Content
 
 [SEASON_OVERVIEW_10U_STARTER]
 
-### 12U Starter Content Placeholder
+### 12U Starter Content
 
 [SEASON_OVERVIEW_12U_STARTER]
 
-### 14U Starter Content Placeholder
+### 14U Starter Content
 
 [SEASON_OVERVIEW_14U_STARTER]
 
-### 16U and older Starter Content Placeholder
+### 16U and older Starter Content
 
 [SEASON_OVERVIEW_16U_AND_OLDER_STARTER]
 `;
 
 describe("getSeasonOverviewMarkdown", () => {
-  it("uses 14U starter content for 14U selections", () => {
+  it("uses all-ages content followed by the selected age-group content", () => {
     const markdown = getSeasonOverviewMarkdown(true, "14U", seasonOverviewMd);
+    expect(markdown).toContain("[SEASON_OVERVIEW_ALL_AGES_STARTER]");
     expect(markdown).toContain("[SEASON_OVERVIEW_14U_STARTER]");
+    expect(markdown.indexOf("[SEASON_OVERVIEW_ALL_AGES_STARTER]")).toBeLessThan(
+      markdown.indexOf("[SEASON_OVERVIEW_14U_STARTER]")
+    );
+    expect(markdown).toContain(
+      "[SEASON_OVERVIEW_ALL_AGES_STARTER]\n\n\n[SEASON_OVERVIEW_14U_STARTER]"
+    );
+  });
+
+  it("uses the season overview placeholder when starter content is disabled", () => {
+    const markdown = getSeasonOverviewMarkdown(false, "14U", seasonOverviewMd);
+    expect(markdown).toContain("[SEASON_OVERVIEW_SELECTED]");
+    expect(markdown).not.toContain("[SEASON_OVERVIEW_ALL_AGES_STARTER]");
+    expect(markdown).not.toContain("[SEASON_OVERVIEW_14U_STARTER]");
   });
 
   describe("level-3 sample content selection", () => {

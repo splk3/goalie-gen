@@ -2,16 +2,21 @@ export type MarkdownBlock =
   | { type: "heading"; level: 1 | 2 | 3; text: string }
   | { type: "paragraph"; text: string }
   | { type: "bullet"; text: string }
-  | { type: "image"; alt: string; src: string };
+  | { type: "image"; alt: string; src: string }
+  | { type: "spacer" };
 
 /**
  * Parses a simple markdown string into structured blocks.
  * Supports headings (# ## ###), bullet lists (- or *), and paragraphs.
  */
-export function parseMarkdown(markdown: string): MarkdownBlock[] {
+export function parseMarkdown(
+  markdown: string,
+  options: { preserveBlankLines?: boolean } = {}
+): MarkdownBlock[] {
   const lines = markdown.split("\n");
   const blocks: MarkdownBlock[] = [];
   let paragraphLines: string[] = [];
+  let previousLineWasBlank = false;
 
   const flushParagraph = () => {
     const text = paragraphLines.join(" ").trim();
@@ -60,9 +65,14 @@ export function parseMarkdown(markdown: string): MarkdownBlock[] {
 
     if (line.trim() === "") {
       flushParagraph();
+      if (options.preserveBlankLines && previousLineWasBlank) {
+        blocks.push({ type: "spacer" });
+      }
+      previousLineWasBlank = true;
       continue;
     }
 
+    previousLineWasBlank = false;
     paragraphLines.push(line.trim());
   }
 

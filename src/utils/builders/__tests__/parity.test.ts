@@ -96,9 +96,9 @@ const MINIMAL_TEAM_CONFIG: TeamPlanConfig = {
 };
 
 const MINIMAL_TEAM_CONTENT: TeamPlanContent = {
-  coverMd: "## Cover\n\n### Selected Overview Placeholder\nTest overview.",
+  coverMd: "## Cover\n\n### Season Overview Placeholder\nTest overview.",
   seasonOverviewMd:
-    "## Season Overview\n\n### Selected Overview Placeholder\nTest placeholder overview.",
+    "## Season Overview\n\n### Season Overview Placeholder\nTest placeholder overview.",
   eventDetailsMd: "## Events\n\n### Selected Event Details Placeholder\nTest event details.",
 };
 

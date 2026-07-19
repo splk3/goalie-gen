@@ -457,7 +457,8 @@ export async function buildTeamPlanDocument(
   documentChildren.push(
     ...blocksToDocxParagraphs(
       parseMarkdown(
-        getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd)
+        getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd),
+        { preserveBlankLines: true }
       ),
       colorOpts
     )
