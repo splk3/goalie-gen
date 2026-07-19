@@ -66,7 +66,7 @@ function findClosingMarker(text: string, marker: string, start: number): number 
 function parseInline(text: string, inheritedStyle: InlineStyle): InlineMarkdownSegment[] {
   const segments: InlineMarkdownSegment[] = [];
 
-  for (let index = 0; index < text.length;) {
+  for (let index = 0; index < text.length; ) {
     if (text[index] === "\\" && index + 1 < text.length) {
       pushSegment(segments, {
         type: "text",
