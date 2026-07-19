@@ -336,7 +336,8 @@ describe("buildTeamPlanDocument", () => {
       "Starter event content."
     );
 
-    expect(markdown).toContain("**Calendar Event:** Summer Showcase");
+    expect(markdown).toContain("Summer Showcase");
+    expect(markdown).not.toContain("Calendar Event:");
     expect(markdown).not.toContain("Description");
     expect(markdown).toContain("Starter event content.");
   });

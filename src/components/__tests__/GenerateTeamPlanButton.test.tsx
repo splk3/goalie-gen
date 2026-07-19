@@ -265,9 +265,10 @@ describe("GenerateTeamPlanButton", () => {
     expect(serializedDoc).not.toContain("Number of Practices");
   });
 
-  it("renders two calendar months per page in team-plan DOCX calendar view", async () => {
+  it("keeps calendar months flowing naturally without forced page breaks", async () => {
     const user = userEvent.setup();
     const mockParagraph = jest.fn((options) => ({ options }));
+    const mockTable = jest.fn((options) => ({ options }));
     const mockTextRun = jest.fn((options) => ({ options }));
 
     jest.spyOn(teamPlanCalendarGrid, "buildEventCalendarMonths").mockReturnValue([
@@ -341,7 +342,7 @@ describe("GenerateTeamPlanButton", () => {
       ImageRun: jest.fn((options) => ({ options })),
       Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
       Paragraph: mockParagraph,
-      Table: jest.fn((options) => ({ options })),
+      Table: mockTable,
       TableCell: jest.fn((options) => ({ options })),
       TableLayoutType: { FIXED: "FIXED" },
       TableRow: jest.fn((options) => ({ options })),
@@ -369,12 +370,20 @@ describe("GenerateTeamPlanButton", () => {
       .filter((options) => /^Month [1-4]$/.test(options.children?.[0]?.options?.text ?? ""));
 
     expect(monthHeadingParagraphs).toHaveLength(4);
-    expect(monthHeadingParagraphs.map((options) => options.pageBreakBefore)).toEqual([
-      false,
-      true,
-      true,
-      true,
-    ]);
+    expect(monthHeadingParagraphs.every((options) => options.pageBreakBefore === undefined)).toBe(
+      true
+    );
+    expect(monthHeadingParagraphs.every((options) => options.keepNext === true)).toBe(true);
+
+    const calendarTables = mockTable.mock.calls
+      .map(([options]) => options)
+      .filter((options) => options.rows?.[0]?.options?.tableHeader === true);
+    expect(calendarTables).toHaveLength(4);
+    expect(
+      calendarTables.every((table) =>
+        table.rows.every((row: { options?: { cantSplit?: boolean } }) => row.options?.cantSplit)
+      )
+    ).toBe(true);
   });
 
   it("filters event details output by selected detailed-entry event types", async () => {

@@ -29,8 +29,6 @@ type DocxModule = typeof import("docx");
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-// Keep each month table contiguous by forcing one calendar month per page.
-const MONTH_CALENDARS_PER_PAGE = 1;
 const CALENDAR_EVENT_FONT_SIZE = 16;
 const CALENDAR_EVENT_BOTTOM_SPACING = 40;
 const DOCX_CONTENT_WIDTH_TWIPS = 9360;
@@ -48,9 +46,7 @@ export function buildImportedEventMarkdown(
   event: Pick<EventSelection, "title">,
   eventStarterMarkdown: string
 ): string {
-  return event.title
-    ? [`**Calendar Event:** ${event.title}`, "", eventStarterMarkdown].join("\n")
-    : eventStarterMarkdown;
+  return event.title ? [event.title, "", eventStarterMarkdown].join("\n") : eventStarterMarkdown;
 }
 
 export function formatTeamPlanEventHeading(
@@ -543,13 +539,12 @@ export async function buildTeamPlanDocument(
         })
       );
 
-      calendarMonths.forEach((month, monthIndex) => {
-        const startsNewCalendarPage = monthIndex > 0 && monthIndex % MONTH_CALENDARS_PER_PAGE === 0;
+      calendarMonths.forEach((month) => {
         documentChildren.push(
           new Paragraph({
             children: [toPrimaryRun(month.monthLabel, { bold: true })],
             heading: HeadingLevel.HEADING_3,
-            pageBreakBefore: startsNewCalendarPage,
+            keepNext: true,
             spacing: { before: 250, after: 120 },
           })
         );
@@ -575,37 +570,52 @@ export async function buildTeamPlanDocument(
             ),
           }),
           ...month.weeks.map(
-            (week) =>
+            (week, weekIndex) =>
               new TableRow({
                 cantSplit: true,
-                children: week.map((cell, index) => {
+                children: week.map((cell, cellIndex) => {
                   const dateLabel = cell.dayOfMonth ? `${cell.dayOfMonth}` : "";
+                  const isLastCellInMonth =
+                    weekIndex === month.weeks.length - 1 && cellIndex === week.length - 1;
+                  const cellParagraphCount = 1 + (cell.hasEvents ? cell.eventTypes.length : 1);
+                  const keepNextForParagraph = (paragraphIndex: number): boolean =>
+                    !(isLastCellInMonth && paragraphIndex === cellParagraphCount - 1);
+                  const cellParagraphs = [
+                    new Paragraph({
+                      keepNext: keepNextForParagraph(0),
+                      spacing: { after: cell.hasEvents ? 30 : 80 },
+                      children: [toBlackRun(dateLabel, { bold: cell.hasEvents })],
+                    }),
+                    ...(cell.hasEvents
+                      ? cell.eventTypes.map(
+                          (eventType, eventIndex) =>
+                            new Paragraph({
+                              keepNext: keepNextForParagraph(eventIndex + 1),
+                              spacing: {
+                                after:
+                                  eventIndex === cell.eventTypes.length - 1
+                                    ? CALENDAR_EVENT_BOTTOM_SPACING
+                                    : 0,
+                              },
+                              children: [toBlackRun(eventType, { size: CALENDAR_EVENT_FONT_SIZE })],
+                            })
+                        )
+                      : [
+                          new Paragraph({
+                            keepNext: keepNextForParagraph(1),
+                            children: [toBlackRun("")],
+                          }),
+                        ]),
+                  ];
+
                   return new TableCell({
-                    width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
+                    width: {
+                      size: cellIndex === 6 ? 1338 : 1337,
+                      type: WidthType.DXA,
+                    },
                     verticalAlign: VerticalAlign.TOP,
                     shading: cell.hasEvents ? { fill: "D9D9D9" } : undefined,
-                    children: [
-                      new Paragraph({
-                        spacing: { after: cell.hasEvents ? 30 : 80 },
-                        children: [toBlackRun(dateLabel, { bold: cell.hasEvents })],
-                      }),
-                      ...(cell.hasEvents
-                        ? cell.eventTypes.map(
-                            (eventType, eventIndex) =>
-                              new Paragraph({
-                                spacing: {
-                                  after:
-                                    eventIndex === cell.eventTypes.length - 1
-                                      ? CALENDAR_EVENT_BOTTOM_SPACING
-                                      : 0,
-                                },
-                                children: [
-                                  toBlackRun(eventType, { size: CALENDAR_EVENT_FONT_SIZE }),
-                                ],
-                              })
-                          )
-                        : [new Paragraph({ children: [toBlackRun("")] })]),
-                    ],
+                    children: cellParagraphs,
                   });
                 }),
               })
