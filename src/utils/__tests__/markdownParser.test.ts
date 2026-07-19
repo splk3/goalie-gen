@@ -80,6 +80,44 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("parses pipe tables with headers, alignment separators, and rows", () => {
+    const md = [
+      "| Phase | Focus |",
+      "| :--- | ---: |",
+      "| Early | Stance and skating |",
+      "| Late | Game preparation |",
+    ].join("\n");
+
+    expect(parseMarkdown(md)).toEqual([
+      {
+        type: "table",
+        headers: ["Phase", "Focus"],
+        rows: [
+          ["Early", "Stance and skating"],
+          ["Late", "Game preparation"],
+        ],
+      },
+    ]);
+  });
+
+  it("unescapes pipes inside table cells", () => {
+    expect(
+      parseMarkdown("| Skill | Detail |\n| --- | --- |\n| Saves | Glove \\| blocker |")
+    ).toEqual([
+      {
+        type: "table",
+        headers: ["Skill", "Detail"],
+        rows: [["Saves", "Glove | blocker"]],
+      },
+    ]);
+  });
+
+  it("does not treat a pipe paragraph without a separator row as a table", () => {
+    expect(parseMarkdown("A | sentence\nwith | pipes")).toEqual([
+      { type: "paragraph", text: "A | sentence with | pipes" },
+    ]);
+  });
+
   it("merges consecutive non-blank lines into one paragraph", () => {
     const md = "Line one\nLine two\nLine three";
     const blocks = parseMarkdown(md);

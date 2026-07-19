@@ -1,6 +1,22 @@
-import { AlignmentType, HeadingLevel, ImageRun, Paragraph, TextRun, ExternalHyperlink } from "docx";
+import {
+  AlignmentType,
+  BorderStyle,
+  ExternalHyperlink,
+  HeadingLevel,
+  ImageRun,
+  Paragraph,
+  Table,
+  TableCell,
+  TableLayoutType,
+  TableRow,
+  TextRun,
+  VerticalAlign,
+  WidthType,
+} from "docx";
 import type { MarkdownBlock } from "./markdownParser";
 import { parseInlineMarkdown } from "./inlineMarkdown";
+
+const DOCX_CONTENT_WIDTH_TWIPS = 9360;
 
 /**
  * Data representation of a single text run before it is converted to a docx
@@ -89,7 +105,8 @@ export function parseSegments(text: string): ParsedSegment[] {
 export function textToParagraphChildren(
   text: string,
   primaryColor: string = "000000",
-  textColor: string = "000000"
+  textColor: string = "000000",
+  bold = false
 ): (TextRun | ExternalHyperlink)[] {
   return parseSegments(text).map((segment) => {
     if (segment.type === "link") {
@@ -100,7 +117,7 @@ export function textToParagraphChildren(
             text: segment.text,
             color: primaryColor,
             underline: { type: "single" },
-            bold: segment.bold || undefined,
+            bold: bold || segment.bold || undefined,
             italics: segment.italics || undefined,
           }),
         ],
@@ -109,28 +126,86 @@ export function textToParagraphChildren(
     return new TextRun({
       text: segment.text,
       italics: segment.italics || segment.type === "placeholder" || undefined,
-      bold: segment.bold || undefined,
+      bold: bold || segment.bold || undefined,
       color: textColor,
     });
   });
 }
 
+export type DocxContent = Paragraph | Table;
+
+function getTableColumnWidths(columnCount: number): number[] {
+  const baseWidth = Math.floor(DOCX_CONTENT_WIDTH_TWIPS / columnCount);
+  const remainder = DOCX_CONTENT_WIDTH_TWIPS - baseWidth * columnCount;
+  return Array.from({ length: columnCount }, (_, index) =>
+    index === columnCount - 1 ? baseWidth + remainder : baseWidth
+  );
+}
+
+function createTableCellParagraphs(
+  text: string,
+  primaryColor: string,
+  isHeader: boolean
+): Paragraph[] {
+  return text.split(/<br\s*\/?>/gi).map(
+    (line) =>
+      new Paragraph({
+        children: textToParagraphChildren(line, primaryColor, "000000", isHeader),
+        spacing: { after: 40 },
+      })
+  );
+}
+
+function tableBlockToDocxTable(
+  block: Extract<MarkdownBlock, { type: "table" }>,
+  primaryColor: string
+): Table {
+  const columnWidths = getTableColumnWidths(block.headers.length);
+  const rows = [block.headers, ...block.rows].map((cells, rowIndex) => {
+    const isHeader = rowIndex === 0;
+    return new TableRow({
+      cantSplit: true,
+      tableHeader: isHeader,
+      children: cells.map(
+        (cell, cellIndex) =>
+          new TableCell({
+            width: { size: columnWidths[cellIndex], type: WidthType.DXA },
+            verticalAlign: VerticalAlign.TOP,
+            shading: isHeader ? { fill: "EDEDED" } : undefined,
+            borders: {
+              top: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+              bottom: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+              left: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+              right: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+            },
+            children: createTableCellParagraphs(cell, primaryColor, isHeader),
+          })
+      ),
+    });
+  });
+
+  return new Table({
+    width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+    layout: TableLayoutType.FIXED,
+    columnWidths,
+    rows,
+  });
+}
+
 /**
- * Converts an array of parsed markdown blocks into docx Paragraph objects.
- * For both paragraph and bullet blocks, italic style is applied to placeholder
- * text wrapped in square brackets, including inline occurrences such as
- * "Focus: [Placeholder]". Markdown links [text](url) are parsed and rendered
- * as clickable hyperlinks.
+ * Converts parsed markdown blocks into native DOCX paragraphs and fixed-width tables.
  */
-export function blocksToDocxParagraphs(
+export function blocksToDocxContent(
   blocks: MarkdownBlock[],
   options?: DocxColorOptions
-): Paragraph[] {
+): DocxContent[] {
   const primary = cleanHexColor(options?.primaryColor);
   const secondary = cleanHexColor(options?.secondaryColor);
 
-  return blocks.flatMap((block) => {
+  return blocks.flatMap((block): DocxContent[] => {
     switch (block.type) {
+      case "table":
+        return [tableBlockToDocxTable(block, primary)];
       case "heading": {
         const level =
           block.level === 1
@@ -201,6 +276,23 @@ export function blocksToDocxParagraphs(
         ];
     }
   });
+}
+
+/**
+ * Converts an array of parsed markdown blocks into docx Paragraph objects.
+ * For both paragraph and bullet blocks, italic style is applied to placeholder
+ * text wrapped in square brackets, including inline occurrences such as
+ * "Focus: [Placeholder]". Markdown links [text](url) are parsed and rendered
+ * as clickable hyperlinks. Use blocksToDocxContent when table blocks should be
+ * included in the output.
+ */
+export function blocksToDocxParagraphs(
+  blocks: MarkdownBlock[],
+  options?: DocxColorOptions
+): Paragraph[] {
+  return blocksToDocxContent(blocks, options).filter(
+    (content): content is Paragraph => content instanceof Paragraph
+  );
 }
 
 /**

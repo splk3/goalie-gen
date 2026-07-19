@@ -1,5 +1,6 @@
-import { TextRun, Paragraph, ExternalHyperlink } from "docx";
+import { TextRun, Paragraph, ExternalHyperlink, Table } from "docx";
 import {
+  blocksToDocxContent,
   parseRunData,
   textToRuns,
   parseSegments,
@@ -180,6 +181,64 @@ describe("cleanHexColor", () => {
 describe("blocksToDocxParagraphs", () => {
   it("returns empty array for empty input", () => {
     expect(blocksToDocxParagraphs([])).toEqual([]);
+  });
+
+  describe("blocksToDocxContent tables", () => {
+    it("renders a markdown table as a native fixed-width DOCX table", () => {
+      const content = blocksToDocxContent([
+        {
+          type: "table",
+          headers: ["Phase", "Focus", "Details"],
+          rows: [["Early", "Skating", "Stance<br>Balance"]],
+        },
+      ]);
+
+      expect(content).toHaveLength(1);
+      expect(content[0]).toBeInstanceOf(Table);
+
+      const table = content[0] as Table & {
+        root: Array<{ root?: Array<unknown>; options?: { children: Array<unknown> } }>;
+      };
+      const grid = table.root[1];
+      expect(grid.root).toHaveLength(3);
+
+      const firstRow = table.root[2] as {
+        options: {
+          children: Array<{
+            options: {
+              width: { size: number; type: string };
+              children: Array<unknown>;
+            };
+          }>;
+        };
+      };
+      const cells = firstRow.options.children;
+      expect(cells.map((cell) => cell.options.width)).toEqual([
+        { size: 3120, type: "dxa" },
+        { size: 3120, type: "dxa" },
+        { size: 3120, type: "dxa" },
+      ]);
+      const secondRow = table.root[3] as {
+        options: {
+          children: Array<{
+            options: {
+              children: Array<unknown>;
+            };
+          }>;
+        };
+      };
+      expect(secondRow.options.children[2].options.children).toHaveLength(2);
+    });
+
+    it("keeps paragraph conversion unchanged for non-table blocks", () => {
+      const content = blocksToDocxContent([
+        { type: "heading", level: 2, text: "Section" },
+        { type: "paragraph", text: "Body" },
+      ]);
+
+      expect(content).toHaveLength(2);
+      content.forEach((block) => expect(block).toBeInstanceOf(Paragraph));
+    });
   });
 
   it("returns one Paragraph per heading block", () => {

@@ -6,7 +6,7 @@
  * callbacks so the same builder runs unchanged in both the browser and Node.
  */
 import { parseMarkdown } from "../markdownParser";
-import { blocksToDocxParagraphs, cleanHexColor, makeDocxHeaderFooter } from "../docxContent";
+import { blocksToDocxContent, cleanHexColor, makeDocxHeaderFooter } from "../docxContent";
 import { buildEventCalendarMonths } from "../teamPlanCalendarGrid";
 import type {
   TeamPlanConfig,
@@ -455,7 +455,7 @@ export async function buildTeamPlanDocument(
 
   // Season Overview section
   documentChildren.push(
-    ...blocksToDocxParagraphs(
+    ...blocksToDocxContent(
       parseMarkdown(
         getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd),
         { preserveBlankLines: true }
@@ -467,7 +467,7 @@ export async function buildTeamPlanDocument(
   // Goalie Mentor section (optional)
   if (hasGoalieMentors) {
     documentChildren.push(
-      ...blocksToDocxParagraphs(
+      ...blocksToDocxContent(
         parseMarkdown(`## Goalie Mentor Information
 
 - Mentor Name: [GOALIE_MENTOR_NAME]
@@ -757,7 +757,7 @@ export async function buildTeamPlanDocument(
         const importedEventMarkdown = buildImportedEventMarkdown(event, eventStarterMarkdown);
 
         documentChildren.push(
-          ...blocksToDocxParagraphs(parseMarkdown(importedEventMarkdown), colorOpts)
+          ...blocksToDocxContent(parseMarkdown(importedEventMarkdown), colorOpts)
         );
 
         if (event.eventType === "On-ice Practice" && addSuggestedDrillEachPractice) {
