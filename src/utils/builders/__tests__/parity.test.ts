@@ -496,6 +496,30 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
+  it("separates adjacent event details with a subtle secondary-color divider", async () => {
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        addCalendarOfEvents: true,
+        includeEventDetails: true,
+        detailedEventSelections: [
+          { date: "2026-07-11", eventType: "Game" },
+          { date: "2026-07-15", eventType: "Evaluation" },
+        ],
+      },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain('"rootKey":"w:pBdr"');
+    expect(serializedDocument).toContain(
+      '"style":{"key":"w:val","value":"single"},"color":{"key":"w:color","value":"AF272F"}'
+    );
+  });
+
   it("calls QrGenerator when hasGoalieEvaluations is true", async () => {
     const calledUrls: string[] = [];
     const trackingQrGenerator: QrGenerator = async (url) => {

@@ -646,7 +646,24 @@ export async function buildTeamPlanDocument(
         })
       );
 
-      for (const event of detailedEventSelections) {
+      for (const [eventIndex, event] of detailedEventSelections.entries()) {
+        if (eventIndex > 0) {
+          documentChildren.push(
+            new Paragraph({
+              children: [toBlackRun("")],
+              border: {
+                bottom: {
+                  style: BorderStyle.SINGLE,
+                  size: 6,
+                  color: cleanSecondary,
+                  space: 1,
+                },
+              },
+              spacing: { before: 160, after: 160 },
+            })
+          );
+        }
+
         documentChildren.push(
           new Paragraph({
             children: [toBlackRun(formatTeamPlanEventHeading(event))],
