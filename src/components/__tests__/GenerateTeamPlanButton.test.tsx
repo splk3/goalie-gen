@@ -46,7 +46,6 @@ async function openModal(user: ReturnType<typeof userEvent.setup>) {
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText("Team Name"), "Springfield Goalies");
   await user.selectOptions(screen.getByLabelText("Age Group"), "10U");
-  await user.selectOptions(screen.getByLabelText("Skill Level"), "intermediate");
 }
 
 function getCalendarEventTypesFieldset(): HTMLElement {
@@ -86,6 +85,7 @@ describe("GenerateTeamPlanButton", () => {
     expect(screen.getByLabelText("Team Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Team/Club Website (Optional)")).toBeInTheDocument();
     expect(screen.getByLabelText("Team/Club Motto/Mission (Optional)")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Skill Level")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Number of Practices (0-50)")).not.toBeInTheDocument();
     expect(screen.queryByText(/output format/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("radio", { name: /word/i })).not.toBeInTheDocument();
@@ -263,6 +263,8 @@ describe("GenerateTeamPlanButton", () => {
     expect(serializedDoc).not.toContain("Practice 1");
     expect(serializedDoc).not.toContain("Practice Plans");
     expect(serializedDoc).not.toContain("Number of Practices");
+    expect(serializedDoc).not.toContain("Experience Level");
+    expect(serializedDoc).not.toContain("SKILL_LEVEL");
   });
 
   it("keeps calendar months flowing naturally without forced page breaks", async () => {

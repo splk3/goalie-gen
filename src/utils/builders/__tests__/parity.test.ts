@@ -82,7 +82,6 @@ const MINIMAL_TEAM_CONFIG: TeamPlanConfig = {
   primaryColor: "#00205B",
   secondaryColor: "#AF272F",
   ageGroup: "12U",
-  skillLevel: "intermediate",
   hasGoalieMentors: false,
   hasGoalieEvaluations: false,
   goalieEvaluationTimes: "3",

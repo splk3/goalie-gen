@@ -116,7 +116,6 @@ export async function buildTeamPlanDocument(
     primaryColor,
     secondaryColor,
     ageGroup,
-    skillLevel,
     hasGoalieMentors,
     hasGoalieEvaluations,
     goalieEvaluationTimes,
@@ -437,17 +436,6 @@ export async function buildTeamPlanDocument(
     new Paragraph({
       children: [
         toBlackRun(`Age Group: ${valueOrPlaceholder(ageGroup.toUpperCase(), "AGE_GROUP")}`),
-      ],
-      spacing: { after: 100 },
-    }),
-    new Paragraph({
-      children: [
-        toBlackRun(
-          `Experience Level: ${valueOrPlaceholder(
-            skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1),
-            "SKILL_LEVEL"
-          )}`
-        ),
       ],
       spacing: { after: 100 },
     }),

@@ -27,7 +27,6 @@ import eventDetailsMd from "../content/team-plan/event-details.md";
 
 import type {
   AgeGroup,
-  SkillLevel,
   ConfigurableEventType,
   EventType,
   EventDateSelection,
@@ -159,7 +158,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   );
   const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
-  const [skillLevel, setSkillLevel] = React.useState<string>("");
   const [addSuggestedDrillEachPractice, setAddSuggestedDrillEachPractice] =
     React.useState<boolean>(true);
   const [hasGoalieMentors, setHasGoalieMentors] = React.useState<boolean>(false);
@@ -225,7 +223,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   }, [validationError]);
 
   const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U", "16U and older"];
-  const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
   const availableConfigurableEventTypes = React.useMemo(
     () => CONFIGURABLE_EVENT_TYPES.filter((eventType) => calendarEnabledEventTypes[eventType]),
@@ -544,12 +541,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       return false;
     }
 
-    if (!skillLevel) {
-      shouldScrollValidationErrorRef.current = true;
-      setValidationError("Please select a skill level");
-      return false;
-    }
-
     if (hasGoalieEvaluations) {
       if (goalieEvaluationTimes.includes(".") || goalieEvaluationTimes.includes(",")) {
         shouldScrollValidationErrorRef.current = true;
@@ -628,7 +619,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       primaryColor: primaryTeamColor,
       secondaryColor: secondaryTeamColor,
       ageGroup,
-      skillLevel,
       hasGoalieMentors,
       hasGoalieEvaluations,
       goalieEvaluationTimes,
@@ -676,7 +666,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         format: "docx",
         team_name: teamName,
         age_group: ageGroup,
-        skill_level: skillLevel,
       });
     } catch (error) {
       console.error("Error generating document:", error);
@@ -713,7 +702,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
       setAgeGroup("");
-      setSkillLevel("");
       setAddSuggestedDrillEachPractice(true);
       setHasGoalieMentors(false);
       setHasGoalieEvaluations(false);
@@ -766,7 +754,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
     setAgeGroup("");
-    setSkillLevel("");
     setAddSuggestedDrillEachPractice(true);
     setHasGoalieMentors(false);
     setHasGoalieEvaluations(false);
@@ -988,29 +975,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               {ageGroups.map((age) => (
                 <option key={age} value={age}>
                   {age}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="skillLevel"
-              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-            >
-              Skill Level
-            </label>
-            <select
-              id="skillLevel"
-              value={skillLevel}
-              onChange={(e) => setSkillLevel(e.target.value)}
-              disabled={!!generatedBlob || isGenerating}
-              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <option value="">Select skill level</option>
-              {skillLevels.map((level) => (
-                <option key={level} value={level}>
-                  {level.charAt(0).toUpperCase() + level.slice(1)}
                 </option>
               ))}
             </select>
