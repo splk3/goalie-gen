@@ -13,6 +13,28 @@ jest.mock("../../utils/loadExportModules", () => ({
   loadDocxModule: jest.fn(),
 }));
 
+jest.mock(
+  "../../content/team-plan/event-details.md",
+  () => `## Event Details
+
+### Selected Event Content
+[EVENT_DETAILS_SELECTED]
+
+### Practice Event Content
+[EVENT_DETAILS_PRACTICE_CONTENT]
+
+### Game Event Content
+[[FIELDS:Opponent|Time]]
+[[FIELDS:Goalie|Venue]]
+[[FIELD:Game Notes|4]]
+
+### Tournament Event Content
+[EVENT_DETAILS_TOURNAMENT_CONTENT]
+
+### Off-Ice Event Content
+[EVENT_DETAILS_OFF_ICE_CONTENT]`
+);
+
 jest.mock("../Logo", () => {
   function MockLogo() {
     return <div data-testid="logo" />;
@@ -485,7 +507,11 @@ describe("GenerateTeamPlanButton", () => {
     const docArgument = mockDocument.mock.calls[0][0];
     const serializedDoc = JSON.stringify(docArgument);
 
-    expect(serializedDoc).toContain("[EVENT_DETAILS_GAME_CONTENT]");
+    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_CONTENT]");
+    expect(serializedDoc).toContain("Opponent");
+    expect(serializedDoc).toContain("Time");
+    expect(serializedDoc).toContain("Goalie");
+    expect(serializedDoc).toContain("Venue");
     expect(serializedDoc).toContain("Goals");
     expect(serializedDoc).toContain("Shots");
     expect(serializedDoc).toContain("1st");

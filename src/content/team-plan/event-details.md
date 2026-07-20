@@ -12,14 +12,9 @@
 
 ### Game Event Content
 
-[EVENT_DETAILS_GAME_CONTENT]
-
-[[FIELDS:Opponent|Venue]]
-[[FIELDS:Result|Goalie]]
-
-[[FIELD:Game Notes|3]]
-
-[[FIELD:Game Notes|5]]
+[[FIELDS:Opponent|Time]]
+[[FIELDS:Goalie|Venue]]
+[[FIELD:Game Notes|4]]
 
 ### Tournament Event Content
 
