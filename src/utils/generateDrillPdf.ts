@@ -247,7 +247,7 @@ export const generateDrillPdf = async (
       loadImageAsDataURL(
         buildCacheBustedAssetPath("/images/usahockey/usahockey-gold-certification.png")
       ),
-      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light-whitebg.png")),
+      loadImageAsDataURL(buildCacheBustedAssetPath("/images/logos/logo-alt-light.png")),
       loadImageAsDataURL(buildCacheBustedAssetPath("/images/coachthem/supported-by-ct.png")),
       getQrCodeDataURL(drillUrl),
     ]);

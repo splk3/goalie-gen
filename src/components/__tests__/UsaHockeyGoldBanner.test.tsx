@@ -37,7 +37,7 @@ describe("UsaHockeyGoldBanner", () => {
     render(<UsaHockeyGoldBanner showCopyright showTerms />);
 
     const logo = screen.getByAltText("Goalie Gen");
-    expect(logo).toHaveAttribute("src", "/images/logos/logo-alt-light-whitebg.png");
+    expect(logo).toHaveAttribute("src", "/images/logos/logo-alt-light.png");
 
     document.documentElement.classList.add("dark");
 

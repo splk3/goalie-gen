@@ -244,7 +244,7 @@ export default function Home() {
                 src={withPrefix(
                   isDarkMode
                     ? "/images/logos/logo-alt-dark.png"
-                    : "/images/logos/logo-alt-light-whitebg.png"
+                    : "/images/logos/logo-alt-light.png"
                 )}
                 alt="Goalie Gen"
                 width={56}
