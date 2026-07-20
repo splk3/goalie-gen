@@ -230,6 +230,30 @@ describe("blocksToDocxParagraphs", () => {
       expect(secondRow.options.children[2].options.children).toHaveLength(2);
     });
 
+    it("allows season-plan tables to span pages while keeping rows intact", () => {
+      const content = blocksToDocxContent(
+        [
+          {
+            type: "table",
+            headers: ["Phase", "Focus"],
+            rows: [["Early", "Skating"]],
+          },
+        ],
+        { keepTablesTogether: false }
+      );
+      const table = content[0] as Table & {
+        root: Array<{
+          options?: {
+            cantSplit?: boolean;
+            children?: Array<{ options?: { children?: Array<unknown> } }>;
+          };
+        }>;
+      };
+
+      expect(table.root[2].options?.cantSplit).toBe(true);
+      expect(table.root[3].options?.cantSplit).toBe(true);
+    });
+
     it("keeps paragraph conversion unchanged for non-table blocks", () => {
       const content = blocksToDocxContent([
         { type: "heading", level: 2, text: "Section" },

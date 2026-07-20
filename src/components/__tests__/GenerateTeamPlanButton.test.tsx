@@ -446,6 +446,7 @@ describe("GenerateTeamPlanButton", () => {
   it("adds the game event score diagram when game entries are included in event details", async () => {
     const user = userEvent.setup();
     const mockDocument = jest.fn((config) => ({ config }));
+    const mockTable = jest.fn((options) => ({ options }));
 
     mockedLoadDocxModule.mockResolvedValue({
       AlignmentType: { CENTER: "CENTER", LEFT: "LEFT" },
@@ -455,7 +456,7 @@ describe("GenerateTeamPlanButton", () => {
       ImageRun: jest.fn((options) => ({ options })),
       Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
       Paragraph: jest.fn((options) => ({ options })),
-      Table: jest.fn((options) => ({ options })),
+      Table: mockTable,
       TableCell: jest.fn((options) => ({ options })),
       TableLayoutType: { FIXED: "FIXED" },
       TableRow: jest.fn((options) => ({ options })),
@@ -495,6 +496,25 @@ describe("GenerateTeamPlanButton", () => {
     expect(serializedDoc).toContain('"width":{"size":9360,"type":"DXA"}');
     expect(serializedDoc).toContain('"columnWidths":[1200,2178,2178,2178,726,900]');
     expect(serializedDoc).toContain('"layout":"FIXED"');
+
+    const gameTimelineParagraph = mockDocument.mock.calls[0][0].sections
+      .flatMap(
+        (section: { children: Array<{ options?: { children?: unknown[] } }> }) => section.children
+      )
+      .find(
+        (child: { options?: { children?: Array<{ options?: { text?: string } }> } }) =>
+          child.options?.children?.[0]?.options?.text === "Game Timeline"
+      );
+    expect(gameTimelineParagraph?.options?.pageBreakBefore).toBeUndefined();
+
+    const gameTimelineTable = mockTable.mock.calls
+      .map(([options]) => options)
+      .find((options) => options.columnWidths?.[0] === 1200);
+    expect(
+      gameTimelineTable?.rows.every(
+        (row: { options?: { cantSplit?: boolean } }) => row.options?.cantSplit
+      )
+    ).toBe(true);
   });
 });
 

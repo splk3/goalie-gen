@@ -194,7 +194,7 @@ export async function buildTeamPlanDocument(
                 top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
                 bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
               },
-              children: [new Paragraph({ children: [toBlackRun("")] })],
+              children: [new Paragraph({ children: [toBlackRun("")], keepNext: true })],
             }),
             ...periodLabels.map(
               (label, index) =>
@@ -205,6 +205,7 @@ export async function buildTeamPlanDocument(
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
                         spacing: { after: 120 },
+                        keepNext: true,
                         children: [toBlackRun(label, { bold: true })],
                       }),
                     ],
@@ -231,6 +232,7 @@ export async function buildTeamPlanDocument(
               children: [
                 new Paragraph({
                   spacing: { after: 60 },
+                  keepNext: true,
                   children: [toBlackRun("Goals")],
                 }),
               ],
@@ -239,7 +241,7 @@ export async function buildTeamPlanDocument(
               (label, index) =>
                 new TableCell({
                   width: { size: gameEventColumnWidths[index + 1], type: WidthType.DXA },
-                  ...borderCell([new Paragraph({ children: [toBlackRun("")] })], {
+                  ...borderCell([new Paragraph({ children: [toBlackRun("")], keepNext: true })], {
                     showBottomBorder: true,
                     showRightBorder: label !== "Totals",
                   }),
@@ -460,7 +462,7 @@ export async function buildTeamPlanDocument(
         getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd),
         { preserveBlankLines: true }
       ),
-      colorOpts
+      { ...colorOpts, keepTablesTogether: false }
     )
   );
 
@@ -773,7 +775,6 @@ export async function buildTeamPlanDocument(
           documentChildren.push(
             new Paragraph({
               children: [toBlackRun("Game Timeline", { bold: true })],
-              pageBreakBefore: true,
               spacing: { before: 120, after: 80 },
             })
           );

@@ -34,6 +34,8 @@ export interface DocxColorOptions {
   primaryColor?: string;
   /** Raw hex color string — may include or omit a leading `#`. */
   secondaryColor?: string;
+  /** Keep each table together when it fits on one page. */
+  keepTablesTogether?: boolean;
   images?: Record<string, DocxImageData>;
 }
 
@@ -145,20 +147,23 @@ function getTableColumnWidths(columnCount: number): number[] {
 function createTableCellParagraphs(
   text: string,
   primaryColor: string,
-  isHeader: boolean
+  isHeader: boolean,
+  keepNext: boolean
 ): Paragraph[] {
   return text.split(/<br\s*\/?>/gi).map(
     (line) =>
       new Paragraph({
         children: textToParagraphChildren(line, primaryColor, "000000", isHeader),
         spacing: { after: 40 },
+        keepNext,
       })
   );
 }
 
 function tableBlockToDocxTable(
   block: Extract<MarkdownBlock, { type: "table" }>,
-  primaryColor: string
+  primaryColor: string,
+  keepTablesTogether: boolean
 ): Table {
   const columnWidths = getTableColumnWidths(block.headers.length);
   const rows = [block.headers, ...block.rows].map((cells, rowIndex) => {
@@ -178,7 +183,12 @@ function tableBlockToDocxTable(
               left: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
               right: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
             },
-            children: createTableCellParagraphs(cell, primaryColor, isHeader),
+            children: createTableCellParagraphs(
+              cell,
+              primaryColor,
+              isHeader,
+              keepTablesTogether && rowIndex < block.rows.length
+            ),
           })
       ),
     });
@@ -216,6 +226,7 @@ function fillInFieldToDocxTable(
                   bold: showLabel,
                 }),
               ],
+              keepNext: index < block.lines - 1,
             }),
           ],
         }),
@@ -231,6 +242,7 @@ function fillInFieldToDocxTable(
             new Paragraph({
               children: [new TextRun({ text: "" })],
               spacing: { after: 120 },
+              keepNext: index < block.lines - 1,
             }),
           ],
         }),
@@ -255,7 +267,7 @@ function compactFieldsToDocxTable(
   const columnWidths = [labelWidth, inputWidth, labelWidth, inputWidth];
   const noBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
   const rows = block.rows.map(
-    ({ left, right }) =>
+    ({ left, right }, rowIndex) =>
       new TableRow({
         cantSplit: true,
         children: [left, right].flatMap((label, index) => [
@@ -271,6 +283,7 @@ function compactFieldsToDocxTable(
                     bold: true,
                   }),
                 ],
+                keepNext: rowIndex < block.rows.length - 1,
               }),
             ],
           }),
@@ -286,6 +299,7 @@ function compactFieldsToDocxTable(
               new Paragraph({
                 children: [new TextRun({ text: "" })],
                 spacing: { after: 120 },
+                keepNext: rowIndex < block.rows.length - 1,
               }),
             ],
           }),
@@ -310,11 +324,12 @@ export function blocksToDocxContent(
 ): DocxContent[] {
   const primary = cleanHexColor(options?.primaryColor);
   const secondary = cleanHexColor(options?.secondaryColor);
+  const keepTablesTogether = options?.keepTablesTogether ?? true;
 
   return blocks.flatMap((block): DocxContent[] => {
     switch (block.type) {
       case "table":
-        return [tableBlockToDocxTable(block, primary)];
+        return [tableBlockToDocxTable(block, primary, keepTablesTogether)];
       case "field":
         return [fillInFieldToDocxTable(block, primary)];
       case "fields":
