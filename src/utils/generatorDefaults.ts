@@ -416,24 +416,15 @@ export function getSeasonOverviewMarkdown(
  *   `src/content/team-plan/event-details.md`.
  */
 export function getEventContentMarkdown(eventType: string, eventDetailsMd: string): string {
-  if (eventType === "On-ice Practice") {
-    return (
-      extractLevel3Section(eventDetailsMd, "Practice Event Content") ||
-      "[EVENT_DETAILS_PRACTICE_CONTENT]"
-    );
-  }
-  if (eventType === "Game") {
-    return (
-      extractLevel3Section(eventDetailsMd, "Game Event Content") || "[EVENT_DETAILS_GAME_CONTENT]"
-    );
-  }
-  if (eventType === "Off-ice Practice" || eventType === "Video Review") {
-    return (
-      extractLevel3Section(eventDetailsMd, "Off-Ice Event Content") ||
-      "[EVENT_DETAILS_OFF_ICE_CONTENT]"
-    );
-  }
-  return (
-    extractLevel3Section(eventDetailsMd, "Selected Event Content") || "[EVENT_DETAILS_SELECTED]"
-  );
+  const placeholderByEventType: Record<string, string> = {
+    "On-ice Practice": "[EVENT_DETAILS_PRACTICE_CONTENT]",
+    "Off-ice Practice": "[EVENT_DETAILS_OFF_ICE_CONTENT]",
+    "Video Review": "[EVENT_DETAILS_OFF_ICE_CONTENT]",
+    Evaluation: "[EVENT_DETAILS_SELECTED]",
+    Game: "[EVENT_DETAILS_GAME_CONTENT]",
+    TBD: "[EVENT_DETAILS_SELECTED]",
+  };
+  const placeholder = placeholderByEventType[eventType] ?? "[EVENT_DETAILS_SELECTED]";
+
+  return extractLevel3Section(eventDetailsMd, eventType) || placeholder;
 }

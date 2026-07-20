@@ -99,7 +99,7 @@ const MINIMAL_TEAM_CONTENT: TeamPlanContent = {
   coverMd: "## Cover\n\n### Season Overview Placeholder\nTest overview.",
   seasonOverviewMd:
     "## Season Overview\n\n### Season Overview Placeholder\nTest placeholder overview.",
-  eventDetailsMd: "## Events\n\n### Selected Event Content\nTest event details.",
+  eventDetailsMd: "## Events\n\n### TBD\nTest event details.",
 };
 
 const NULL_QR_GENERATOR: QrGenerator = async () => null;
@@ -530,7 +530,7 @@ describe("buildTeamPlanDocument", () => {
       {
         ...MINIMAL_TEAM_CONTENT,
         eventDetailsMd:
-          "## Events\n\n### Game Event Content\n[[FIELDS:Opponent|Venue]]\n[[FIELDS:Result|Goalie]]",
+          "## Events\n\n### Game\n[[FIELDS:Opponent|Venue]]\n[[FIELDS:Result|Goalie]]",
       },
       null,
       NULL_QR_GENERATOR,

@@ -1,5 +1,6 @@
 import {
   extractLevel3SectionsByPrefix,
+  getEventContentMarkdown,
   getSeasonOverviewMarkdown,
   selectRandomLevel3Section,
 } from "../generatorDefaults";
@@ -46,6 +47,56 @@ describe("getSeasonOverviewMarkdown", () => {
     expect(markdown).toContain(
       "[SEASON_OVERVIEW_ALL_AGES_STARTER]\n\n\n[SEASON_OVERVIEW_14U_STARTER]"
     );
+  });
+
+  describe("getEventContentMarkdown", () => {
+    const eventDetailsMd = [
+      "## Event Details",
+      "",
+      "### TBD",
+      "TBD content.",
+      "",
+      "### On-ice Practice",
+      "Practice content.",
+      "",
+      "### Off-ice Practice",
+      "Off-ice content.",
+      "",
+      "### Video Review",
+      "Video content.",
+      "",
+      "### Evaluation",
+      "Evaluation content.",
+      "",
+      "### Game",
+      "Game content.",
+    ].join("\n");
+
+    it.each([
+      ["On-ice Practice", "Practice content."],
+      ["Off-ice Practice", "Off-ice content."],
+      ["Video Review", "Video content."],
+      ["Evaluation", "Evaluation content."],
+      ["Game", "Game content."],
+      ["TBD", "TBD content."],
+    ])("uses the exact event-type section for %s", (eventType, expectedContent) => {
+      expect(getEventContentMarkdown(eventType, eventDetailsMd)).toBe(expectedContent);
+    });
+
+    it("uses the event-type-specific placeholder when its section is missing", () => {
+      expect(getEventContentMarkdown("Game", "## Event Details")).toBe(
+        "[EVENT_DETAILS_GAME_CONTENT]"
+      );
+      expect(getEventContentMarkdown("Off-ice Practice", "## Event Details")).toBe(
+        "[EVENT_DETAILS_OFF_ICE_CONTENT]"
+      );
+    });
+
+    it("uses the selected placeholder for unknown event types", () => {
+      expect(getEventContentMarkdown("Custom Event", "## Event Details")).toBe(
+        "[EVENT_DETAILS_SELECTED]"
+      );
+    });
   });
 
   it("uses the season overview placeholder when starter content is disabled", () => {

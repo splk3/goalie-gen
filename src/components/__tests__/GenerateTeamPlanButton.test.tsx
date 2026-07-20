@@ -17,21 +17,21 @@ jest.mock(
   "../../content/team-plan/event-details.md",
   () => `## Event Details
 
-### Selected Event Content
+### TBD
 [EVENT_DETAILS_SELECTED]
 
-### Practice Event Content
+### On-ice Practice
 [EVENT_DETAILS_PRACTICE_CONTENT]
 
-### Game Event Content
+### Game
 [[FIELDS:Opponent|Time]]
 [[FIELDS:Goalie|Venue]]
 [[FIELD:Game Notes|4]]
 
-### Tournament Event Content
-[EVENT_DETAILS_TOURNAMENT_CONTENT]
+### Off-ice Practice
+[EVENT_DETAILS_OFF_ICE_CONTENT]
 
-### Off-Ice Event Content
+### Video Review
 [EVENT_DETAILS_OFF_ICE_CONTENT]`
 );
 

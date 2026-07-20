@@ -2,24 +2,29 @@
 
 ## Event Details
 
-### Selected Event Content
+### TBD
 
-[EVENT_DETAILS_SELECTED]
+[[FIELDS:Event Name|Time]]
+[[FIELD:Plan/Notes|4]]
 
-### Practice Event Content
+### On-ice Practice
 
-[EVENT_DETAILS_PRACTICE_CONTENT]
+[[FIELDS:Opponent|Time]]
 
-### Game Event Content
+### Game
 
 [[FIELDS:Opponent|Time]]
 [[FIELDS:Goalie|Venue]]
 [[FIELD:Game Notes|4]]
 
-### Tournament Event Content
-
-[EVENT_DETAILS_TOURNAMENT_CONTENT]
-
-### Off-Ice Event Content
+### Off-ice Practice
 
 [EVENT_DETAILS_OFF_ICE_CONTENT]
+
+### Video Review
+
+[EVENT_DETAILS_OFF_ICE_CONTENT]
+
+### Evaluation
+
+[EVENT_DETAILS_SELECTED]
