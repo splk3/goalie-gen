@@ -4,7 +4,12 @@ name: Puck Retrieval Point Shot
 description: Two shot puck retrieval with point shot.
 
 drill_steps: |-
-  Drill starts with coach dumping puck into corner. Player retrieves puck while pressure is applied. They pass back to that coach then receive it back for a shot. They post up in front of the net for a screen. From there the second coach passes the point player a puck. Then they get a quick shot off.
+  1. Coach dumps puck into corner.
+  2. Player retrieves puck while pressure is applied.
+  3. Player passes back to the coach, then receives it back for a shot.
+  4. Player posts up in front of the net for a screen.
+  5. Second coach passes the point player a puck.
+  6. Player gets a quick shot off.
 
 coaching_focus_points: |-
   - Communicate pressure.
