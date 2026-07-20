@@ -2,22 +2,29 @@
 
 ## Event Details
 
-### Selected Event Details Placeholder
+### Selected Event Content
 
 [EVENT_DETAILS_SELECTED]
 
-### Practice Event Starter Placeholder
+### Practice Event Content
 
-[EVENT_DETAILS_PRACTICE_STARTER]
+[EVENT_DETAILS_PRACTICE_CONTENT]
 
-### Game Event Starter Placeholder
+### Game Event Content
 
-[EVENT_DETAILS_GAME_STARTER]
+[EVENT_DETAILS_GAME_CONTENT]
 
-### Tournament Event Starter Placeholder
+[[FIELDS:Opponent|Venue]]
+[[FIELDS:Result|Goalie]]
 
-[EVENT_DETAILS_TOURNAMENT_STARTER]
+[[FIELD:Game Notes|3]]
 
-### Off-Ice Event Starter Placeholder
+[[FIELD:Game Notes|5]]
 
-[EVENT_DETAILS_OFF_ICE_STARTER]
+### Tournament Event Content
+
+[EVENT_DETAILS_TOURNAMENT_CONTENT]
+
+### Off-Ice Event Content
+
+[EVENT_DETAILS_OFF_ICE_CONTENT]

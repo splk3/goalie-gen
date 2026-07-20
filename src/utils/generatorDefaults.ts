@@ -415,27 +415,25 @@ export function getSeasonOverviewMarkdown(
  * @param eventDetailsMd Pre-loaded content from
  *   `src/content/team-plan/event-details.md`.
  */
-export function getEventStarterMarkdown(eventType: string, eventDetailsMd: string): string {
+export function getEventContentMarkdown(eventType: string, eventDetailsMd: string): string {
   if (eventType === "On-ice Practice") {
     return (
-      extractLevel3Section(eventDetailsMd, "Practice Event Starter Placeholder") ||
-      "[EVENT_DETAILS_PRACTICE_STARTER]"
+      extractLevel3Section(eventDetailsMd, "Practice Event Content") ||
+      "[EVENT_DETAILS_PRACTICE_CONTENT]"
     );
   }
   if (eventType === "Game") {
     return (
-      extractLevel3Section(eventDetailsMd, "Game Event Starter Placeholder") ||
-      "[EVENT_DETAILS_GAME_STARTER]"
+      extractLevel3Section(eventDetailsMd, "Game Event Content") || "[EVENT_DETAILS_GAME_CONTENT]"
     );
   }
   if (eventType === "Off-ice Practice" || eventType === "Video Review") {
     return (
-      extractLevel3Section(eventDetailsMd, "Off-Ice Event Starter Placeholder") ||
-      "[EVENT_DETAILS_OFF_ICE_STARTER]"
+      extractLevel3Section(eventDetailsMd, "Off-Ice Event Content") ||
+      "[EVENT_DETAILS_OFF_ICE_CONTENT]"
     );
   }
   return (
-    extractLevel3Section(eventDetailsMd, "Selected Event Details Placeholder") ||
-    "[EVENT_DETAILS_SELECTED]"
+    extractLevel3Section(eventDetailsMd, "Selected Event Content") || "[EVENT_DETAILS_SELECTED]"
   );
 }

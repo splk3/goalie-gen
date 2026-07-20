@@ -100,6 +100,33 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("parses fill-in fields with an optional number of lines", () => {
+    expect(parseMarkdown("[[FIELD:Game Notes|3]]")).toEqual([
+      { type: "field", label: "Game Notes", lines: 3 },
+    ]);
+    expect(parseMarkdown("[[FIELD: Coach Notes ]]")).toEqual([
+      { type: "field", label: "Coach Notes", lines: 1 },
+    ]);
+  });
+
+  it("groups consecutive compact fill-in fields into four-column rows", () => {
+    expect(parseMarkdown("[[FIELDS:Opponent|Venue]]\n[[FIELDS:Result|Goalie]]")).toEqual([
+      {
+        type: "fields",
+        rows: [
+          { left: "Opponent", right: "Venue" },
+          { left: "Result", right: "Goalie" },
+        ],
+      },
+    ]);
+  });
+
+  it("leaves malformed compact fill-in fields as normal text", () => {
+    expect(parseMarkdown("[[FIELDS:Opponent]]")).toEqual([
+      { type: "paragraph", text: "[[FIELDS:Opponent]]" },
+    ]);
+  });
+
   it("unescapes pipes inside table cells", () => {
     expect(
       parseMarkdown("| Skill | Detail |\n| --- | --- |\n| Saves | Glove \\| blocker |")

@@ -192,6 +192,115 @@ function tableBlockToDocxTable(
   });
 }
 
+function fillInFieldToDocxTable(
+  block: Extract<MarkdownBlock, { type: "field" }>,
+  primaryColor: string
+): Table {
+  const labelWidth = 1800;
+  const inputWidth = DOCX_CONTENT_WIDTH_TWIPS - labelWidth;
+  const noBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+  const rows = Array.from({ length: block.lines }, (_, index) => {
+    const showLabel = index === 0;
+    return new TableRow({
+      cantSplit: true,
+      children: [
+        new TableCell({
+          width: { size: labelWidth, type: WidthType.DXA },
+          borders: { top: noBorder, bottom: noBorder, left: noBorder, right: noBorder },
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: showLabel ? block.label : "",
+                  color: primaryColor,
+                  bold: showLabel,
+                }),
+              ],
+            }),
+          ],
+        }),
+        new TableCell({
+          width: { size: inputWidth, type: WidthType.DXA },
+          borders: {
+            top: noBorder,
+            left: noBorder,
+            right: noBorder,
+            bottom: { style: BorderStyle.SINGLE, size: 6, color: "000000" },
+          },
+          children: [
+            new Paragraph({
+              children: [new TextRun({ text: "" })],
+              spacing: { after: 120 },
+            }),
+          ],
+        }),
+      ],
+    });
+  });
+
+  return new Table({
+    width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+    layout: TableLayoutType.FIXED,
+    columnWidths: [labelWidth, inputWidth],
+    rows,
+  });
+}
+
+function compactFieldsToDocxTable(
+  block: Extract<MarkdownBlock, { type: "fields" }>,
+  primaryColor: string
+): Table {
+  const labelWidth = 1500;
+  const inputWidth = 3180;
+  const columnWidths = [labelWidth, inputWidth, labelWidth, inputWidth];
+  const noBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+  const rows = block.rows.map(
+    ({ left, right }) =>
+      new TableRow({
+        cantSplit: true,
+        children: [left, right].flatMap((label, index) => [
+          new TableCell({
+            width: { size: columnWidths[index * 2], type: WidthType.DXA },
+            borders: { top: noBorder, bottom: noBorder, left: noBorder, right: noBorder },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: label,
+                    color: primaryColor,
+                    bold: true,
+                  }),
+                ],
+              }),
+            ],
+          }),
+          new TableCell({
+            width: { size: columnWidths[index * 2 + 1], type: WidthType.DXA },
+            borders: {
+              top: noBorder,
+              left: noBorder,
+              right: noBorder,
+              bottom: { style: BorderStyle.SINGLE, size: 6, color: "000000" },
+            },
+            children: [
+              new Paragraph({
+                children: [new TextRun({ text: "" })],
+                spacing: { after: 120 },
+              }),
+            ],
+          }),
+        ]),
+      })
+  );
+
+  return new Table({
+    width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+    layout: TableLayoutType.FIXED,
+    columnWidths,
+    rows,
+  });
+}
+
 /**
  * Converts parsed markdown blocks into native DOCX paragraphs and fixed-width tables.
  */
@@ -206,6 +315,10 @@ export function blocksToDocxContent(
     switch (block.type) {
       case "table":
         return [tableBlockToDocxTable(block, primary)];
+      case "field":
+        return [fillInFieldToDocxTable(block, primary)];
+      case "fields":
+        return [compactFieldsToDocxTable(block, primary)];
       case "heading": {
         const level =
           block.level === 1

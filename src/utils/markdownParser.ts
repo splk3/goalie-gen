@@ -3,6 +3,8 @@ export type MarkdownBlock =
   | { type: "paragraph"; text: string }
   | { type: "bullet"; text: string }
   | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "field"; label: string; lines: number }
+  | { type: "fields"; rows: Array<{ left: string; right: string }> }
   | { type: "image"; alt: string; src: string }
   | { type: "spacer" };
 
@@ -76,7 +78,8 @@ function parseTableAt(
 
 /**
  * Parses a simple markdown string into structured blocks.
- * Supports headings (# ## ###), bullet lists (- or *), paragraphs, and pipe tables.
+ * Supports headings (# ## ###), bullet lists (- or *), paragraphs, pipe tables,
+ * and fill-in fields such as [[FIELD:Game Notes|3]] or [[FIELDS:Opponent|Venue]].
  */
 export function parseMarkdown(
   markdown: string,
@@ -101,6 +104,30 @@ export function parseMarkdown(
     // directives like <!-- markdownlint-disable MD041 -->). Multi-line HTML comments
     // are not tracked since content fragments only use single-line disable directives.
     if (line.trim().startsWith("<!--") && line.trim().endsWith("-->")) {
+      continue;
+    }
+
+    const fieldMatch = line.trim().match(/^\[\[FIELD:\s*(.+?)(?:\|(\d+))?\s*\]\]$/);
+    if (fieldMatch) {
+      flushParagraph();
+      blocks.push({
+        type: "field",
+        label: fieldMatch[1].trim(),
+        lines: Math.max(1, Number(fieldMatch[2] || 1)),
+      });
+      continue;
+    }
+
+    const fieldsMatch = line.trim().match(/^\[\[FIELDS:\s*([^|]+?)\s*\|\s*([^|]+?)\s*\]\]$/);
+    if (fieldsMatch) {
+      flushParagraph();
+      const lastBlock = blocks[blocks.length - 1];
+      const row = { left: fieldsMatch[1].trim(), right: fieldsMatch[2].trim() };
+      if (lastBlock?.type === "fields") {
+        lastBlock.rows.push(row);
+      } else {
+        blocks.push({ type: "fields", rows: [row] });
+      }
       continue;
     }
 

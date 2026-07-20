@@ -99,7 +99,7 @@ const MINIMAL_TEAM_CONTENT: TeamPlanContent = {
   coverMd: "## Cover\n\n### Season Overview Placeholder\nTest overview.",
   seasonOverviewMd:
     "## Season Overview\n\n### Season Overview Placeholder\nTest placeholder overview.",
-  eventDetailsMd: "## Events\n\n### Selected Event Details Placeholder\nTest event details.",
+  eventDetailsMd: "## Events\n\n### Selected Event Content\nTest event details.",
 };
 
 const NULL_QR_GENERATOR: QrGenerator = async () => null;
@@ -517,6 +517,28 @@ describe("buildTeamPlanDocument", () => {
     expect(serializedDocument).toContain(
       '"style":{"key":"w:val","value":"single"},"color":{"key":"w:color","value":"AF272F"}'
     );
+  });
+
+  it("renders compact event fields as four fixed-width columns", async () => {
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        addCalendarOfEvents: true,
+        includeEventDetails: true,
+        detailedEventSelections: [{ date: "2026-07-11", eventType: "Game" }],
+      },
+      {
+        ...MINIMAL_TEAM_CONTENT,
+        eventDetailsMd:
+          "## Events\n\n### Game Event Content\n[[FIELDS:Opponent|Venue]]\n[[FIELDS:Result|Goalie]]",
+      },
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const buffer = await docx.Packer.toBuffer(result);
+    expect(buffer.length).toBeGreaterThan(0);
   });
 
   it("calls QrGenerator when hasGoalieEvaluations is true", async () => {

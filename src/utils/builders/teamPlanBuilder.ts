@@ -21,7 +21,7 @@ import {
   normalizeUrl,
   formatDisplayDate,
   getSeasonOverviewMarkdown,
-  getEventStarterMarkdown,
+  getEventContentMarkdown,
 } from "../generatorDefaults";
 
 type DocxModule = typeof import("docx");
@@ -49,9 +49,9 @@ const INLINE_RESOURCE_QR_SIZE_TWIPS = 60;
 
 export function buildImportedEventMarkdown(
   event: Pick<EventSelection, "title">,
-  eventStarterMarkdown: string
+  eventContentMarkdown: string
 ): string {
-  return event.title ? [event.title, "", eventStarterMarkdown].join("\n") : eventStarterMarkdown;
+  return event.title ? [event.title, "", eventContentMarkdown].join("\n") : eventContentMarkdown;
 }
 
 export function formatTeamPlanEventHeading(
@@ -753,8 +753,8 @@ export async function buildTeamPlanDocument(
           })
         );
 
-        const eventStarterMarkdown = getEventStarterMarkdown(event.eventType, eventDetailsMd);
-        const importedEventMarkdown = buildImportedEventMarkdown(event, eventStarterMarkdown);
+        const eventContentMarkdown = getEventContentMarkdown(event.eventType, eventDetailsMd);
+        const importedEventMarkdown = buildImportedEventMarkdown(event, eventContentMarkdown);
 
         documentChildren.push(
           ...blocksToDocxContent(parseMarkdown(importedEventMarkdown), colorOpts)

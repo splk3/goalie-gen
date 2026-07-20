@@ -436,8 +436,8 @@ describe("GenerateTeamPlanButton", () => {
 
     const docArgument = mockDocument.mock.calls[0][0];
     const serializedDoc = JSON.stringify(docArgument);
-    expect(serializedDoc).toContain("[EVENT_DETAILS_PRACTICE_STARTER]");
-    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_STARTER]");
+    expect(serializedDoc).toContain("[EVENT_DETAILS_PRACTICE_CONTENT]");
+    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_CONTENT]");
     expect(serializedDoc).not.toContain("Goals");
     expect(serializedDoc).not.toContain("Shots");
     expect(serializedDoc).not.toContain("Totals");
@@ -484,7 +484,7 @@ describe("GenerateTeamPlanButton", () => {
     const docArgument = mockDocument.mock.calls[0][0];
     const serializedDoc = JSON.stringify(docArgument);
 
-    expect(serializedDoc).toContain("[EVENT_DETAILS_GAME_STARTER]");
+    expect(serializedDoc).toContain("[EVENT_DETAILS_GAME_CONTENT]");
     expect(serializedDoc).toContain("Goals");
     expect(serializedDoc).toContain("Shots");
     expect(serializedDoc).toContain("1st");
