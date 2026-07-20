@@ -1,0 +1,50 @@
+---
+name: Puck Retrieval Point Shot
+
+description: Two shot puck retrieval with point shot.
+
+drill_steps: |-
+  Drill starts with coach dumping puck into corner. Player retrieves puck while pressure is applied. They pass back to that coach then receive it back for a shot. They post up in front of the net for a screen. From there the second coach passes the point player a puck. Then they get a quick shot off.
+
+coaching_focus_points: |-
+  - Communicate pressure.
+  - Small shuffles/adjustments with shooter.
+  - Stay on stick angle of screen.
+
+shooter_focus_points: |-
+  - Quick shots.
+  - Get in front of goalies eyes.
+  - Recognize pressure.
+
+drill_image: puck-retrieval-point-shot.png
+
+drill_creation_date: 2026-07-20
+
+tags:
+  skill_level:
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - 12U
+    - 14U
+    - 16U_and_older
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - opposed_practice
+  equipment:
+    - none
+  space_required:
+    - half_zone
