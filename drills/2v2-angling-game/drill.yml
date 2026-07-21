@@ -1,0 +1,51 @@
+---
+name: 2v2 Angling Game
+
+drill_steps: |-
+  1. Coach dumps a puck behind either net to start the rep.
+  2. The closest team goes behind the net to retrieve the puck.
+  3. At the same time, the other team gaps up and angles the puck carrier.
+  4. Players must go through the circle before fully engaging.
+  5. Play 2v2 until the whistle for roughly 45-second shifts.
+
+coaching_focus_points: |-
+  - Gain as much depth as possible.
+  - Recognize passing options.
+  - Communicate teammates' options.
+
+shooter_focus_points: |-
+  - Maintain a good competitive gap.
+  - Be creative with passes.
+  - Backcheck hard.
+
+drill_image: 2v2-angling-game.png
+
+drill_creation_date: 2026-07-20
+
+tags:
+  skill_level:
+    - beginner
+    - intermediate
+    - advanced
+  team_drill: "yes"
+  age_level:
+    - all
+  fundamental_skill:
+    - skating
+    - positioning
+    - stance
+    - save_selection
+    - rebound_control
+    - recovery
+  skating_skill:
+    - shuffle
+    - t_push
+    - c_cut
+    - butterfly
+    - power_push
+  game_situations:
+    - small_sided_game
+  equipment:
+    - none
+  space_required:
+    - whole_zone
