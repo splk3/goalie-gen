@@ -37,51 +37,51 @@ name: Agentic Maintenance
 
 on:
   schedule:
-    - cron: "37 0 * * *"  # Daily (based on minimum expires: 30 days)
+    - cron: "37 0 * * *" # Daily (based on minimum expires: 30 days)
   workflow_dispatch:
     inputs:
       operation:
-        description: 'Optional maintenance operation to run'
+        description: "Optional maintenance operation to run"
         required: false
         type: choice
-        default: ''
+        default: ""
         options:
-          - ''
-          - 'disable'
-          - 'enable'
-          - 'update'
-          - 'upgrade'
-          - 'safe_outputs'
-          - 'create_labels'
-          - 'activity_report'
-          - 'close_agentic_workflows_issues'
-          - 'clean_cache_memories'
-          - 'update_pull_request_branches'
-          - 'validate'
-          - 'forecast'
+          - ""
+          - "disable"
+          - "enable"
+          - "update"
+          - "upgrade"
+          - "safe_outputs"
+          - "create_labels"
+          - "activity_report"
+          - "close_agentic_workflows_issues"
+          - "clean_cache_memories"
+          - "update_pull_request_branches"
+          - "validate"
+          - "forecast"
       run_url:
-        description: 'Run URL or run ID to replay safe outputs from (e.g. https://github.com/owner/repo/actions/runs/12345 or 12345). Required when operation is safe_outputs.'
+        description: "Run URL or run ID to replay safe outputs from (e.g. https://github.com/owner/repo/actions/runs/12345 or 12345). Required when operation is safe_outputs."
         required: false
         type: string
-        default: ''
+        default: ""
   workflow_call:
     inputs:
       operation:
-        description: 'Optional maintenance operation to run (disable, enable, update, upgrade, safe_outputs, create_labels, activity_report, close_agentic_workflows_issues, clean_cache_memories, update_pull_request_branches, validate, forecast)'
+        description: "Optional maintenance operation to run (disable, enable, update, upgrade, safe_outputs, create_labels, activity_report, close_agentic_workflows_issues, clean_cache_memories, update_pull_request_branches, validate, forecast)"
         required: false
         type: string
-        default: ''
+        default: ""
       run_url:
-        description: 'Run URL or run ID to replay safe outputs from (e.g. https://github.com/owner/repo/actions/runs/12345 or 12345). Required when operation is safe_outputs.'
+        description: "Run URL or run ID to replay safe outputs from (e.g. https://github.com/owner/repo/actions/runs/12345 or 12345). Required when operation is safe_outputs."
         required: false
         type: string
-        default: ''
+        default: ""
     outputs:
       operation_completed:
-        description: 'The maintenance operation that was completed (empty when none ran or a scheduled job ran)'
+        description: "The maintenance operation that was completed (empty when none ran or a scheduled job ran)"
         value: ${{ jobs.run_operation.outputs.operation || inputs.operation }}
       applied_run_url:
-        description: 'The run URL that safe outputs were applied from'
+        description: "The run URL that safe outputs were applied from"
         value: ${{ jobs.apply_safe_outputs.outputs.run_url }}
 
 permissions: {}
