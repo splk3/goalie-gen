@@ -97,6 +97,12 @@ function getTestIcsDateTime(daysFromToday: number, hour: number): string {
   return `${datePart}T${String(hour).padStart(2, "0")}0000Z`;
 }
 
+function getLocalDateKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
+}
+
 describe("GenerateTeamPlanButton", () => {
   it("shows DOCX-only UI and team-specific fields", async () => {
     const user = userEvent.setup();
@@ -563,7 +569,7 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     expect(screen.getByRole("dialog", { name: "Import Calendar Events" })).toBeInTheDocument();
     expect(screen.getByLabelText("Calendar feed URL")).toBeInTheDocument();
     expect(screen.getByLabelText("Calendar import start date")).toHaveValue(
-      new Date().toISOString().slice(0, 10)
+      getLocalDateKey(new Date())
     );
     expect(screen.getByRole("button", { name: "Upload an .ics file" })).toBeInTheDocument();
   });
