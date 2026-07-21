@@ -87,6 +87,12 @@ Options:
   const contentDir = path.join(__dirname, "src/content/goalie-journal");
   const journalContent: GoalieJournalContent = {
     coverMd: fs.readFileSync(path.join(contentDir, "cover.md"), "utf8"),
+    acknowledgementsMd: fs.readFileSync(path.join(contentDir, "acknowledgements.md"), "utf8"),
+    howToUseMd: fs.readFileSync(path.join(contentDir, "how-to-use.md"), "utf8"),
+    howToImproveEveryDayMd: fs.readFileSync(
+      path.join(contentDir, "how-to-improve-every-day.md"),
+      "utf8"
+    ),
     seasonGoalsMd: fs.readFileSync(path.join(contentDir, "season-goals.md"), "utf8"),
     practiceEntryMd: fs.readFileSync(path.join(contentDir, "practice-entry.md"), "utf8"),
     endOfSeasonMd: fs.readFileSync(path.join(contentDir, "end-of-season.md"), "utf8"),

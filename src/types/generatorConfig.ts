@@ -102,11 +102,7 @@ export interface ClubPlanContent {
 
 export type AgeGroup = "8U" | "10U" | "12U" | "14U" | "16U and older";
 export type ConfigurableEventType =
-  | "On-ice Practice"
-  | "Off-ice Practice"
-  | "Video Review"
-  | "Evaluation"
-  | "Game";
+  "On-ice Practice" | "Off-ice Practice" | "Video Review" | "Evaluation" | "Game";
 export type EventType = ConfigurableEventType | "TBD";
 
 export interface EventDateSelection {
@@ -181,6 +177,9 @@ export interface GoalieJournalConfig {
 /** Pre-loaded markdown content for the Goalie Journal builder. */
 export interface GoalieJournalContent {
   coverMd: string;
+  acknowledgementsMd: string;
+  howToUseMd: string;
+  howToImproveEveryDayMd: string;
   seasonGoalsMd: string;
   practiceEntryMd: string;
   endOfSeasonMd: string;

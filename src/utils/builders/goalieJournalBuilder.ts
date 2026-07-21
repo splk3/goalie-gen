@@ -93,6 +93,27 @@ function drawInlineText(
   return lines.length;
 }
 
+function renderJournalContentPage(doc: JournalDocument, markdown: string, primary: string): void {
+  const blocks = parseMarkdown(markdown);
+  const title = blocks.find((block) => block.type === "heading")?.text ?? "";
+  const bodyBlocks = blocks.filter(
+    (block) => block.type === "paragraph" || block.type === "bullet"
+  );
+
+  doc.setTextColor(primary);
+  doc.setFontSize(20);
+  drawInlineText(doc, title, 105, 20, 170, 6, "center");
+
+  doc.setTextColor("#000000");
+  doc.setFontSize(11);
+  let y = 42;
+  bodyBlocks.forEach((block) => {
+    const text = block.type === "bullet" ? `- ${block.text}` : block.text;
+    const lineCount = drawInlineText(doc, text, 20, y, 170, 6);
+    y += lineCount * 6 + 6;
+  });
+}
+
 /**
  * Builds a Goalie Journal PDF and returns the `jsPDF` document instance.
  *
@@ -117,7 +138,15 @@ export function buildGoalieJournalPdf(
 ): InstanceType<JsPdfModule["jsPDF"]> {
   const { jsPDF } = jsPdf;
   const { goalieName, teamName, primaryColor, secondaryColor, season, entryCount } = config;
-  const { coverMd, seasonGoalsMd, practiceEntryMd, endOfSeasonMd } = content;
+  const {
+    coverMd,
+    acknowledgementsMd,
+    howToUseMd,
+    howToImproveEveryDayMd,
+    seasonGoalsMd,
+    practiceEntryMd,
+    endOfSeasonMd,
+  } = content;
   const primary = normalizeHexRgbColor(primaryColor) ?? DEFAULT_PRIMARY_TEAM_COLOR;
   const secondary = normalizeHexRgbColor(secondaryColor) ?? DEFAULT_SECONDARY_TEAM_COLOR;
 
@@ -157,6 +186,21 @@ export function buildGoalieJournalPdf(
       console.error("Error adding logo to PDF:", e);
     }
   }
+
+  // ── Acknowledgements page ───────────────────────────────────────────────────
+
+  doc.addPage();
+  renderJournalContentPage(doc, acknowledgementsMd, primary);
+
+  // ── How to Use this Journal page ────────────────────────────────────────────
+
+  doc.addPage();
+  renderJournalContentPage(doc, howToUseMd, primary);
+
+  // ── How to Improve Every Day page ───────────────────────────────────────────
+
+  doc.addPage();
+  renderJournalContentPage(doc, howToImproveEveryDayMd, primary);
 
   // ── Season Goals page ──────────────────────────────────────────────────────
 

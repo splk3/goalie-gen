@@ -116,6 +116,11 @@ const JOURNAL_CONFIG: GoalieJournalConfig = {
 
 const JOURNAL_CONTENT: GoalieJournalContent = {
   coverMd: "# Goalie Journal\n\nA journal for your season.",
+  acknowledgementsMd: "# Acknowledgements\n\nThank you to the people who support your development.",
+  howToUseMd:
+    "# How to Use this Journal\n\nUse this journal to track your progress.\n\n- Review your entries.",
+  howToImproveEveryDayMd:
+    "# How to Improve Every Day\n\nChoose one small improvement to practice today.",
   seasonGoalsMd: "# Season Goals\n\nSet your goals here.",
   practiceEntryMd: "# Goalie Event Log\n\nNotes from today's practice.",
   endOfSeasonMd: "# End of Season Review\n\nReflect on your season.",
@@ -670,7 +675,7 @@ describe("buildGoalieJournalPdf", () => {
     expect(typeof result.output).toBe("function");
   });
 
-  it("adds at least 3 pages (cover + goals + log + EOS)", () => {
+  it("adds introductory pages before the season goals and log sections", () => {
     const mockModule = makeMockJsPdfModule();
     buildGoalieJournalPdf(
       JOURNAL_CONFIG,
@@ -787,6 +792,15 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(mockModule.texts).toContain("Page");
+    expect(mockModule.texts).toContain("How to Use this Journal");
+    expect(mockModule.texts).toContain("Acknowledgements");
+    expect(mockModule.texts).toContain("How to Improve Every Day");
+    expect(mockModule.texts.indexOf("Acknowledgements")).toBeLessThan(
+      mockModule.texts.indexOf("How to Use this Journal")
+    );
+    expect(mockModule.texts.indexOf("How to Use this Journal")).toBeLessThan(
+      mockModule.texts.indexOf("How to Improve Every Day")
+    );
     expect(mockModule.texts).toContain("Entry #");
     expect(mockModule.texts).toContain("Time:");
     expect(mockModule.texts).toContain("Practice");
