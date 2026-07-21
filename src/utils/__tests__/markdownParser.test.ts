@@ -104,6 +104,49 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("parses compact season tables into the same table blocks as pipe tables", () => {
+    const md = [
+      ":::season-table",
+      "headers: Timeframe & Core Focus; Specific Skills & Techniques",
+      "- phase: **Early Season**<br>_Core Focus: Stance and skating_",
+      "  skills: **Stance:** Ready position<br>**Skating:** Shuffles",
+      "- phase: **Late Season**<br>_Core Focus: Game preparation_",
+      "  skills: **Tactics:** Breakaways",
+      ":::",
+    ].join("\n");
+
+    expect(parseMarkdown(md)).toEqual([
+      {
+        type: "table",
+        headers: ["Timeframe & Core Focus", "Specific Skills & Techniques"],
+        rows: [
+          [
+            "**Early Season**<br>_Core Focus: Stance and skating_",
+            "**Stance:** Ready position<br>**Skating:** Shuffles",
+          ],
+          ["**Late Season**<br>_Core Focus: Game preparation_", "**Tactics:** Breakaways"],
+        ],
+      },
+    ]);
+  });
+
+  it("leaves malformed compact season tables as normal text", () => {
+    expect(parseMarkdown(":::season-table\nheaders: Phase; Skills\n- phase: Early\n:::")).toEqual([
+      {
+        type: "paragraph",
+        text: ":::season-table headers: Phase; Skills",
+      },
+      {
+        type: "bullet",
+        text: "phase: Early",
+      },
+      {
+        type: "paragraph",
+        text: ":::",
+      },
+    ]);
+  });
+
   it("parses every season overview age-group table", () => {
     const markdown = fs.readFileSync(
       path.join(__dirname, "../../content/team-plan/season-overview.md"),

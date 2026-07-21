@@ -76,10 +76,62 @@ function parseTableAt(
   };
 }
 
+function parseSeasonTableAt(
+  lines: string[],
+  startIndex: number
+): {
+  block: Extract<MarkdownBlock, { type: "table" }>;
+  nextIndex: number;
+} | null {
+  if (lines[startIndex].trim() !== ":::season-table") {
+    return null;
+  }
+
+  const headerLine = lines[startIndex + 1]?.match(/^headers:\s*(.+)$/);
+  if (!headerLine) {
+    return null;
+  }
+
+  const headers = headerLine[1].split(";").map((header) => header.trim());
+  if (headers.length < 1 || headers.some((header) => header.length === 0)) {
+    return null;
+  }
+
+  const rows: string[][] = [];
+  let nextIndex = startIndex + 2;
+  while (nextIndex < lines.length) {
+    if (lines[nextIndex].trim() === "") {
+      nextIndex++;
+      continue;
+    }
+    if (lines[nextIndex].trim() === ":::") {
+      break;
+    }
+
+    const phaseMatch = lines[nextIndex].match(/^[ \t]*-\s+phase:\s*(.+)$/);
+    const skillsMatch = lines[nextIndex + 1]?.match(/^[ \t]+skills:\s*(.+)$/);
+    if (!phaseMatch || !skillsMatch) {
+      return null;
+    }
+    rows.push([phaseMatch[1].trim(), skillsMatch[1].trim()]);
+    nextIndex += 2;
+  }
+
+  if (nextIndex >= lines.length || rows.length === 0 || headers.length !== 2) {
+    return null;
+  }
+
+  return {
+    block: { type: "table", headers, rows },
+    nextIndex: nextIndex + 1,
+  };
+}
+
 /**
  * Parses a simple markdown string into structured blocks.
- * Supports headings (# ## ###), bullet lists (- or *), paragraphs, pipe tables,
- * and fill-in fields such as [[FIELD:Game Notes|3]] or [[FIELDS:Opponent|Venue]].
+ * Supports headings (# ## ###), bullet lists (- or *), pipe tables, compact
+ * season tables, and fill-in fields such as [[FIELD:Game Notes|3]] or
+ * [[FIELDS:Opponent|Venue]].
  */
 export function parseMarkdown(
   markdown: string,
@@ -128,6 +180,15 @@ export function parseMarkdown(
       } else {
         blocks.push({ type: "fields", rows: [row] });
       }
+      continue;
+    }
+
+    const seasonTable = parseSeasonTableAt(lines, lineIndex);
+    if (seasonTable) {
+      flushParagraph();
+      blocks.push(seasonTable.block);
+      lineIndex = seasonTable.nextIndex - 1;
+      previousLineWasBlank = false;
       continue;
     }
 
