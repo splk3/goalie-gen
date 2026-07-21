@@ -8,13 +8,15 @@ Goalie Gen utilizes GitHub Actions and cloud deployment platforms for continuous
 
 All workflows are configured in `.github/workflows/`.
 
-| Workflow                   | File                         | Trigger                                                                 | Purpose                                                                                                               |
-| -------------------------- | ---------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Deploy to GitHub Pages** | `deploy.yml`                 | Push to `dev` branch or manual dispatch                                 | Automatically builds and deploys the site to GitHub Pages.                                                            |
-| **Test Build**             | `test-build.yml`             | PRs to any branch, manual triggers, or weekly Saturdays at 3:00 AM UTC  | Runs full Jest test suites, verifies Gatsby builds, and asserts that compilation succeeds.                            |
-| **Lint Codebase**          | `super-linter.yml`           | Push to any branch, weekly Saturdays at 2:00 AM UTC, or manual dispatch | Validates quality using formatting checkers. Biome linters are disabled to prevent conflicts.                         |
-| **Update Docs Agent**      | `update-docs-agent.lock.yml` | Weekly schedule or manual dispatch                                      | Runs an AI docs-maintenance workflow. Pull requests from this workflow are forbidden from modifying GitHub workflows. |
-| **Copilot Setup Steps**    | `copilot-setup-steps.yml`    | Manual dispatch or edits to this workflow file                          | Integrates environment dependencies for GitHub Copilot Agent setup processes.                                         |
+| Workflow                   | File                           | Trigger                                                                 | Purpose                                                                                                               |
+| -------------------------- | ------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Deploy to GitHub Pages** | `deploy.yml`                   | Push to `dev` branch or manual dispatch                                 | Automatically builds and deploys the site to GitHub Pages.                                                            |
+| **Test Build**             | `test-build.yml`               | PRs to any branch, manual triggers, or weekly Saturdays at 3:00 AM UTC  | Runs full Jest test suites, verifies Gatsby builds, and asserts that compilation succeeds.                            |
+| **Lint Codebase**          | `super-linter.yml`             | Push to any branch, weekly Saturdays at 2:00 AM UTC, or manual dispatch | Validates quality using formatting checkers. Biome linters are disabled to prevent conflicts.                         |
+| **CodeQL Advanced**        | `codeql.yml`                   | Push/PR to `main` branch, weekly Sundays                                | Runs GitHub CodeQL security scanning for vulnerabilities.                                                             |
+| **Update Docs Agent**      | `update-docs-agent.lock.yml`   | Weekly schedule or manual dispatch                                      | Runs an AI docs-maintenance workflow. Pull requests from this workflow are forbidden from modifying GitHub workflows. |
+| **Agentic Maintenance**    | `agentics-maintenance.yml`     | Scheduled or manual dispatch                                            | Generated workflow for cleanup of expiring agentic safe outputs. Do not edit manually.                                |
+| **Copilot Setup Steps**    | `copilot-setup-steps.yml`      | Manual dispatch or edits to this workflow file                          | Integrates environment dependencies for GitHub Copilot Agent setup processes.                                         |
 
 ---
 
