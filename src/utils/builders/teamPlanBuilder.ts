@@ -6,7 +6,7 @@
  * callbacks so the same builder runs unchanged in both the browser and Node.
  */
 import { parseMarkdown } from "../markdownParser";
-import { blocksToDocxParagraphs, cleanHexColor, makeDocxHeaderFooter } from "../docxContent";
+import { blocksToDocxContent, cleanHexColor, makeDocxHeaderFooter } from "../docxContent";
 import { buildEventCalendarMonths } from "../teamPlanCalendarGrid";
 import type {
   TeamPlanConfig,
@@ -21,7 +21,7 @@ import {
   normalizeUrl,
   formatDisplayDate,
   getSeasonOverviewMarkdown,
-  getEventStarterMarkdown,
+  getEventContentMarkdown,
 } from "../generatorDefaults";
 
 type DocxModule = typeof import("docx");
@@ -29,8 +29,8 @@ type DocxModule = typeof import("docx");
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-// Keep each month table contiguous by forcing one calendar month per page.
-const MONTH_CALENDARS_PER_PAGE = 1;
+const CALENDAR_EVENT_FONT_SIZE = 16;
+const CALENDAR_EVENT_BOTTOM_SPACING = 40;
 const DOCX_CONTENT_WIDTH_TWIPS = 9360;
 const GAME_EVENT_LABEL_COLUMN_WIDTH_TWIPS = 1200;
 const GAME_EVENT_TOTALS_COLUMN_WIDTH_TWIPS = 900;
@@ -41,14 +41,17 @@ const GAME_EVENT_TIMELINE_WIDTH_TWIPS =
 const GAME_EVENT_PERIOD_WIDTH_TWIPS = Math.floor(GAME_EVENT_TIMELINE_WIDTH_TWIPS * 0.3);
 const GAME_EVENT_OT_WIDTH_TWIPS =
   GAME_EVENT_TIMELINE_WIDTH_TWIPS - GAME_EVENT_PERIOD_WIDTH_TWIPS * 3;
+const EVALUATION_QR_COLUMN_WIDTH_TWIPS = 1200;
+const EVALUATION_LINK_COLUMN_WIDTH_TWIPS = 2160;
+const EVALUATION_LIST_COLUMN_WIDTH_TWIPS =
+  DOCX_CONTENT_WIDTH_TWIPS - EVALUATION_LINK_COLUMN_WIDTH_TWIPS - EVALUATION_QR_COLUMN_WIDTH_TWIPS;
+const INLINE_RESOURCE_QR_SIZE_TWIPS = 60;
 
 export function buildImportedEventMarkdown(
   event: Pick<EventSelection, "title">,
-  eventStarterMarkdown: string
+  eventContentMarkdown: string
 ): string {
-  return event.title
-    ? [`**Calendar Event:** ${event.title}`, "", eventStarterMarkdown].join("\n")
-    : eventStarterMarkdown;
+  return event.title ? [event.title, "", eventContentMarkdown].join("\n") : eventContentMarkdown;
 }
 
 export function formatTeamPlanEventHeading(
@@ -57,7 +60,10 @@ export function formatTeamPlanEventHeading(
   const time = event.startTime
     ? ` at ${event.startTime}${event.timeZone ? ` ${event.timeZone}` : ""}`
     : "";
-  return `${formatDisplayDate(event.date)}${time} (${event.eventType})`;
+  const dateAndTime = `${formatDisplayDate(event.date)}${time}`;
+  return event.eventType === "TBD"
+    ? `${dateAndTime} (Event Type:___________________)`
+    : `${dateAndTime} (${event.eventType})`;
 }
 
 /**
@@ -113,7 +119,6 @@ export async function buildTeamPlanDocument(
     primaryColor,
     secondaryColor,
     ageGroup,
-    skillLevel,
     hasGoalieMentors,
     hasGoalieEvaluations,
     goalieEvaluationTimes,
@@ -122,6 +127,7 @@ export async function buildTeamPlanDocument(
     includeCalendarView,
     includeEventDetails,
     addSuggestedDrillEachPractice,
+    addShotTrackerToGames,
     sortedEventDates,
     eventSelections,
     detailedEventSelections,
@@ -192,7 +198,7 @@ export async function buildTeamPlanDocument(
                 top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
                 bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
               },
-              children: [new Paragraph({ children: [toBlackRun("")] })],
+              children: [new Paragraph({ children: [toBlackRun("")], keepNext: true })],
             }),
             ...periodLabels.map(
               (label, index) =>
@@ -203,6 +209,7 @@ export async function buildTeamPlanDocument(
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
                         spacing: { after: 120 },
+                        keepNext: true,
                         children: [toBlackRun(label, { bold: true })],
                       }),
                     ],
@@ -229,6 +236,7 @@ export async function buildTeamPlanDocument(
               children: [
                 new Paragraph({
                   spacing: { after: 60 },
+                  keepNext: true,
                   children: [toBlackRun("Goals")],
                 }),
               ],
@@ -237,7 +245,7 @@ export async function buildTeamPlanDocument(
               (label, index) =>
                 new TableCell({
                   width: { size: gameEventColumnWidths[index + 1], type: WidthType.DXA },
-                  ...borderCell([new Paragraph({ children: [toBlackRun("")] })], {
+                  ...borderCell([new Paragraph({ children: [toBlackRun("")], keepNext: true })], {
                     showBottomBorder: true,
                     showRightBorder: label !== "Totals",
                   }),
@@ -438,17 +446,6 @@ export async function buildTeamPlanDocument(
       spacing: { after: 100 },
     }),
     new Paragraph({
-      children: [
-        toBlackRun(
-          `Experience Level: ${valueOrPlaceholder(
-            skillLevel.charAt(0).toUpperCase() + skillLevel.slice(1),
-            "SKILL_LEVEL"
-          )}`
-        ),
-      ],
-      spacing: { after: 100 },
-    }),
-    new Paragraph({
       children: [toBlackRun(`Website: ${valueOrPlaceholder(teamWebsite, "WEBSITE_URL")}`)],
       spacing: { after: 100 },
     }),
@@ -464,18 +461,19 @@ export async function buildTeamPlanDocument(
 
   // Season Overview section
   documentChildren.push(
-    ...blocksToDocxParagraphs(
+    ...blocksToDocxContent(
       parseMarkdown(
-        getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd)
+        getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd),
+        { preserveBlankLines: true }
       ),
-      colorOpts
+      { ...colorOpts, keepTablesTogether: false }
     )
   );
 
   // Goalie Mentor section (optional)
   if (hasGoalieMentors) {
     documentChildren.push(
-      ...blocksToDocxParagraphs(
+      ...blocksToDocxContent(
         parseMarkdown(`## Goalie Mentor Information
 
 - Mentor Name: [GOALIE_MENTOR_NAME]
@@ -491,31 +489,118 @@ export async function buildTeamPlanDocument(
   // Goalie Evaluations section (optional)
   if (hasGoalieEvaluations) {
     const evaluationsCount = parseInt(goalieEvaluationTimes, 10);
+    const evaluationLink = normalizeUrl("https://goaliegen.com/goalie-evals/");
+    const evaluationQrData = evaluationLink ? await qrGenerator(evaluationLink) : null;
     documentChildren.push(
       new Paragraph({
         children: [toPrimaryRun("Goalie Evaluations", { bold: true })],
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 400, after: 200 },
-      }),
-      new Paragraph({
-        children: [toBlackRun("Planned evaluation sessions:")],
-        spacing: { after: 120 },
       })
     );
 
-    for (let i = 1; i <= evaluationsCount; i += 1) {
-      documentChildren.push(
-        new Paragraph({
-          children: [toBlackRun(`Evaluation ${i}: [EVALUATION_${i}_DATE]`)],
-          bullet: { level: 0 },
-          spacing: { after: 100 },
-        })
-      );
-    }
-
-    await addResourceLinkWithQr(
-      "Evaluation forms available at ",
-      "https://goaliegen.com/goalie-evals/"
+    documentChildren.push(
+      new Table({
+        width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+        layout: TableLayoutType.FIXED,
+        columnWidths: [
+          EVALUATION_LIST_COLUMN_WIDTH_TWIPS,
+          EVALUATION_LINK_COLUMN_WIDTH_TWIPS,
+          EVALUATION_QR_COLUMN_WIDTH_TWIPS,
+        ],
+        rows: [
+          new TableRow({
+            cantSplit: true,
+            children: [
+              new TableCell({
+                width: { size: EVALUATION_LIST_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                verticalAlign: VerticalAlign.TOP,
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: [
+                  new Paragraph({
+                    children: [toBlackRun("Planned evaluation sessions:")],
+                    spacing: { after: 120 },
+                  }),
+                  ...Array.from({ length: evaluationsCount }, (_, index) => {
+                    const evaluationNumber = index + 1;
+                    return new Paragraph({
+                      children: [
+                        toBlackRun(
+                          `Evaluation ${evaluationNumber}: [EVALUATION_${evaluationNumber}_DATE]`
+                        ),
+                      ],
+                      bullet: { level: 0 },
+                      spacing: { after: 100 },
+                    });
+                  }),
+                ],
+              }),
+              new TableCell({
+                width: { size: EVALUATION_LINK_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                verticalAlign: VerticalAlign.TOP,
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: [
+                  new Paragraph({
+                    children: [
+                      toBlackRun("Evaluation forms available at "),
+                      ...(evaluationLink
+                        ? [
+                            new ExternalHyperlink({
+                              link: evaluationLink,
+                              children: [
+                                toPrimaryRun(evaluationLink, {
+                                  underline: { type: "single" },
+                                }),
+                              ],
+                            }),
+                          ]
+                        : []),
+                    ],
+                    spacing: { after: evaluationQrData ? 80 : 200 },
+                  }),
+                ],
+              }),
+              new TableCell({
+                width: { size: EVALUATION_QR_COLUMN_WIDTH_TWIPS, type: WidthType.DXA },
+                verticalAlign: VerticalAlign.TOP,
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                },
+                children: evaluationQrData
+                  ? [
+                      new Paragraph({
+                        children: [
+                          new ImageRun({
+                            type: "png",
+                            data: evaluationQrData,
+                            transformation: {
+                              width: INLINE_RESOURCE_QR_SIZE_TWIPS,
+                              height: INLINE_RESOURCE_QR_SIZE_TWIPS,
+                            },
+                          }),
+                        ],
+                        spacing: { after: 200 },
+                      }),
+                    ]
+                  : [],
+              }),
+            ],
+          }),
+        ],
+      })
     );
   }
 
@@ -541,13 +626,12 @@ export async function buildTeamPlanDocument(
         })
       );
 
-      calendarMonths.forEach((month, monthIndex) => {
-        const startsNewCalendarPage = monthIndex > 0 && monthIndex % MONTH_CALENDARS_PER_PAGE === 0;
+      calendarMonths.forEach((month) => {
         documentChildren.push(
           new Paragraph({
             children: [toPrimaryRun(month.monthLabel, { bold: true })],
             heading: HeadingLevel.HEADING_3,
-            pageBreakBefore: startsNewCalendarPage,
+            keepNext: true,
             spacing: { before: 250, after: 120 },
           })
         );
@@ -573,30 +657,52 @@ export async function buildTeamPlanDocument(
             ),
           }),
           ...month.weeks.map(
-            (week) =>
+            (week, weekIndex) =>
               new TableRow({
                 cantSplit: true,
-                children: week.map((cell, index) => {
+                children: week.map((cell, cellIndex) => {
                   const dateLabel = cell.dayOfMonth ? `${cell.dayOfMonth}` : "";
-                  const eventTypeLabel = cell.hasEvents ? cell.eventTypes.join(", ") : "";
+                  const isLastCellInMonth =
+                    weekIndex === month.weeks.length - 1 && cellIndex === week.length - 1;
+                  const cellParagraphCount = 1 + (cell.hasEvents ? cell.eventTypes.length : 1);
+                  const keepNextForParagraph = (paragraphIndex: number): boolean =>
+                    !(isLastCellInMonth && paragraphIndex === cellParagraphCount - 1);
+                  const cellParagraphs = [
+                    new Paragraph({
+                      keepNext: keepNextForParagraph(0),
+                      spacing: { after: cell.hasEvents ? 30 : 80 },
+                      children: [toBlackRun(dateLabel, { bold: cell.hasEvents })],
+                    }),
+                    ...(cell.hasEvents
+                      ? cell.eventTypes.map(
+                          (eventType, eventIndex) =>
+                            new Paragraph({
+                              keepNext: keepNextForParagraph(eventIndex + 1),
+                              spacing: {
+                                after:
+                                  eventIndex === cell.eventTypes.length - 1
+                                    ? CALENDAR_EVENT_BOTTOM_SPACING
+                                    : 0,
+                              },
+                              children: [toBlackRun(eventType, { size: CALENDAR_EVENT_FONT_SIZE })],
+                            })
+                        )
+                      : [
+                          new Paragraph({
+                            keepNext: keepNextForParagraph(1),
+                            children: [toBlackRun("")],
+                          }),
+                        ]),
+                  ];
+
                   return new TableCell({
-                    width: { size: index === 6 ? 1338 : 1337, type: WidthType.DXA },
+                    width: {
+                      size: cellIndex === 6 ? 1338 : 1337,
+                      type: WidthType.DXA,
+                    },
                     verticalAlign: VerticalAlign.TOP,
                     shading: cell.hasEvents ? { fill: "D9D9D9" } : undefined,
-                    children: [
-                      new Paragraph({
-                        spacing: { after: cell.hasEvents ? 30 : 80 },
-                        children: [toBlackRun(dateLabel, { bold: cell.hasEvents })],
-                      }),
-                      ...(eventTypeLabel
-                        ? [
-                            new Paragraph({
-                              spacing: { after: 40 },
-                              children: [toBlackRun(eventTypeLabel, { size: 16 })],
-                            }),
-                          ]
-                        : [new Paragraph({ children: [toBlackRun("")] })]),
-                    ],
+                    children: cellParagraphs,
                   });
                 }),
               })
@@ -627,7 +733,24 @@ export async function buildTeamPlanDocument(
         })
       );
 
-      for (const event of detailedEventSelections) {
+      for (const [eventIndex, event] of detailedEventSelections.entries()) {
+        if (eventIndex > 0) {
+          documentChildren.push(
+            new Paragraph({
+              children: [toBlackRun("")],
+              border: {
+                bottom: {
+                  style: BorderStyle.SINGLE,
+                  size: 6,
+                  color: cleanSecondary,
+                  space: 1,
+                },
+              },
+              spacing: { before: 160, after: 160 },
+            })
+          );
+        }
+
         documentChildren.push(
           new Paragraph({
             children: [toBlackRun(formatTeamPlanEventHeading(event))],
@@ -636,11 +759,11 @@ export async function buildTeamPlanDocument(
           })
         );
 
-        const eventStarterMarkdown = getEventStarterMarkdown(event.eventType, eventDetailsMd);
-        const importedEventMarkdown = buildImportedEventMarkdown(event, eventStarterMarkdown);
+        const eventContentMarkdown = getEventContentMarkdown(event.eventType, eventDetailsMd);
+        const importedEventMarkdown = buildImportedEventMarkdown(event, eventContentMarkdown);
 
         documentChildren.push(
-          ...blocksToDocxParagraphs(parseMarkdown(importedEventMarkdown), colorOpts)
+          ...blocksToDocxContent(parseMarkdown(importedEventMarkdown), colorOpts)
         );
 
         if (event.eventType === "On-ice Practice" && addSuggestedDrillEachPractice) {
@@ -652,11 +775,10 @@ export async function buildTeamPlanDocument(
           );
         }
 
-        if (event.eventType === "Game") {
+        if (event.eventType === "Game" && addShotTrackerToGames) {
           documentChildren.push(
             new Paragraph({
-              children: [toBlackRun("Game Timeline", { bold: true })],
-              pageBreakBefore: true,
+              children: [toBlackRun("Game Timeline / Shot Tracker", { bold: true })],
               spacing: { before: 120, after: 80 },
             })
           );

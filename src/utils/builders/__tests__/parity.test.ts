@@ -82,7 +82,6 @@ const MINIMAL_TEAM_CONFIG: TeamPlanConfig = {
   primaryColor: "#00205B",
   secondaryColor: "#AF272F",
   ageGroup: "12U",
-  skillLevel: "intermediate",
   hasGoalieMentors: false,
   hasGoalieEvaluations: false,
   goalieEvaluationTimes: "3",
@@ -91,16 +90,17 @@ const MINIMAL_TEAM_CONFIG: TeamPlanConfig = {
   includeCalendarView: false,
   includeEventDetails: false,
   addSuggestedDrillEachPractice: false,
+  addShotTrackerToGames: true,
   sortedEventDates: [],
   eventSelections: [],
   detailedEventSelections: [],
 };
 
 const MINIMAL_TEAM_CONTENT: TeamPlanContent = {
-  coverMd: "## Cover\n\n### Selected Overview Placeholder\nTest overview.",
+  coverMd: "## Cover\n\n### Season Overview Placeholder\nTest overview.",
   seasonOverviewMd:
-    "## Season Overview\n\n### Selected Overview Placeholder\nTest placeholder overview.",
-  eventDetailsMd: "## Events\n\n### Selected Event Details Placeholder\nTest event details.",
+    "## Season Overview\n\n### Season Overview Placeholder\nTest placeholder overview.",
+  eventDetailsMd: "## Events\n\n### TBD\nTest event details.",
 };
 
 const NULL_QR_GENERATOR: QrGenerator = async () => null;
@@ -336,7 +336,8 @@ describe("buildTeamPlanDocument", () => {
       "Starter event content."
     );
 
-    expect(markdown).toContain("**Calendar Event:** Summer Showcase");
+    expect(markdown).toContain("Summer Showcase");
+    expect(markdown).not.toContain("Calendar Event:");
     expect(markdown).not.toContain("Description");
     expect(markdown).toContain("Starter event content.");
   });
@@ -350,6 +351,26 @@ describe("buildTeamPlanDocument", () => {
         eventType: "Game",
       })
     ).toBe("Wed, Jul 15, 2026 at 7:15 PM EDT (Game)");
+  });
+
+  it("omits TBD from event headings", () => {
+    expect(
+      formatTeamPlanEventHeading({
+        date: "2026-07-15",
+        eventType: "TBD",
+      })
+    ).toBe("Wed, Jul 15, 2026 (Event Type:___________________)");
+  });
+
+  it("retains the time in TBD headings without adding the event type", () => {
+    expect(
+      formatTeamPlanEventHeading({
+        date: "2026-07-15",
+        startTime: "7:15 PM",
+        timeZone: "EDT",
+        eventType: "TBD",
+      })
+    ).toBe("Wed, Jul 15, 2026 at 7:15 PM EDT (Event Type:___________________)");
   });
 
   it("returns a docx.Document instance", async () => {
@@ -435,6 +456,66 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
+  it("omits the game shot tracker when disabled", async () => {
+    const config: TeamPlanConfig = {
+      ...MINIMAL_TEAM_CONFIG,
+      addCalendarOfEvents: true,
+      includeCalendarView: true,
+      includeEventDetails: true,
+      addShotTrackerToGames: false,
+      sortedEventDates: [{ date: "2026-07-11", eventTypes: ["Game"] }],
+      eventSelections: [{ date: "2026-07-11", eventType: "Game" }],
+      detailedEventSelections: [{ date: "2026-07-11", eventType: "Game" }],
+    };
+    const result = await buildTeamPlanDocument(
+      config,
+      {
+        ...MINIMAL_TEAM_CONTENT,
+        eventDetailsMd: "## Events\n\n### Game\n[[FIELDS:Opponent|Time]]\n[[FIELDS:Goalie|Venue]]",
+      },
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain("Opponent");
+    expect(serializedDocument).not.toContain("Game Timeline / Shot Tracker");
+  });
+
+  it("renders same-day calendar events as separate lines without commas", async () => {
+    const config: TeamPlanConfig = {
+      ...MINIMAL_TEAM_CONFIG,
+      addCalendarOfEvents: true,
+      includeCalendarView: true,
+      sortedEventDates: [
+        {
+          date: "2026-07-11",
+          eventTypes: ["On-ice Practice", "Game"],
+        },
+      ],
+      eventSelections: [
+        { date: "2026-07-11", eventType: "On-ice Practice" },
+        { date: "2026-07-11", eventType: "Game" },
+      ],
+    };
+    const result = await buildTeamPlanDocument(
+      config,
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain("On-ice Practice");
+    expect(serializedDocument).toContain("Game");
+    expect(serializedDocument).not.toContain("On-ice Practice, Game");
+    expect(serializedDocument).toContain('"root":{"val":16}');
+    expect(serializedDocument).not.toContain('"root":{"val":14}');
+    expect(serializedDocument).toContain('"after":{"key":"w:after","value":40}');
+  });
+
   it("accepts imported calendar metadata in event details", async () => {
     const config: TeamPlanConfig = {
       ...MINIMAL_TEAM_CONFIG,
@@ -462,6 +543,52 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
+  it("separates adjacent event details with a subtle secondary-color divider", async () => {
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        addCalendarOfEvents: true,
+        includeEventDetails: true,
+        detailedEventSelections: [
+          { date: "2026-07-11", eventType: "Game" },
+          { date: "2026-07-15", eventType: "Evaluation" },
+        ],
+      },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain('"rootKey":"w:pBdr"');
+    expect(serializedDocument).toContain(
+      '"style":{"key":"w:val","value":"single"},"color":{"key":"w:color","value":"AF272F"}'
+    );
+  });
+
+  it("renders compact event fields as four fixed-width columns", async () => {
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        addCalendarOfEvents: true,
+        includeEventDetails: true,
+        detailedEventSelections: [{ date: "2026-07-11", eventType: "Game" }],
+      },
+      {
+        ...MINIMAL_TEAM_CONTENT,
+        eventDetailsMd:
+          "## Events\n\n### Game\n[[FIELDS:Opponent|Venue]]\n[[FIELDS:Result|Goalie]]",
+      },
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const buffer = await docx.Packer.toBuffer(result);
+    expect(buffer.length).toBeGreaterThan(0);
+  });
+
   it("calls QrGenerator when hasGoalieEvaluations is true", async () => {
     const calledUrls: string[] = [];
     const trackingQrGenerator: QrGenerator = async (url) => {
@@ -478,6 +605,32 @@ describe("buildTeamPlanDocument", () => {
     // The builder calls QR generator for the evaluation forms link
     expect(calledUrls.length).toBeGreaterThan(0);
     expect(calledUrls.some((url) => url === "https://goaliegen.com/goalie-evals/")).toBe(true);
+  });
+
+  it("renders evaluation sessions, link, and QR in a compact three-column block", async () => {
+    const qrData = new Uint8Array([1, 2, 3]);
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        hasGoalieEvaluations: true,
+        goalieEvaluationTimes: "2",
+      },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      async () => qrData,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain('"rootKey":"w:tbl"');
+    expect(serializedDocument).toContain("Planned evaluation sessions:");
+    expect(serializedDocument).toContain("Evaluation forms available at");
+    expect(serializedDocument).toContain(
+      '"x":{"key":"cx","value":571500},"y":{"key":"cy","value":571500}'
+    );
+    expect(serializedDocument).toContain('"value":6000');
+    expect(serializedDocument).toContain('"value":2160');
+    expect(serializedDocument).toContain('"value":1200');
   });
 });
 

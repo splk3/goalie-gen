@@ -27,7 +27,6 @@ import eventDetailsMd from "../content/team-plan/event-details.md";
 
 import type {
   AgeGroup,
-  SkillLevel,
   ConfigurableEventType,
   EventType,
   EventDateSelection,
@@ -159,9 +158,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   );
   const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
-  const [skillLevel, setSkillLevel] = React.useState<string>("");
   const [addSuggestedDrillEachPractice, setAddSuggestedDrillEachPractice] =
     React.useState<boolean>(true);
+  const [addShotTrackerToGames, setAddShotTrackerToGames] = React.useState<boolean>(true);
   const [hasGoalieMentors, setHasGoalieMentors] = React.useState<boolean>(false);
   const [hasGoalieEvaluations, setHasGoalieEvaluations] = React.useState<boolean>(false);
   const [goalieEvaluationTimes, setGoalieEvaluationTimes] = React.useState<string>("3");
@@ -225,7 +224,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   }, [validationError]);
 
   const ageGroups: AgeGroup[] = ["8U", "10U", "12U", "14U", "16U and older"];
-  const skillLevels: SkillLevel[] = ["beginner", "intermediate", "advanced"];
 
   const availableConfigurableEventTypes = React.useMemo(
     () => CONFIGURABLE_EVENT_TYPES.filter((eventType) => calendarEnabledEventTypes[eventType]),
@@ -281,10 +279,18 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setCanDownloadCalendarFeed(false);
     setIsImportingCalendar(true);
     try {
-      const result = parseCalendarFeed(icsText, {
-        startDate: calendarImportStartDate,
-        endDate: calendarImportEndDate,
-      });
+      const result = parseCalendarFeed(
+        icsText,
+        {
+          startDate: calendarImportStartDate,
+          endDate: calendarImportEndDate,
+        },
+        { expandFiniteEvents: true }
+      );
+      if (result.effectiveRange) {
+        setCalendarImportStartDate(result.effectiveRange.startDate);
+        setCalendarImportEndDate(result.effectiveRange.endDate);
+      }
       setSelectedEventDates((previous) => mergeCalendarEvents(previous, result.events));
       setCalendarImportStatus(
         `Imported ${result.events.length} event${result.events.length === 1 ? "" : "s"}${
@@ -310,10 +316,18 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setIsImportingCalendar(true);
     try {
       const icsText = await fetchCalendarFeed(calendarFeedUrl);
-      const result = parseCalendarFeed(icsText, {
-        startDate: calendarImportStartDate,
-        endDate: calendarImportEndDate,
-      });
+      const result = parseCalendarFeed(
+        icsText,
+        {
+          startDate: calendarImportStartDate,
+          endDate: calendarImportEndDate,
+        },
+        { expandFiniteEvents: true }
+      );
+      if (result.effectiveRange) {
+        setCalendarImportStartDate(result.effectiveRange.startDate);
+        setCalendarImportEndDate(result.effectiveRange.endDate);
+      }
       setSelectedEventDates((previous) => mergeCalendarEvents(previous, result.events));
       setCalendarImportStatus(
         `Imported ${result.events.length} event${result.events.length === 1 ? "" : "s"}${
@@ -528,12 +542,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       return false;
     }
 
-    if (!skillLevel) {
-      shouldScrollValidationErrorRef.current = true;
-      setValidationError("Please select a skill level");
-      return false;
-    }
-
     if (hasGoalieEvaluations) {
       if (goalieEvaluationTimes.includes(".") || goalieEvaluationTimes.includes(",")) {
         shouldScrollValidationErrorRef.current = true;
@@ -612,7 +620,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       primaryColor: primaryTeamColor,
       secondaryColor: secondaryTeamColor,
       ageGroup,
-      skillLevel,
       hasGoalieMentors,
       hasGoalieEvaluations,
       goalieEvaluationTimes,
@@ -621,6 +628,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       includeCalendarView,
       includeEventDetails,
       addSuggestedDrillEachPractice,
+      addShotTrackerToGames,
       sortedEventDates,
       eventSelections,
       detailedEventSelections,
@@ -660,7 +668,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
         format: "docx",
         team_name: teamName,
         age_group: ageGroup,
-        skill_level: skillLevel,
       });
     } catch (error) {
       console.error("Error generating document:", error);
@@ -697,7 +704,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
       setAgeGroup("");
-      setSkillLevel("");
       setAddSuggestedDrillEachPractice(true);
       setHasGoalieMentors(false);
       setHasGoalieEvaluations(false);
@@ -750,7 +756,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
     setAgeGroup("");
-    setSkillLevel("");
     setAddSuggestedDrillEachPractice(true);
     setHasGoalieMentors(false);
     setHasGoalieEvaluations(false);
@@ -977,29 +982,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
             </select>
           </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="skillLevel"
-              className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
-            >
-              Skill Level
-            </label>
-            <select
-              id="skillLevel"
-              value={skillLevel}
-              onChange={(e) => setSkillLevel(e.target.value)}
-              disabled={!!generatedBlob || isGenerating}
-              className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <option value="">Select skill level</option>
-              {skillLevels.map((level) => (
-                <option key={level} value={level}>
-                  {level.charAt(0).toUpperCase() + level.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <fieldset className="mb-6 border border-gray-300 dark:border-gray-600 rounded-lg p-4">
             <legend className="px-2 text-lg font-bold text-usa-blue dark:text-blue-400">
               Team Plan Details
@@ -1172,33 +1154,55 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                       const isCalendarDisabledForType =
                         eventType !== "TBD" && !calendarEnabledEventTypes[eventType];
                       return (
-                        <label
-                          key={`detailed-event-type-${eventType}`}
-                          className={`flex items-center gap-2 ${
-                            isCalendarDisabledForType
-                              ? "text-gray-400 dark:text-gray-500"
-                              : "text-gray-700 dark:text-gray-300"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={detailedEntryEventTypes[eventType]}
-                            onChange={(e) =>
-                              setDetailedEntryEventTypes((previous) => ({
-                                ...previous,
-                                [eventType]: e.target.checked,
-                              }))
-                            }
-                            disabled={!canEditEventPlanning || isCalendarDisabledForType}
-                            className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
-                          />
-                          <span>
-                            {eventType}
-                            {isCalendarDisabledForType && (
-                              <span className="ml-1">(Must be enabled in Calendar view.)</span>
-                            )}
-                          </span>
-                        </label>
+                        <React.Fragment key={`detailed-event-type-${eventType}`}>
+                          <label
+                            className={`flex items-center gap-2 ${
+                              isCalendarDisabledForType
+                                ? "text-gray-400 dark:text-gray-500"
+                                : "text-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={detailedEntryEventTypes[eventType]}
+                              onChange={(e) =>
+                                setDetailedEntryEventTypes((previous) => ({
+                                  ...previous,
+                                  [eventType]: e.target.checked,
+                                }))
+                              }
+                              disabled={!canEditEventPlanning || isCalendarDisabledForType}
+                              className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                            />
+                            <span>
+                              {eventType}
+                              {isCalendarDisabledForType && (
+                                <span className="ml-1">(Must be enabled in Calendar view.)</span>
+                              )}
+                            </span>
+                          </label>
+                          {eventType === "Game" && (
+                            <label className="ml-6 inline-flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                              <input
+                                type="checkbox"
+                                aria-label="Add Shot Tracker to Games"
+                                checked={addShotTrackerToGames}
+                                onChange={(e) => setAddShotTrackerToGames(e.target.checked)}
+                                disabled={!canEditEventPlanning}
+                                className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                              />
+                              <span>Add Shot Tracker to Games</span>
+                              <span
+                                role="img"
+                                aria-label="Add Shot Tracker to Games help"
+                                title="For each game, include a timeline chart for tracking shots and goals"
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-400 text-xs text-gray-600 dark:border-gray-500 dark:text-gray-300"
+                              >
+                                i
+                              </span>
+                            </label>
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </div>

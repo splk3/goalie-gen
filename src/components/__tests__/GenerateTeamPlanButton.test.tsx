@@ -13,6 +13,28 @@ jest.mock("../../utils/loadExportModules", () => ({
   loadDocxModule: jest.fn(),
 }));
 
+jest.mock(
+  "../../content/team-plan/event-details.md",
+  () => `## Event Details
+
+### TBD
+[EVENT_DETAILS_SELECTED]
+
+### On-ice Practice
+[EVENT_DETAILS_PRACTICE_CONTENT]
+
+### Game
+[[FIELDS:Opponent|Time]]
+[[FIELDS:Goalie|Venue]]
+[[FIELD:Game Notes|4]]
+
+### Off-ice Practice
+[EVENT_DETAILS_OFF_ICE_CONTENT]
+
+### Video Review
+[EVENT_DETAILS_OFF_ICE_CONTENT]`
+);
+
 jest.mock("../Logo", () => {
   function MockLogo() {
     return <div data-testid="logo" />;
@@ -46,7 +68,6 @@ async function openModal(user: ReturnType<typeof userEvent.setup>) {
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText("Team Name"), "Springfield Goalies");
   await user.selectOptions(screen.getByLabelText("Age Group"), "10U");
-  await user.selectOptions(screen.getByLabelText("Skill Level"), "intermediate");
 }
 
 function getCalendarEventTypesFieldset(): HTMLElement {
@@ -86,6 +107,7 @@ describe("GenerateTeamPlanButton", () => {
     expect(screen.getByLabelText("Team Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Team/Club Website (Optional)")).toBeInTheDocument();
     expect(screen.getByLabelText("Team/Club Motto/Mission (Optional)")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Skill Level")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Number of Practices (0-50)")).not.toBeInTheDocument();
     expect(screen.queryByText(/output format/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("radio", { name: /word/i })).not.toBeInTheDocument();
@@ -263,11 +285,14 @@ describe("GenerateTeamPlanButton", () => {
     expect(serializedDoc).not.toContain("Practice 1");
     expect(serializedDoc).not.toContain("Practice Plans");
     expect(serializedDoc).not.toContain("Number of Practices");
+    expect(serializedDoc).not.toContain("Experience Level");
+    expect(serializedDoc).not.toContain("SKILL_LEVEL");
   });
 
-  it("renders two calendar months per page in team-plan DOCX calendar view", async () => {
+  it("keeps calendar months flowing naturally without forced page breaks", async () => {
     const user = userEvent.setup();
     const mockParagraph = jest.fn((options) => ({ options }));
+    const mockTable = jest.fn((options) => ({ options }));
     const mockTextRun = jest.fn((options) => ({ options }));
 
     jest.spyOn(teamPlanCalendarGrid, "buildEventCalendarMonths").mockReturnValue([
@@ -341,7 +366,7 @@ describe("GenerateTeamPlanButton", () => {
       ImageRun: jest.fn((options) => ({ options })),
       Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
       Paragraph: mockParagraph,
-      Table: jest.fn((options) => ({ options })),
+      Table: mockTable,
       TableCell: jest.fn((options) => ({ options })),
       TableLayoutType: { FIXED: "FIXED" },
       TableRow: jest.fn((options) => ({ options })),
@@ -369,12 +394,20 @@ describe("GenerateTeamPlanButton", () => {
       .filter((options) => /^Month [1-4]$/.test(options.children?.[0]?.options?.text ?? ""));
 
     expect(monthHeadingParagraphs).toHaveLength(4);
-    expect(monthHeadingParagraphs.map((options) => options.pageBreakBefore)).toEqual([
-      false,
-      true,
-      true,
-      true,
-    ]);
+    expect(monthHeadingParagraphs.every((options) => options.pageBreakBefore === undefined)).toBe(
+      true
+    );
+    expect(monthHeadingParagraphs.every((options) => options.keepNext === true)).toBe(true);
+
+    const calendarTables = mockTable.mock.calls
+      .map(([options]) => options)
+      .filter((options) => options.rows?.[0]?.options?.tableHeader === true);
+    expect(calendarTables).toHaveLength(4);
+    expect(
+      calendarTables.every((table) =>
+        table.rows.every((row: { options?: { cantSplit?: boolean } }) => row.options?.cantSplit)
+      )
+    ).toBe(true);
   });
 
   it("filters event details output by selected detailed-entry event types", async () => {
@@ -425,8 +458,8 @@ describe("GenerateTeamPlanButton", () => {
 
     const docArgument = mockDocument.mock.calls[0][0];
     const serializedDoc = JSON.stringify(docArgument);
-    expect(serializedDoc).toContain("[EVENT_DETAILS_PRACTICE_STARTER]");
-    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_STARTER]");
+    expect(serializedDoc).toContain("[EVENT_DETAILS_PRACTICE_CONTENT]");
+    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_CONTENT]");
     expect(serializedDoc).not.toContain("Goals");
     expect(serializedDoc).not.toContain("Shots");
     expect(serializedDoc).not.toContain("Totals");
@@ -435,6 +468,7 @@ describe("GenerateTeamPlanButton", () => {
   it("adds the game event score diagram when game entries are included in event details", async () => {
     const user = userEvent.setup();
     const mockDocument = jest.fn((config) => ({ config }));
+    const mockTable = jest.fn((options) => ({ options }));
 
     mockedLoadDocxModule.mockResolvedValue({
       AlignmentType: { CENTER: "CENTER", LEFT: "LEFT" },
@@ -444,7 +478,7 @@ describe("GenerateTeamPlanButton", () => {
       ImageRun: jest.fn((options) => ({ options })),
       Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
       Paragraph: jest.fn((options) => ({ options })),
-      Table: jest.fn((options) => ({ options })),
+      Table: mockTable,
       TableCell: jest.fn((options) => ({ options })),
       TableLayoutType: { FIXED: "FIXED" },
       TableRow: jest.fn((options) => ({ options })),
@@ -462,6 +496,11 @@ describe("GenerateTeamPlanButton", () => {
     await openModal(user);
     await fillRequiredFields(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    expect(screen.getByRole("checkbox", { name: "Add Shot Tracker to Games" })).toBeChecked();
+    expect(screen.getByRole("img", { name: "Add Shot Tracker to Games help" })).toHaveAttribute(
+      "title",
+      "For each game, include a timeline chart for tracking shots and goals"
+    );
     await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 9,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
@@ -473,7 +512,11 @@ describe("GenerateTeamPlanButton", () => {
     const docArgument = mockDocument.mock.calls[0][0];
     const serializedDoc = JSON.stringify(docArgument);
 
-    expect(serializedDoc).toContain("[EVENT_DETAILS_GAME_STARTER]");
+    expect(serializedDoc).not.toContain("[EVENT_DETAILS_GAME_CONTENT]");
+    expect(serializedDoc).toContain("Opponent");
+    expect(serializedDoc).toContain("Time");
+    expect(serializedDoc).toContain("Goalie");
+    expect(serializedDoc).toContain("Venue");
     expect(serializedDoc).toContain("Goals");
     expect(serializedDoc).toContain("Shots");
     expect(serializedDoc).toContain("1st");
@@ -484,6 +527,25 @@ describe("GenerateTeamPlanButton", () => {
     expect(serializedDoc).toContain('"width":{"size":9360,"type":"DXA"}');
     expect(serializedDoc).toContain('"columnWidths":[1200,2178,2178,2178,726,900]');
     expect(serializedDoc).toContain('"layout":"FIXED"');
+
+    const gameTimelineParagraph = mockDocument.mock.calls[0][0].sections
+      .flatMap(
+        (section: { children: Array<{ options?: { children?: unknown[] } }> }) => section.children
+      )
+      .find(
+        (child: { options?: { children?: Array<{ options?: { text?: string } }> } }) =>
+          child.options?.children?.[0]?.options?.text === "Game Timeline / Shot Tracker"
+      );
+    expect(gameTimelineParagraph?.options?.pageBreakBefore).toBeUndefined();
+
+    const gameTimelineTable = mockTable.mock.calls
+      .map(([options]) => options)
+      .find((options) => options.columnWidths?.[0] === 1200);
+    expect(
+      gameTimelineTable?.rows.every(
+        (row: { options?: { cantSplit?: boolean } }) => row.options?.cantSplit
+      )
+    ).toBe(true);
   });
 });
 
@@ -544,6 +606,48 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     await waitFor(() => expect(screen.getByText(/Imported 1 event/)).toBeInTheDocument());
     expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(2);
     expect(fetchMock).toHaveBeenCalledWith("https://calendar.example/feed.ics");
+    global.fetch = originalFetch;
+  });
+
+  it("expands the import dates when finite feed events fall outside the defaults", async () => {
+    const user = userEvent.setup();
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () =>
+        [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "BEGIN:VEVENT",
+          "UID:outside-range-early",
+          "DTSTART;VALUE=DATE:20200101",
+          "SUMMARY:Early Event",
+          "END:VEVENT",
+          "BEGIN:VEVENT",
+          "UID:outside-range-late",
+          "DTSTART;VALUE=DATE:20300101",
+          "SUMMARY:Late Event",
+          "END:VEVENT",
+          "END:VCALENDAR",
+        ].join("\r\n"),
+    });
+
+    render(<GenerateTeamPlanButton />);
+    await openModal(user);
+    await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    await user.click(screen.getByRole("button", { name: "Add Event Dates from Calendar Feed" }));
+    await user.type(
+      screen.getByLabelText("Calendar feed URL"),
+      "https://calendar.example/feed.ics"
+    );
+    await user.click(screen.getByRole("button", { name: "Import from URL" }));
+
+    await waitFor(() => expect(screen.getByText("Imported 2 events.")).toBeInTheDocument());
+    expect(screen.getByLabelText("Calendar import start date")).toHaveValue("2020-01-01");
+    expect(screen.getByLabelText("Calendar import end date")).toHaveValue("2030-01-01");
+    expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(2);
+
     global.fetch = originalFetch;
   });
 

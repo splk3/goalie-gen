@@ -80,6 +80,71 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("parses pipe tables with headers, alignment separators, and rows", () => {
+    const md = [
+      "| Phase | Focus |",
+      "| :--- | ---: |",
+      "| Early | Stance and skating |",
+      "| Late | Game preparation |",
+    ].join("\n");
+
+    expect(parseMarkdown(md)).toEqual([
+      {
+        type: "table",
+        headers: ["Phase", "Focus"],
+        rows: [
+          ["Early", "Stance and skating"],
+          ["Late", "Game preparation"],
+        ],
+      },
+    ]);
+  });
+
+  it("parses fill-in fields with an optional number of lines", () => {
+    expect(parseMarkdown("[[FIELD:Game Notes|3]]")).toEqual([
+      { type: "field", label: "Game Notes", lines: 3 },
+    ]);
+    expect(parseMarkdown("[[FIELD: Coach Notes ]]")).toEqual([
+      { type: "field", label: "Coach Notes", lines: 1 },
+    ]);
+  });
+
+  it("groups consecutive compact fill-in fields into four-column rows", () => {
+    expect(parseMarkdown("[[FIELDS:Opponent|Venue]]\n[[FIELDS:Result|Goalie]]")).toEqual([
+      {
+        type: "fields",
+        rows: [
+          { left: "Opponent", right: "Venue" },
+          { left: "Result", right: "Goalie" },
+        ],
+      },
+    ]);
+  });
+
+  it("leaves malformed compact fill-in fields as normal text", () => {
+    expect(parseMarkdown("[[FIELDS:Opponent]]")).toEqual([
+      { type: "paragraph", text: "[[FIELDS:Opponent]]" },
+    ]);
+  });
+
+  it("unescapes pipes inside table cells", () => {
+    expect(
+      parseMarkdown("| Skill | Detail |\n| --- | --- |\n| Saves | Glove \\| blocker |")
+    ).toEqual([
+      {
+        type: "table",
+        headers: ["Skill", "Detail"],
+        rows: [["Saves", "Glove | blocker"]],
+      },
+    ]);
+  });
+
+  it("does not treat a pipe paragraph without a separator row as a table", () => {
+    expect(parseMarkdown("A | sentence\nwith | pipes")).toEqual([
+      { type: "paragraph", text: "A | sentence with | pipes" },
+    ]);
+  });
+
   it("merges consecutive non-blank lines into one paragraph", () => {
     const md = "Line one\nLine two\nLine three";
     const blocks = parseMarkdown(md);

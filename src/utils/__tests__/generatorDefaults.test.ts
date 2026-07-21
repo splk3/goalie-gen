@@ -1,40 +1,109 @@
 import {
   extractLevel3SectionsByPrefix,
+  getEventContentMarkdown,
   getSeasonOverviewMarkdown,
   selectRandomLevel3Section,
 } from "../generatorDefaults";
 
 const seasonOverviewMd = `## Season Overview
 
-### Selected Overview Placeholder
+### Season Overview Placeholder
 
 [SEASON_OVERVIEW_SELECTED]
 
-### 8U Starter Content Placeholder
+### All Ages Starter Content
+
+[SEASON_OVERVIEW_ALL_AGES_STARTER]
+
+### 8U Starter Content
 
 [SEASON_OVERVIEW_8U_STARTER]
 
-### 10U Starter Content Placeholder
+### 10U Starter Content
 
 [SEASON_OVERVIEW_10U_STARTER]
 
-### 12U Starter Content Placeholder
+### 12U Starter Content
 
 [SEASON_OVERVIEW_12U_STARTER]
 
-### 14U Starter Content Placeholder
+### 14U Starter Content
 
 [SEASON_OVERVIEW_14U_STARTER]
 
-### 16U and older Starter Content Placeholder
+### 16U and older Starter Content
 
 [SEASON_OVERVIEW_16U_AND_OLDER_STARTER]
 `;
 
 describe("getSeasonOverviewMarkdown", () => {
-  it("uses 14U starter content for 14U selections", () => {
+  it("uses all-ages content followed by the selected age-group content", () => {
     const markdown = getSeasonOverviewMarkdown(true, "14U", seasonOverviewMd);
+    expect(markdown).toContain("[SEASON_OVERVIEW_ALL_AGES_STARTER]");
     expect(markdown).toContain("[SEASON_OVERVIEW_14U_STARTER]");
+    expect(markdown.indexOf("[SEASON_OVERVIEW_ALL_AGES_STARTER]")).toBeLessThan(
+      markdown.indexOf("[SEASON_OVERVIEW_14U_STARTER]")
+    );
+    expect(markdown).toContain(
+      "[SEASON_OVERVIEW_ALL_AGES_STARTER]\n\n[SEASON_OVERVIEW_14U_STARTER]"
+    );
+  });
+
+  describe("getEventContentMarkdown", () => {
+    const eventDetailsMd = [
+      "## Event Details",
+      "",
+      "### TBD",
+      "TBD content.",
+      "",
+      "### On-ice Practice",
+      "Practice content.",
+      "",
+      "### Off-ice Practice",
+      "Off-ice content.",
+      "",
+      "### Video Review",
+      "Video content.",
+      "",
+      "### Evaluation",
+      "Evaluation content.",
+      "",
+      "### Game",
+      "Game content.",
+    ].join("\n");
+
+    it.each([
+      ["On-ice Practice", "Practice content."],
+      ["Off-ice Practice", "Off-ice content."],
+      ["Video Review", "Video content."],
+      ["Evaluation", "Evaluation content."],
+      ["Game", "Game content."],
+      ["TBD", "TBD content."],
+    ])("uses the exact event-type section for %s", (eventType, expectedContent) => {
+      expect(getEventContentMarkdown(eventType, eventDetailsMd)).toBe(expectedContent);
+    });
+
+    it("uses the event-type-specific placeholder when its section is missing", () => {
+      expect(getEventContentMarkdown("Game", "## Event Details")).toBe(
+        "[EVENT_DETAILS_GAME_CONTENT]"
+      );
+      expect(getEventContentMarkdown("Off-ice Practice", "## Event Details")).toBe(
+        "[EVENT_DETAILS_OFF_ICE_CONTENT]"
+      );
+    });
+
+    it("uses the selected placeholder for unknown event types", () => {
+      expect(getEventContentMarkdown("Custom Event", "## Event Details")).toBe(
+        "[EVENT_DETAILS_SELECTED]"
+      );
+    });
+  });
+
+  it("uses the season overview placeholder when starter content is disabled", () => {
+    const markdown = getSeasonOverviewMarkdown(false, "14U", seasonOverviewMd);
+    expect(markdown).toContain("[SEASON_OVERVIEW_SELECTED]");
+    expect(markdown).not.toContain("[SEASON_OVERVIEW_ALL_AGES_STARTER]");
+    expect(markdown).not.toContain("[SEASON_OVERVIEW_14U_STARTER]");
   });
 
   describe("level-3 sample content selection", () => {

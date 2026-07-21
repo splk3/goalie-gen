@@ -30,6 +30,25 @@ Goalie Gen provides three separate document generation workflows:
    - Uses the selected primary color for headings and the secondary color for journal
      entry borders and writing lines; body text remains black.
 
+### Team Plan Event Detail Fill-In Fields
+
+Team-plan event-detail starter content is stored in
+`src/content/team-plan/event-details.md` and supports table-based fields for
+information the coach can enter digitally or by hand after printing:
+
+- `[[FIELD:Game Notes|3]]` creates a full-width field with three writable lines.
+  The line count is optional and defaults to one.
+- `[[FIELDS:Opponent|Venue]]` creates one compact row with four columns:
+  field name, input area, field name, input area.
+- Consecutive `[[FIELDS:...|...]]` markers are grouped into additional rows in
+  the same compact table.
+
+Input areas use fixed-width DOCX table cells with bottom borders rather than
+underscore characters. This keeps printed lines stable and allows users to type
+content without malformed wrapping or shifting underline characters. Use the
+full-width `FIELD` form for longer responses and the paired `FIELDS` form for
+shorter values.
+
 ### Team Plan Calendar Feed Import
 
 The Team Plan Generator imports a calendar once from a directly fetchable feed URL or a downloaded `.ics` file.

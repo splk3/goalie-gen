@@ -104,6 +104,22 @@ The document generators assemble Word documents (`.docx`) from markdown content 
 
 All three use the `docx` library. Shared helpers live in `src/utils/docxContent.ts` and `src/utils/docxImageType.ts`. Use `OBJECT_URL_REVOKE_DELAY_MS` (from `src/utils/staticAsset.ts`) when creating object URLs for the download trigger.
 
+#### Team Plan Event Detail Fill-In Fields
+
+Team-plan event-detail markdown in `src/content/team-plan/event-details.md`
+supports two table-based fill-in formats:
+
+- `[[FIELD:Label|N]]` creates a full-width field with `N` writable lines
+  (`N` defaults to `1`).
+- `[[FIELDS:Left Label|Right Label]]` creates a compact four-column row:
+  label, input area, label, input area. Consecutive `FIELDS` markers are grouped
+  into one table with additional rows.
+
+The DOCX renderer must use fixed-width tables and bottom borders on input cells,
+not literal underscore strings. This preserves clean printed lines and allows
+typed content to fit without malformed underline wrapping. Keep the full-width
+form for longer notes and the paired form for short event details.
+
 #### Team Color Picker & Logo Palette Extraction
 
 [TeamColorPickers.tsx](src/components/TeamColorPickers.tsx) renders a **Primary** and **Secondary** color picker UI (custom popover color picker using `react-colorful`'s `HexColorPicker` + `HexColorInput` + palette swatches). It is embedded inside all three document generator forms.

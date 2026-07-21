@@ -61,7 +61,6 @@ async function run() {
   let logoPath = "";
   let outputPath = "test-team-plan.docx";
   let ageGroup = "12U";
-  let skillLevel = "intermediate";
   let enableAll = true;
 
   for (let i = 0; i < args.length; i++) {
@@ -89,9 +88,6 @@ async function run() {
     } else if (args[i] === "--age" && args[i + 1]) {
       ageGroup = normalizeAgeGroup(args[i + 1]);
       i++;
-    } else if (args[i] === "--skill" && args[i + 1]) {
-      skillLevel = args[i + 1].toLowerCase();
-      i++;
     } else if (args[i] === "--none") {
       enableAll = false;
     } else if (args[i] === "--all") {
@@ -109,7 +105,6 @@ Options:
   --logo <path>        Path to logo image file (optional)
   --out <path>         Path to output .docx file (default: "test-team-plan.docx")
   --age <string>       Age Group (8U, 10U, 12U, 14U, 16U and older, default: "12U")
-  --skill <string>     Skill Level (beginner, intermediate, advanced, default: "intermediate")
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features
       `);
@@ -134,7 +129,6 @@ Options:
   console.log(`  Motto:       ${teamMotto}`);
   console.log(`  Colors:      Primary: ${primaryColor}, Secondary: ${secondaryColor}`);
   console.log(`  Age Group:   ${ageGroup}`);
-  console.log(`  Skill Level: ${skillLevel}`);
   console.log(`  Logo:        ${logoPath || "None"}`);
   console.log(`  Output:      ${outputPath}`);
   console.log(`  Features:    ${enableAll ? "All enabled" : "Minimal/none"}\n`);
@@ -187,10 +181,11 @@ Options:
   const selectedEventDates: EventDateSelection[] = enableAll
     ? [
         // August 2026
-        { date: "2026-08-03", eventTypes: ["On-ice Practice"] },
+        { date: "2026-08-03", eventTypes: ["On-ice Practice", "Off-ice Practice"] },
         { date: "2026-08-08", eventTypes: ["Game"] },
         { date: "2026-08-12", eventTypes: ["Off-ice Practice"] },
         { date: "2026-08-17", eventTypes: ["Video Review"] },
+        { date: "2026-08-21", eventTypes: ["TBD"] },
         // September 2026
         { date: "2026-09-02", eventTypes: ["On-ice Practice"] },
         { date: "2026-09-07", eventTypes: ["Off-ice Practice"] },
@@ -199,13 +194,14 @@ Options:
         // October 2026
         { date: "2026-10-01", eventTypes: ["On-ice Practice"] },
         { date: "2026-10-06", eventTypes: ["Video Review"] },
-        { date: "2026-10-10", eventTypes: ["Game"] },
+        { date: "2026-10-10", eventTypes: ["Game", "Video Review"] },
         { date: "2026-10-14", eventTypes: ["Evaluation"] },
         // November 2026
         { date: "2026-11-02", eventTypes: ["On-ice Practice"] },
         { date: "2026-11-07", eventTypes: ["Game"] },
         { date: "2026-11-11", eventTypes: ["Off-ice Practice"] },
         { date: "2026-11-16", eventTypes: ["Video Review"] },
+        { date: "2026-11-21", eventTypes: ["TBD"] },
       ]
     : [];
 
@@ -215,13 +211,24 @@ Options:
     "Video Review": true,
     Evaluation: true,
     Game: true,
-    TBD: false,
+    TBD: true,
   };
 
   const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
-  const eventSelections = sortedEventDates.flatMap<EventSelection>((eventDate) =>
-    eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
-  );
+  const easternStartTimes = ["6:00 PM", "7:15 PM", "8:30 AM", "5:45 PM"];
+  const eventSelections = sortedEventDates
+    .flatMap<EventSelection>((eventDate) =>
+      eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
+    )
+    .map((event, index) =>
+      index % 2 === 0
+        ? {
+            ...event,
+            startTime: easternStartTimes[(index / 2) % easternStartTimes.length],
+            timeZone: "ET",
+          }
+        : event
+    );
   const detailedEventSelections = eventSelections.filter(
     (event) => detailedEntryEventTypes[event.eventType]
   );
@@ -234,7 +241,6 @@ Options:
     primaryColor,
     secondaryColor,
     ageGroup,
-    skillLevel,
     hasGoalieMentors: enableAll,
     hasGoalieEvaluations: enableAll,
     goalieEvaluationTimes: "3",
@@ -243,6 +249,7 @@ Options:
     includeCalendarView: enableAll,
     includeEventDetails: enableAll,
     addSuggestedDrillEachPractice: enableAll,
+    addShotTrackerToGames: enableAll,
     sortedEventDates,
     eventSelections,
     detailedEventSelections,

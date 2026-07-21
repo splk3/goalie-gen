@@ -10,6 +10,7 @@ export interface CalendarImportRange {
 export interface CalendarImportResult {
   events: EventSelection[];
   skippedEvents: number;
+  effectiveRange?: CalendarImportRange;
 }
 
 export class CalendarImportError extends Error {
@@ -249,7 +250,8 @@ function normalizeCalendarLineEndings(icsText: string): string {
 
 export function parseCalendarFeed(
   icsText: string,
-  range: CalendarImportRange
+  range: CalendarImportRange,
+  options: { expandFiniteEvents?: boolean } = {}
 ): CalendarImportResult {
   validateRange(range);
   if (!icsText.trim()) {
@@ -265,6 +267,8 @@ export function parseCalendarFeed(
 
   const events: EventSelection[] = [];
   let skippedEvents = 0;
+  let earliestEventDate: string | undefined;
+  let latestEventDate: string | undefined;
 
   for (const component of getComponents(calendar)) {
     try {
@@ -275,16 +279,24 @@ export function parseCalendarFeed(
       }
 
       const timeZone = eventTimeZone(event);
+      const recurrenceRule = event.component.getFirstPropertyValue("rrule") as {
+        count?: number | null;
+        until?: ICAL.Time | null;
+      } | null;
+      const hasFiniteRecurrence =
+        event.isRecurring() && Boolean(recurrenceRule?.count || recurrenceRule?.until);
       const occurrences: ICAL.Time[] = [];
       if (event.isRecurring()) {
         const iterator = event.iterator();
         let occurrence: ICAL.Time | null;
         while ((occurrence = iterator.next())) {
           const date = localizedEventTime(occurrence, timeZone).date;
-          if (date > range.endDate) {
+          if (date > range.endDate && !(options.expandFiniteEvents && hasFiniteRecurrence)) {
             break;
           }
-          if (date >= range.startDate) {
+          if (options.expandFiniteEvents && hasFiniteRecurrence) {
+            occurrences.push(occurrence);
+          } else if (date >= range.startDate) {
             occurrences.push(occurrence);
           }
         }
@@ -295,7 +307,8 @@ export function parseCalendarFeed(
       for (const occurrence of occurrences) {
         const localizedTime = localizedEventTime(occurrence, timeZone);
         const occurrenceDate = localizedTime.date;
-        if (!isWithinRange(occurrenceDate, range)) {
+        const shouldInclude = options.expandFiniteEvents || isWithinRange(occurrenceDate, range);
+        if (!shouldInclude) {
           continue;
         }
         const details = event.getOccurrenceDetails(occurrence);
@@ -317,13 +330,35 @@ export function parseCalendarFeed(
           timeZone: localizedTime.timeZone,
           source: "calendar",
         });
+        earliestEventDate =
+          !earliestEventDate || occurrenceDate < earliestEventDate
+            ? occurrenceDate
+            : earliestEventDate;
+        latestEventDate =
+          !latestEventDate || occurrenceDate > latestEventDate ? occurrenceDate : latestEventDate;
       }
     } catch {
       skippedEvents += 1;
     }
   }
 
-  return { events: deduplicateCalendarEvents(events), skippedEvents };
+  const deduplicatedEvents = deduplicateCalendarEvents(events);
+  return {
+    events: deduplicatedEvents,
+    skippedEvents,
+    ...(options.expandFiniteEvents
+      ? {
+          effectiveRange: {
+            startDate:
+              earliestEventDate && earliestEventDate < range.startDate
+                ? earliestEventDate
+                : range.startDate,
+            endDate:
+              latestEventDate && latestEventDate > range.endDate ? latestEventDate : range.endDate,
+          },
+        }
+      : {}),
+  };
 }
 
 function deduplicateCalendarEvents(events: EventSelection[]): EventSelection[] {
