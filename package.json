@@ -48,7 +48,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.13.3",
+    "@types/node": "^26.1.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.5.0",
@@ -62,10 +62,10 @@
     "jest-environment-jsdom": "^30.3.0",
     "patch-package": "^8.0.1",
     "postcss": "^8.5.18",
-    "prettier": "3.8.4",
+    "prettier": "3.9.5",
     "tailwindcss": "^4.2.3",
     "tsx": "^4.20.6",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "jsdom": "29.1.1"
