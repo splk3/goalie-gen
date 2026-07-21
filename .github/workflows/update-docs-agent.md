@@ -28,6 +28,7 @@ safe-outputs:
     allowed-files:
       - README.md
       - .github/copilot-instructions.md
+      - docs/**/*.md
     excluded-files:
       - .github/workflows/**
       - .github/aw/**
