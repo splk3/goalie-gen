@@ -230,6 +230,30 @@ describe("blocksToDocxParagraphs", () => {
       expect(secondRow.options.children[2].options.children).toHaveLength(2);
     });
 
+    it("uses one-third and two-thirds widths for season-plan tables", () => {
+      const content = blocksToDocxContent([
+        {
+          type: "table",
+          headers: ["Season Phase / Focus Points", "Specific Skills & Techniques"],
+          rows: [["Early Season", "Stance and skating"]],
+        },
+      ]);
+
+      const table = content[0] as Table & {
+        root: Array<{ options?: { children: Array<unknown> } }>;
+      };
+      const firstRow = table.root[2] as {
+        options: {
+          children: Array<{ options: { width: { size: number; type: string } } }>;
+        };
+      };
+
+      expect(firstRow.options.children.map((cell) => cell.options.width)).toEqual([
+        { size: 3120, type: "dxa" },
+        { size: 6240, type: "dxa" },
+      ]);
+    });
+
     it("allows season-plan tables to span pages while keeping rows intact", () => {
       const content = blocksToDocxContent(
         [

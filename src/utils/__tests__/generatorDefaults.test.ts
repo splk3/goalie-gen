@@ -45,7 +45,7 @@ describe("getSeasonOverviewMarkdown", () => {
       markdown.indexOf("[SEASON_OVERVIEW_14U_STARTER]")
     );
     expect(markdown).toContain(
-      "[SEASON_OVERVIEW_ALL_AGES_STARTER]\n\n\n[SEASON_OVERVIEW_14U_STARTER]"
+      "[SEASON_OVERVIEW_ALL_AGES_STARTER]\n\n[SEASON_OVERVIEW_14U_STARTER]"
     );
   });
 

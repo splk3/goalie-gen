@@ -148,6 +148,7 @@ export interface TeamPlanConfig {
   includeCalendarView: boolean;
   includeEventDetails: boolean;
   addSuggestedDrillEachPractice: boolean;
+  addShotTrackerToGames: boolean;
 
   // Pre-processed event lists (sorted, filtered, reconciled)
   sortedEventDates: EventDateSelection[];

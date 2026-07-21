@@ -4,27 +4,30 @@
 
 ### TBD
 
-[[FIELDS:Event Name|Time]]
+[[FIELD:Event Details|1]]
 [[FIELD:Plan/Notes|4]]
 
 ### On-ice Practice
 
-[[FIELDS:Opponent|Time]]
+[[FIELD:Plan/Notes|4]]
 
 ### Game
 
-[[FIELDS:Opponent|Time]]
-[[FIELDS:Goalie|Venue]]
+[[FIELDS:Opponent|Details]]
+[[FIELDS:Goalies|Venue]]
 [[FIELD:Game Notes|4]]
 
 ### Off-ice Practice
 
-[EVENT_DETAILS_OFF_ICE_CONTENT]
+[[FIELD:Plan/Notes|4]]
 
 ### Video Review
 
-[EVENT_DETAILS_OFF_ICE_CONTENT]
+[[FIELD:Plan/Notes|4]]
 
 ### Evaluation
 
-[EVENT_DETAILS_SELECTED]
+[[FIELDS:Goalie Name|Goalie Name]]
+[[FIELDS:Good|Good]]
+[[FIELDS:Improve|Improve]]
+[[FIELD:Other Notes|2]]

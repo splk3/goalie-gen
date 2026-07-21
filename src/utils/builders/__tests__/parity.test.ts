@@ -90,6 +90,7 @@ const MINIMAL_TEAM_CONFIG: TeamPlanConfig = {
   includeCalendarView: false,
   includeEventDetails: false,
   addSuggestedDrillEachPractice: false,
+  addShotTrackerToGames: true,
   sortedEventDates: [],
   eventSelections: [],
   detailedEventSelections: [],
@@ -352,6 +353,26 @@ describe("buildTeamPlanDocument", () => {
     ).toBe("Wed, Jul 15, 2026 at 7:15 PM EDT (Game)");
   });
 
+  it("omits TBD from event headings", () => {
+    expect(
+      formatTeamPlanEventHeading({
+        date: "2026-07-15",
+        eventType: "TBD",
+      })
+    ).toBe("Wed, Jul 15, 2026 (Event Type:___________________)");
+  });
+
+  it("retains the time in TBD headings without adding the event type", () => {
+    expect(
+      formatTeamPlanEventHeading({
+        date: "2026-07-15",
+        startTime: "7:15 PM",
+        timeZone: "EDT",
+        eventType: "TBD",
+      })
+    ).toBe("Wed, Jul 15, 2026 at 7:15 PM EDT (Event Type:___________________)");
+  });
+
   it("returns a docx.Document instance", async () => {
     const result = await buildTeamPlanDocument(
       MINIMAL_TEAM_CONFIG,
@@ -433,6 +454,33 @@ describe("buildTeamPlanDocument", () => {
     );
     const buffer = await docx.Packer.toBuffer(result);
     expect(buffer.length).toBeGreaterThan(0);
+  });
+
+  it("omits the game shot tracker when disabled", async () => {
+    const config: TeamPlanConfig = {
+      ...MINIMAL_TEAM_CONFIG,
+      addCalendarOfEvents: true,
+      includeCalendarView: true,
+      includeEventDetails: true,
+      addShotTrackerToGames: false,
+      sortedEventDates: [{ date: "2026-07-11", eventTypes: ["Game"] }],
+      eventSelections: [{ date: "2026-07-11", eventType: "Game" }],
+      detailedEventSelections: [{ date: "2026-07-11", eventType: "Game" }],
+    };
+    const result = await buildTeamPlanDocument(
+      config,
+      {
+        ...MINIMAL_TEAM_CONTENT,
+        eventDetailsMd: "## Events\n\n### Game\n[[FIELDS:Opponent|Time]]\n[[FIELDS:Goalie|Venue]]",
+      },
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain("Opponent");
+    expect(serializedDocument).not.toContain("Game Timeline / Shot Tracker");
   });
 
   it("renders same-day calendar events as separate lines without commas", async () => {

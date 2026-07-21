@@ -60,7 +60,10 @@ export function formatTeamPlanEventHeading(
   const time = event.startTime
     ? ` at ${event.startTime}${event.timeZone ? ` ${event.timeZone}` : ""}`
     : "";
-  return `${formatDisplayDate(event.date)}${time} (${event.eventType})`;
+  const dateAndTime = `${formatDisplayDate(event.date)}${time}`;
+  return event.eventType === "TBD"
+    ? `${dateAndTime} (Event Type:___________________)`
+    : `${dateAndTime} (${event.eventType})`;
 }
 
 /**
@@ -124,6 +127,7 @@ export async function buildTeamPlanDocument(
     includeCalendarView,
     includeEventDetails,
     addSuggestedDrillEachPractice,
+    addShotTrackerToGames,
     sortedEventDates,
     eventSelections,
     detailedEventSelections,
@@ -771,10 +775,10 @@ export async function buildTeamPlanDocument(
           );
         }
 
-        if (event.eventType === "Game") {
+        if (event.eventType === "Game" && addShotTrackerToGames) {
           documentChildren.push(
             new Paragraph({
-              children: [toBlackRun("Game Timeline", { bold: true })],
+              children: [toBlackRun("Game Timeline / Shot Tracker", { bold: true })],
               spacing: { before: 120, after: 80 },
             })
           );

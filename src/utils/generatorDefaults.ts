@@ -399,7 +399,7 @@ export function getSeasonOverviewMarkdown(
     : "";
   const starterSection = [allAgesStarterSection, ageGroupStarterSection]
     .filter((section) => section.length > 0)
-    .join("\n\n\n");
+    .join("\n\n");
 
   const sectionBody = includeStarter
     ? starterSection || selectedPlaceholderSection || "[SEASON_OVERVIEW_SELECTED]"

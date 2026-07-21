@@ -496,6 +496,11 @@ describe("GenerateTeamPlanButton", () => {
     await openModal(user);
     await fillRequiredFields(user);
     await user.click(screen.getByRole("switch", { name: "Add calendar of events?" }));
+    expect(screen.getByRole("checkbox", { name: "Add Shot Tracker to Games" })).toBeChecked();
+    expect(screen.getByRole("img", { name: "Add Shot Tracker to Games help" })).toHaveAttribute(
+      "title",
+      "For each game, include a timeline chart for tracking shots and goals"
+    );
     await user.click(screen.getByRole("button", { name: "Add Event Dates Manually" }));
     await user.click(screen.getByRole("button", { name: / 9,/ }));
     await user.click(screen.getByRole("button", { name: "OK" }));
@@ -529,7 +534,7 @@ describe("GenerateTeamPlanButton", () => {
       )
       .find(
         (child: { options?: { children?: Array<{ options?: { text?: string } }> } }) =>
-          child.options?.children?.[0]?.options?.text === "Game Timeline"
+          child.options?.children?.[0]?.options?.text === "Game Timeline / Shot Tracker"
       );
     expect(gameTimelineParagraph?.options?.pageBreakBefore).toBeUndefined();
 

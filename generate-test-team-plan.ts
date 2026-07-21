@@ -185,6 +185,7 @@ Options:
         { date: "2026-08-08", eventTypes: ["Game"] },
         { date: "2026-08-12", eventTypes: ["Off-ice Practice"] },
         { date: "2026-08-17", eventTypes: ["Video Review"] },
+        { date: "2026-08-21", eventTypes: ["TBD"] },
         // September 2026
         { date: "2026-09-02", eventTypes: ["On-ice Practice"] },
         { date: "2026-09-07", eventTypes: ["Off-ice Practice"] },
@@ -200,6 +201,7 @@ Options:
         { date: "2026-11-07", eventTypes: ["Game"] },
         { date: "2026-11-11", eventTypes: ["Off-ice Practice"] },
         { date: "2026-11-16", eventTypes: ["Video Review"] },
+        { date: "2026-11-21", eventTypes: ["TBD"] },
       ]
     : [];
 
@@ -209,13 +211,24 @@ Options:
     "Video Review": true,
     Evaluation: true,
     Game: true,
-    TBD: false,
+    TBD: true,
   };
 
   const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
-  const eventSelections = sortedEventDates.flatMap<EventSelection>((eventDate) =>
-    eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
-  );
+  const easternStartTimes = ["6:00 PM", "7:15 PM", "8:30 AM", "5:45 PM"];
+  const eventSelections = sortedEventDates
+    .flatMap<EventSelection>((eventDate) =>
+      eventDate.eventTypes.map((eventType) => ({ date: eventDate.date, eventType }))
+    )
+    .map((event, index) =>
+      index % 2 === 0
+        ? {
+            ...event,
+            startTime: easternStartTimes[(index / 2) % easternStartTimes.length],
+            timeZone: "ET",
+          }
+        : event
+    );
   const detailedEventSelections = eventSelections.filter(
     (event) => detailedEntryEventTypes[event.eventType]
   );
@@ -236,6 +249,7 @@ Options:
     includeCalendarView: enableAll,
     includeEventDetails: enableAll,
     addSuggestedDrillEachPractice: enableAll,
+    addShotTrackerToGames: enableAll,
     sortedEventDates,
     eventSelections,
     detailedEventSelections,

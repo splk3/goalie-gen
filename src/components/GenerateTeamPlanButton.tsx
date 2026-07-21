@@ -160,6 +160,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   const [ageGroup, setAgeGroup] = React.useState<string>("");
   const [addSuggestedDrillEachPractice, setAddSuggestedDrillEachPractice] =
     React.useState<boolean>(true);
+  const [addShotTrackerToGames, setAddShotTrackerToGames] = React.useState<boolean>(true);
   const [hasGoalieMentors, setHasGoalieMentors] = React.useState<boolean>(false);
   const [hasGoalieEvaluations, setHasGoalieEvaluations] = React.useState<boolean>(false);
   const [goalieEvaluationTimes, setGoalieEvaluationTimes] = React.useState<string>("3");
@@ -627,6 +628,7 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       includeCalendarView,
       includeEventDetails,
       addSuggestedDrillEachPractice,
+      addShotTrackerToGames,
       sortedEventDates,
       eventSelections,
       detailedEventSelections,
@@ -1152,33 +1154,55 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
                       const isCalendarDisabledForType =
                         eventType !== "TBD" && !calendarEnabledEventTypes[eventType];
                       return (
-                        <label
-                          key={`detailed-event-type-${eventType}`}
-                          className={`flex items-center gap-2 ${
-                            isCalendarDisabledForType
-                              ? "text-gray-400 dark:text-gray-500"
-                              : "text-gray-700 dark:text-gray-300"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={detailedEntryEventTypes[eventType]}
-                            onChange={(e) =>
-                              setDetailedEntryEventTypes((previous) => ({
-                                ...previous,
-                                [eventType]: e.target.checked,
-                              }))
-                            }
-                            disabled={!canEditEventPlanning || isCalendarDisabledForType}
-                            className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
-                          />
-                          <span>
-                            {eventType}
-                            {isCalendarDisabledForType && (
-                              <span className="ml-1">(Must be enabled in Calendar view.)</span>
-                            )}
-                          </span>
-                        </label>
+                        <React.Fragment key={`detailed-event-type-${eventType}`}>
+                          <label
+                            className={`flex items-center gap-2 ${
+                              isCalendarDisabledForType
+                                ? "text-gray-400 dark:text-gray-500"
+                                : "text-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={detailedEntryEventTypes[eventType]}
+                              onChange={(e) =>
+                                setDetailedEntryEventTypes((previous) => ({
+                                  ...previous,
+                                  [eventType]: e.target.checked,
+                                }))
+                              }
+                              disabled={!canEditEventPlanning || isCalendarDisabledForType}
+                              className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                            />
+                            <span>
+                              {eventType}
+                              {isCalendarDisabledForType && (
+                                <span className="ml-1">(Must be enabled in Calendar view.)</span>
+                              )}
+                            </span>
+                          </label>
+                          {eventType === "Game" && (
+                            <label className="ml-6 inline-flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                              <input
+                                type="checkbox"
+                                aria-label="Add Shot Tracker to Games"
+                                checked={addShotTrackerToGames}
+                                onChange={(e) => setAddShotTrackerToGames(e.target.checked)}
+                                disabled={!canEditEventPlanning}
+                                className="h-4 w-4 text-usa-blue dark:text-blue-400 border-gray-300 rounded focus:ring-usa-blue disabled:cursor-not-allowed"
+                              />
+                              <span>Add Shot Tracker to Games</span>
+                              <span
+                                role="img"
+                                aria-label="Add Shot Tracker to Games help"
+                                title="For each game, include a timeline chart for tracking shots and goals"
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-400 text-xs text-gray-600 dark:border-gray-500 dark:text-gray-300"
+                              >
+                                i
+                              </span>
+                            </label>
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </div>

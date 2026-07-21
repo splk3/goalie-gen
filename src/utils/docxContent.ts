@@ -136,7 +136,12 @@ export function textToParagraphChildren(
 
 export type DocxContent = Paragraph | Table;
 
-function getTableColumnWidths(columnCount: number): number[] {
+function getTableColumnWidths(headers: string[]): number[] {
+  if (headers.length === 2 && headers[0] === "Season Phase / Focus Points") {
+    return [3120, 6240];
+  }
+
+  const columnCount = headers.length;
   const baseWidth = Math.floor(DOCX_CONTENT_WIDTH_TWIPS / columnCount);
   const remainder = DOCX_CONTENT_WIDTH_TWIPS - baseWidth * columnCount;
   return Array.from({ length: columnCount }, (_, index) =>
@@ -165,7 +170,7 @@ function tableBlockToDocxTable(
   primaryColor: string,
   keepTablesTogether: boolean
 ): Table {
-  const columnWidths = getTableColumnWidths(block.headers.length);
+  const columnWidths = getTableColumnWidths(block.headers);
   const rows = [block.headers, ...block.rows].map((cells, rowIndex) => {
     const isHeader = rowIndex === 0;
     return new TableRow({
