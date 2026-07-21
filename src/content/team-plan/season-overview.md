@@ -61,7 +61,7 @@ Having time on the bench also gives coaches and goalies a chance to communicate 
 While fun remains a primary focus, 10U goals shift towards foundational skills mastery, mechanical consistency, and continued athletic development.
 
 Goalies at this level typically begin to specialize or split time in the net more formally,
-but skating out should still be encouraged when possible to continue developing overal athleticism and improve Hockey IQ.
+but skating out should still be encouraged when possible to continue developing overall athleticism and improve Hockey IQ.
 
 The focus at 10U is on building a solid baseline of muscle memory and game experience in a safe, fun environment so that the goaltender is mechanically, emotionally, and intellectually ready for higher levels of play.
 
