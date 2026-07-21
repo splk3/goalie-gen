@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD041 -->
 
-## Practice & Game Log
+## Goalie Event Log
 
 Goals for today:
 

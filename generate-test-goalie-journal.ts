@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as jsPdfModule from "jspdf";
+import * as qrCode from "qrcode";
 import { DEFAULT_JOURNAL_ENTRY_COUNT } from "./src/utils/generatorDefaults";
 import { DEFAULT_PRIMARY_TEAM_COLOR, DEFAULT_SECONDARY_TEAM_COLOR } from "./src/utils/teamColors";
 import { buildGoalieJournalPdf } from "./src/utils/builders/goalieJournalBuilder";
@@ -111,6 +112,18 @@ Options:
     }
   }
 
+  const footerLogoPath = path.join(__dirname, "static/images/logos/logo-alt-light.png");
+  let footerLogoData: JournalLogoData | null = null;
+  if (fs.existsSync(footerLogoPath)) {
+    const footerLogoBuffer = fs.readFileSync(footerLogoPath);
+    const dimensions = getImageDimensions(footerLogoPath);
+    footerLogoData = {
+      dataUrl: `data:image/png;base64,${footerLogoBuffer.toString("base64")}`,
+      width: dimensions?.width ?? 60,
+      height: dimensions?.height ?? 60,
+    };
+  }
+
   const currentYear = new Date().getFullYear();
   const season = `${currentYear}-${currentYear + 1}`;
 
@@ -123,7 +136,19 @@ Options:
     entryCount,
   };
 
-  const doc = buildGoalieJournalPdf(config, journalContent, logoData, jsPdfModule);
+  const qrCodeDataUrl = await qrCode.toDataURL("https://goaliegen.com", {
+    margin: 1,
+    width: 160,
+    color: { dark: "#000000", light: "#FFFFFF" },
+  });
+  const doc = buildGoalieJournalPdf(
+    config,
+    journalContent,
+    logoData,
+    jsPdfModule,
+    qrCodeDataUrl,
+    footerLogoData
+  );
   const arrayBuffer = doc.output("arraybuffer");
   fs.writeFileSync(outputPath, Buffer.from(arrayBuffer));
   console.log(`\u2713 Generated goalie journal successfully at: ${outputPath}`);

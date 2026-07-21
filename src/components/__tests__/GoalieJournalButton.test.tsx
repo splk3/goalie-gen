@@ -15,6 +15,10 @@ jest.mock("../../utils/loadExportModules", () => ({
   loadJsPdfModule: jest.fn(async () => ({})),
 }));
 
+jest.mock("qrcode", () => ({
+  toDataURL: jest.fn(async () => "data:image/png;base64,qr"),
+}));
+
 jest.mock("../../utils/teamColors", () => ({
   DEFAULT_PRIMARY_TEAM_COLOR: "#00205B",
   DEFAULT_SECONDARY_TEAM_COLOR: "#AF272F",
@@ -81,6 +85,8 @@ describe("GoalieJournalButton", () => {
   it("passes edited colors to the journal PDF builder", async () => {
     const user = userEvent.setup();
     const originalImage = global.Image;
+    const originalGetContext = HTMLCanvasElement.prototype.getContext;
+    const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
     class MockImage {
       width = 1;
       height = 1;
@@ -92,6 +98,14 @@ describe("GoalieJournalButton", () => {
       }
     }
     Object.defineProperty(global, "Image", { configurable: true, value: MockImage });
+    Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+      configurable: true,
+      value: jest.fn(() => ({ drawImage: jest.fn() })),
+    });
+    Object.defineProperty(HTMLCanvasElement.prototype, "toDataURL", {
+      configurable: true,
+      value: jest.fn(() => "data:image/png;base64,default-logo"),
+    });
 
     render(<GoalieJournalButton />);
 
@@ -120,11 +134,21 @@ describe("GoalieJournalButton", () => {
           }),
           expect.anything(),
           expect.anything(),
+          expect.anything(),
+          expect.anything(),
           expect.anything()
         );
       });
     } finally {
       Object.defineProperty(global, "Image", { configurable: true, value: originalImage });
+      Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+        configurable: true,
+        value: originalGetContext,
+      });
+      Object.defineProperty(HTMLCanvasElement.prototype, "toDataURL", {
+        configurable: true,
+        value: originalToDataURL,
+      });
     }
   });
 });

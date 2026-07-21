@@ -80,10 +80,10 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     };
   }, [logoPreview]);
 
-  const getLogoAsBase64 = (): Promise<string | null> => {
+  const getLogoAsBase64 = (previewUrl: string | null = logoPreview): Promise<string | null> => {
     return new Promise((resolve) => {
-      if (logoPreview) {
-        resolve(logoPreview);
+      if (previewUrl) {
+        resolve(previewUrl);
         return;
       }
 
@@ -115,14 +115,30 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
 
   const generatePdf = async (): Promise<void> => {
     const jsPdfModule = await loadJsPdfModule();
+    let qrCodeDataUrl: string | null = null;
+    try {
+      const qrCode = await import("qrcode");
+      qrCodeDataUrl = await qrCode.toDataURL("https://goaliegen.com", {
+        margin: 1,
+        width: 160,
+        color: { dark: "#000000", light: "#FFFFFF" },
+      });
+    } catch (error) {
+      console.error("Failed to generate goalie journal QR code", error);
+    }
     const currentYear = new Date().getFullYear();
     const season = `${currentYear}-${currentYear + 1}`;
 
     const logoBase64 = await getLogoAsBase64();
+    const footerLogoBase64 = await getLogoAsBase64(null);
 
-    // Resolve logo dimensions for the builder
-    let logoData: import("../types/generatorConfig").JournalLogoData | null = null;
-    if (logoBase64) {
+    const resolveLogoData = async (
+      dataUrl: string | null
+    ): Promise<import("../types/generatorConfig").JournalLogoData | null> => {
+      if (!dataUrl) {
+        return null;
+      }
+
       let logoWidth = 60;
       let logoHeight = 60;
       try {
@@ -130,15 +146,18 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
         await new Promise((resolve) => {
           img.onload = resolve;
           img.onerror = resolve;
-          img.src = logoBase64;
+          img.src = dataUrl;
         });
         logoWidth = img.width > 0 ? img.width : 60;
         logoHeight = img.height > 0 ? img.height : 60;
       } catch (e) {
         console.error("Failed to parse logo dimensions", e);
       }
-      logoData = { dataUrl: logoBase64, width: logoWidth, height: logoHeight };
-    }
+      return { dataUrl, width: logoWidth, height: logoHeight };
+    };
+
+    const logoData = await resolveLogoData(logoBase64);
+    const footerLogoData = await resolveLogoData(footerLogoBase64);
 
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
       goalieName,
@@ -156,7 +175,14 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       endOfSeasonMd,
     };
 
-    const doc = buildGoalieJournalPdf(config, journalContent, logoData, jsPdfModule);
+    const doc = buildGoalieJournalPdf(
+      config,
+      journalContent,
+      logoData,
+      jsPdfModule,
+      qrCodeDataUrl,
+      footerLogoData
+    );
 
     const sanitizedName =
       goalieName

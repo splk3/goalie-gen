@@ -117,7 +117,7 @@ const JOURNAL_CONFIG: GoalieJournalConfig = {
 const JOURNAL_CONTENT: GoalieJournalContent = {
   coverMd: "# Goalie Journal\n\nA journal for your season.",
   seasonGoalsMd: "# Season Goals\n\nSet your goals here.",
-  practiceEntryMd: "# Practice & Game Log\n\nNotes from today's practice.",
+  practiceEntryMd: "# Goalie Event Log\n\nNotes from today's practice.",
   endOfSeasonMd: "# End of Season Review\n\nReflect on your season.",
 };
 
@@ -130,6 +130,8 @@ function makeMockJsPdfModule() {
   const textColors: string[] = [];
   const drawColors: string[] = [];
   const fonts: string[] = [];
+  const texts: string[] = [];
+  const images: string[] = [];
   class MockJsPDF {
     internal = {
       pageSize: { height: 297 },
@@ -154,6 +156,7 @@ function makeMockJsPdfModule() {
       return this;
     }
     text(_text: string | string[], _x: number, _y: number, _options?: object) {
+      texts.push(Array.isArray(_text) ? _text.join("\n") : _text);
       return this;
     }
     line(_x1: number, _y1: number, _x2: number, _y2: number) {
@@ -173,13 +176,14 @@ function makeMockJsPdfModule() {
       return this;
     }
     addImage(_data: string, _format: string, _x: number, _y: number, _w: number, _h: number) {
+      images.push(_data);
       return this;
     }
     output(_type: string): unknown {
       return _type === "blob" ? new Blob() : new ArrayBuffer(0);
     }
   }
-  return { jsPDF: MockJsPDF, textColors, drawColors, fonts };
+  return { jsPDF: MockJsPDF, textColors, drawColors, fonts, texts, images };
 }
 
 // ─── Club Plan builder tests ──────────────────────────────────────────────────
@@ -716,8 +720,49 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(mockModule.textColors).toContain("#123456");
+    expect(mockModule.textColors).toContain("#ABCDEF");
     expect(mockModule.drawColors).toContain("#ABCDEF");
+    expect(mockModule.drawColors).toContain("#000000");
     expect(mockModule.textColors).toContain("#000000");
+  });
+
+  it("renders hand-fillable log labels, vector checkboxes, footer text, and QR code", () => {
+    const mockModule = makeMockJsPdfModule();
+    const qrCodeDataUrl = "data:image/png;base64,qr";
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf"),
+      qrCodeDataUrl
+    );
+
+    expect(mockModule.texts).toContain("Page");
+    expect(mockModule.texts).toContain("Entry #");
+    expect(mockModule.texts).toContain("Time:");
+    expect(mockModule.texts).toContain("Practice");
+    expect(mockModule.texts).toContain("Game");
+    expect(mockModule.texts).toContain("Other:");
+    expect(mockModule.texts).toContain(
+      "If you need more space, make copies of this page or download the PDF at goaliegen.com"
+    );
+    expect(mockModule.images).toContain(qrCodeDataUrl);
+
+    const footerLogoData = {
+      dataUrl: "data:image/png;base64,footer-logo",
+      width: 60,
+      height: 60,
+    };
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf"),
+      qrCodeDataUrl,
+      footerLogoData
+    );
+    expect(mockModule.images).toContain(footerLogoData.dataUrl);
   });
 
   it("renders Markdown bold and italic styles in PDF text", () => {
@@ -725,7 +770,7 @@ describe("buildGoalieJournalPdf", () => {
     const content: GoalieJournalContent = {
       ...JOURNAL_CONTENT,
       coverMd: "# **Bold Journal**\n\n*Italic subtitle*",
-      practiceEntryMd: "# Practice & Game Log\n\n**Bold prompt** and _italic prompt_.",
+      practiceEntryMd: "# Goalie Event Log\n\n**Bold prompt** and _italic prompt_.",
     };
 
     buildGoalieJournalPdf(

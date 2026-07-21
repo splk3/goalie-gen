@@ -111,7 +111,9 @@ export function buildGoalieJournalPdf(
   config: GoalieJournalConfig,
   content: GoalieJournalContent,
   logo: JournalLogoData | null,
-  jsPdf: JsPdfModule
+  jsPdf: JsPdfModule,
+  qrCodeDataUrl: string | null = null,
+  footerLogo: JournalLogoData | null = null
 ): InstanceType<JsPdfModule["jsPDF"]> {
   const { jsPDF } = jsPdf;
   const { goalieName, teamName, primaryColor, secondaryColor, season, entryCount } = config;
@@ -130,13 +132,14 @@ export function buildGoalieJournalPdf(
   doc.setTextColor(primary);
   doc.setFontSize(28);
   drawInlineText(doc, coverTitle, 105, 40, 170, 6, "center");
-  doc.setTextColor("#000000");
+  doc.setTextColor(secondary);
   doc.setFontSize(18);
   doc.text(goalieName, 105, 58, { align: "center" });
   doc.text(teamName, 105, 72, { align: "center" });
   doc.text(`Season ${season}`, 105, 86, { align: "center" });
   if (coverSubtitle) {
     doc.setFontSize(10);
+    doc.setTextColor("#000000");
     drawInlineText(doc, coverSubtitle, 105, 97, 170, 5, "center");
   }
 
@@ -182,7 +185,7 @@ export function buildGoalieJournalPdf(
   // ── Practice/Game Log pages ────────────────────────────────────────────────
 
   const entryBlocks = parseMarkdown(practiceEntryMd);
-  const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Practice & Game Log";
+  const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Event Log";
   const entryLabels = entryBlocks
     .filter((b) => b.type === "paragraph" || b.type === "bullet")
     .map((b) => b.text);
@@ -192,7 +195,7 @@ export function buildGoalieJournalPdf(
   const labelMaxWidth = 165; // mm available for label text at x=20
   const labelLineHeight = 5; // mm per wrapped text line
   const labelRowGap = 8; // mm from last text line to underline + to next prompt start
-  const entryHeaderHeight = 23; // mm from box top to first prompt (entry label + date row)
+  const entryHeaderHeight = 30; // mm from box top to first prompt (entry label + event rows)
   const entryBorderPadding = 2; // mm for the box border
   const entryMinHeight = 50; // mm minimum so the box is always readable
 
@@ -204,7 +207,7 @@ export function buildGoalieJournalPdf(
     entryBorderPadding;
   const entryHeight = Math.max(entryMinHeight, computedEntryHeight);
   const journalPageHeight = doc.internal.pageSize.height;
-  const availablePerPage = journalPageHeight - 40;
+  const availablePerPage = journalPageHeight - 58;
   const entriesPerPage = Math.max(1, Math.floor(availablePerPage / entryHeight));
   const numLogPages = Math.ceil(entryCount / entriesPerPage);
 
@@ -212,28 +215,42 @@ export function buildGoalieJournalPdf(
     doc.addPage();
     doc.setTextColor(primary);
     doc.setFontSize(16);
-    doc.text(`${entryTitle} - Page ${page + 1}`, 105, 15, { align: "center" });
+    doc.text(entryTitle, 105, 12, { align: "center" });
+    doc.setFontSize(9);
+    doc.text("Page", 165, 15);
+    doc.line(177, 15, 195, 15);
 
     const firstEntry = page * entriesPerPage;
     const lastEntry = Math.min(firstEntry + entriesPerPage, entryCount);
     for (let entry = firstEntry; entry < lastEntry; entry++) {
       const startY = 25 + (entry - firstEntry) * entryHeight;
-      const entryNum = entry + 1;
 
       doc.setDrawColor(secondary);
       doc.setLineWidth(0.5);
       doc.rect(15, startY, 180, entryHeight - 2);
+      doc.setDrawColor("#000000");
 
       doc.setTextColor("#000000");
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text(`Entry ${entryNum}`, 20, startY + 7);
+      doc.text("Entry #", 20, startY + 7);
+      doc.line(48, startY + 7, 75, startY + 7);
       doc.setFont("helvetica", "normal");
 
       doc.setFontSize(9);
-      doc.text("Date: _______________", 20, startY + 15);
-      doc.text("\u25A1 Practice  \u25A1 Game", 80, startY + 15);
-      doc.text("Opponent: _______________", 135, startY + 15);
+      doc.text("Date:", 20, startY + 15);
+      doc.line(31, startY + 15, 54, startY + 15);
+      doc.text("Time:", 59, startY + 15);
+      doc.line(70, startY + 15, 93, startY + 15);
+      doc.rect(101, startY + 11.5, 3, 3);
+      doc.text("Practice", 106, startY + 15);
+      doc.rect(124, startY + 11.5, 3, 3);
+      doc.text("Game", 129, startY + 15);
+      doc.rect(143, startY + 11.5, 3, 3);
+      doc.text("Other:", 148, startY + 15);
+      doc.line(161, startY + 15, 190, startY + 15);
+      doc.text("Opponent:", 20, startY + 23);
+      doc.line(42, startY + 23, 100, startY + 23);
 
       let promptY = startY + entryHeaderHeight;
       entryLabels.forEach((label) => {
@@ -250,6 +267,18 @@ export function buildGoalieJournalPdf(
         doc.line(20, underlineY, 190, underlineY);
         promptY += lines.length * labelLineHeight + labelRowGap;
       });
+    }
+
+    const footerText =
+      "If you need more space, make copies of this page or download the PDF at goaliegen.com";
+    doc.setFontSize(7);
+    doc.setTextColor("#000000");
+    if (footerLogo) {
+      doc.addImage(footerLogo.dataUrl, "PNG", 20, journalPageHeight - 24, 14, 14);
+    }
+    doc.text(footerText, footerLogo ? 106 : 98, journalPageHeight - 10, { align: "center" });
+    if (qrCodeDataUrl) {
+      doc.addImage(qrCodeDataUrl, "PNG", 178, journalPageHeight - 24, 14, 14);
     }
   }
 
