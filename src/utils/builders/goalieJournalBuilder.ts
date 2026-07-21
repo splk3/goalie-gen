@@ -218,6 +218,8 @@ export function buildGoalieJournalPdf(
     doc.text(entryTitle, 105, 12, { align: "center" });
     doc.setFontSize(9);
     doc.text("Page", 165, 15);
+    doc.setDrawColor(primary);
+    doc.setLineWidth(0.5);
     doc.line(177, 15, 195, 15);
 
     const firstEntry = page * entriesPerPage;
@@ -225,7 +227,7 @@ export function buildGoalieJournalPdf(
     for (let entry = firstEntry; entry < lastEntry; entry++) {
       const startY = 25 + (entry - firstEntry) * entryHeight;
 
-      doc.setDrawColor(secondary);
+      doc.setDrawColor(entry % 2 === 0 ? primary : secondary);
       doc.setLineWidth(0.5);
       doc.rect(15, startY, 180, entryHeight - 2);
       doc.setDrawColor("#000000");

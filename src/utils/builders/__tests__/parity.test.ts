@@ -129,6 +129,10 @@ function makeMockJsPdfModule() {
   const pages: number[] = [1];
   const textColors: string[] = [];
   const drawColors: string[] = [];
+  const lineDrawColors: string[] = [];
+  const lineWidths: number[] = [];
+  let currentDrawColor = "#000000";
+  let currentLineWidth = 0.2;
   const fonts: string[] = [];
   const texts: string[] = [];
   const images: string[] = [];
@@ -149,10 +153,12 @@ function makeMockJsPdfModule() {
       return this;
     }
     setDrawColor(color: string) {
+      currentDrawColor = color;
       drawColors.push(color);
       return this;
     }
-    setLineWidth(_w: number) {
+    setLineWidth(width: number) {
+      currentLineWidth = width;
       return this;
     }
     text(_text: string | string[], _x: number, _y: number, _options?: object) {
@@ -160,6 +166,8 @@ function makeMockJsPdfModule() {
       return this;
     }
     line(_x1: number, _y1: number, _x2: number, _y2: number) {
+      lineDrawColors.push(currentDrawColor);
+      lineWidths.push(currentLineWidth);
       return this;
     }
     rect(_x: number, _y: number, _w: number, _h: number) {
@@ -183,7 +191,16 @@ function makeMockJsPdfModule() {
       return _type === "blob" ? new Blob() : new ArrayBuffer(0);
     }
   }
-  return { jsPDF: MockJsPDF, textColors, drawColors, fonts, texts, images };
+  return {
+    jsPDF: MockJsPDF,
+    textColors,
+    drawColors,
+    lineDrawColors,
+    lineWidths,
+    fonts,
+    texts,
+    images,
+  };
 }
 
 // ─── Club Plan builder tests ──────────────────────────────────────────────────
@@ -724,6 +741,37 @@ describe("buildGoalieJournalPdf", () => {
     expect(mockModule.drawColors).toContain("#ABCDEF");
     expect(mockModule.drawColors).toContain("#000000");
     expect(mockModule.textColors).toContain("#000000");
+  });
+
+  it("alternates journal entry box borders between configured colors", () => {
+    const mockModule = makeMockJsPdfModule();
+    const config: GoalieJournalConfig = {
+      ...JOURNAL_CONFIG,
+      primaryColor: "#123456",
+      secondaryColor: "#ABCDEF",
+      entryCount: 5,
+    };
+
+    buildGoalieJournalPdf(
+      config,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const firstEntryBorderIndex = mockModule.drawColors.indexOf("#123456");
+    const secondEntryBorderIndex = mockModule.drawColors.indexOf(
+      "#ABCDEF",
+      firstEntryBorderIndex + 1
+    );
+    expect(firstEntryBorderIndex).toBeGreaterThanOrEqual(0);
+    expect(secondEntryBorderIndex).toBeGreaterThan(firstEntryBorderIndex);
+    expect(mockModule.lineDrawColors.filter((color) => color === "#123456")).toHaveLength(2);
+    mockModule.lineDrawColors.forEach((color, index) => {
+      if (color === "#123456") {
+        expect(mockModule.lineWidths[index]).toBe(0.5);
+      }
+    });
   });
 
   it("renders hand-fillable log labels, vector checkboxes, footer text, and QR code", () => {
