@@ -1,4 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { parseMarkdown } from "../markdownParser";
+import type { MarkdownBlock } from "../markdownParser";
 
 describe("parseMarkdown", () => {
   it("parses a heading 1", () => {
@@ -98,6 +102,26 @@ describe("parseMarkdown", () => {
         ],
       },
     ]);
+  });
+
+  it("parses every season overview age-group table", () => {
+    const markdown = fs.readFileSync(
+      path.join(__dirname, "../../content/team-plan/season-overview.md"),
+      "utf8"
+    );
+    const tables = parseMarkdown(markdown).filter(
+      (block): block is Extract<MarkdownBlock, { type: "table" }> => block.type === "table"
+    );
+
+    expect(tables).toHaveLength(5);
+    expect(tables.map((table) => table.headers)).toEqual([
+      ["Season Phase / Focus Points", "Specific Skills & Techniques"],
+      ["Season Phase / Focus Points", "Specific Skills"],
+      ["Timeframe & Core Focus", "Specific Skills & Techniques (11U/12U)"],
+      ["Timeframe & Core Focus", "Specific Skills & Techniques (13U/14U)"],
+      ["Timeframe & Core Focus", "16U and Older Specific Skills and Techniques"],
+    ]);
+    expect(tables.every((table) => table.rows.length === 4)).toBe(true);
   });
 
   it("parses fill-in fields with an optional number of lines", () => {
