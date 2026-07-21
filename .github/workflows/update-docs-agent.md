@@ -44,6 +44,7 @@ You are a technical documentation writer. Your task is to review the current sta
 1. **Read the current documentation files**:
    - `README.md` — the main project README
    - `.github/copilot-instructions.md` — Copilot coding agent instructions
+   - `docs/**/*.md` — supplemental documentation in the `docs/` directory (e.g., `docs/architecture.md`, `docs/components.md`, `docs/drills.md`, etc.)
 
 2. **Review the repository structure** to understand the current state:
    - Examine `src/pages/`, `src/components/`, `src/templates/`, `src/utils/`, `src/hooks/`
