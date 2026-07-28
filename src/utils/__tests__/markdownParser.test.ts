@@ -104,29 +104,99 @@ describe("parseMarkdown", () => {
     ]);
   });
 
-  it("parses compact season tables into the same table blocks as pipe tables", () => {
+  it("parses compact season tables into season-table blocks", () => {
     const md = [
       ":::season-table",
       "headers: Timeframe & Core Focus; Specific Skills & Techniques",
-      "- phase: **Early Season**<br>_Core Focus: Stance and skating_",
-      "  skills: **Stance:** Ready position<br>**Skating:** Shuffles",
-      "- phase: **Late Season**<br>_Core Focus: Game preparation_",
-      "  skills: **Tactics:** Breakaways",
+      "- phase:",
+      "    - **Early Season**",
+      "    - _Core Focus: Stance and skating_",
+      "  skills:",
+      "    - **Stance:** Ready position",
+      "    - **Skating:** Shuffles",
+      "- phase:",
+      "    - **Late Season**",
+      "    - _Core Focus: Game preparation_",
+      "  skills:",
+      "    - **Tactics:** Breakaways",
       ":::",
     ].join("\n");
 
     expect(parseMarkdown(md)).toEqual([
       {
-        type: "table",
+        type: "season-table",
         headers: ["Timeframe & Core Focus", "Specific Skills & Techniques"],
         rows: [
-          [
-            "**Early Season**<br>_Core Focus: Stance and skating_",
-            "**Stance:** Ready position<br>**Skating:** Shuffles",
-          ],
-          ["**Late Season**<br>_Core Focus: Game preparation_", "**Tactics:** Breakaways"],
+          {
+            phase: "**Early Season**\n_Core Focus: Stance and skating_",
+            skills: "**Stance:** Ready position\n**Skating:** Shuffles",
+          },
+          {
+            phase: "**Late Season**\n_Core Focus: Game preparation_",
+            skills: "**Tactics:** Breakaways",
+          },
         ],
       },
+    ]);
+  });
+
+  it("parses drill_url from a season table phase", () => {
+    const md = [
+      ":::season-table",
+      "headers: Season Phase / Focus Points; Specific Skills",
+      "- phase:",
+      "    - **Early Season**",
+      "    - **Core Focus:** Basics",
+      "  drill_url: https://goaliegen.com/goalie-drills/",
+      "  skills:",
+      "    - **Stance:** Ready position",
+      "- phase:",
+      "    - **Late Season**",
+      "    - **Core Focus:** Advanced",
+      "  skills:",
+      "    - **Tactics:** Breakaways",
+      ":::",
+    ].join("\n");
+
+    expect(parseMarkdown(md)).toEqual([
+      {
+        type: "season-table",
+        headers: ["Season Phase / Focus Points", "Specific Skills"],
+        rows: [
+          {
+            phase: "**Early Season**\n**Core Focus:** Basics",
+            skills: "**Stance:** Ready position",
+            drillUrl: "https://goaliegen.com/goalie-drills/",
+          },
+          {
+            phase: "**Late Season**\n**Core Focus:** Advanced",
+            skills: "**Tactics:** Breakaways",
+          },
+        ],
+      },
+    ]);
+  });
+
+  it("leaves legacy compact season table phase syntax as normal text", () => {
+    const md = [
+      ":::season-table",
+      "headers: Timeframe & Core Focus; Specific Skills & Techniques",
+      "- phase: **Early Season**<br>_Core Focus: Stance and skating_",
+      "  skills: **Stance:** Ready position<br>**Skating:** Shuffles",
+      ":::",
+    ].join("\n");
+
+    expect(parseMarkdown(md)).toEqual([
+      {
+        type: "paragraph",
+        text: ":::season-table headers: Timeframe & Core Focus; Specific Skills & Techniques",
+      },
+      {
+        type: "bullet",
+        text:
+          "phase: **Early Season**<br>_Core Focus: Stance and skating_ skills: **Stance:** Ready position<br>**Skating:** Shuffles",
+      },
+      { type: "paragraph", text: ":::" },
     ]);
   });
 
@@ -153,7 +223,8 @@ describe("parseMarkdown", () => {
       "utf8"
     );
     const tables = parseMarkdown(markdown).filter(
-      (block): block is Extract<MarkdownBlock, { type: "table" }> => block.type === "table"
+      (block): block is Extract<MarkdownBlock, { type: "season-table" }> =>
+        block.type === "season-table"
     );
 
     expect(tables).toHaveLength(5);

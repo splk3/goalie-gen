@@ -155,7 +155,7 @@ function createTableCellParagraphs(
   isHeader: boolean,
   keepNext: boolean
 ): Paragraph[] {
-  return text.split(/<br\s*\/?>/gi).map(
+  return text.split(/<br\s*\/?>|\r?\n/gi).map(
     (line) =>
       new Paragraph({
         children: textToParagraphChildren(line, primaryColor, "000000", isHeader),
@@ -335,6 +335,18 @@ export function blocksToDocxContent(
     switch (block.type) {
       case "table":
         return [tableBlockToDocxTable(block, primary, keepTablesTogether)];
+      case "season-table":
+        return [
+          tableBlockToDocxTable(
+            {
+              type: "table",
+              headers: block.headers,
+              rows: block.rows.map((row) => [row.phase, row.skills]),
+            },
+            primary,
+            keepTablesTogether
+          ),
+        ];
       case "field":
         return [fillInFieldToDocxTable(block, primary)];
       case "fields":

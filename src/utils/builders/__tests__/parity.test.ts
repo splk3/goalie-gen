@@ -589,6 +589,49 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
+  it("keeps Event Details links for On-ice Practice/Evaluation without generating QR codes", async () => {
+    const calledUrls: string[] = [];
+    const trackingQrGenerator: QrGenerator = async (url) => {
+      calledUrls.push(url);
+      return new Uint8Array([1, 2, 3]);
+    };
+    const result = await buildTeamPlanDocument(
+      {
+        ...MINIMAL_TEAM_CONFIG,
+        addCalendarOfEvents: true,
+        includeEventDetails: true,
+        addSuggestedDrillEachPractice: true,
+        sortedEventDates: [
+          { date: "2026-07-11", eventTypes: ["On-ice Practice"] },
+          { date: "2026-07-12", eventTypes: ["Evaluation"] },
+        ],
+        eventSelections: [
+          { date: "2026-07-11", eventType: "On-ice Practice" },
+          { date: "2026-07-12", eventType: "Evaluation" },
+        ],
+        detailedEventSelections: [
+          { date: "2026-07-11", eventType: "On-ice Practice" },
+          { date: "2026-07-12", eventType: "Evaluation" },
+        ],
+      },
+      {
+        ...MINIMAL_TEAM_CONTENT,
+        eventDetailsMd:
+          "## Event Details\n\n### On-ice Practice\n[[FIELD:Event Details|1]]\n\n### Evaluation\n[[FIELD:Event Details|1]]",
+      },
+      null,
+      trackingQrGenerator,
+      docx
+    );
+
+    const serializedDocument = JSON.stringify(result);
+    expect(serializedDocument).toContain("Suggested goalie drills page:");
+    expect(serializedDocument).toContain("https://goaliegen.com/goalie-drills/");
+    expect(serializedDocument).toContain("Evaluation forms available at");
+    expect(serializedDocument).toContain("https://goaliegen.com/goalie-evals/");
+    expect(calledUrls).toEqual([]);
+  });
+
   it("calls QrGenerator when hasGoalieEvaluations is true", async () => {
     const calledUrls: string[] = [];
     const trackingQrGenerator: QrGenerator = async (url) => {

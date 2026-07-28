@@ -1,8 +1,11 @@
+export type SeasonTableRow = { phase: string; skills: string; drillUrl?: string };
+
 export type MarkdownBlock =
   | { type: "heading"; level: 1 | 2 | 3; text: string }
   | { type: "paragraph"; text: string }
   | { type: "bullet"; text: string }
   | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "season-table"; headers: string[]; rows: SeasonTableRow[] }
   | { type: "field"; label: string; lines: number }
   | { type: "fields"; rows: Array<{ left: string; right: string }> }
   | { type: "image"; alt: string; src: string }
@@ -80,7 +83,7 @@ function parseSeasonTableAt(
   lines: string[],
   startIndex: number
 ): {
-  block: Extract<MarkdownBlock, { type: "table" }>;
+  block: Extract<MarkdownBlock, { type: "season-table" }>;
   nextIndex: number;
 } | null {
   if (lines[startIndex].trim() !== ":::season-table") {
@@ -97,7 +100,7 @@ function parseSeasonTableAt(
     return null;
   }
 
-  const rows: string[][] = [];
+  const rows: SeasonTableRow[] = [];
   let nextIndex = startIndex + 2;
   while (nextIndex < lines.length) {
     if (lines[nextIndex].trim() === "") {
@@ -108,13 +111,86 @@ function parseSeasonTableAt(
       break;
     }
 
-    const phaseMatch = lines[nextIndex].match(/^[ \t]*-\s+phase:\s*(.+)$/);
-    const skillsMatch = lines[nextIndex + 1]?.match(/^[ \t]+skills:\s*(.+)$/);
-    if (!phaseMatch || !skillsMatch) {
+    const phaseHeaderMatch = lines[nextIndex].match(/^[ \t]*-\s+phase:\s*$/);
+    if (!phaseHeaderMatch) {
       return null;
     }
-    rows.push([phaseMatch[1].trim(), skillsMatch[1].trim()]);
-    nextIndex += 2;
+
+    const phase: string[] = [];
+    let phaseLineIndex = nextIndex + 1;
+    while (phaseLineIndex < lines.length) {
+      const candidateLine = lines[phaseLineIndex];
+      const trimmedCandidate = candidateLine.trim();
+      if (trimmedCandidate === "") {
+        phaseLineIndex++;
+        continue;
+      }
+      if (
+        /^[ \t]+skills:\s*$/.test(candidateLine) ||
+        /^[ \t]+drill_url:\s*\S/.test(candidateLine)
+      ) {
+        break;
+      }
+
+      const phaseItemMatch = candidateLine.match(/^[ \t]+-\s+(.+)$/);
+      if (!phaseItemMatch) {
+        return null;
+      }
+      phase.push(phaseItemMatch[1].trim());
+      phaseLineIndex++;
+    }
+
+    if (phase.length === 0) {
+      return null;
+    }
+
+    // Parse optional drill_url line before skills
+    let drillUrl: string | undefined;
+    const drillUrlMatch = lines[phaseLineIndex]?.match(/^[ \t]+drill_url:\s*(\S+)\s*$/);
+    if (drillUrlMatch) {
+      drillUrl = drillUrlMatch[1].trim();
+      phaseLineIndex++;
+      // Skip any blank lines between drill_url and skills
+      while (phaseLineIndex < lines.length && lines[phaseLineIndex].trim() === "") {
+        phaseLineIndex++;
+      }
+    }
+
+    const skillsHeaderMatch = lines[phaseLineIndex]?.match(/^[ \t]+skills:\s*$/);
+    if (!skillsHeaderMatch) {
+      return null;
+    }
+
+    const skills: string[] = [];
+    let skillsLineIndex = phaseLineIndex + 1;
+    while (skillsLineIndex < lines.length) {
+      const candidateLine = lines[skillsLineIndex];
+      const trimmedCandidate = candidateLine.trim();
+      if (trimmedCandidate === "") {
+        skillsLineIndex++;
+        continue;
+      }
+      if (
+        trimmedCandidate === ":::" ||
+        /^[ \t]*-\s+phase:\s*$/.test(candidateLine)
+      ) {
+        break;
+      }
+
+      const skillItemMatch = candidateLine.match(/^[ \t]+-\s+(.+)$/);
+      if (!skillItemMatch) {
+        return null;
+      }
+      skills.push(skillItemMatch[1].trim());
+      skillsLineIndex++;
+    }
+
+    if (skills.length === 0) {
+      return null;
+    }
+
+    rows.push({ phase: phase.join("\n"), skills: skills.join("\n"), drillUrl });
+    nextIndex = skillsLineIndex;
   }
 
   if (nextIndex >= lines.length || rows.length === 0 || headers.length !== 2) {
@@ -122,7 +198,7 @@ function parseSeasonTableAt(
   }
 
   return {
-    block: { type: "table", headers, rows },
+    block: { type: "season-table", headers, rows },
     nextIndex: nextIndex + 1,
   };
 }

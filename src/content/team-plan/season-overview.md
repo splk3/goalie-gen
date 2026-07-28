@@ -37,21 +37,55 @@ Based on the 10U and 9U goalie development plans provided in the source material
 
 **8U Goaltending Season Plan**
 
-<!-- Season table shorthand: use one `- phase:` line followed by one indented `skills:` line for each row; separate headers with a semicolon. -->
+<!-- Season table shorthand: use one `- phase:` list and one indented `skills:` list for each row; separate headers with a semicolon. -->
 <!-- The generator expands each `:::season-table` block into the existing DOCX table. -->
 
+<!-- prettier-ignore-start -->
 :::season-table
 headers: Season Phase / Focus Points; Specific Skills & Techniques
 
-- phase: **Early Season / Fall**<br>_(August-September)_<br>**Core Focus:** "Try Goalie" Phase: Basic Stance, Skating, & Fun
-  skills: **Stance & Balance:** Establishing an athletic posture (chest up, knees bent, feet shoulder-width) and quiet torso.<br>**Skating:** Forward/backward C-cuts and parallel shuffles.<br>**Positioning:** Understanding the basic center-line (aligning the puck, belly button, and middle of the net).<br>**Saves:** Executing standing stick, glove, blocker, and body saves. _(Teaching the butterfly is often intentionally delayed at this stage so players develop standing fundamentals first.)_<br>**Fun/Athleticism:** Engaging in agility games like "Supermans," "Torpedoes," or barrel rolls.
-- phase: **Mid-Season / Winter**<br>_(October-November)_<br>**Core Focus:** The Butterfly, Recovery, & Rebounds
-  skills: **Introduction to Butterfly:** Driving knees to the ice to seal the bottom of the net, and progressing to basic butterfly slides.<br>**Recovery:** Learning proper foot recovery (getting back up from the butterfly using the correct drive/lead leg).<br>**Skating:** Adding T-pushes for faster lateral crease movement.<br>**Rebound Control:** Steering pucks wide or smothering/covering the puck on the ice to get a whistle.
-- phase: **Late Season**<br>_(December-January)_<br>**Core Focus:** Movement Mechanics & Play Reading
-  skills: **Mechanics:** Leading all movements with the Head, Hands, and then Hips (HHH).<br>**Positioning Concepts:** Formally introducing the definitions of S.A.D. (Square, Angle, Depth) and teaching goalies to "attack the shooter".<br>**Traffic:** Basic introduction to finding sightlines around screens and managing bouncing pucks.<br>**Competitions:** Engaging in fun skating activities like goalie relay races or goalie tug-o-war.
-- phase: **End of Season / Spring**<br>_(February-March)_<br>**Core Focus:** Games, Review, & "Graduation"
-  skills: **Goalie Games:** Reinforcing skills through small-area games like a shooting gallery, dodgeball, or "Simon Says" against the shooter.<br>**Review:** Recapping stance, fundamental saves, and overall movement.<br>**Celebration:** Hosting a fun "graduation" event with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
-  :::
+- phase:
+    - **Early Season / Fall**
+    - _(August-September)_
+    - **Core Focus:** "Try Goalie" Phase: Basic Stance, Skating, & Fun
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Stance & Balance:** Establishing an athletic posture (chest up, knees bent, feet shoulder-width) and quiet torso.
+    - **Skating:** Forward/backward C-cuts and parallel shuffles.
+    - **Positioning:** Understanding the basic center-line (aligning the puck, belly button, and middle of the net).
+    - **Saves:** Executing standing stick, glove, blocker, and body saves. _(Teaching the butterfly is often intentionally delayed at this stage so players develop standing fundamentals first.)_
+    - **Fun/Athleticism:** Engaging in agility games like "Supermans," "Torpedoes," or barrel rolls.
+- phase:
+    - **Mid-Season / Winter**
+    - _(October-November)_
+    - **Core Focus:** The Butterfly, Recovery, & Rebounds
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Introduction to Butterfly:** Driving knees to the ice to seal the bottom of the net, and progressing to basic butterfly slides.
+    - **Recovery:** Learning proper foot recovery (getting back up from the butterfly using the correct drive/lead leg).
+    - **Skating:** Adding T-pushes for faster lateral crease movement.
+    - **Rebound Control:** Steering pucks wide or smothering/covering the puck on the ice to get a whistle.
+- phase:
+    - **Late Season**
+    - _(December-January)_
+    - **Core Focus:** Movement Mechanics & Play Reading
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Mechanics:** Leading all movements with the Head, Hands, and then Hips (HHH).
+    - **Positioning Concepts:** Formally introducing the definitions of S.A.D. (Square, Angle, Depth) and teaching goalies to "attack the shooter".
+    - **Traffic:** Basic introduction to finding sightlines around screens and managing bouncing pucks.
+    - **Competitions:** Engaging in fun skating activities like goalie relay races or goalie tug-o-war.
+- phase:
+    - **End of Season / Spring**
+    - _(February-March)_
+    - **Core Focus:** Games, Review, & "Graduation"
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Goalie Games:** Reinforcing skills through small-area games like a shooting gallery, dodgeball, or "Simon Says" against the shooter.
+    - **Review:** Recapping stance, fundamental saves, and overall movement.
+    - **Celebration:** Hosting a fun "graduation" event with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
+    :::
+<!-- prettier-ignore-end -->
 
 ### 10U Starter Content
 
@@ -77,18 +111,45 @@ The focus at 10U is on building a solid baseline of muscle memory and game exper
 
 **10U Goaltending Season Plan**
 
+<!-- prettier-ignore-start -->
 :::season-table
 headers: Season Phase / Focus Points; Specific Skills
 
-- phase: **Early Season** (August-September)<br>**Core Focus:** Stance, Skating, & Positioning
-  skills: **Stance & Balance:** Establishing basic athletic posture, quiet torso, and proper hand/stick placement<br>**Skating:** Shuffles, T-pushes, C-cuts<br>**Positioning:** Angle, Depth, Square<br>**Intro to Saves:** Executing fundamental standing saves, stick steering, and basic butterfly/pad saves
-- phase: **Mid-Season** (October-November)<br>**Core Focus:** Save Execution, Rebounds, & Post Play
-  skills: **Advanced Saves:** Glove, blocker, and body/smothering saves<br>**Rebound & Recovery:** Getting to the feet from any position, controlling rebounds (steering wide or covering), and tracking secondary pucks.<br>**Post Integration:** Wrapping the post on feet, integrating pads with post when in butterfly<br>**Traffic:** Managing screens, deflections, and long shots
-- phase: **Late Season** (December-January)<br>**Core Focus:** Decision Making, Tactical Play
-  skills: **Situational Play:** Breakaways, odd-man rushes, and face-off positioning<br>**Lateral Movement:** Executing high-to-high, high-to-low, and low-to-low cross-crease plays<br>**Mental Skills:** Reading the play, communicating with teammates, and anticipating threats.
-- phase: **End of Season** (February-March)<br>**Core Focus:** Fine-Tuning, Game Simulation, & Review
-  skills: **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.<br>**Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
-  :::
+- phase:
+    - **Early Season** (August-September)
+    - **Core Focus:** Stance, Skating, & Positioning
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Stance & Balance:** Establishing basic athletic posture, quiet torso, and proper hand/stick placement
+    - **Skating:** Shuffles, T-pushes, C-cuts
+    - **Positioning:** Angle, Depth, Square
+    - **Intro to Saves:** Executing fundamental standing saves, stick steering, and basic butterfly/pad saves
+- phase:
+    - **Mid-Season** (October-November)
+    - **Core Focus:** Save Execution, Rebounds, & Post Play
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Advanced Saves:** Glove, blocker, and body/smothering saves
+    - **Rebound & Recovery:** Getting to the feet from any position, controlling rebounds (steering wide or covering), and tracking secondary pucks.
+    - **Post Integration:** Wrapping the post on feet, integrating pads with post when in butterfly
+    - **Traffic:** Managing screens, deflections, and long shots
+- phase:
+    - **Late Season** (December-January)
+    - **Core Focus:** Decision Making, Tactical Play
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Situational Play:** Breakaways, odd-man rushes, and face-off positioning
+    - **Lateral Movement:** Executing high-to-high, high-to-low, and low-to-low cross-crease plays
+    - **Mental Skills:** Reading the play, communicating with teammates, and anticipating threats.
+- phase:
+    - **End of Season** (February-March)
+    - **Core Focus:** Fine-Tuning, Game Simulation, & Review
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.
+    - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
+    :::
+<!-- prettier-ignore-end -->
 
 ### 12U Starter Content
 
@@ -115,18 +176,52 @@ At Peewee level, goalies transition from the basic fundamentals learned at 8U/10
 
 **12U Goaltending Season Plan**
 
+<!-- prettier-ignore-start -->
 :::season-table
 headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
 
-- phase: **Early Season / Fall**<br>(August-September)<br>_Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
-  skills: **Stance & Baseline Movement:** Establishing a proper athletic ready stance with hands forward and stick on the ice. <br>**Skating Fundamentals:** Mastering crease mobility through shuffles, C-cuts (forward and backward), T-pushes, and introductory butterfly slides. <br>**Positioning Basics:** Learning the relationship between squareness, angle, and depth (the ABCDs of depth). <br>**Basic Save Selection:** Practicing foundational upper and lower body saves, including stick, pad, glove, and blocker saves.
-- phase: **Mid-Season / Winter**<br>(October-November)<br>_Core Focus: The Butterfly, Recovery, & Rebounds_
-  skills: **Butterfly Mechanics:** Refining the butterfly drop to close the five-hole and practicing explosive, lead-leg recoveries to get back to the feet quickly. <br>**Rebound Management:** Shifting from just blocking pucks to actively absorbing/smothering them for a whistle, or using the stick and blocker to steer rebounds into safe areas (corners). <br>**Traffic & Sightlines:** Learning to look around screens and track the puck through heavy net-front traffic. <br>**Intro to Post Play:** Beginning to integrate standing and butterfly pad seals against the post to defend against tight-angle plays.
-- phase: **Late Season**<br>(December-January)<br>_Core Focus: Movement Mechanics & Play Reading_
-  skills: **Advanced Post Integration:** Implementing VH (Vertical-Horizontal), RVH (Reverse Vertical-Horizontal), and overlap techniques for plays below the goal line and wraparounds. <br>**Play Reading & Anticipation:** Tracking passes from behind the net, reading shooter "telegraphing" (predicting shot placement), and managing complex scenarios like odd-man rushes and breakaways. <br>**Deflections & Scrambles:** Reacting to tipped pucks and recovering rapidly during multi-shot scramble situations. <br>**Puck Handling:** Safely stopping dumped or rimmed pucks behind the net and initiating simple breakout passes to defensemen.
-- phase: **End of Season / Spring**<br>(February-March)<br>_Core Focus: Review, Refine, and Evaluate_
-  skills: **Skills Tune-Up & Integration:** Combining all learned season skills (movement, angle play, saves, and rebound control) into dynamic, high-speed game-flow sequences. <br>**Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and mental resilience to handle high-pressure game/playoff scenarios. <br>**Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes. <br>**End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and off-season goal setting.
-  :::
+- phase:
+    - **Early Season / Fall**
+    - (August-September)
+    - _Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Stance & Baseline Movement:** Establishing a proper athletic ready stance with hands forward and stick on the ice.
+    - **Skating Fundamentals:** Mastering crease mobility through shuffles, C-cuts (forward and backward), T-pushes, and introductory butterfly slides.
+    - **Positioning Basics:** Learning the relationship between squareness, angle, and depth (the ABCDs of depth).
+    - **Basic Save Selection:** Practicing foundational upper and lower body saves, including stick, pad, glove, and blocker saves.
+- phase:
+    - **Mid-Season / Winter**
+    - (October-November)
+    - _Core Focus: The Butterfly, Recovery, & Rebounds_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Butterfly Mechanics:** Refining the butterfly drop to close the five-hole and practicing explosive, lead-leg recoveries to get back to the feet quickly.
+    - **Rebound Management:** Shifting from just blocking pucks to actively absorbing/smothering them for a whistle, or using the stick and blocker to steer rebounds into safe areas (corners).
+    - **Traffic & Sightlines:** Learning to look around screens and track the puck through heavy net-front traffic.
+    - **Intro to Post Play:** Beginning to integrate standing and butterfly pad seals against the post to defend against tight-angle plays.
+- phase:
+    - **Late Season**
+    - (December-January)
+    - _Core Focus: Movement Mechanics & Play Reading_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Advanced Post Integration:** Implementing VH (Vertical-Horizontal), RVH (Reverse Vertical-Horizontal), and overlap techniques for plays below the goal line and wraparounds.
+    - **Play Reading & Anticipation:** Tracking passes from behind the net, reading shooter "telegraphing" (predicting shot placement), and managing complex scenarios like odd-man rushes and breakaways.
+    - **Deflections & Scrambles:** Reacting to tipped pucks and recovering rapidly during multi-shot scramble situations.
+    - **Puck Handling:** Safely stopping dumped or rimmed pucks behind the net and initiating simple breakout passes to defensemen.
+- phase:
+    - **End of Season / Spring**
+    - (February-March)
+    - _Core Focus: Review, Refine, and Evaluate_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Skills Tune-Up & Integration:** Combining all learned season skills (movement, angle play, saves, and rebound control) into dynamic, high-speed game-flow sequences.
+    - **Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and mental resilience to handle high-pressure game/playoff scenarios.
+    - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes.
+    - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and off-season goal setting.
+    :::
+<!-- prettier-ignore-end -->
 
 ### 14U Starter Content
 
@@ -187,18 +282,49 @@ Here is a representative 13U/14U (Bantam) season plan table based on the provide
 
 While the provided timeframes use the "Try Goalie" phrasing as an example for the early season, at the 14U level, goalies are typically experienced. Therefore, the skills in that block reflect an advanced re-establishment of their foundational techniques rather than a true beginner phase.
 
+<!-- prettier-ignore-start -->
 :::season-table
 headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
 
-- phase: **Early Season / Fall**<br>(August-September)<br>_Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
-  skills: **Advanced Stance & Box Control:** Perfecting posture across the "7 stances" (high, mid, and low upright variations, butterfly, VH, RVH, etc.) to adjust to varying shot distances. Understanding "box control" (optimizing angle, squareness, and depth) to visually minimize the amount of open net presented to the shooter.<br>**Elite Crease Mobility:** High-intensity skating to build explosive agility, including rapid T-pushes, shuffles, and C-cuts, ensuring the goalie leads with their eyes and head.<br>**Fundamental Save Mastery:** Drilling strict fundamentals for glove, blocker, stick, and pad saves, ensuring goalies track the puck all the way into their equipment.
-- phase: **Mid-Season / Winter**<br>(October-November)<br>_Core Focus: The Butterfly, Recovery, & Rebounds_
-  skills: **Butterfly & Rapid Recovery:** Refining butterfly slide mechanics and explosive recoveries. Goalies practice popping back up to their feet using the correct lead leg to prepare for secondary shots.<br>**Active Rebound Management:** Evolving from merely blocking shots to intentionally directing rebounds into the corners using the stick or angled pads, or actively absorbing/smothering pucks into the chest to force a whistle.<br>**Traffic Management:** Developing the ability to look around screens (using high/low stance adjustments), battle through heavy net-front traffic, and react to late deflections or tips.
-- phase: **Late Season**<br>(December-January)<br>_Core Focus: Movement Mechanics & Play Reading_
-  skills: **Post-Play Integration:** Mastering the Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques to seal the posts tightly during wraparounds, sharp-angle shots, and plays below the goal line.<br>**Hockey IQ & Play Reading:** Enhancing anticipation by reading shooter telegraphing, tracking lateral passes, and managing complex tactical situations like odd-man rushes (2-on-1s, 3-on-2s) and breakaways.<br>**Advanced Puck Handling:** Evolving into a "third defenseman" by confidently stopping rimmed pucks behind the net and executing accurate forehand or backhand breakout passes under pressure.
-- phase: **End of Season / Spring**<br>(February-March)<br>_Core Focus: Review, Refine, and Evaluate_
-  skills: **High-Tempo Game Simulation:** Synthesizing all learned skills into continuous, high-speed scramble and multi-shot drills that mimic playoff intensity. <br>**Mental Toughness & Playoff Prep:** Establishing rigorous game-day routines, including visualization, breathing exercises, and stress management, to maintain peak focus during high-pressure games.<br>**Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.<br>**Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players.
-  :::
+- phase:
+    - **Early Season / Fall**
+    - (August-September)
+    - _Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Advanced Stance & Box Control:** Perfecting posture across the "7 stances" (high, mid, and low upright variations, butterfly, VH, RVH, etc.) to adjust to varying shot distances. Understanding "box control" (optimizing angle, squareness, and depth) to visually minimize the amount of open net presented to the shooter.
+    - **Elite Crease Mobility:** High-intensity skating to build explosive agility, including rapid T-pushes, shuffles, and C-cuts, ensuring the goalie leads with their eyes and head.
+    - **Fundamental Save Mastery:** Drilling strict fundamentals for glove, blocker, stick, and pad saves, ensuring goalies track the puck all the way into their equipment.
+- phase:
+    - **Mid-Season / Winter**
+    - (October-November)
+    - _Core Focus: The Butterfly, Recovery, & Rebounds_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Butterfly & Rapid Recovery:** Refining butterfly slide mechanics and explosive recoveries. Goalies practice popping back up to their feet using the correct lead leg to prepare for secondary shots.
+    - **Active Rebound Management:** Evolving from merely blocking shots to intentionally directing rebounds into the corners using the stick or angled pads, or actively absorbing/smothering pucks into the chest to force a whistle.
+    - **Traffic Management:** Developing the ability to look around screens (using high/low stance adjustments), battle through heavy net-front traffic, and react to late deflections or tips.
+- phase:
+    - **Late Season**
+    - (December-January)
+    - _Core Focus: Movement Mechanics & Play Reading_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Post-Play Integration:** Mastering the Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques to seal the posts tightly during wraparounds, sharp-angle shots, and plays below the goal line.
+    - **Hockey IQ & Play Reading:** Enhancing anticipation by reading shooter telegraphing, tracking lateral passes, and managing complex tactical situations like odd-man rushes (2-on-1s, 3-on-2s) and breakaways.
+    - **Advanced Puck Handling:** Evolving into a "third defenseman" by confidently stopping rimmed pucks behind the net and executing accurate forehand or backhand breakout passes under pressure.
+- phase:
+    - **End of Season / Spring**
+    - (February-March)
+    - _Core Focus: Review, Refine, and Evaluate_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **High-Tempo Game Simulation:** Synthesizing all learned skills into continuous, high-speed scramble and multi-shot drills that mimic playoff intensity.
+    - **Mental Toughness & Playoff Prep:** Establishing rigorous game-day routines, including visualization, breathing exercises, and stress management, to maintain peak focus during high-pressure games.
+    - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.
+    - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players.
+    :::
+<!-- prettier-ignore-end -->
 
 ### 16U and older Starter Content
 
@@ -233,17 +359,52 @@ For 16U, 18U, 19U, high school, and older goaltenders, season plans shift from b
 
 Based on the 16U goaltending season plans provided in the sources, here is a representative season plan table. It uses your requested timeframes and core focuses for the first column, while the second column incorporates the advanced skills, techniques, and tactical focus points specifically designed for 16U goalies.
 
+<!-- prettier-ignore-start -->
 :::season-table
 headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
 
-- phase: **Early Season / Fall**<br>(August-September)<br><br>_Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
-  skills: **Stance Mechanics:** Posture, feet/hand positioning, holding the triangle, and maintaining a quiet torso. <br><br>**Advanced Crease Mobility:** Shuffles, T-pushes, C-cuts, and advanced edge work (inside/outside edges, pivots, and sharp cutting). <br><br>**Foundational Saves & Movement:** Butterfly technique, butterfly slides, and lateral movements (slides/T-pushes). <br><br>**Puck Play Introduction:** Basic puck handling, playing the puck behind the net, and passing.
-- phase: **Mid-Season / Winter**<br>(October-November)<br><br>_Core Focus: The Butterfly, Recovery, & Rebounds_
-  skills: **Positioning & Angles:** Square to the puck, ABCDs of Depth, Box Theory, and HHH (Lead with Head, then Hands, then Hips). <br><br>**Save Selection & Control:** Stick saves, glove/blocker tracking, and body saves. <br><br>**Rebound Management & Recovery:** Rebound control, recovery out of the butterfly, and secondary shot saves. <br><br>**Tactical Play Reading:** Defending cross-crease movements, wraparounds, and reading high-to-low/low-to-high passing options. <br><br>**Communication:** Verbal and non-verbal communication with defensemen.
-- phase: **Late Season**<br>(December-January)<br><br>_Core Focus: Movement Mechanics & Play Reading_
-  skills: **Post Integration:** Mastery of Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques for low-angle attacks. <br><br>**Managing Traffic:** Battling through screens, tracking pucks through traffic, and setting up for tips/deflections. <br><br>**Advanced Play Reading:** Anticipating plays from behind the net, reading net drives versus passing options, and tracking the puck. <br><br>**Desperation Saves:** Recoveries, second efforts, and desperation save execution.
-- phase: **End of Season / Spring**<br>(February-March)<br><br>_Core Focus: Review, Refine, and Evaluate_
-  skills: **High-Pressure Situations:** Managing odd-man rushes (2-on-1s), penalty shots, and breakaways. <br><br>**Advanced Puck Handling:** Stopping dump-ins, playing the puck under pressure, and executing backhands. <br><br>**Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience. <br><br>**Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
-  :::
+- phase:
+    - **Early Season / Fall**
+    - (August-September)
+    - _Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Stance Mechanics:** Posture, feet/hand positioning, holding the triangle, and maintaining a quiet torso.
+    - **Advanced Crease Mobility:** Shuffles, T-pushes, C-cuts, and advanced edge work (inside/outside edges, pivots, and sharp cutting).
+    - **Foundational Saves & Movement:** Butterfly technique, butterfly slides, and lateral movements (slides/T-pushes).
+    - **Puck Play Introduction:** Basic puck handling, playing the puck behind the net, and passing.
+- phase:
+    - **Mid-Season / Winter**
+    - (October-November)
+    - _Core Focus: The Butterfly, Recovery, & Rebounds_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Positioning & Angles:** Square to the puck, ABCDs of Depth, Box Theory, and HHH (Lead with Head, then Hands, then Hips).
+    - **Save Selection & Control:** Stick saves, glove/blocker tracking, and body saves.
+    - **Rebound Management & Recovery:** Rebound control, recovery out of the butterfly, and secondary shot saves.
+    - **Tactical Play Reading:** Defending cross-crease movements, wraparounds, and reading high-to-low/low-to-high passing options.
+    - **Communication:** Verbal and non-verbal communication with defensemen.
+- phase:
+    - **Late Season**
+    - (December-January)
+    - _Core Focus: Movement Mechanics & Play Reading_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **Post Integration:** Mastery of Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques for low-angle attacks.
+    - **Managing Traffic:** Battling through screens, tracking pucks through traffic, and setting up for tips/deflections.
+    - **Advanced Play Reading:** Anticipating plays from behind the net, reading net drives versus passing options, and tracking the puck.
+    - **Desperation Saves:** Recoveries, second efforts, and desperation save execution.
+- phase:
+    - **End of Season / Spring**
+    - (February-March)
+    - _Core Focus: Review, Refine, and Evaluate_
+  drill_url: https://goaliegen.com/goalie-drills/
+  skills:
+    - **High-Pressure Situations:** Managing odd-man rushes (2-on-1s), penalty shots, and breakaways.
+    - **Advanced Puck Handling:** Stopping dump-ins, playing the puck under pressure, and executing backhands.
+    - **Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience.
+    - **Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
+    :::
+<!-- prettier-ignore-end -->
 
 <!-- markdownlint-enable MD013 -->

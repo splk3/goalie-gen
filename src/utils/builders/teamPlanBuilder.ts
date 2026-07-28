@@ -6,7 +6,8 @@
  * callbacks so the same builder runs unchanged in both the browser and Node.
  */
 import { parseMarkdown } from "../markdownParser";
-import { blocksToDocxContent, cleanHexColor, makeDocxHeaderFooter } from "../docxContent";
+import type { SeasonTableRow } from "../markdownParser";
+import { blocksToDocxContent, cleanHexColor, makeDocxHeaderFooter, textToParagraphChildren } from "../docxContent";
 import { buildEventCalendarMonths } from "../teamPlanCalendarGrid";
 import type {
   TeamPlanConfig,
@@ -46,6 +47,8 @@ const EVALUATION_LINK_COLUMN_WIDTH_TWIPS = 2160;
 const EVALUATION_LIST_COLUMN_WIDTH_TWIPS =
   DOCX_CONTENT_WIDTH_TWIPS - EVALUATION_LINK_COLUMN_WIDTH_TWIPS - EVALUATION_QR_COLUMN_WIDTH_TWIPS;
 const INLINE_RESOURCE_QR_SIZE_TWIPS = 60;
+const SEASON_TABLE_PHASE_COLUMN_WIDTH_TWIPS = 3120;
+const SEASON_TABLE_SKILLS_COLUMN_WIDTH_TWIPS = 6240;
 
 export function buildImportedEventMarkdown(
   event: Pick<EventSelection, "title">,
@@ -297,14 +300,15 @@ export async function buildTeamPlanDocument(
     linesBeforeUrl: string,
     rawUrl: string,
     qrSize = 84,
-    inline = false
+    inline = false,
+    includeQr = true
   ): Promise<void> => {
     const normalizedLink = normalizeUrl(rawUrl);
     if (!normalizedLink) {
       return;
     }
 
-    const qrData = await qrGenerator(normalizedLink);
+    const qrData = includeQr ? await qrGenerator(normalizedLink) : null;
 
     if (inline && qrData) {
       documentChildren.push(
@@ -355,6 +359,142 @@ export async function buildTeamPlanDocument(
         );
       }
     }
+  };
+
+  // ── Season table with QR codes ─────────────────────────────────────────────
+
+  const buildSeasonTableWithQr = async (
+    headers: string[],
+    rows: SeasonTableRow[],
+    keepTablesTogether: boolean
+  ): Promise<InstanceType<typeof Table>> => {
+    const columnWidths = [
+      SEASON_TABLE_PHASE_COLUMN_WIDTH_TWIPS,
+      SEASON_TABLE_SKILLS_COLUMN_WIDTH_TWIPS,
+    ];
+    const cellBorders = {
+      top: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+      left: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+      right: { style: BorderStyle.SINGLE, size: 4, color: "B7B7B7" },
+    };
+
+    const makeCellParagraph = (
+      text: string,
+      color: string,
+      keepNext: boolean,
+      bold = false
+    ): InstanceType<typeof Paragraph> =>
+      new Paragraph({
+        children: textToParagraphChildren(text, cleanPrimary, color, bold),
+        spacing: { after: 40 },
+        keepNext,
+      });
+
+    const headerRow = new TableRow({
+      cantSplit: true,
+      tableHeader: true,
+      children: headers.map(
+        (header, cellIndex) =>
+          new TableCell({
+            width: { size: columnWidths[cellIndex], type: WidthType.DXA },
+            verticalAlign: VerticalAlign.TOP,
+            shading: { fill: "EDEDED" },
+            borders: cellBorders,
+            children: [makeCellParagraph(header, cleanPrimary, false, true)],
+          })
+      ),
+    });
+
+    const dataRows = await Promise.all(
+      rows.map(async (row, rowIndex) => {
+        const isLastRow = rowIndex === rows.length - 1;
+        const keepNext = keepTablesTogether && !isLastRow;
+
+        // Pre-generate QR code for this phase's drill URL
+        const normalizedDrillUrl = row.drillUrl ? normalizeUrl(row.drillUrl) : null;
+        const qrData = normalizedDrillUrl ? await qrGenerator(normalizedDrillUrl) : null;
+
+        // Phase lines — each set to keepNext:true so all phase text stays together
+        const phaseLines = row.phase.split(/\r?\n/);
+        const hasRecommendedDrills = Boolean(row.drillUrl);
+        const phaseParagraphs: InstanceType<typeof Paragraph>[] = phaseLines.map(
+          (line, lineIndex) => {
+            const isLastPhaseLine = lineIndex === phaseLines.length - 1;
+            // Last phase line keepNext: if there's a recommended drills entry coming, keep with it;
+            // otherwise use the row-level keepNext.
+            const lineKeepNext = isLastPhaseLine
+              ? hasRecommendedDrills || keepNext
+              : true;
+            return makeCellParagraph(line, "000000", lineKeepNext);
+          }
+        );
+
+        // Append "Recommended Drills:" label + inline QR code image
+        if (hasRecommendedDrills) {
+          const drillRunChildren: InstanceType<typeof TextRun | typeof ImageRun>[] = [
+            new TextRun({ text: "Recommended Drills: ", color: "000000", bold: true }),
+          ];
+          if (qrData) {
+            drillRunChildren.push(
+              new ImageRun({
+                type: "png",
+                data: qrData,
+                transformation: {
+                  width: INLINE_RESOURCE_QR_SIZE_TWIPS,
+                  height: INLINE_RESOURCE_QR_SIZE_TWIPS,
+                },
+              })
+            );
+          }
+          phaseParagraphs.push(
+            new Paragraph({
+              children: drillRunChildren,
+              spacing: { after: 40 },
+              keepNext,
+            })
+          );
+        }
+
+        // Skills lines
+        const skillsLines = row.skills.split(/\r?\n/);
+        const skillsParagraphs: InstanceType<typeof Paragraph>[] = skillsLines.map(
+          (line, lineIndex) => {
+            const isLastSkillsLine = lineIndex === skillsLines.length - 1;
+            return makeCellParagraph(
+              line,
+              "000000",
+              keepNext && !isLastSkillsLine
+            );
+          }
+        );
+
+        return new TableRow({
+          cantSplit: true,
+          children: [
+            new TableCell({
+              width: { size: columnWidths[0], type: WidthType.DXA },
+              verticalAlign: VerticalAlign.TOP,
+              borders: cellBorders,
+              children: phaseParagraphs,
+            }),
+            new TableCell({
+              width: { size: columnWidths[1], type: WidthType.DXA },
+              verticalAlign: VerticalAlign.TOP,
+              borders: cellBorders,
+              children: skillsParagraphs,
+            }),
+          ],
+        });
+      })
+    );
+
+    return new Table({
+      width: { size: DOCX_CONTENT_WIDTH_TWIPS, type: WidthType.DXA },
+      layout: TableLayoutType.FIXED,
+      columnWidths,
+      rows: [headerRow, ...dataRows],
+    });
   };
 
   // ── Cover page ─────────────────────────────────────────────────────────────
@@ -460,15 +600,21 @@ export async function buildTeamPlanDocument(
   );
 
   // Season Overview section
-  documentChildren.push(
-    ...blocksToDocxContent(
-      parseMarkdown(
-        getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd),
-        { preserveBlankLines: true }
-      ),
-      { ...colorOpts, keepTablesTogether: false }
-    )
+  const seasonOverviewBlocks = parseMarkdown(
+    getSeasonOverviewMarkdown(includeStarterIntroductionAndGoals, ageGroup, seasonOverviewMd),
+    { preserveBlankLines: true }
   );
+  for (const block of seasonOverviewBlocks) {
+    if (block.type === "season-table") {
+      documentChildren.push(
+        await buildSeasonTableWithQr(block.headers, block.rows, false)
+      );
+    } else {
+      documentChildren.push(
+        ...blocksToDocxContent([block], { ...colorOpts, keepTablesTogether: false })
+      );
+    }
+  }
 
   // Goalie Mentor section (optional)
   if (hasGoalieMentors) {
@@ -771,7 +917,8 @@ export async function buildTeamPlanDocument(
             "Suggested goalie drills page: ",
             "https://goaliegen.com/goalie-drills/",
             60,
-            true
+            true,
+            false
           );
         }
 
@@ -796,7 +943,8 @@ export async function buildTeamPlanDocument(
             "Evaluation forms available at ",
             "https://goaliegen.com/goalie-evals/",
             60,
-            true
+            true,
+            false
           );
         }
       }

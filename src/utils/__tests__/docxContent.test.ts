@@ -189,7 +189,7 @@ describe("blocksToDocxParagraphs", () => {
         {
           type: "table",
           headers: ["Phase", "Focus", "Details"],
-          rows: [["Early", "Skating", "Stance<br>Balance"]],
+          rows: [["Early", "Skating", "Stance\nBalance"]],
         },
       ]);
 
@@ -233,9 +233,9 @@ describe("blocksToDocxParagraphs", () => {
     it("uses one-third and two-thirds widths for season-plan tables", () => {
       const content = blocksToDocxContent([
         {
-          type: "table",
+          type: "season-table",
           headers: ["Season Phase / Focus Points", "Specific Skills & Techniques"],
-          rows: [["Early Season", "Stance and skating"]],
+          rows: [{ phase: "Early Season", skills: "Stance and skating" }],
         },
       ]);
 
