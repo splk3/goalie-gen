@@ -37,7 +37,8 @@ Based on the 10U and 9U goalie development plans provided in the source material
 
 **8U Goaltending Season Plan**
 
-<!-- Season table shorthand: use one `- phase:` list and one indented `skills:` list for each row; separate headers with a semicolon. -->
+<!-- Season table shorthand: each row starts with a `- phase:` marker, followed by indented bullet lines for the phase content, an optional indented `drill_url:`, and one indented `skills:` list; put the headers on the next line separated by semicolons. -->
+
 <!-- The generator expands each `:::season-table` block into the existing DOCX table. -->
 
 <!-- prettier-ignore-start -->
