@@ -29,11 +29,8 @@ At 8U, the overarching goal is fun, participation, and building confidence.
 The team will emphasize creating a positive environment where success is "measured in smiles".
 Early specialization is actively discouraged.
 Instead, let all interested players rotate in and out of the net using quick-change gear
-in practices and games so they can experience the position while continuing to develop their overall athletic
+in practices and games (switch between jamboree games or between halves) so they can experience the position while continuing to develop their overall athletic
 and skating skills as players.
-
-**Focus Areas by Timeframe**
-Based on the 10U and 9U goalie development plans provided in the source materials, here is a comprehensive season plan synthesized into a table. The plan is broken down by monthly and seasonal phases, highlighting the core focus areas and specific skills for each period.
 
 **8U Goaltending Season Plan**
 
@@ -49,10 +46,10 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
     - **Early Season / Fall**
     - _(August-September)_
     - **Core Focus:** "Try Goalie" Phase: Basic Stance, Skating, & Fun
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?fundamental_skill=positioning%2Csave_selection%2Cskating%2Cstance&age_level=10_and_under%2Call&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&equipment=none&team_drill=no&skill_level=beginner
   skills:
     - **Stance & Balance:** Establishing an athletic posture (chest up, knees bent, feet shoulder-width) and quiet torso.
-    - **Skating:** Forward/backward C-cuts and parallel shuffles.
+    - **Skating:** Forward/backward, C-cuts, and shuffles.
     - **Positioning:** Understanding the basic center-line (aligning the puck, belly button, and middle of the net).
     - **Saves:** Executing standing stick, glove, blocker, and body saves. _(Teaching the butterfly is often intentionally delayed at this stage so players develop standing fundamentals first.)_
     - **Fun/Athleticism:** Engaging in agility games like "Supermans," "Torpedoes," or barrel rolls.
@@ -60,31 +57,31 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
     - **Mid-Season / Winter**
     - _(October-November)_
     - **Core Focus:** The Butterfly, Recovery, & Rebounds
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?age_level=10_and_under%2Call&skill_level=beginner&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&team_drill=no&skating_skill=butterfly%2Cc_cut%2Cshuffle%2Ct_push
   skills:
-    - **Introduction to Butterfly:** Driving knees to the ice to seal the bottom of the net, and progressing to basic butterfly slides.
-    - **Recovery:** Learning proper foot recovery (getting back up from the butterfly using the correct drive/lead leg).
+    - **Introduction to Butterfly:** Driving knees to the ice to seal the bottom of the net, keep upright posture in butterfly, and progressing to basic butterfly slides.
+    - **Recovery:** Learning proper foot recovery (getting back up from the butterfly using the correct leg - "drive" leg, which is _away_ from the puck).
     - **Skating:** Adding T-pushes for faster lateral crease movement.
-    - **Rebound Control:** Steering pucks wide or smothering/covering the puck on the ice to get a whistle.
+    - **Rebound Control:** Steering pucks wide/behind the net or smothering/covering the puck on the ice to get a whistle.
 - phase:
     - **Late Season**
     - _(December-January)_
     - **Core Focus:** Movement Mechanics & Play Reading
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?team_drill=no&age_level=10_and_under%2Call&skill_level=beginner&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone
   skills:
-    - **Mechanics:** Leading all movements with the Head, Hands, and then Hips (HHH).
-    - **Positioning Concepts:** Formally introducing the definitions of S.A.D. (Square, Angle, Depth) and teaching goalies to "attack the shooter".
+    - **Mechanics:** Leading all movements with the 1.Head, 2.Hands, and then 3.Hips (HHH).
+    - **Positioning Concepts:** Formally introducing the definitions of S.A.D. (Square, Angle, Depth) and teaching goalies to "attack the shooter".  Priorities are Angle, then Depth, then Square.
     - **Traffic:** Basic introduction to finding sightlines around screens and managing bouncing pucks.
-    - **Competitions:** Engaging in fun skating activities like goalie relay races or goalie tug-o-war.
+    - **Competitions:** Engaging in fun skating activities like goalie relay races, goalie soccer, or goalie tug-o-war.
 - phase:
     - **End of Season / Spring**
     - _(February-March)_
-    - **Core Focus:** Games, Review, & "Graduation"
-  drill_url: https://goaliegen.com/goalie-drills/
+    - **Core Focus:** Games, Review, and "Graduation"
+  drill_url: https://goaliegen.com/goalie-drills/?team_drill=no&skill_level=beginner%2Cintermediate&age_level=10_and_under%2Call&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone
   skills:
     - **Goalie Games:** Reinforcing skills through small-area games like a shooting gallery, dodgeball, or "Simon Says" against the shooter.
-    - **Review:** Recapping stance, fundamental saves, and overall movement.
-    - **Celebration:** Hosting a fun "graduation" event with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
+    - **Review:** Recapping stance, fundamental saves, rebound control, and overall movement.
+    - **Celebration:** Hosting a fun "graduation" event to close out the season with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
     :::
 <!-- prettier-ignore-end -->
 
