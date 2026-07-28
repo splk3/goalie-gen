@@ -10,11 +10,18 @@ The page files under `src/pages/` are automatically compiled by Gatsby into corr
 
 - **Home Page (`src/pages/index.tsx`)**: High-level introduction to Goalie Gen with options to launch the document generators or explore goalie drills.
 - **Goalie Drills Library (`src/pages/goalie-drills.tsx`)**: An interactive search and filtering directory containing all goalie drills in the database.
+- **Team Drills (`src/pages/team-drills.tsx`)**: Redirect page that navigates visitors to the Goalie Drills Library pre-filtered to team drills (`team_drill=yes`).
 - **Goalie Evaluations (`src/pages/goalie-evals.tsx`)**: Form list and overview for downloading printable goalie evaluation templates and scorecards.
+- **Equipment Fitting (`src/pages/equipment-fitting.tsx`)**: Resource page for goalie equipment fitting guidance.
+- **About Pages**: Informational overview pages for each document generator:
+  - **About Club Plans (`src/pages/about-club-plans.tsx`)**
+  - **About Team Plans (`src/pages/about-team-plans.tsx`)**
+  - **About Goalie Journals (`src/pages/about-goalie-journals.tsx`)**
 - **Resource Pages**: Pages loaded with external PDFs and links for goalie learning:
   - **Club Resources (`src/pages/club-resources.tsx`)**
   - **Coach Resources (`src/pages/coach-resources.tsx`)**
   - **Goalie Resources (`src/pages/goalie-resources.tsx`)**
+- **404 Page (`src/pages/404.tsx`)**: Custom not-found error page.
 
 ---
 
