@@ -92,11 +92,11 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
 At 10U, USA Hockey recommends splitting periods between your goalies.
 At the halfway mark of each period, switch your goalies, and rotate who plays the first vs. second half of periods.
 If you have more than 2 goalies or have goalies who want to skate out,
-rotate your goalies so they can skate out when not in net.
+rotate your goalies each game so they can skate out when not in net.
 
 _Note:_ All teams and goalies are different, so talk to your goalies and work with them on a rotational schedule that works for them and the team.
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
-Having time on the bench also gives coaches and goalies a chance to communicate and get feedback during games.
+Having time on the bench also gives coaches a chance to communicate and give feedback to goalies during games.
 
 **10U Season Goals**
 
@@ -159,7 +159,7 @@ and rotating which goalie starts/closes each game.
 
 _Note:_ All teams and goalies are different, so talk to your goalies and work with them on a rotational schedule that works for them and the team.
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
-Having time on the bench also gives coaches and goalies a chance to communicate and get feedback during games.
+Having time on the bench also gives coaches a chance to communicate and give feedback to goalies during games.
 
 **12U Season Goals**
 
@@ -230,7 +230,7 @@ Rotate which goalie starts vs. closes out each game.
 
 _Note:_ All teams and goalies are different, so talk to your goalies and work with them on a rotational schedule that works for them and the team.
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
-Having time on the bench also gives coaches and goalies a chance to communicate and get feedback during games.
+Having time on the bench also gives coaches a chance to communicate and give feedback to goalies during games.
 
 **14U Season Goals**
 
