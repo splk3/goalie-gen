@@ -296,12 +296,8 @@ describe("blocksToDocxParagraphs", () => {
       const fieldTable = content[0] as Table;
       const compactTable = content[1] as Table;
 
-      expect(getFirstCellParagraphProperties(fieldTable, 0).root?.[0]?.rootKey).toBe(
-        "w:keepNext"
-      );
-      expect(getFirstCellParagraphProperties(fieldTable, 2).root?.[0]?.rootKey).toBe(
-        "w:keepNext"
-      );
+      expect(getFirstCellParagraphProperties(fieldTable, 0).root?.[0]?.rootKey).toBe("w:keepNext");
+      expect(getFirstCellParagraphProperties(fieldTable, 2).root?.[0]?.rootKey).toBe("w:keepNext");
       expect(getFirstCellParagraphProperties(compactTable, 0).root?.[0]?.rootKey).toBeUndefined();
     });
 

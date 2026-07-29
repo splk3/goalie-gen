@@ -170,10 +170,7 @@ function parseSeasonTableAt(
         skillsLineIndex++;
         continue;
       }
-      if (
-        trimmedCandidate === ":::" ||
-        /^[ \t]*-\s+phase:\s*$/.test(candidateLine)
-      ) {
+      if (trimmedCandidate === ":::" || /^[ \t]*-\s+phase:\s*$/.test(candidateLine)) {
         break;
       }
 

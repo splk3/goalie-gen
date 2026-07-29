@@ -375,22 +375,12 @@ export function blocksToDocxContent(
         break;
       case "field":
         content.push(
-          fillInFieldToDocxTable(
-            block,
-            primary,
-            keepTablesTogether,
-            keepWithNextFillInTable
-          )
+          fillInFieldToDocxTable(block, primary, keepTablesTogether, keepWithNextFillInTable)
         );
         break;
       case "fields":
         content.push(
-          compactFieldsToDocxTable(
-            block,
-            primary,
-            keepTablesTogether,
-            keepWithNextFillInTable
-          )
+          compactFieldsToDocxTable(block, primary, keepTablesTogether, keepWithNextFillInTable)
         );
         break;
       case "heading": {

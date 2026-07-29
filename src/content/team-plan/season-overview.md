@@ -39,6 +39,7 @@ and skating skills as players.
 <!-- The generator expands each `:::season-table` block into the existing DOCX table. -->
 
 <!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 :::season-table
 headers: Season Phase / Focus Points; Specific Skills & Techniques
 
@@ -83,6 +84,7 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
     - **Review:** Recapping stance, fundamental saves, rebound control, and overall movement.
     - **Celebration:** Hosting a fun "graduation" event to close out the season with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
     :::
+<!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
 ### 10U Starter Content
@@ -110,6 +112,7 @@ The focus at 10U is on building a solid baseline of muscle memory and game exper
 **10U Goaltending Season Plan**
 
 <!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 :::season-table
 headers: Season Phase / Focus Points; Specific Skills
 
@@ -147,6 +150,7 @@ headers: Season Phase / Focus Points; Specific Skills
     - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.
     - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
     :::
+<!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
 ### 12U Starter Content
@@ -176,6 +180,7 @@ At Peewee level, goalies transition from the basic fundamentals learned at 8U/10
 **12U Goaltending Season Plan**
 
 <!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 :::season-table
 headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
 
@@ -220,6 +225,7 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
     - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes.
     - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and tryout prep.
     :::
+<!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
 ### 14U Starter Content
@@ -274,6 +280,7 @@ Here are the common skills, techniques, and goals for 13U/14U goalies and teams:
 **14U Season Plan**
 
 <!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 :::season-table
 headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
 
@@ -315,6 +322,7 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
     - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.
     - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players for a practice.
     :::
+<!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
 ### 16U and older Starter Content
@@ -349,6 +357,7 @@ For 16U, 18U, 19U, high school, and older goaltenders, season plans shift from b
 **16U and Older Season Plan**
 
 <!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 :::season-table
 headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
 
@@ -394,6 +403,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
     - **Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience.
     - **Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
     :::
+<!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
 <!-- markdownlint-enable MD013 -->

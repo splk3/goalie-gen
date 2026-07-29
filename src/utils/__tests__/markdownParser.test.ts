@@ -193,8 +193,7 @@ describe("parseMarkdown", () => {
       },
       {
         type: "bullet",
-        text:
-          "phase: **Early Season**<br>_Core Focus: Stance and skating_ skills: **Stance:** Ready position<br>**Skating:** Shuffles",
+        text: "phase: **Early Season**<br>_Core Focus: Stance and skating_ skills: **Stance:** Ready position<br>**Skating:** Shuffles",
       },
       { type: "paragraph", text: ":::" },
     ]);
