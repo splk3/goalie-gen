@@ -182,43 +182,43 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
 - phase:
     - **Early Season / Fall**
     - (August-September)
-    - _Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
-  drill_url: https://goaliegen.com/goalie-drills/
+    - _Core Focus: "Back to Basics" - Stance, Skating, & Fundamental Saves_
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=12U%2Call&skill_level=beginner%2Cintermediate&fundamental_skill=positioning%2Csave_selection%2Cskating%2Cstance
   skills:
     - **Stance & Baseline Movement:** Establishing a proper athletic ready stance with hands forward and stick on the ice.
-    - **Skating Fundamentals:** Mastering crease mobility through shuffles, C-cuts (forward and backward), T-pushes, and introductory butterfly slides.
-    - **Positioning Basics:** Learning the relationship between squareness, angle, and depth (the ABCDs of depth).
-    - **Basic Save Selection:** Practicing foundational upper and lower body saves, including stick, pad, glove, and blocker saves.
+    - **Skating Fundamentals:** Mastering crease mobility through shuffles, C-cuts (forward and backward), T-pushes, and butterfly slides.
+    - **Positioning Basics:** Review the relationship between squareness, angle, and depth (the ABCDs of depth).
+    - **Basic Save Selection:** Practicing foundational upper and lower body saves, including stick, pad, glove, blocker, and pad saves.
 - phase:
     - **Mid-Season / Winter**
     - (October-November)
     - _Core Focus: The Butterfly, Recovery, & Rebounds_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=12U%2Call&skill_level=beginner%2Cintermediate&fundamental_skill=rebound_control%2Crecovery&skating_skill=power_push
   skills:
-    - **Butterfly Mechanics:** Refining the butterfly drop to close the five-hole and practicing explosive, lead-leg recoveries to get back to the feet quickly.
+    - **Butterfly Mechanics:** Refining the butterfly drop to close the five-hole and practicing explosive, drive-leg power pushes, and rapid recoveries to get back to the feet.
     - **Rebound Management:** Shifting from just blocking pucks to actively absorbing/smothering them for a whistle, or using the stick and blocker to steer rebounds into safe areas (corners).
     - **Traffic & Sightlines:** Learning to look around screens and track the puck through heavy net-front traffic.
-    - **Intro to Post Play:** Beginning to integrate standing and butterfly pad seals against the post to defend against tight-angle plays.
+    - **Post Play:** Beginning to integrate standing and butterfly pad seals against the post to defend against tight-angle plays.
 - phase:
     - **Late Season**
     - (December-January)
-    - _Core Focus: Movement Mechanics & Play Reading_
-  drill_url: https://goaliegen.com/goalie-drills/
+    - _Core Focus: Outside Crease Movement, More Post Integration, and Play Reading_
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=12U%2Call&skill_level=beginner%2Cintermediate
   skills:
-    - **Advanced Post Integration:** Implementing VH (Vertical-Horizontal), RVH (Reverse Vertical-Horizontal), and overlap techniques for plays below the goal line and wraparounds.
+    - **Advanced Post Integration (Advanced):** Implementing VH (Vertical-Horizontal), RVH (Reverse Vertical-Horizontal), and overlap techniques for in close plays below the goal line and wraparounds.
     - **Play Reading & Anticipation:** Tracking passes from behind the net, reading shooter "telegraphing" (predicting shot placement), and managing complex scenarios like odd-man rushes and breakaways.
     - **Deflections & Scrambles:** Reacting to tipped pucks and recovering rapidly during multi-shot scramble situations.
-    - **Puck Handling:** Safely stopping dumped or rimmed pucks behind the net and initiating simple breakout passes to defensemen.
+    - **Puck Handling (Advanced):** Safely stopping dumped or rimmed pucks behind the net and initiating simple breakout passes to defensemen.
 - phase:
     - **End of Season / Spring**
     - (February-March)
     - _Core Focus: Review, Refine, and Evaluate_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=12U%2Call&skill_level=advanced%2Cintermediate
   skills:
-    - **Skills Tune-Up & Integration:** Combining all learned season skills (movement, angle play, saves, and rebound control) into dynamic, high-speed game-flow sequences.
-    - **Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and mental resilience to handle high-pressure game/playoff scenarios.
+    - **Skills Tune-Up & Integration:** Combining all learned season skills (movement, play reading, saves, and rebound control) into dynamic, high-speed game-flow sequences.
+    - **Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and/or mental resilience to handle high-pressure game/playoff scenarios with confidence.
     - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes.
-    - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and off-season goal setting.
+    - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and tryout prep.
     :::
 <!-- prettier-ignore-end -->
 
