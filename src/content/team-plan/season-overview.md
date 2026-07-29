@@ -75,9 +75,15 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
   - **Positioning Concepts:** Formally introducing the definitions of S.A.D. (Square, Angle, Depth) and teaching goalies to "attack the shooter". Priorities are Angle, then Depth, then Square.
   - **Traffic:** Basic introduction to finding sightlines around screens and managing bouncing pucks.
   - **Competitions:** Engaging in fun skating activities like goalie relay races, goalie soccer, or goalie tug-o-war.
-- phase: - **End of Season / Spring** - _(February-March)_ - **Core Focus:** Games, Review, and "Graduation"
-  drill_url: https://goaliegen.com/goalie-drills/?team_drill=no&skill_level=beginner%2Cintermediate&age_level=10_and_under%2Call&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone
-  skills: - **Goalie Games:** Reinforcing skills through small-area games like a shooting gallery, dodgeball, or "Simon Says" against the shooter. - **Review:** Recapping stance, fundamental saves, rebound control, and overall movement. - **Celebration:** Hosting a fun "graduation" event to close out the season with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
+- phase:
+  - **End of Season / Spring**
+  - _(February-March)_
+  - **Core Focus:** Games, Review, and "Graduation"
+    drill_url: https://goaliegen.com/goalie-drills/?team_drill=no&skill_level=beginner%2Cintermediate&age_level=10_and_under%2Call&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone
+    skills:
+  - **Goalie Games:** Reinforcing skills through small-area games like a shooting gallery, dodgeball, or "Simon Says" against the shooter.
+  - **Review:** Recapping stance, fundamental saves, rebound control, and overall movement.
+  - **Celebration:** Hosting a fun "graduation" event to close out the season with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
   :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
@@ -138,9 +144,14 @@ headers: Season Phase / Focus Points; Specific Skills
   - **Situational Play:** Breakaways, odd-man rushes, and face-off positioning
   - **Lateral Movement:** Executing high-to-high, high-to-low, and low-to-low cross-crease plays
   - **Mental Skills:** Reading the play, communicating with teammates, and anticipating threats.
-- phase: - **End of Season** (February-March) - **Core Focus:** Fine-Tuning, Game Simulation, & Review
-  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=10_and_under%2Call&skill_level=advanced%2Cbeginner%2Cintermediate
-  skills: - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation. - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
+- phase:
+  - **End of Season**
+  - (February-March)
+  - **Core Focus:** Fine-Tuning, Game Simulation, & Review
+    drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=10_and_under%2Call&skill_level=advanced%2Cbeginner%2Cintermediate
+    skills:
+  - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.
+  - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
   :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
@@ -207,9 +218,16 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
   - **Play Reading & Anticipation:** Tracking passes from behind the net, reading shooter "telegraphing" (predicting shot placement), and managing complex scenarios like odd-man rushes and breakaways.
   - **Deflections & Scrambles:** Reacting to tipped pucks and recovering rapidly during multi-shot scramble situations.
   - **Puck Handling (Advanced):** Safely stopping dumped or rimmed pucks behind the net and initiating simple breakout passes to defensemen.
-- phase: - **End of Season / Spring** - (February-March) - _Core Focus: Review, Refine, and Evaluate_
-  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=12U%2Call&skill_level=advanced%2Cintermediate
-  skills: - **Skills Tune-Up & Integration:** Combining all learned season skills (movement, play reading, saves, and rebound control) into dynamic, high-speed game-flow sequences. - **Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and/or mental resilience to handle high-pressure game/playoff scenarios with confidence. - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes. - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and tryout prep.
+- phase:
+  - **End of Season / Spring**
+  - (February-March)
+  - _Core Focus: Review, Refine, and Evaluate_
+    drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=12U%2Call&skill_level=advanced%2Cintermediate
+    skills:
+  - **Skills Tune-Up & Integration:** Combining all learned season skills (movement, play reading, saves, and rebound control) into dynamic, high-speed game-flow sequences.
+  - **Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and/or mental resilience to handle high-pressure game/playoff scenarios with confidence.
+  - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes.
+  - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and tryout prep.
   :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
@@ -298,9 +316,16 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
   - **Post-Play Integration:** Mastering the Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques to seal the posts tightly during wraparounds, sharp-angle shots, and plays below the goal line.
   - **Hockey IQ & Play Reading:** Enhancing anticipation by reading shooter telegraphing, tracking lateral passes, and managing complex tactical situations like odd-man rushes (2-on-1s, 3-on-2s) and breakaways.
   - **Advanced Puck Handling:** Evolving into a "third defenseman" by confidently stopping rimmed pucks behind the net and executing accurate forehand or backhand breakout passes under pressure.
-- phase: - **End of Season / Spring** - (February-March) - _Core Focus: Review, Refine, and Evaluate_
-  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=14U&skill_level=advanced%2Cintermediate
-  skills: - **High-Tempo Game Simulation:** Synthesizing all learned skills into continuous, high-speed scramble and multi-shot drills that mimic playoff intensity. - **Mental Toughness & Playoff Prep:** Establishing rigorous game-day routines, including visualization, breathing exercises, and stress management, to maintain peak focus during high-pressure games. - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position. - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players for a practice.
+- phase:
+  - **End of Season / Spring**
+  - (February-March)
+  - _Core Focus: Review, Refine, and Evaluate_
+    drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=14U&skill_level=advanced%2Cintermediate
+    skills:
+  - **High-Tempo Game Simulation:** Synthesizing all learned skills into continuous, high-speed scramble and multi-shot drills that mimic playoff intensity.
+  - **Mental Toughness & Playoff Prep:** Establishing rigorous game-day routines, including visualization, breathing exercises, and stress management, to maintain peak focus during high-pressure games.
+  - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.
+  - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players for a practice.
   :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
@@ -373,9 +398,16 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
   - **Managing Traffic:** Battling through screens, tracking pucks through traffic, and setting up for tips/deflections.
   - **Advanced Play Reading:** Anticipating plays from behind the net, reading net drives versus passing options, and tracking the puck.
   - **Desperation Saves:** Recoveries, second efforts, and desperation save execution.
-- phase: - **End of Season / Spring** - (February-March) - _Core Focus: Review, Refine, and Evaluate_
-  drill_url: https://goaliegen.com/goalie-drills/?age_level=16U_and_older&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&skill_level=advanced%2Cintermediate
-  skills: - **High-Pressure Situations:** Managing odd-man rushes (2-on-1s), penalty shots, and breakaways. - **Advanced Puck Handling:** Stopping dump-ins, playing the puck under pressure, and executing backhands. - **Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience. - **Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
+- phase:
+  - **End of Season / Spring**
+  - (February-March)
+  - _Core Focus: Review, Refine, and Evaluate_
+    drill_url: https://goaliegen.com/goalie-drills/?age_level=16U_and_older&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&skill_level=advanced%2Cintermediate
+    skills:
+  - **High-Pressure Situations:** Managing odd-man rushes (2-on-1s), penalty shots, and breakaways.
+  - **Advanced Puck Handling:** Stopping dump-ins, playing the puck under pressure, and executing backhands.
+  - **Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience.
+  - **Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
   :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
