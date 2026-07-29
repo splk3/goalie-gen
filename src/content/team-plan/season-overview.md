@@ -116,7 +116,7 @@ headers: Season Phase / Focus Points; Specific Skills
 - phase:
     - **Early Season** (August-September)
     - **Core Focus:** Stance, Skating, & Positioning
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=10_and_under%2Call&skill_level=beginner%2Cintermediate&fundamental_skill=positioning%2Cskating%2Cstance&skating_skill=c_cut%2Cshuffle%2Ct_push
   skills:
     - **Stance & Balance:** Establishing basic athletic posture, quiet torso, and proper hand/stick placement
     - **Skating:** Shuffles, T-pushes, C-cuts
@@ -125,7 +125,7 @@ headers: Season Phase / Focus Points; Specific Skills
 - phase:
     - **Mid-Season** (October-November)
     - **Core Focus:** Save Execution, Rebounds, & Post Play
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=10_and_under%2Call&skill_level=beginner%2Cintermediate&fundamental_skill=rebound_control%2Csave_selection
   skills:
     - **Advanced Saves:** Glove, blocker, and body/smothering saves
     - **Rebound & Recovery:** Getting to the feet from any position, controlling rebounds (steering wide or covering), and tracking secondary pucks.
@@ -134,7 +134,7 @@ headers: Season Phase / Focus Points; Specific Skills
 - phase:
     - **Late Season** (December-January)
     - **Core Focus:** Decision Making, Tactical Play
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=10_and_under%2Call&skill_level=beginner%2Cintermediate
   skills:
     - **Situational Play:** Breakaways, odd-man rushes, and face-off positioning
     - **Lateral Movement:** Executing high-to-high, high-to-low, and low-to-low cross-crease plays
@@ -142,7 +142,7 @@ headers: Season Phase / Focus Points; Specific Skills
 - phase:
     - **End of Season** (February-March)
     - **Core Focus:** Fine-Tuning, Game Simulation, & Review
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=10_and_under%2Call&skill_level=advanced%2Cbeginner%2Cintermediate
   skills:
     - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.
     - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
@@ -156,6 +156,7 @@ headers: Season Phase / Focus Points; Specific Skills
 12U is a good time to start working the "shift" length of goalies to a full period.
 USA Hockey recommends switching goalies each period during a game,
 and rotating which goalie starts/closes each game.
+If you have more than 2 goalies or have goalies who want to skate out, consider rotating your goalies each game so they can skate out when not in net.
 
 _Note:_ All teams and goalies are different, so talk to your goalies and work with them on a rotational schedule that works for them and the team.
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
