@@ -278,7 +278,7 @@ describe("blocksToDocxParagraphs", () => {
       expect(table.root[3].options?.cantSplit).toBe(true);
     });
 
-    it("keeps fill-in tables together by chaining row paragraphs", () => {
+    it("chains adjacent fill-in tables so they paginate as a single unit", () => {
       const content = blocksToDocxContent([
         { type: "field", label: "Notes", lines: 3 },
         { type: "fields", rows: [{ left: "Name", right: "Focus" }] },
@@ -299,8 +299,25 @@ describe("blocksToDocxParagraphs", () => {
       expect(getFirstCellParagraphProperties(fieldTable, 0).root?.[0]?.rootKey).toBe(
         "w:keepNext"
       );
-      expect(getFirstCellParagraphProperties(fieldTable, 2).root?.[0]?.rootKey).toBeUndefined();
+      expect(getFirstCellParagraphProperties(fieldTable, 2).root?.[0]?.rootKey).toBe(
+        "w:keepNext"
+      );
       expect(getFirstCellParagraphProperties(compactTable, 0).root?.[0]?.rootKey).toBeUndefined();
+    });
+
+    it("does not chain standalone fill-in tables to following non-table content", () => {
+      const content = blocksToDocxContent([
+        { type: "field", label: "Notes", lines: 2 },
+        { type: "paragraph", text: "After table" },
+      ]);
+
+      type XmlNode = { root?: XmlNode[]; rootKey?: string };
+      const rows = (content[0] as unknown as { root: XmlNode[] }).root;
+      const lastRow = rows[3];
+      const firstCell = lastRow.root?.[1];
+      const paragraphProperties = firstCell?.root?.[1]?.root?.[0];
+
+      expect(paragraphProperties?.root?.[0]?.rootKey).toBeUndefined();
     });
 
     it("keeps paragraph conversion unchanged for non-table blocks", () => {

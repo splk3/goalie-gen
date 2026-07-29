@@ -210,7 +210,8 @@ function tableBlockToDocxTable(
 function fillInFieldToDocxTable(
   block: Extract<MarkdownBlock, { type: "field" }>,
   primaryColor: string,
-  keepTablesTogether: boolean
+  keepTablesTogether: boolean,
+  keepWithNextFillInTable: boolean
 ): Table {
   const labelWidth = 1800;
   const inputWidth = DOCX_CONTENT_WIDTH_TWIPS - labelWidth;
@@ -232,7 +233,10 @@ function fillInFieldToDocxTable(
                   bold: showLabel,
                 }),
               ],
-              keepNext: keepTablesTogether && index < block.lines - 1 ? true : undefined,
+              keepNext:
+                keepTablesTogether && (index < block.lines - 1 || keepWithNextFillInTable)
+                  ? true
+                  : undefined,
             }),
           ],
         }),
@@ -248,7 +252,10 @@ function fillInFieldToDocxTable(
             new Paragraph({
               children: [new TextRun({ text: "" })],
               spacing: { after: 120 },
-              keepNext: keepTablesTogether && index < block.lines - 1 ? true : undefined,
+              keepNext:
+                keepTablesTogether && (index < block.lines - 1 || keepWithNextFillInTable)
+                  ? true
+                  : undefined,
             }),
           ],
         }),
@@ -267,7 +274,8 @@ function fillInFieldToDocxTable(
 function compactFieldsToDocxTable(
   block: Extract<MarkdownBlock, { type: "fields" }>,
   primaryColor: string,
-  keepTablesTogether: boolean
+  keepTablesTogether: boolean,
+  keepWithNextFillInTable: boolean
 ): Table {
   const labelWidth = 1500;
   const inputWidth = 3180;
@@ -291,7 +299,10 @@ function compactFieldsToDocxTable(
                   }),
                 ],
                 keepNext:
-                  keepTablesTogether && rowIndex < block.rows.length - 1 ? true : undefined,
+                  keepTablesTogether &&
+                  (rowIndex < block.rows.length - 1 || keepWithNextFillInTable)
+                    ? true
+                    : undefined,
               }),
             ],
           }),
@@ -308,7 +319,10 @@ function compactFieldsToDocxTable(
                 children: [new TextRun({ text: "" })],
                 spacing: { after: 120 },
                 keepNext:
-                  keepTablesTogether && rowIndex < block.rows.length - 1 ? true : undefined,
+                  keepTablesTogether &&
+                  (rowIndex < block.rows.length - 1 || keepWithNextFillInTable)
+                    ? true
+                    : undefined,
               }),
             ],
           }),
@@ -334,13 +348,20 @@ export function blocksToDocxContent(
   const primary = cleanHexColor(options?.primaryColor);
   const secondary = cleanHexColor(options?.secondaryColor);
   const keepTablesTogether = options?.keepTablesTogether ?? true;
+  const isFillInBlock = (
+    block: MarkdownBlock | undefined
+  ): block is Extract<MarkdownBlock, { type: "field" | "fields" }> =>
+    block?.type === "field" || block?.type === "fields";
+  const content: DocxContent[] = [];
 
-  return blocks.flatMap((block): DocxContent[] => {
+  blocks.forEach((block, index) => {
+    const keepWithNextFillInTable = isFillInBlock(block) && isFillInBlock(blocks[index + 1]);
     switch (block.type) {
       case "table":
-        return [tableBlockToDocxTable(block, primary, keepTablesTogether)];
+        content.push(tableBlockToDocxTable(block, primary, keepTablesTogether));
+        break;
       case "season-table":
-        return [
+        content.push(
           tableBlockToDocxTable(
             {
               type: "table",
@@ -349,12 +370,29 @@ export function blocksToDocxContent(
             },
             primary,
             keepTablesTogether
-          ),
-        ];
+          )
+        );
+        break;
       case "field":
-        return [fillInFieldToDocxTable(block, primary, keepTablesTogether)];
+        content.push(
+          fillInFieldToDocxTable(
+            block,
+            primary,
+            keepTablesTogether,
+            keepWithNextFillInTable
+          )
+        );
+        break;
       case "fields":
-        return [compactFieldsToDocxTable(block, primary, keepTablesTogether)];
+        content.push(
+          compactFieldsToDocxTable(
+            block,
+            primary,
+            keepTablesTogether,
+            keepWithNextFillInTable
+          )
+        );
+        break;
       case "heading": {
         const level =
           block.level === 1
@@ -362,23 +400,25 @@ export function blocksToDocxContent(
             : block.level === 2
               ? HeadingLevel.HEADING_2
               : HeadingLevel.HEADING_3;
-        return [
+        content.push(
           new Paragraph({
             children: [new TextRun({ text: block.text, color: primary, bold: true })],
             heading: level,
             spacing: { before: 400, after: 200 },
-          }),
-        ];
+          })
+        );
+        break;
       }
       case "paragraph":
-        return [
+        content.push(
           new Paragraph({
             children: textToParagraphChildren(block.text, primary, "000000"),
             spacing: { after: 300 },
-          }),
-        ];
+          })
+        );
+        break;
       case "bullet":
-        return [
+        content.push(
           new Paragraph({
             indent: { left: 540, hanging: 360 },
             children: [
@@ -390,19 +430,21 @@ export function blocksToDocxContent(
               ...textToParagraphChildren(block.text, primary, "000000"),
             ],
             spacing: { after: 100 },
-          }),
-        ];
+          })
+        );
+        break;
       case "image": {
         const image = options?.images?.[block.src];
         if (!image) {
-          return [
+          content.push(
             new Paragraph({
               children: [new TextRun({ text: block.alt, color: "000000" })],
               spacing: { after: 300 },
-            }),
-          ];
+            })
+          );
+          break;
         }
-        return [
+        content.push(
           new Paragraph({
             children: [
               new ImageRun({
@@ -413,18 +455,22 @@ export function blocksToDocxContent(
             ],
             alignment: AlignmentType.CENTER,
             spacing: { before: 100, after: 300 },
-          }),
-        ];
+          })
+        );
+        break;
       }
       case "spacer":
-        return [
+        content.push(
           new Paragraph({
             children: [new TextRun({ text: "" })],
             spacing: { after: 300 },
-          }),
-        ];
+          })
+        );
+        break;
     }
   });
+
+  return content;
 }
 
 /**
