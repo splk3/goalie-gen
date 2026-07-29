@@ -235,51 +235,43 @@ Having time on the bench also gives coaches a chance to communicate and give fee
 
 **14U Season Goals**
 
-At the 13U/14U (Bantam) level, players are entering adolescence, which means goalies face faster shots, larger players, and a significantly higher pace of play
-. Because nearly all foundational techniques should be in place by this age, the emphasis shifts from basic learning to mastery, consistency, and tactical awareness
-. USA Hockey defines this age group as the "Train to Train" stage, where athletes learn to take ownership of their overall development
-.
+At the 13U/14U (Bantam) level, players are entering adolescence, which means goalies face faster shots, larger players, and a significantly higher pace of play.
+Because nearly all foundational techniques should be in place by this age, the emphasis shifts from basic learning to mastery, consistency, and tactical awareness.
+USA Hockey defines this age group as the "Train to Train" stage, where athletes learn to take ownership of their overall development.
+
 Here are the common skills, techniques, and goals for 13U/14U goalies and teams:
-Core Goals & Philosophy
-Ownership and Off-Ice Habits: Goalies are expected to take responsibility for their development by adopting rigorous off-ice habits, focusing heavily on proper nutrition, hydration, self-discipline, and sleep/recovery
-.
-Mental Toughness: Because Bantams face increased pressure from league playoffs and showcases, developing mental resilience is a central theme
-. Goalies work on consistent pre-game routines, emotional control, stress management, and the ability to bounce back quickly after allowing a goal
-.
-Skating & Crease Movement
-High-Intensity Agility: Skating drills become highly progressive to match game speed, emphasizing explosive footwork, balance, and agility
-.
-Advanced Mobility: Goalies master advanced crease movements, such as explosive lateral T-pushes and rapid, efficient up-and-down recoveries to keep up with faster cross-ice passes
-.
-Positioning & Play Reading (Hockey IQ)
-Box Control: Goalies are taught advanced positioning to "box out" shooters. This means using perfect angles and depth to minimize the amount of open net the shooter can see
-.
-Anticipation and Threat Assessment: Goalies elevate their Hockey IQ by learning to read complex play developments, anticipate the opposition's strategy, and adjust their depth based on where the primary threats are located
-.
-Save Selection & Rebound Control
-The "7 Stances": 14U goalies refine their posture to be comfortable in multiple stance variations—specifically high, mid, and low upright stances, the butterfly, VH, RVH, and RVH tracking along the post—allowing them to adjust to different shot heights and scenarios
-.
-Toolbox Expansion: Goalies dial in specialized saves, such as half-butterflies and well-timed poke checks, while prioritizing quick recoveries and strict rebound control on much harder shots
-.
-Traffic Management
-Screens and Deflections: With larger players crowding the net, goalies must learn advanced traffic management. This involves finding sightlines through heavy screens, battling for positioning, and reacting to late tips and deflections
-.
-Advanced Techniques: Post Play & Puck Handling
-Post-Play Mastery: Goalies master Vertical-Horizontal (VH) and Reverse Vertical-Horizontal (RVH) integrations to confidently seal the posts, shut down wraparounds, and control rebounds on sharp-angle attacks
-.
-The "Third Defenseman": 14U goalies are expected to evolve into capable puck-handlers
-. They develop "soft hands" to confidently leave the crease, stop dumped pucks, and dish effective breakout passes to relieve defensive pressure
-.
-Communication & Team Defense
-Goalies become active participants in the team's defensive strategy
-. They are expected to establish and maintain a constant line of communication with their defensemen during the chaotic flow of the game, calling out threats and directing breakouts
-.
+
+**Core Goals and Philosophy**
+
+- _Ownership and Off-Ice Habits_: Goalies are expected to take responsibility for their development by adopting rigorous off-ice habits, focusing heavily on proper nutrition, hydration, self-discipline, and sleep/recovery.
+- _Mental Toughness_: Because Bantams face increased pressure from playoffs, tournaments, and internal drive, developing mental resilience is a central theme.
+  Goalies work on consistent pre-game routines, emotional control, stress management, and the ability to bounce back quickly after allowing a goal.
+
+**Skating and Crease Movement**
+
+- _High-Intensity Agility_: Skating drills become highly progressive to match game speed, emphasizing explosive footwork, balance, and agility.
+- _Advanced Mobility_: Goalies master advanced crease movements, such as explosive lateral T-pushes and rapid, efficient up-and-down recoveries to keep up with faster cross-ice passes.
+
+**Positioning & Play Reading (Hockey IQ)**
+
+- _Box Control_: Goalies are taught advanced positioning to "box out" shooters. This means using perfect angles and depth to minimize the amount of open net the shooter can see.
+- _Anticipation and Threat Assessment_: Goalies elevate their Hockey IQ by learning to read complex play developments, anticipate the opposition's strategy, and adjust their depth based on where the primary threats are located.
+
+**Save Selection & Rebound Control**
+
+- _Use the appropriate stance/position_: 14U goalies refine their posture to be comfortable in multiple stance variations—specifically high, mid, and low upright stances, the butterfly, VH, RVH, allowing them to adjust to different shot heights and scenarios.
+- _Toolbox Expansion_: Goalies experiment with specialized saves, such as half-butterflies and well-timed poke checks, while prioritizing quick recoveries and strict rebound control on much harder shots.
+- _Traffic Management, Screens and Deflections_: With larger players crowding the net, goalies must learn advanced traffic management. This involves finding sightlines through heavy screens, battling for positioning, and reacting to late tips and deflections.
+
+**Advanced Techniques: Post Play & Puck Handling**
+
+- _Post-Play Mastery_: Goalies master Vertical-Horizontal (VH) and Reverse Vertical-Horizontal (RVH) integrations to confidently seal the posts, shut down wraparounds, and control rebounds on sharp-angle attacks.
+- _The "Third Defenseman"_: 14U goalies are expected to evolve into capable puck-handlers.
+  They develop "soft hands" to confidently leave the crease, stop dumped pucks, and dish effective breakout passes to relieve defensive pressure.
+- _Communication & Team Defense_: Goalies become active participants in the team's defensive strategy.
+  They are expected to establish and maintain a constant line of communication with their defensemen during the chaotic flow of the game, calling out threats and directing breakouts.
 
 **14U Season Plan**
-
-Here is a representative 13U/14U (Bantam) season plan table based on the provided sources.
-
-While the provided timeframes use the "Try Goalie" phrasing as an example for the early season, at the 14U level, goalies are typically experienced. Therefore, the skills in that block reflect an advanced re-establishment of their foundational techniques rather than a true beginner phase.
 
 <!-- prettier-ignore-start -->
 :::season-table
@@ -288,26 +280,26 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
 - phase:
     - **Early Season / Fall**
     - (August-September)
-    - _Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
-  drill_url: https://goaliegen.com/goalie-drills/
+    - _Core Focus: "Back to Basics" - Stance, Skating, & Fundamental Saves_
+  drill_url: https://goaliegen.com/goalie-drills/?skill_level=beginner%2Cintermediate&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=14U&skating_skill=c_cut%2Cshuffle%2Ct_push&fundamental_skill=positioning%2Csave_selection%2Cskating%2Cstance
   skills:
-    - **Advanced Stance & Box Control:** Perfecting posture across the "7 stances" (high, mid, and low upright variations, butterfly, VH, RVH, etc.) to adjust to varying shot distances. Understanding "box control" (optimizing angle, squareness, and depth) to visually minimize the amount of open net presented to the shooter.
+    - **Advanced Stance & Box Control:** Perfecting posture across all stances (high, mid, and low upright variations, butterfly, VH, RVH) to adjust to varying shot distances and angles. Understanding "box control" (optimizing angle, squareness, and depth) to minimize the amount of open net presented to the shooter.
     - **Elite Crease Mobility:** High-intensity skating to build explosive agility, including rapid T-pushes, shuffles, and C-cuts, ensuring the goalie leads with their eyes and head.
     - **Fundamental Save Mastery:** Drilling strict fundamentals for glove, blocker, stick, and pad saves, ensuring goalies track the puck all the way into their equipment.
 - phase:
     - **Mid-Season / Winter**
     - (October-November)
-    - _Core Focus: The Butterfly, Recovery, & Rebounds_
-  drill_url: https://goaliegen.com/goalie-drills/
+    - _Core Focus: Butterfly, Recovery and Rebound Control_
+  drill_url: https://goaliegen.com/goalie-drills/?skill_level=beginner%2Cintermediate&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=14U&fundamental_skill=rebound_control%2Crecovery%2Csave_selection&skating_skill=butterfly%2Cpower_push
   skills:
-    - **Butterfly & Rapid Recovery:** Refining butterfly slide mechanics and explosive recoveries. Goalies practice popping back up to their feet using the correct lead leg to prepare for secondary shots.
-    - **Active Rebound Management:** Evolving from merely blocking shots to intentionally directing rebounds into the corners using the stick or angled pads, or actively absorbing/smothering pucks into the chest to force a whistle.
+    - **Butterfly & Rapid Recovery:** Refining butterfly slide mechanics and explosive pushes and recoveries. Goalies practice popping back up to their feet using the correct lead leg to prepare for secondary shots.
+    - **Active Rebound Management:** Intentionally direct rebounds into the corners using the stick or angled pads, or actively pulling loose pucks in close to cover.
     - **Traffic Management:** Developing the ability to look around screens (using high/low stance adjustments), battle through heavy net-front traffic, and react to late deflections or tips.
 - phase:
     - **Late Season**
     - (December-January)
     - _Core Focus: Movement Mechanics & Play Reading_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=14U
   skills:
     - **Post-Play Integration:** Mastering the Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques to seal the posts tightly during wraparounds, sharp-angle shots, and plays below the goal line.
     - **Hockey IQ & Play Reading:** Enhancing anticipation by reading shooter telegraphing, tracking lateral passes, and managing complex tactical situations like odd-man rushes (2-on-1s, 3-on-2s) and breakaways.
@@ -316,12 +308,12 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
     - **End of Season / Spring**
     - (February-March)
     - _Core Focus: Review, Refine, and Evaluate_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&age_level=14U&skill_level=advanced%2Cintermediate
   skills:
     - **High-Tempo Game Simulation:** Synthesizing all learned skills into continuous, high-speed scramble and multi-shot drills that mimic playoff intensity.
     - **Mental Toughness & Playoff Prep:** Establishing rigorous game-day routines, including visualization, breathing exercises, and stress management, to maintain peak focus during high-pressure games.
     - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.
-    - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players.
+    - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players for a practice.
     :::
 <!-- prettier-ignore-end -->
 
@@ -341,22 +333,20 @@ For 16U, 18U, 19U, high school, and older goaltenders, season plans shift from b
 
 **Common Goals**
 
-- **Mental Toughness and Resilience:** Older goalies are trained to handle the mental demands of competitive sports, focusing on stress management, performing under pressure, positive self-talk, and bouncing back from mistakes. Coaches often incorporate visualization, goal setting, and mental health support into their routines.
-- **Elite Physical Conditioning:** Workouts become highly specialized, targeting goalie-specific strength, explosive power, core stability, and cardiovascular endurance to handle the high pace of older age groups. Nutrition, hydration, and sleep management are also heavily emphasized.
-- **Leadership and Communication:** Goalies are expected to act as leaders on the ice. Plans emphasize active communication with defensemen, calling out plays, and directing the team's defensive zone strategy.
+- _Mental Toughness and Resilience_: Older goalies are trained to handle the mental demands of competitive sports, focusing on stress management, performing under pressure, unconditional confidence, and bouncing back from mistakes. Coaches often incorporate visualization, goal setting, and mental health support into their routines.
+- _Elite Physical Conditioning_: Workouts become highly specialized, targeting goalie-specific strength, explosive power, core stability, and cardiovascular endurance to handle the high pace of older age groups. Nutrition, hydration, and sleep management are also heavily emphasized.
+- _Leadership and Communication_: Goalies are expected to act as leaders on the ice. Plans emphasize active communication with defensemen, calling out plays, and directing the team's defensive zone strategy.
 
 **Common Skills and Techniques**
 
-- **Post-Integration Mastery:** A major technical focus at the 16U+ level is sealing the posts and protecting the net from low-angle plays and wrap-arounds. Goalies spend significant time mastering the Reverse Vertical-Horizontal (RVH), Vertical-Horizontal (VH), and Overlap techniques, as well as knowing when to transition between them.
-- **Advanced Crease Mobility:** Skating transitions from basic shuffles to "elite crease mobility" (sometimes referred to as "Crease Ballet"), which involves explosive lateral pushes, rapid recoveries, sharp cutting, hinging, and pivoting.
-- **Puck Handling and Distribution:** At these levels, goalies are expected to act as a capable "third defenseman". Techniques focus on stopping hard dump-ins, playing the puck under pressure, intercepting rim-arounds, and making accurate forehand and backhand breakout passes to teammates.
-- **Play Reading and "Hockey IQ":** Goalies are trained to read and react to complex game situations. This includes anticipating odd-man rushes (2-on-1s, 3-on-2s), recognizing high-to-low or low-to-high passing options, tracking backdoor threats, and understanding the team's power-play and penalty-kill systems.
-- **Managing Traffic and Screens:** As shooters become more skilled, goalies must practice battling for sightlines. Techniques include tracking the puck through layered screens, adjusting depth, and setting up for late deflections and tips.
-- **Advanced Save Selection:** Goalies refine their "save artistry" by utilizing specialized techniques like blocker wrist twists, precise stick redirections to safely place rebounds into the corners, and executing desperation or extension saves when caught out of position.
+- _Post-Integration Mastery_: A major technical focus at the 16U+ level is sealing the posts and protecting the net from low-angle plays and wrap-arounds. Goalies spend significant time mastering the Reverse Vertical-Horizontal (RVH), Vertical-Horizontal (VH), and Overlap techniques, as well as knowing when and how to transition between them.
+- _Advanced Crease Mobility_: Skating continuously improves in speed and precision, which involves explosive lateral pushes, rapid recoveries, sharp cutting, hinging, and pivoting.
+- _Puck Handling and Distribution_: At these levels, goalies are expected to act as a capable "third defenseman". Techniques focus on stopping hard dump-ins, playing the puck under pressure, intercepting rim-arounds, and making accurate forehand and backhand breakout passes to teammates.
+- _Play Reading and "Hockey IQ"_: Goalies are trained to read and react to complex game situations. This includes anticipating odd-man rushes (2-on-1s, 3-on-2s), recognizing high-to-low or low-to-high passing options, tracking backdoor threats, and understanding the team's power-play and penalty-kill systems.
+- _Managing Traffic and Screens_: As shooters become more skilled, goalies must practice battling for sightlines. Techniques include tracking the puck through layered screens, adjusting depth, and setting up for late deflections and tips.
+- _Advanced Save Selection_: Goalies refine their "save artistry" by utilizing specialized techniques like blocker wrist twists, precise stick redirections to safely place rebounds into the corners, and executing desperation or extension saves when caught out of position.
 
 **16U and Older Season Plan**
-
-Based on the 16U goaltending season plans provided in the sources, here is a representative season plan table. It uses your requested timeframes and core focuses for the first column, while the second column incorporates the advanced skills, techniques, and tactical focus points specifically designed for 16U goalies.
 
 <!-- prettier-ignore-start -->
 :::season-table
@@ -366,7 +356,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
     - **Early Season / Fall**
     - (August-September)
     - _Core Focus: "Try Goalie" Phase: Basic Stance, Skating, & Fun_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?age_level=16U_and_older&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&fundamental_skill=positioning%2Csave_selection%2Cskating%2Cstance
   skills:
     - **Stance Mechanics:** Posture, feet/hand positioning, holding the triangle, and maintaining a quiet torso.
     - **Advanced Crease Mobility:** Shuffles, T-pushes, C-cuts, and advanced edge work (inside/outside edges, pivots, and sharp cutting).
@@ -376,7 +366,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
     - **Mid-Season / Winter**
     - (October-November)
     - _Core Focus: The Butterfly, Recovery, & Rebounds_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?age_level=16U_and_older&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&skating_skill=butterfly%2Cpower_push&fundamental_skill=rebound_control%2Crecovery
   skills:
     - **Positioning & Angles:** Square to the puck, ABCDs of Depth, Box Theory, and HHH (Lead with Head, then Hands, then Hips).
     - **Save Selection & Control:** Stick saves, glove/blocker tracking, and body saves.
@@ -387,7 +377,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
     - **Late Season**
     - (December-January)
     - _Core Focus: Movement Mechanics & Play Reading_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?age_level=16U_and_older&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&skill_level=advanced%2Cintermediate
   skills:
     - **Post Integration:** Mastery of Vertical-Horizontal (VH), Reverse Vertical-Horizontal (RVH), and Overlap techniques for low-angle attacks.
     - **Managing Traffic:** Battling through screens, tracking pucks through traffic, and setting up for tips/deflections.
@@ -397,7 +387,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
     - **End of Season / Spring**
     - (February-March)
     - _Core Focus: Review, Refine, and Evaluate_
-  drill_url: https://goaliegen.com/goalie-drills/
+  drill_url: https://goaliegen.com/goalie-drills/?age_level=16U_and_older&space_required=crease_only%2Cflexible%2Chalf_zone%2Cwhole_zone&skill_level=advanced%2Cintermediate
   skills:
     - **High-Pressure Situations:** Managing odd-man rushes (2-on-1s), penalty shots, and breakaways.
     - **Advanced Puck Handling:** Stopping dump-ins, playing the puck under pressure, and executing backhands.
