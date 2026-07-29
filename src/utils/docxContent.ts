@@ -160,7 +160,7 @@ function createTableCellParagraphs(
       new Paragraph({
         children: textToParagraphChildren(line, primaryColor, "000000", isHeader),
         spacing: { after: 40 },
-        keepNext,
+        keepNext: keepNext ? true : undefined,
       })
   );
 }
@@ -209,7 +209,8 @@ function tableBlockToDocxTable(
 
 function fillInFieldToDocxTable(
   block: Extract<MarkdownBlock, { type: "field" }>,
-  primaryColor: string
+  primaryColor: string,
+  keepTablesTogether: boolean
 ): Table {
   const labelWidth = 1800;
   const inputWidth = DOCX_CONTENT_WIDTH_TWIPS - labelWidth;
@@ -231,7 +232,7 @@ function fillInFieldToDocxTable(
                   bold: showLabel,
                 }),
               ],
-              keepNext: index < block.lines - 1,
+              keepNext: keepTablesTogether && index < block.lines - 1 ? true : undefined,
             }),
           ],
         }),
@@ -247,7 +248,7 @@ function fillInFieldToDocxTable(
             new Paragraph({
               children: [new TextRun({ text: "" })],
               spacing: { after: 120 },
-              keepNext: index < block.lines - 1,
+              keepNext: keepTablesTogether && index < block.lines - 1 ? true : undefined,
             }),
           ],
         }),
@@ -265,7 +266,8 @@ function fillInFieldToDocxTable(
 
 function compactFieldsToDocxTable(
   block: Extract<MarkdownBlock, { type: "fields" }>,
-  primaryColor: string
+  primaryColor: string,
+  keepTablesTogether: boolean
 ): Table {
   const labelWidth = 1500;
   const inputWidth = 3180;
@@ -288,7 +290,8 @@ function compactFieldsToDocxTable(
                     bold: true,
                   }),
                 ],
-                keepNext: rowIndex < block.rows.length - 1,
+                keepNext:
+                  keepTablesTogether && rowIndex < block.rows.length - 1 ? true : undefined,
               }),
             ],
           }),
@@ -304,7 +307,8 @@ function compactFieldsToDocxTable(
               new Paragraph({
                 children: [new TextRun({ text: "" })],
                 spacing: { after: 120 },
-                keepNext: rowIndex < block.rows.length - 1,
+                keepNext:
+                  keepTablesTogether && rowIndex < block.rows.length - 1 ? true : undefined,
               }),
             ],
           }),
@@ -348,9 +352,9 @@ export function blocksToDocxContent(
           ),
         ];
       case "field":
-        return [fillInFieldToDocxTable(block, primary)];
+        return [fillInFieldToDocxTable(block, primary, keepTablesTogether)];
       case "fields":
-        return [compactFieldsToDocxTable(block, primary)];
+        return [compactFieldsToDocxTable(block, primary, keepTablesTogether)];
       case "heading": {
         const level =
           block.level === 1

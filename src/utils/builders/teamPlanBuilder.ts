@@ -7,7 +7,12 @@
  */
 import { parseMarkdown } from "../markdownParser";
 import type { SeasonTableRow } from "../markdownParser";
-import { blocksToDocxContent, cleanHexColor, makeDocxHeaderFooter, textToParagraphChildren } from "../docxContent";
+import {
+  blocksToDocxContent,
+  cleanHexColor,
+  makeDocxHeaderFooter,
+  textToParagraphChildren,
+} from "../docxContent";
 import { buildEventCalendarMonths } from "../teamPlanCalendarGrid";
 import type {
   TeamPlanConfig,
@@ -129,7 +134,6 @@ export async function buildTeamPlanDocument(
     addCalendarOfEvents,
     includeCalendarView,
     includeEventDetails,
-    addSuggestedDrillEachPractice,
     addShotTrackerToGames,
     sortedEventDates,
     eventSelections,
@@ -423,9 +427,7 @@ export async function buildTeamPlanDocument(
             const isLastPhaseLine = lineIndex === phaseLines.length - 1;
             // Last phase line keepNext: if there's a recommended drills entry coming, keep with it;
             // otherwise use the row-level keepNext.
-            const lineKeepNext = isLastPhaseLine
-              ? hasRecommendedDrills || keepNext
-              : true;
+            const lineKeepNext = isLastPhaseLine ? hasRecommendedDrills || keepNext : true;
             return makeCellParagraph(line, "000000", lineKeepNext);
           }
         );
@@ -461,11 +463,7 @@ export async function buildTeamPlanDocument(
         const skillsParagraphs: InstanceType<typeof Paragraph>[] = skillsLines.map(
           (line, lineIndex) => {
             const isLastSkillsLine = lineIndex === skillsLines.length - 1;
-            return makeCellParagraph(
-              line,
-              "000000",
-              keepNext && !isLastSkillsLine
-            );
+            return makeCellParagraph(line, "000000", keepNext && !isLastSkillsLine);
           }
         );
 
@@ -606,9 +604,7 @@ export async function buildTeamPlanDocument(
   );
   for (const block of seasonOverviewBlocks) {
     if (block.type === "season-table") {
-      documentChildren.push(
-        await buildSeasonTableWithQr(block.headers, block.rows, false)
-      );
+      documentChildren.push(await buildSeasonTableWithQr(block.headers, block.rows, false));
     } else {
       documentChildren.push(
         ...blocksToDocxContent([block], { ...colorOpts, keepTablesTogether: false })
@@ -909,23 +905,17 @@ export async function buildTeamPlanDocument(
         const importedEventMarkdown = buildImportedEventMarkdown(event, eventContentMarkdown);
 
         documentChildren.push(
-          ...blocksToDocxContent(parseMarkdown(importedEventMarkdown), colorOpts)
+          ...blocksToDocxContent(parseMarkdown(importedEventMarkdown), {
+            ...colorOpts,
+            keepTablesTogether: true,
+          })
         );
-
-        if (event.eventType === "On-ice Practice" && addSuggestedDrillEachPractice) {
-          await addResourceLinkWithQr(
-            "Suggested goalie drills page: ",
-            "https://goaliegen.com/goalie-drills/",
-            60,
-            true,
-            false
-          );
-        }
 
         if (event.eventType === "Game" && addShotTrackerToGames) {
           documentChildren.push(
             new Paragraph({
               children: [toBlackRun("Game Timeline / Shot Tracker", { bold: true })],
+              keepNext: true,
               spacing: { before: 120, after: 80 },
             })
           );

@@ -278,6 +278,31 @@ describe("blocksToDocxParagraphs", () => {
       expect(table.root[3].options?.cantSplit).toBe(true);
     });
 
+    it("keeps fill-in tables together by chaining row paragraphs", () => {
+      const content = blocksToDocxContent([
+        { type: "field", label: "Notes", lines: 3 },
+        { type: "fields", rows: [{ left: "Name", right: "Focus" }] },
+      ]);
+
+      type XmlNode = { root?: XmlNode[]; rootKey?: string };
+      const getFirstCellParagraphProperties = (table: Table, rowIndex: number): XmlNode => {
+        const rows = (table as unknown as { root: XmlNode[] }).root;
+        const row = rows[rowIndex + 2];
+        const cell = row.root?.[1];
+        const paragraph = cell?.root?.[1];
+        return paragraph?.root?.[0] ?? {};
+      };
+
+      const fieldTable = content[0] as Table;
+      const compactTable = content[1] as Table;
+
+      expect(getFirstCellParagraphProperties(fieldTable, 0).root?.[0]?.rootKey).toBe(
+        "w:keepNext"
+      );
+      expect(getFirstCellParagraphProperties(fieldTable, 2).root?.[0]?.rootKey).toBeUndefined();
+      expect(getFirstCellParagraphProperties(compactTable, 0).root?.[0]?.rootKey).toBeUndefined();
+    });
+
     it("keeps paragraph conversion unchanged for non-table blocks", () => {
       const content = blocksToDocxContent([
         { type: "heading", level: 2, text: "Section" },

@@ -158,8 +158,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
   );
   const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
   const [ageGroup, setAgeGroup] = React.useState<string>("");
-  const [addSuggestedDrillEachPractice, setAddSuggestedDrillEachPractice] =
-    React.useState<boolean>(true);
   const [addShotTrackerToGames, setAddShotTrackerToGames] = React.useState<boolean>(true);
   const [hasGoalieMentors, setHasGoalieMentors] = React.useState<boolean>(false);
   const [hasGoalieEvaluations, setHasGoalieEvaluations] = React.useState<boolean>(false);
@@ -627,7 +625,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       addCalendarOfEvents,
       includeCalendarView,
       includeEventDetails,
-      addSuggestedDrillEachPractice,
       addShotTrackerToGames,
       sortedEventDates,
       eventSelections,
@@ -704,7 +701,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
       setAgeGroup("");
-      setAddSuggestedDrillEachPractice(true);
       setHasGoalieMentors(false);
       setHasGoalieEvaluations(false);
       setGoalieEvaluationTimes("3");
@@ -756,7 +752,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
     setAgeGroup("");
-    setAddSuggestedDrillEachPractice(true);
     setHasGoalieMentors(false);
     setHasGoalieEvaluations(false);
     setGoalieEvaluationTimes("3");
@@ -987,13 +982,6 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
               Team Plan Details
             </legend>
 
-            <SliderToggle
-              id="add-suggested-goalie-drill"
-              label="Add suggested goalie drill for each practice?"
-              enabled={addSuggestedDrillEachPractice}
-              onChange={setAddSuggestedDrillEachPractice}
-              disabled={!!generatedBlob || isGenerating}
-            />
             <SliderToggle
               id="has-goalie-mentors"
               label="Does this team have a goalie mentor(s) from an older team(s)?"

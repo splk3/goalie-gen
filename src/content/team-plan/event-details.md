@@ -5,25 +5,28 @@
 ### TBD
 
 [[FIELD:Event Details|1]]
-[[FIELD:Plan/Notes|4]]
+[[FIELD:Plan/Notes|3]]
 
 ### On-ice Practice
 
-[[FIELD:Plan/Notes|4]]
+[[FIELDS:Drill Name/URL|Focus Points]]
+[[FIELD:Plan/Notes|3]]
 
 ### Game
 
 [[FIELDS:Opponent|Details]]
 [[FIELDS:Goalies|Venue]]
-[[FIELD:Game Notes|4]]
+[[FIELD:Game Notes|3]]
 
 ### Off-ice Practice
 
-[[FIELD:Plan/Notes|4]]
+[[FIELDS:Practice Type|Focus Points]]
+[[FIELD:Plan/Notes|3]]
 
 ### Video Review
 
-[[FIELD:Plan/Notes|4]]
+[[FIELDS:Event|Focus Points]]
+[[FIELD:Plan/Notes|3]]
 
 ### Evaluation
 
