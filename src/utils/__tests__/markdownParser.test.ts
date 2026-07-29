@@ -20,6 +20,11 @@ describe("parseMarkdown", () => {
     expect(blocks).toEqual([{ type: "heading", level: 3, text: "Sub Heading" }]);
   });
 
+  it("parses a heading 4", () => {
+    const blocks = parseMarkdown("#### Sub Sub Heading");
+    expect(blocks).toEqual([{ type: "heading", level: 4, text: "Sub Sub Heading" }]);
+  });
+
   it("parses a paragraph", () => {
     const blocks = parseMarkdown("Hello world");
     expect(blocks).toEqual([{ type: "paragraph", text: "Hello world" }]);

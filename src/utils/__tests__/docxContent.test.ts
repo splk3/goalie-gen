@@ -332,9 +332,10 @@ describe("blocksToDocxParagraphs", () => {
       { type: "heading", level: 1, text: "Title" },
       { type: "heading", level: 2, text: "Section" },
       { type: "heading", level: 3, text: "Sub" },
+      { type: "heading", level: 4, text: "SubSub" },
     ];
     const paragraphs = blocksToDocxParagraphs(blocks);
-    expect(paragraphs).toHaveLength(3);
+    expect(paragraphs).toHaveLength(4);
     paragraphs.forEach((p) => expect(p).toBeInstanceOf(Paragraph));
   });
 

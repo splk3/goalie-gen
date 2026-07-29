@@ -389,7 +389,9 @@ export function blocksToDocxContent(
             ? HeadingLevel.HEADING_1
             : block.level === 2
               ? HeadingLevel.HEADING_2
-              : HeadingLevel.HEADING_3;
+              : block.level === 3
+                ? HeadingLevel.HEADING_3
+                : HeadingLevel.HEADING_4;
         content.push(
           new Paragraph({
             children: [new TextRun({ text: block.text, color: primary, bold: true })],

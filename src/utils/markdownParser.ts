@@ -1,7 +1,7 @@
 export type SeasonTableRow = { phase: string; skills: string; drillUrl?: string };
 
 export type MarkdownBlock =
-  | { type: "heading"; level: 1 | 2 | 3; text: string }
+  | { type: "heading"; level: 1 | 2 | 3 | 4; text: string }
   | { type: "paragraph"; text: string }
   | { type: "bullet"; text: string }
   | { type: "table"; headers: string[]; rows: string[][] }
@@ -240,6 +240,7 @@ export function parseMarkdown(
         label: fieldMatch[1].trim(),
         lines: Math.max(1, Number(fieldMatch[2] || 1)),
       });
+      previousLineWasBlank = false;
       continue;
     }
 
@@ -253,6 +254,7 @@ export function parseMarkdown(
       } else {
         blocks.push({ type: "fields", rows: [row] });
       }
+      previousLineWasBlank = false;
       continue;
     }
 
@@ -278,14 +280,16 @@ export function parseMarkdown(
     if (imageMatch) {
       flushParagraph();
       blocks.push({ type: "image", alt: imageMatch[1], src: imageMatch[2] });
+      previousLineWasBlank = false;
       continue;
     }
 
-    const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+    const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
     if (headingMatch) {
       flushParagraph();
-      const level = headingMatch[1].length as 1 | 2 | 3;
+      const level = headingMatch[1].length as 1 | 2 | 3 | 4;
       blocks.push({ type: "heading", level, text: headingMatch[2].trim() });
+      previousLineWasBlank = false;
       continue;
     }
 
@@ -293,6 +297,7 @@ export function parseMarkdown(
     if (bulletMatch) {
       flushParagraph();
       blocks.push({ type: "bullet", text: bulletMatch[1].trim() });
+      previousLineWasBlank = false;
       continue;
     }
 

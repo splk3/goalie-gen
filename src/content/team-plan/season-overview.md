@@ -9,7 +9,7 @@
 
 ### All Ages Starter Content
 
-**Team Goalie Information**
+#### Team Goalie Information
 
 _Goalie 1 Information_
 
@@ -23,7 +23,7 @@ _Goalie 2 Information_
 
 ### 8U Starter Content
 
-**8U Season Goals and Rotation**
+#### 8U Season Goals and Rotation
 
 At 8U, the overarching goal is fun, participation, and building confidence.
 The team will emphasize creating a positive environment where success is "measured in smiles".
@@ -32,7 +32,7 @@ Instead, let all interested players rotate in and out of the net using quick-cha
 in practices and games (switch between jamboree games or between halves) so they can experience the position while continuing to develop their overall athletic
 and skating skills as players.
 
-**8U Goaltending Season Plan**
+#### 8U Goaltending Season Plan
 
 <!-- Season table shorthand: each row starts with a `- phase:` marker, followed by indented bullet lines for the phase content, an optional indented `drill_url:`, and one indented `skills:` list; put the headers on the next line separated by semicolons. -->
 
@@ -84,13 +84,13 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
   - **Goalie Games:** Reinforcing skills through small-area games like a shooting gallery, dodgeball, or "Simon Says" against the shooter.
   - **Review:** Recapping stance, fundamental saves, rebound control, and overall movement.
   - **Celebration:** Hosting a fun "graduation" event to close out the season with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
-  :::
+    :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
 
 ### 10U Starter Content
 
-**10U Goalie Rotation**
+#### 10U Goalie Rotation
 
 At 10U, USA Hockey recommends splitting periods between your goalies.
 At the halfway mark of each period, switch your goalies, and rotate who plays the first vs. second half of periods.
@@ -101,7 +101,7 @@ _Note:_ All teams and goalies are different, so talk to your goalies and work wi
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
 Having time on the bench also gives coaches a chance to communicate and give feedback to goalies during games.
 
-**10U Season Goals**
+#### 10U Season Goals
 
 While fun remains a primary focus, 10U goals shift towards foundational skills mastery, mechanical consistency, and continued athletic development.
 
@@ -110,7 +110,7 @@ but skating out should still be encouraged when possible to continue developing 
 
 The focus at 10U is on building a solid baseline of muscle memory and game experience in a safe, fun environment so that the goaltender is mechanically, emotionally, and intellectually ready for higher levels of play.
 
-**10U Goaltending Season Plan**
+#### 10U Goaltending Season Plan
 
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -152,13 +152,13 @@ headers: Season Phase / Focus Points; Specific Skills
     skills:
   - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.
   - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
-  :::
+    :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
 
 ### 12U Starter Content
 
-**Goalie Rotation**
+#### Goalie Rotation
 
 12U is a good time to start working the "shift" length of goalies to a full period.
 USA Hockey recommends switching goalies each period during a game,
@@ -169,7 +169,7 @@ _Note:_ All teams and goalies are different, so talk to your goalies and work wi
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
 Having time on the bench also gives coaches a chance to communicate and give feedback to goalies during games.
 
-**12U Season Goals**
+#### 12U Season Goals
 
 At Peewee level, goalies transition from the basic fundamentals learned at 8U/10U into more refined mechanics, tactical awareness, and situational game play.
 
@@ -180,7 +180,7 @@ At Peewee level, goalies transition from the basic fundamentals learned at 8U/10
 - **Playing the Puck:** Goalies are taught to safely leave the crease to stop dumped pucks behind the net or along the boards. They begin acting as a third defenseman by making short breakout passes or rimming the puck to help their team transition with speed
 - **Be Vocal**: Teams expect 12U goalies to become highly vocal. Because they have the best view of the ice, goalies are taught to actively communicate with their defensemen—calling out screens, identifying open attackers on the backdoor, or directing teammates to play or leave a loose puck
 
-**12U Goaltending Season Plan**
+#### 12U Goaltending Season Plan
 
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -228,13 +228,13 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
   - **Playoff Mindset & Pressure:** Introducing visualization techniques, breathing routines, and/or mental resilience to handle high-pressure game/playoff scenarios with confidence.
   - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes.
   - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and tryout prep.
-  :::
+    :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
 
 ### 14U Starter Content
 
-**Goalie Rotation**
+#### Goalie Rotation
 
 At 14U, USA Hockey recommends switching goalies at the midway point of each game.
 Rotate which goalie starts vs. closes out each game.
@@ -243,7 +243,7 @@ _Note:_ All teams and goalies are different, so talk to your goalies and work wi
 Using shorter shifts at younger ages can significantly reduce stress on goalies.
 Having time on the bench also gives coaches a chance to communicate and give feedback to goalies during games.
 
-**14U Season Goals**
+#### 14U Season Goals
 
 At the 13U/14U (Bantam) level, players are entering adolescence, which means goalies face faster shots, larger players, and a significantly higher pace of play.
 Because nearly all foundational techniques should be in place by this age, the emphasis shifts from basic learning to mastery, consistency, and tactical awareness.
@@ -251,29 +251,29 @@ USA Hockey defines this age group as the "Train to Train" stage, where athletes 
 
 Here are the common skills, techniques, and goals for 13U/14U goalies and teams:
 
-**Core Goals and Philosophy**
+#### Core Goals and Philosophy
 
 - _Ownership and Off-Ice Habits_: Goalies are expected to take responsibility for their development by adopting rigorous off-ice habits, focusing heavily on proper nutrition, hydration, self-discipline, and sleep/recovery.
 - _Mental Toughness_: Because Bantams face increased pressure from playoffs, tournaments, and internal drive, developing mental resilience is a central theme.
   Goalies work on consistent pre-game routines, emotional control, stress management, and the ability to bounce back quickly after allowing a goal.
 
-**Skating and Crease Movement**
+#### Skating and Crease Movement
 
 - _High-Intensity Agility_: Skating drills become highly progressive to match game speed, emphasizing explosive footwork, balance, and agility.
 - _Advanced Mobility_: Goalies master advanced crease movements, such as explosive lateral T-pushes and rapid, efficient up-and-down recoveries to keep up with faster cross-ice passes.
 
-**Positioning & Play Reading (Hockey IQ)**
+#### Positioning & Play Reading (Hockey IQ)
 
 - _Box Control_: Goalies are taught advanced positioning to "box out" shooters. This means using perfect angles and depth to minimize the amount of open net the shooter can see.
 - _Anticipation and Threat Assessment_: Goalies elevate their Hockey IQ by learning to read complex play developments, anticipate the opposition's strategy, and adjust their depth based on where the primary threats are located.
 
-**Save Selection & Rebound Control**
+#### Save Selection & Rebound Control
 
 - _Use the appropriate stance/position_: 14U goalies refine their posture to be comfortable in multiple stance variations—specifically high, mid, and low upright stances, the butterfly, VH, RVH, allowing them to adjust to different shot heights and scenarios.
 - _Toolbox Expansion_: Goalies experiment with specialized saves, such as half-butterflies and well-timed poke checks, while prioritizing quick recoveries and strict rebound control on much harder shots.
 - _Traffic Management, Screens and Deflections_: With larger players crowding the net, goalies must learn advanced traffic management. This involves finding sightlines through heavy screens, battling for positioning, and reacting to late tips and deflections.
 
-**Advanced Techniques: Post Play & Puck Handling**
+#### Advanced Techniques: Post Play & Puck Handling
 
 - _Post-Play Mastery_: Goalies master Vertical-Horizontal (VH) and Reverse Vertical-Horizontal (RVH) integrations to confidently seal the posts, shut down wraparounds, and control rebounds on sharp-angle attacks.
 - _The "Third Defenseman"_: 14U goalies are expected to evolve into capable puck-handlers.
@@ -281,7 +281,7 @@ Here are the common skills, techniques, and goals for 13U/14U goalies and teams:
 - _Communication & Team Defense_: Goalies become active participants in the team's defensive strategy.
   They are expected to establish and maintain a constant line of communication with their defensemen during the chaotic flow of the game, calling out threats and directing breakouts.
 
-**14U Season Plan**
+#### 14U Season Plan
 
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -326,13 +326,13 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
   - **Mental Toughness & Playoff Prep:** Establishing rigorous game-day routines, including visualization, breathing exercises, and stress management, to maintain peak focus during high-pressure games.
   - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.
   - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players for a practice.
-  :::
+    :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
 
 ### 16U and older Starter Content
 
-**Goalie Rotation**
+#### Goalie Rotation
 
 USA Hockey recommends that, at 16U and older, players should be playing complete games.
 They recommend rotating goalies through regular season games to make sure players that come to the rink get to play hockey.
@@ -340,17 +340,17 @@ For days with double headers (such as at tournaments), its a good idea to let on
 
 _Note:_ All teams and goalies are different, so talk to your goalies and work with them on a rotational schedule that works for them and the team.
 
-**16U and Older Season Goals**
+#### 16U and Older Season Goals
 
 For 16U, 18U, 19U, high school, and older goaltenders, season plans shift from basic fundamentals to advanced technical refinement, tactical understanding, and holistic athletic development. Here are the common skills, techniques, and goals for goalies and teams at these levels:
 
-**Common Goals**
+#### Common Goals
 
 - _Mental Toughness and Resilience_: Older goalies are trained to handle the mental demands of competitive sports, focusing on stress management, performing under pressure, unconditional confidence, and bouncing back from mistakes. Coaches often incorporate visualization, goal setting, and mental health support into their routines.
 - _Elite Physical Conditioning_: Workouts become highly specialized, targeting goalie-specific strength, explosive power, core stability, and cardiovascular endurance to handle the high pace of older age groups. Nutrition, hydration, and sleep management are also heavily emphasized.
 - _Leadership and Communication_: Goalies are expected to act as leaders on the ice. Plans emphasize active communication with defensemen, calling out plays, and directing the team's defensive zone strategy.
 
-**Common Skills and Techniques**
+#### Common Skills and Techniques
 
 - _Post-Integration Mastery_: A major technical focus at the 16U+ level is sealing the posts and protecting the net from low-angle plays and wrap-arounds. Goalies spend significant time mastering the Reverse Vertical-Horizontal (RVH), Vertical-Horizontal (VH), and Overlap techniques, as well as knowing when and how to transition between them.
 - _Advanced Crease Mobility_: Skating continuously improves in speed and precision, which involves explosive lateral pushes, rapid recoveries, sharp cutting, hinging, and pivoting.
@@ -359,7 +359,7 @@ For 16U, 18U, 19U, high school, and older goaltenders, season plans shift from b
 - _Managing Traffic and Screens_: As shooters become more skilled, goalies must practice battling for sightlines. Techniques include tracking the puck through layered screens, adjusting depth, and setting up for late deflections and tips.
 - _Advanced Save Selection_: Goalies refine their "save artistry" by utilizing specialized techniques like blocker wrist twists, precise stick redirections to safely place rebounds into the corners, and executing desperation or extension saves when caught out of position.
 
-**16U and Older Season Plan**
+#### 16U and Older Season Plan
 
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -408,7 +408,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
   - **Advanced Puck Handling:** Stopping dump-ins, playing the puck under pressure, and executing backhands.
   - **Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience.
   - **Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
-  :::
+    :::
   <!-- markdownlint-enable -->
   <!-- prettier-ignore-end -->
 
