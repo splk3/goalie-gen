@@ -248,7 +248,6 @@ Options:
     addCalendarOfEvents: enableAll,
     includeCalendarView: enableAll,
     includeEventDetails: enableAll,
-    addSuggestedDrillEachPractice: enableAll,
     addShotTrackerToGames: enableAll,
     sortedEventDates,
     eventSelections,

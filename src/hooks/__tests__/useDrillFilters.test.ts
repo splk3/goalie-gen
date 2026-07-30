@@ -11,6 +11,7 @@ const makeDrills = () => [
       skating_skill: ["edges"],
       equipment: ["stick"],
       space_required: ["full_ice"],
+      game_situations: ["power_play"],
     },
   },
   {
@@ -22,6 +23,7 @@ const makeDrills = () => [
       skating_skill: ["crossovers"],
       equipment: ["stick", "pucks"],
       space_required: ["flexible"],
+      game_situations: ["penalty_kill"],
     },
   },
   {
@@ -33,6 +35,7 @@ const makeDrills = () => [
       skating_skill: ["edges"],
       equipment: ["pucks"],
       space_required: ["flexible"],
+      game_situations: ["power_play", "small_sided_game"],
     },
   },
 ];
@@ -55,6 +58,22 @@ describe("useDrillFilters", () => {
 
     expect(result.current.filteredDrills).toHaveLength(1);
     expect(result.current.filteredDrills[0].tags.skill_level).toContain("beginner");
+  });
+
+  it("filters drills by game situation", () => {
+    const drills = makeDrills();
+    const { result } = renderHook(() => useDrillFilters(drills));
+
+    act(() => {
+      result.current.toggleFilter("game_situations", "power_play");
+    });
+
+    expect(result.current.filteredDrills).toHaveLength(2);
+    expect(result.current.tagCategories.game_situations).toEqual([
+      "penalty_kill",
+      "power_play",
+      "small_sided_game",
+    ]);
   });
 
   it("filters drills by multiple tag values within the same category (OR logic)", () => {
@@ -266,6 +285,7 @@ describe("useDrillFilters", () => {
           skating_skill: ["edges"],
           equipment: [],
           space_required: ["crease_only"],
+          game_situations: [],
         },
       },
     ];
@@ -300,6 +320,7 @@ describe("useDrillFilters", () => {
         skating_skill: ["edges"],
         equipment: [],
         space_required: ["crease_only"],
+        game_situations: [],
       },
     });
     const { result } = renderHook(() =>
@@ -311,6 +332,7 @@ describe("useDrillFilters", () => {
         skating_skill: [],
         equipment: ["none"],
         space_required: [],
+        game_situations: [],
       })
     );
 
@@ -386,6 +408,7 @@ describe("useDrillFilters", () => {
         skating_skill: [],
         equipment: [],
         space_required: [],
+        game_situations: [],
       })
     );
 

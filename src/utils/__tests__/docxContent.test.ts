@@ -189,7 +189,7 @@ describe("blocksToDocxParagraphs", () => {
         {
           type: "table",
           headers: ["Phase", "Focus", "Details"],
-          rows: [["Early", "Skating", "Stance<br>Balance"]],
+          rows: [["Early", "Skating", "Stance\nBalance"]],
         },
       ]);
 
@@ -233,9 +233,9 @@ describe("blocksToDocxParagraphs", () => {
     it("uses one-third and two-thirds widths for season-plan tables", () => {
       const content = blocksToDocxContent([
         {
-          type: "table",
+          type: "season-table",
           headers: ["Season Phase / Focus Points", "Specific Skills & Techniques"],
-          rows: [["Early Season", "Stance and skating"]],
+          rows: [{ phase: "Early Season", skills: "Stance and skating" }],
         },
       ]);
 
@@ -278,6 +278,44 @@ describe("blocksToDocxParagraphs", () => {
       expect(table.root[3].options?.cantSplit).toBe(true);
     });
 
+    it("chains adjacent fill-in tables so they paginate as a single unit", () => {
+      const content = blocksToDocxContent([
+        { type: "field", label: "Notes", lines: 3 },
+        { type: "fields", rows: [{ left: "Name", right: "Focus" }] },
+      ]);
+
+      type XmlNode = { root?: XmlNode[]; rootKey?: string };
+      const getFirstCellParagraphProperties = (table: Table, rowIndex: number): XmlNode => {
+        const rows = (table as unknown as { root: XmlNode[] }).root;
+        const row = rows[rowIndex + 2];
+        const cell = row.root?.[1];
+        const paragraph = cell?.root?.[1];
+        return paragraph?.root?.[0] ?? {};
+      };
+
+      const fieldTable = content[0] as Table;
+      const compactTable = content[1] as Table;
+
+      expect(getFirstCellParagraphProperties(fieldTable, 0).root?.[0]?.rootKey).toBe("w:keepNext");
+      expect(getFirstCellParagraphProperties(fieldTable, 2).root?.[0]?.rootKey).toBe("w:keepNext");
+      expect(getFirstCellParagraphProperties(compactTable, 0).root?.[0]?.rootKey).toBeUndefined();
+    });
+
+    it("does not chain standalone fill-in tables to following non-table content", () => {
+      const content = blocksToDocxContent([
+        { type: "field", label: "Notes", lines: 2 },
+        { type: "paragraph", text: "After table" },
+      ]);
+
+      type XmlNode = { root?: XmlNode[]; rootKey?: string };
+      const rows = (content[0] as unknown as { root: XmlNode[] }).root;
+      const lastRow = rows[3];
+      const firstCell = lastRow.root?.[1];
+      const paragraphProperties = firstCell?.root?.[1]?.root?.[0];
+
+      expect(paragraphProperties?.root?.[0]?.rootKey).toBeUndefined();
+    });
+
     it("keeps paragraph conversion unchanged for non-table blocks", () => {
       const content = blocksToDocxContent([
         { type: "heading", level: 2, text: "Section" },
@@ -294,9 +332,10 @@ describe("blocksToDocxParagraphs", () => {
       { type: "heading", level: 1, text: "Title" },
       { type: "heading", level: 2, text: "Section" },
       { type: "heading", level: 3, text: "Sub" },
+      { type: "heading", level: 4, text: "SubSub" },
     ];
     const paragraphs = blocksToDocxParagraphs(blocks);
-    expect(paragraphs).toHaveLength(3);
+    expect(paragraphs).toHaveLength(4);
     paragraphs.forEach((p) => expect(p).toBeInstanceOf(Paragraph));
   });
 

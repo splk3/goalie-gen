@@ -1,8 +1,11 @@
+export type SeasonTableRow = { phase: string; skills: string; drillUrl?: string };
+
 export type MarkdownBlock =
-  | { type: "heading"; level: 1 | 2 | 3; text: string }
+  | { type: "heading"; level: 1 | 2 | 3 | 4; text: string }
   | { type: "paragraph"; text: string }
   | { type: "bullet"; text: string }
   | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "season-table"; headers: string[]; rows: SeasonTableRow[] }
   | { type: "field"; label: string; lines: number }
   | { type: "fields"; rows: Array<{ left: string; right: string }> }
   | { type: "image"; alt: string; src: string }
@@ -76,10 +79,132 @@ function parseTableAt(
   };
 }
 
+function parseSeasonTableAt(
+  lines: string[],
+  startIndex: number
+): {
+  block: Extract<MarkdownBlock, { type: "season-table" }>;
+  nextIndex: number;
+} | null {
+  if (lines[startIndex].trim() !== ":::season-table") {
+    return null;
+  }
+
+  const headerLine = lines[startIndex + 1]?.match(/^headers:\s*(.+)$/);
+  if (!headerLine) {
+    return null;
+  }
+
+  const headers = headerLine[1].split(";").map((header) => header.trim());
+  if (headers.length < 1 || headers.some((header) => header.length === 0)) {
+    return null;
+  }
+
+  const rows: SeasonTableRow[] = [];
+  let nextIndex = startIndex + 2;
+  while (nextIndex < lines.length) {
+    if (lines[nextIndex].trim() === "") {
+      nextIndex++;
+      continue;
+    }
+    if (lines[nextIndex].trim() === ":::") {
+      break;
+    }
+
+    const phaseHeaderMatch = lines[nextIndex].match(/^[ \t]*-\s+phase:\s*$/);
+    if (!phaseHeaderMatch) {
+      return null;
+    }
+
+    const phase: string[] = [];
+    let phaseLineIndex = nextIndex + 1;
+    while (phaseLineIndex < lines.length) {
+      const candidateLine = lines[phaseLineIndex];
+      const trimmedCandidate = candidateLine.trim();
+      if (trimmedCandidate === "") {
+        phaseLineIndex++;
+        continue;
+      }
+      if (
+        /^[ \t]+skills:\s*$/.test(candidateLine) ||
+        /^[ \t]+drill_url:\s*\S/.test(candidateLine)
+      ) {
+        break;
+      }
+
+      const phaseItemMatch = candidateLine.match(/^[ \t]+-\s+(.+)$/);
+      if (!phaseItemMatch) {
+        return null;
+      }
+      phase.push(phaseItemMatch[1].trim());
+      phaseLineIndex++;
+    }
+
+    if (phase.length === 0) {
+      return null;
+    }
+
+    // Parse optional drill_url line before skills
+    let drillUrl: string | undefined;
+    const drillUrlMatch = lines[phaseLineIndex]?.match(/^[ \t]+drill_url:\s*(\S+)\s*$/);
+    if (drillUrlMatch) {
+      drillUrl = drillUrlMatch[1].trim();
+      phaseLineIndex++;
+      // Skip any blank lines between drill_url and skills
+      while (phaseLineIndex < lines.length && lines[phaseLineIndex].trim() === "") {
+        phaseLineIndex++;
+      }
+    }
+
+    const skillsHeaderMatch = lines[phaseLineIndex]?.match(/^[ \t]+skills:\s*$/);
+    if (!skillsHeaderMatch) {
+      return null;
+    }
+
+    const skills: string[] = [];
+    let skillsLineIndex = phaseLineIndex + 1;
+    while (skillsLineIndex < lines.length) {
+      const candidateLine = lines[skillsLineIndex];
+      const trimmedCandidate = candidateLine.trim();
+      if (trimmedCandidate === "") {
+        skillsLineIndex++;
+        continue;
+      }
+      if (trimmedCandidate === ":::" || /^[ \t]*-\s+phase:\s*$/.test(candidateLine)) {
+        break;
+      }
+
+      const skillItemMatch = candidateLine.match(/^[ \t]+-\s+(.+)$/);
+      if (!skillItemMatch) {
+        return null;
+      }
+      skills.push(skillItemMatch[1].trim());
+      skillsLineIndex++;
+    }
+
+    if (skills.length === 0) {
+      return null;
+    }
+
+    rows.push({ phase: phase.join("\n"), skills: skills.join("\n"), drillUrl });
+    nextIndex = skillsLineIndex;
+  }
+
+  if (nextIndex >= lines.length || rows.length === 0 || headers.length !== 2) {
+    return null;
+  }
+
+  return {
+    block: { type: "season-table", headers, rows },
+    nextIndex: nextIndex + 1,
+  };
+}
+
 /**
  * Parses a simple markdown string into structured blocks.
- * Supports headings (# ## ###), bullet lists (- or *), paragraphs, pipe tables,
- * and fill-in fields such as [[FIELD:Game Notes|3]] or [[FIELDS:Opponent|Venue]].
+ * Supports headings (# ## ###), bullet lists (- or *), pipe tables, compact
+ * season tables, and fill-in fields such as [[FIELD:Game Notes|3]] or
+ * [[FIELDS:Opponent|Venue]].
  */
 export function parseMarkdown(
   markdown: string,
@@ -115,6 +240,7 @@ export function parseMarkdown(
         label: fieldMatch[1].trim(),
         lines: Math.max(1, Number(fieldMatch[2] || 1)),
       });
+      previousLineWasBlank = false;
       continue;
     }
 
@@ -128,6 +254,16 @@ export function parseMarkdown(
       } else {
         blocks.push({ type: "fields", rows: [row] });
       }
+      previousLineWasBlank = false;
+      continue;
+    }
+
+    const seasonTable = parseSeasonTableAt(lines, lineIndex);
+    if (seasonTable) {
+      flushParagraph();
+      blocks.push(seasonTable.block);
+      lineIndex = seasonTable.nextIndex - 1;
+      previousLineWasBlank = false;
       continue;
     }
 
@@ -144,14 +280,16 @@ export function parseMarkdown(
     if (imageMatch) {
       flushParagraph();
       blocks.push({ type: "image", alt: imageMatch[1], src: imageMatch[2] });
+      previousLineWasBlank = false;
       continue;
     }
 
-    const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+    const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
     if (headingMatch) {
       flushParagraph();
-      const level = headingMatch[1].length as 1 | 2 | 3;
+      const level = headingMatch[1].length as 1 | 2 | 3 | 4;
       blocks.push({ type: "heading", level, text: headingMatch[2].trim() });
+      previousLineWasBlank = false;
       continue;
     }
 
@@ -159,6 +297,7 @@ export function parseMarkdown(
     if (bulletMatch) {
       flushParagraph();
       blocks.push({ type: "bullet", text: bulletMatch[1].trim() });
+      previousLineWasBlank = false;
       continue;
     }
 

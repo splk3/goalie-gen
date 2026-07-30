@@ -156,15 +156,12 @@ describe("GenerateTeamPlanButton", () => {
     expect(secondaryColorPicker).toHaveValue("#654321");
   });
 
-  it("renders new team-plan toggles with expected defaults", async () => {
+  it("renders team-plan toggles with expected defaults", async () => {
     const user = userEvent.setup();
     render(<GenerateTeamPlanButton />);
 
     await openModal(user);
 
-    expect(
-      screen.getByRole("switch", { name: "Add suggested goalie drill for each practice?" })
-    ).toHaveAttribute("aria-checked", "true");
     expect(
       screen.getByRole("switch", {
         name: "Does this team have a goalie mentor(s) from an older team(s)?",
@@ -191,7 +188,7 @@ describe("GenerateTeamPlanButton", () => {
     await openModal(user);
 
     const enabledSwitch = screen.getByRole("switch", {
-      name: "Add suggested goalie drill for each practice?",
+      name: "Add starter content for introduction and season goals?",
     });
     const disabledSwitch = screen.getByRole("switch", {
       name: "Does this team have a goalie mentor(s) from an older team(s)?",
