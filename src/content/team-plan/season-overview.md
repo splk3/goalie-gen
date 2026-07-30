@@ -85,8 +85,8 @@ headers: Season Phase / Focus Points; Specific Skills & Techniques
   - **Review:** Recapping stance, fundamental saves, rebound control, and overall movement.
   - **Celebration:** Hosting a fun "graduation" event to close out the season with a breakaway challenge, rebound control test, or shootout to celebrate their hard work and progress.
     :::
-  <!-- markdownlint-enable -->
-  <!-- prettier-ignore-end -->
+    <!-- markdownlint-enable -->
+    <!-- prettier-ignore-end -->
 
 ### 10U Starter Content
 
@@ -153,12 +153,12 @@ headers: Season Phase / Focus Points; Specific Skills
   - **Game Prep:** Practicing power plays, penalty kills, shootouts, and playoff preparation.
   - **Review Skills:** Reviewing basic skills and fundamental mechanics, save selection, rebound control, and prep for next-season evals/tryouts
     :::
-  <!-- markdownlint-enable -->
-  <!-- prettier-ignore-end -->
+    <!-- markdownlint-enable -->
+    <!-- prettier-ignore-end -->
 
 ### 12U Starter Content
 
-#### Goalie Rotation
+#### 12U Goalie Rotation
 
 12U is a good time to start working the "shift" length of goalies to a full period.
 USA Hockey recommends switching goalies each period during a game,
@@ -229,12 +229,12 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (11U/12U)
   - **Lateral & Traffic Plays:** Refining explosive lateral movements and battling through screens or east-west backdoor passes.
   - **End-of-Season Fun & Evaluation:** Celebrating progress with fun competitions like trick shots, shootout contests, or "Goalie Olympics," followed by a final skills assessment and tryout prep.
     :::
-  <!-- markdownlint-enable -->
-  <!-- prettier-ignore-end -->
+    <!-- markdownlint-enable -->
+    <!-- prettier-ignore-end -->
 
 ### 14U Starter Content
 
-#### Goalie Rotation
+#### 14U Goalie Rotation
 
 At 14U, USA Hockey recommends switching goalies at the midway point of each game.
 Rotate which goalie starts vs. closes out each game.
@@ -327,12 +327,12 @@ headers: Timeframe & Core Focus; Specific Skills & Techniques (13U/14U)
   - **Desperation Saves:** Expanding the toolbox to include desperation/extension saves when caught out of position.
   - **Evaluation & Celebration:** Conducting a final season evaluation to measure progress, setting off-season development goals, and concluding with fun, creative events like "Goalie Olympics," shootout contests, or letting the goalies skate out as players for a practice.
     :::
-  <!-- markdownlint-enable -->
-  <!-- prettier-ignore-end -->
+    <!-- markdownlint-enable -->
+    <!-- prettier-ignore-end -->
 
 ### 16U and older Starter Content
 
-#### Goalie Rotation
+#### 16U and Older Goalie Rotation
 
 USA Hockey recommends that, at 16U and older, players should be playing complete games.
 They recommend rotating goalies through regular season games to make sure players that come to the rink get to play hockey.
@@ -409,7 +409,7 @@ headers: Timeframe & Core Focus; 16U and Older Specific Skills and Techniques
   - **Crease Battles & Patience:** In-close battle drills, rebound recovery after bad rebounds, and practicing patience.
   - **Playoff Preparation:** High-pressure game simulations, competitive games (e.g., shootout or skating races), and end-of-season review.
     :::
-  <!-- markdownlint-enable -->
-  <!-- prettier-ignore-end -->
+    <!-- markdownlint-enable -->
+    <!-- prettier-ignore-end -->
 
 <!-- markdownlint-enable MD013 -->
