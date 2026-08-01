@@ -35,6 +35,16 @@ export default function CoachResources() {
       </div>
 
       <div className="max-w-3xl mx-auto space-y-8">
+        <blockquote className="bg-white dark:bg-gray-800 border-l-4 border-usa-red dark:border-red-400 p-8 rounded-lg shadow-lg">
+          <p className="text-xl italic text-gray-700 dark:text-gray-300">
+            &ldquo;A gardener doesn&apos;t grow flowers, they create environments that make flowers
+            grow.&rdquo;
+          </p>
+          <cite className="block mt-4 text-right font-semibold not-italic text-usa-blue dark:text-blue-400">
+            Thomas Magnusson, Director of Goaltending in Sweden
+          </cite>
+        </blockquote>
+
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Coach Tools</h2>
           <div className="flex flex-col gap-3">

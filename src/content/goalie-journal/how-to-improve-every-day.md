@@ -3,6 +3,9 @@
 ## How to Improve Every Day
 
 - **Use this journal** to track your goals, feelings, worries, and successes during the season. You can look back later and will be encouraged by your progress!
+- **Learn from mistakes**: "If I’m wrong, then I’m already halfway right." -Brian Nguyen, Hollywood Celebrity Trainer
+- **Don't be afraid of challenges.** "The most important part of development is facing adversity." -Brian Daccord, StopItGoaltending CEO and Former NHL Goalie Coach
+- **Take care of yourself off-ice.** Do your warm ups, visualizations, stretches, dryland exercised, eat well, get enough sleep. "I wouldn’t change the people I’ve met; I would change the opportunity to give myself a faster start. I’d look into a mental coach, nutrition coach, better training programs. I’d give myself a better opportunity to optimize potential performance on the same path." -Scott Wedgewood, NHL Goalie
 
 ### Maximize Growth at Practice
 

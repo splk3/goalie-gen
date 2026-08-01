@@ -116,6 +116,14 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
+    it("renders the updated project description", () => {
+      expect(
+        screen.getByText(
+          "Integrating Goalie Development into Team Practices and Drills using USA Hockey's Drill Design Continuum and 5 Elements of Good Drill Design."
+        )
+      ).toBeInTheDocument();
+    });
+
     it("renders the Content Coming Soon notice", () => {
       expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
     });

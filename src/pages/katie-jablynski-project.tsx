@@ -7,7 +7,7 @@ export default function KatieJablynskiProject() {
   return (
     <AboutPage
       title="Katie Jablynski's Project"
-      subtitle="Integrating Goalie Development into Team Practices and Drills"
+      subtitle="Integrating Goalie Development into Team Practices and Drills using USA Hockey's Drill Design Continuum and 5 Elements of Good Drill Design."
       rawMarkdown={rawMarkdown}
     />
   );

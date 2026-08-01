@@ -35,6 +35,36 @@ export default function GoalieResources() {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-8">
+        <blockquote className="bg-white dark:bg-gray-800 border-l-4 border-usa-red dark:border-red-400 p-8 rounded-lg shadow-lg">
+          <p className="text-xl italic text-gray-700 dark:text-gray-300">
+            &ldquo;Every day I wake up, it&apos;s a good day&rdquo;
+          </p>
+          <cite className="block mt-4 text-right font-semibold not-italic text-usa-blue dark:text-blue-400">
+            Abbey Levy, PWHL Goalie, Team USA IIHF World Champion
+          </cite>
+        </blockquote>
+
+        <blockquote className="bg-white dark:bg-gray-800 border-l-4 border-usa-red dark:border-red-400 p-8 rounded-lg shadow-lg">
+          <p className="text-xl italic text-gray-700 dark:text-gray-300">
+            &ldquo;The most important part of development is facing adversity.&rdquo;
+          </p>
+          <cite className="block mt-4 text-right font-semibold not-italic text-usa-blue dark:text-blue-400">
+            Brian Daccord, StopItGoaltending CEO &amp; Former NHL Goalie Coach
+          </cite>
+        </blockquote>
+
+        <blockquote className="bg-white dark:bg-gray-800 border-l-4 border-usa-red dark:border-red-400 p-8 rounded-lg shadow-lg">
+          <p className="text-xl italic text-gray-700 dark:text-gray-300">
+            &ldquo;I wouldn&rsquo;t change the people I&rsquo;ve met; I would change the opportunity
+            to give myself a faster start. I&rsquo;d look into a mental coach, nutrition coach,
+            better training programs. I&rsquo;d give myself a better opportunity to optimize
+            potential performance on the same path.&rdquo;
+          </p>
+          <cite className="block mt-4 text-right font-semibold not-italic text-usa-blue dark:text-blue-400">
+            Scott Wedgewood, NHL Goalie
+          </cite>
+        </blockquote>
+
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Goalie Tools</h2>
           <div className="flex flex-col gap-3">
@@ -52,8 +82,8 @@ export default function GoalieResources() {
           </h2>
           <div className="text-gray-700 dark:text-gray-300 space-y-4">
             <p>
-              This section is dedicated to providing resources specifically for goalies and
-              their families.
+              This section is dedicated to providing resources specifically for goalies and their
+              families.
             </p>
             <p>
               Whether you&apos;re new to playing goal or looking to take your game to the next
