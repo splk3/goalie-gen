@@ -24,8 +24,51 @@ export const DEFAULT_GOALIE_DISCOUNT = "ex. 50%, $500";
 
 // ─── Journal defaults ─────────────────────────────────────────────────────────
 
-/** Default number of weekly practice/game log entry pages in the journal. */
+/** Default number of weekly practice/game log entries in the journal. */
 export const DEFAULT_JOURNAL_ENTRY_COUNT = 24;
+
+export const MIN_JOURNAL_ENTRY_COUNT = 1;
+
+export const MAX_JOURNAL_ENTRY_COUNT = 100;
+
+/** Returns the default journal season using the existing current-year range behavior. */
+export function getDefaultJournalSeason(date = new Date()): string {
+  const currentYear = date.getFullYear();
+  return `${currentYear}-${currentYear + 1}`;
+}
+
+/** Trims a free-form journal season and rejects blank values. */
+export function normalizeJournalSeason(value: string): string | null {
+  const normalized = value.trim();
+  return normalized || null;
+}
+
+/** Parses a journal entry count using the shared whole-number range. */
+export function parseJournalEntryCount(value: string | number): number | null {
+  const normalized = String(value).trim();
+  if (!/^\d+$/.test(normalized)) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  return Number.isSafeInteger(parsed) &&
+    parsed >= MIN_JOURNAL_ENTRY_COUNT &&
+    parsed <= MAX_JOURNAL_ENTRY_COUNT
+    ? parsed
+    : null;
+}
+
+/** Produces a safe filename segment from a user-entered journal value. */
+export function sanitizeJournalFilenamePart(value: string, fallback: string): string {
+  const sanitized = value
+    .trim()
+    .replace(/[<>:"/\\|?*]+/g, "_")
+    .replace(/\s+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^[._]+|[._]+$/g, "");
+
+  return sanitized || fallback;
+}
 
 // ─── Shared pure utility functions ───────────────────────────────────────────
 

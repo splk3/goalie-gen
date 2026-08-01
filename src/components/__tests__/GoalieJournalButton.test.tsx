@@ -4,6 +4,10 @@ import userEvent from "@testing-library/user-event";
 import * as qrCode from "qrcode";
 import GoalieJournalButton from "../GoalieJournalButton";
 import { GOALIE_JOURNAL_PROMOTION_URL } from "../../utils/goalieJournalPromotion";
+import {
+  DEFAULT_JOURNAL_ENTRY_COUNT,
+  getDefaultJournalSeason,
+} from "../../utils/generatorDefaults";
 
 const mockBuildGoalieJournalPdf = jest.fn((..._args: unknown[]) => ({
   output: jest.fn(() => new Blob()),
@@ -57,6 +61,23 @@ jest.mock("../ImageUploader", () => {
 });
 
 describe("GoalieJournalButton", () => {
+  beforeEach(() => {
+    mockBuildGoalieJournalPdf.mockClear();
+    jest.mocked(qrCode.toDataURL).mockClear();
+  });
+
+  it("shows season and journal entry controls with shared defaults", async () => {
+    const user = userEvent.setup();
+    render(<GoalieJournalButton />);
+
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+
+    expect(screen.getByLabelText("Season")).toHaveValue(getDefaultJournalSeason());
+    expect(screen.getByLabelText("Number of Journal Entries")).toHaveValue(
+      DEFAULT_JOURNAL_ENTRY_COUNT
+    );
+  });
+
   it("shows primary and secondary team color controls with USA defaults", async () => {
     const user = userEvent.setup();
     render(<GoalieJournalButton />);
@@ -84,7 +105,7 @@ describe("GoalieJournalButton", () => {
     expect(screen.getByRole("button", { name: "Generate Goalie Journal" })).toBeInTheDocument();
   });
 
-  it("passes edited colors to the journal PDF builder", async () => {
+  it("passes edited journal settings to the journal PDF builder", async () => {
     const user = userEvent.setup();
     const originalImage = global.Image;
     const originalGetContext = HTMLCanvasElement.prototype.getContext;
@@ -117,11 +138,17 @@ describe("GoalieJournalButton", () => {
 
       const goalieNameInput = screen.getByLabelText("Goalie Name");
       const teamNameInput = screen.getByLabelText("Team Name");
+      const seasonInput = screen.getByLabelText("Season");
+      const entryCountInput = screen.getByLabelText("Number of Journal Entries");
       const primaryHexInput = screen.getByLabelText("Primary Team Color Hex");
       const secondaryHexInput = screen.getByLabelText("Secondary Team Color Hex");
 
       await user.type(goalieNameInput, "Test Goalie");
       await user.type(teamNameInput, "Test Team");
+      await user.clear(seasonInput);
+      await user.type(seasonInput, "Middle-School");
+      await user.clear(entryCountInput);
+      await user.type(entryCountInput, "36");
       await user.clear(primaryHexInput);
       await user.type(primaryHexInput, "#123456");
       await user.clear(secondaryHexInput);
@@ -138,6 +165,8 @@ describe("GoalieJournalButton", () => {
           expect.objectContaining({
             primaryColor: "#123456",
             secondaryColor: "#ABCDEF",
+            season: "Middle-School",
+            entryCount: 36,
           }),
           expect.anything(),
           expect.anything(),
@@ -157,5 +186,54 @@ describe("GoalieJournalButton", () => {
         value: originalToDataURL,
       });
     }
+  });
+
+  it("requires a non-empty season", async () => {
+    const user = userEvent.setup();
+    render(<GoalieJournalButton />);
+
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+    await user.type(screen.getByLabelText("Goalie Name"), "Test Goalie");
+    await user.type(screen.getByLabelText("Team Name"), "Test Team");
+    await user.clear(screen.getByLabelText("Season"));
+    await user.click(screen.getByRole("button", { name: "Generate" }));
+
+    expect(screen.getByText("Please enter a season")).toBeInTheDocument();
+    expect(mockBuildGoalieJournalPdf).not.toHaveBeenCalled();
+  });
+
+  it("requires the journal entry count to be a whole number from 1 to 100", async () => {
+    const user = userEvent.setup();
+    render(<GoalieJournalButton />);
+
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+    await user.type(screen.getByLabelText("Goalie Name"), "Test Goalie");
+    await user.type(screen.getByLabelText("Team Name"), "Test Team");
+    await user.clear(screen.getByLabelText("Number of Journal Entries"));
+    await user.type(screen.getByLabelText("Number of Journal Entries"), "101");
+    await user.click(screen.getByRole("button", { name: "Generate" }));
+
+    expect(
+      screen.getByText("Number of journal entries must be a whole number between 1 and 100")
+    ).toBeInTheDocument();
+    expect(mockBuildGoalieJournalPdf).not.toHaveBeenCalled();
+  });
+
+  it("restores season and entry count defaults after cancelling", async () => {
+    const user = userEvent.setup();
+    render(<GoalieJournalButton />);
+
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+    await user.clear(screen.getByLabelText("Season"));
+    await user.type(screen.getByLabelText("Season"), "Spring");
+    await user.clear(screen.getByLabelText("Number of Journal Entries"));
+    await user.type(screen.getByLabelText("Number of Journal Entries"), "12");
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+
+    expect(screen.getByLabelText("Season")).toHaveValue(getDefaultJournalSeason());
+    expect(screen.getByLabelText("Number of Journal Entries")).toHaveValue(
+      DEFAULT_JOURNAL_ENTRY_COUNT
+    );
   });
 });
