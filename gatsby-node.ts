@@ -3,10 +3,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
-import {
-  estimateDrillPdfPages,
-  shouldUseFullWidthFirstPageDiagram,
-} from "./src/utils/estimateDrillPdfPages";
+import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
+import { isValidDrillVideoUrl } from "./src/utils/drillVideo";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
@@ -54,15 +52,6 @@ const ALLOWED_GAME_SITUATIONS = [
   "opposed_practice",
   "unopposed_practice",
 ];
-
-// Valid video URL patterns — only YouTube and Vimeo are accepted, HTTPS only.
-// Patterns are intentionally restricted to formats that getEmbedUrl() (videoUtils.ts) can parse.
-// YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID — v= must be the first query parameter
-const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+([&#].*)?$/;
-// YouTube short URL: https://youtu.be/VIDEO_ID
-const YOUTUBE_SHORT_REGEX = /^https:\/\/youtu\.be\/[\w-]+(\?.*)?$/;
-// Vimeo: https://vimeo.com/VIDEO_ID — numeric ID only; player.vimeo.com not accepted as input
-const VIMEO_REGEX = /^https:\/\/(www\.)?vimeo\.com\/\d+(\?.*)?$/;
 
 // Validate drill data structure
 function validateDrillData(data: unknown, drillFolder: string): data is DrillData {
@@ -146,6 +135,21 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
         throw new Error(
           `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_image' must be a non-empty string when provided`
         );
+      }
+
+      if (typeof p.progression_video !== "undefined") {
+        if (typeof p.progression_video !== "string") {
+          throw new Error(
+            `[${drillFolder}] drill.yml field 'drill_progressions[${index}].progression_video' must be a string URL`
+          );
+        }
+        if (!isValidDrillVideoUrl(p.progression_video)) {
+          throw new Error(
+            `[${drillFolder}] invalid video URL in 'drill_progressions[${index}].progression_video': '${p.progression_video}'. Must be a valid YouTube ` +
+              `(https://www.youtube.com/watch?v=... or https://youtu.be/...) ` +
+              `or Vimeo (https://vimeo.com/...) URL`
+          );
+        }
       }
     });
   }
@@ -320,17 +324,12 @@ function validateDrillData(data: unknown, drillFolder: string): data is DrillDat
   }
 
   // Validate video URL if present — must be a valid YouTube or Vimeo link
-  if (d.video !== undefined && d.video !== null) {
+  if (d.video !== undefined) {
     if (typeof d.video !== "string") {
       throw new Error(`[${drillFolder}] video must be a string URL`);
     }
 
-    const isValidVideoUrl =
-      YOUTUBE_WATCH_REGEX.test(d.video) ||
-      YOUTUBE_SHORT_REGEX.test(d.video) ||
-      VIMEO_REGEX.test(d.video);
-
-    if (!isValidVideoUrl) {
+    if (!isValidDrillVideoUrl(d.video)) {
       throw new Error(
         `[${drillFolder}] invalid video URL '${d.video}'. Must be a valid YouTube ` +
           `(https://www.youtube.com/watch?v=... or https://youtu.be/...) ` +
@@ -508,10 +507,9 @@ export const createPages: GatsbyNode["createPages"] = async ({ actions }) => {
 
   for (const { folder, drillData } of drills) {
     const pageEstimate = estimateDrillPdfPages(drillData);
-    const fitsOnOneMainPageWithFullWidthLayout = shouldUseFullWidthFirstPageDiagram(drillData);
-    if (pageEstimate.mainContentPages > 1 && !fitsOnOneMainPageWithFullWidthLayout) {
+    if (pageEstimate.mainContentPages > 1) {
       console.warn(
-        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has non-progression content estimated to need ${pageEstimate.mainContentPages} page(s) even with the full-width first-page layout. Consider shortening content to reduce overflow risk.`
+        `  ⚠️  PDF size warning: drill '${folder}' ("${drillData.name}") has main content estimated to need ${pageEstimate.mainContentPages} pages. Consider shortening content to reduce overflow risk.`
       );
     }
 

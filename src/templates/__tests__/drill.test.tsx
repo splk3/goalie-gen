@@ -2,12 +2,24 @@ import * as React from "react";
 import { render, screen } from "@testing-library/react";
 import DrillTemplate from "../drill";
 import { shouldPlaceProgressionsOnSecondPage } from "../../utils/estimateDrillPdfPages";
+import { getEmbedUrl } from "../../utils/videoUtils";
 
 jest.mock("../../utils/generateDrillPdf", () => ({
   generateDrillPdf: jest.fn(),
 }));
 jest.mock("../../utils/videoUtils", () => ({
-  getEmbedUrl: jest.fn(() => ""),
+  getEmbedUrl: jest.fn((url: string) => {
+    try {
+      const { hostname } = new URL(url);
+      const normalizedHost = hostname.toLowerCase();
+      const allowedVimeoHosts = ["vimeo.com", "www.vimeo.com"];
+      return allowedVimeoHosts.includes(normalizedHost)
+        ? "https://player.vimeo.com/video/123456"
+        : "https://www.youtube.com/embed/video-id";
+    } catch {
+      return "https://www.youtube.com/embed/video-id";
+    }
+  }),
   getVideoThumbnail: jest.fn(() => ""),
 }));
 jest.mock("../../components/SEO", () => () => null);
@@ -70,6 +82,7 @@ const basePageContext = {
 describe("DrillTemplate", () => {
   beforeEach(() => {
     jest.mocked(shouldPlaceProgressionsOnSecondPage).mockReturnValue(false);
+    jest.mocked(getEmbedUrl).mockClear();
   });
 
   it("renders the Drill Information heading and drill_steps as an ordered list", () => {
@@ -166,6 +179,32 @@ describe("DrillTemplate", () => {
     expect(shareButtons.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("renders the main video before drill progressions for screen and browser print", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            video: "https://youtu.be/video-id",
+            drill_progressions: [
+              {
+                progression_name: "Progression 1",
+                progression_description: "Progression details",
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    const videoHeading = screen.getByText("Video Demonstration");
+    const progressionHeading = screen.getByText("Drill Progressions");
+    expect(
+      videoHeading.compareDocumentPosition(progressionHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
   it("renders progression name, description, and optional image", () => {
     render(
       <DrillTemplate
@@ -189,6 +228,63 @@ describe("DrillTemplate", () => {
     expect(screen.getByText("Progression 8")).toBeInTheDocument();
     expect(screen.getByText("Progression details 8")).toBeInTheDocument();
     expect(screen.getByAltText("Progression 2 diagram")).toBeInTheDocument();
+  });
+
+  it("uses the progression media column for a video-only progression", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            drill_progressions: [
+              {
+                progression_name: "Video Only",
+                progression_description: "Video details",
+                progression_video: "https://youtu.be/video-id",
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    const iframe = screen.getByTitle("Video Only progression video 1");
+    expect(iframe).toHaveAttribute("src", "https://www.youtube.com/embed/video-id");
+    expect(iframe.parentElement).toHaveClass("print:hidden");
+    expect(screen.getByText("Video details").closest(".grid")).toHaveClass(
+      "grid",
+      "md:grid-cols-2",
+      "print:grid-cols-1"
+    );
+  });
+
+  it("renders a progression image before its video with a unique accessible title", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            drill_progressions: [
+              {
+                progression_name: "Both Media",
+                progression_description: "Both details",
+                progression_image: "progression.png",
+                progression_video: "https://vimeo.com/123456",
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    const image = screen.getByAltText("Both Media diagram");
+    const iframe = screen.getByTitle("Both Media progression video 1");
+    expect(screen.getByText("Both details").closest(".grid")).toHaveClass("print:grid-cols-2");
+    expect(image.compareDocumentPosition(iframe) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(iframe).toHaveAttribute("allow", expect.stringContaining("picture-in-picture"));
+    expect(iframe).toHaveAttribute("sandbox", expect.stringContaining("allow-presentation"));
   });
 
   it("adds a print page break class to progressions when placement helper requires page two", () => {

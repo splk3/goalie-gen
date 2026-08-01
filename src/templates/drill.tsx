@@ -27,6 +27,29 @@ interface DrillTemplateProps {
 
 const formatTag = (tag: string): string => formatDrillTagValue(tag);
 
+const videoIframeAllow =
+  "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen";
+
+function DrillVideoEmbed({ url, title }: { url: string; title: string }) {
+  const embedUrl = getEmbedUrl(url);
+  if (!embedUrl) return null;
+
+  return (
+    <div className="relative w-full print:hidden" style={{ paddingBottom: "56.25%" }}>
+      <iframe
+        src={embedUrl}
+        title={title}
+        className="absolute inset-0 w-full h-full rounded-lg"
+        loading="lazy"
+        allowFullScreen
+        allow={videoIframeAllow}
+        referrerPolicy="strict-origin-when-cross-origin"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-presentation"
+      />
+    </div>
+  );
+}
+
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
   const { drillData, drillFolder } = pageContext;
 
@@ -237,7 +260,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Full-width sections: Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
+        {/* Full-width sections: Coaching Focus Points, Shooter Focus Points, Video, Progressions */}
         <div className="mb-6 print:mb-3">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
             Coaching Focus Points
@@ -260,52 +283,6 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         )}
 
-        {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
-          <div
-            className={`mb-6 print:mb-3 ${shouldMoveProgressionsToSecondPage ? "print-break-before-page" : ""}`}
-          >
-            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
-              Drill Progressions
-            </h2>
-            <div className="space-y-4">
-              {drillData.drill_progressions.map((progression, index) => {
-                const progressionImageUrl = progressionImageUrls[index];
-                const hasProgressionImage = progressionImageUrl.length > 0;
-                return (
-                  <div key={`${progression.progression_name}-${index}`}>
-                    <DrillMarkdown
-                      markdown={progression.progression_name}
-                      className="text-lg font-bold text-gray-800 dark:text-gray-200 print:text-base print:text-gray-900 space-y-1"
-                    />
-                    {hasProgressionImage ? (
-                      <div className="grid md:grid-cols-2 gap-4 mt-2 items-start print:grid-cols-2">
-                        <DrillMarkdown
-                          markdown={progression.progression_description}
-                          className="text-gray-700 dark:text-gray-300 print:text-[9pt] print:text-gray-900 space-y-2"
-                        />
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
-                          <img
-                            src={progressionImageUrl}
-                            alt={`${progression.progression_name} diagram`}
-                            className="w-full h-auto object-contain"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <DrillMarkdown
-                        markdown={progression.progression_description}
-                        className="mt-2 text-gray-700 dark:text-gray-300 print:text-[9pt] print:text-gray-900 space-y-2"
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* Video Section */}
         {drillData.video && (
           <div className="mb-8 print:mb-4">
@@ -315,18 +292,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             {embedUrl ? (
               <>
                 {/* Embedded player - hidden when printing */}
-                <div className="relative w-full print:hidden" style={{ paddingBottom: "56.25%" }}>
-                  <iframe
-                    src={embedUrl}
-                    title="Video Demonstration"
-                    className="absolute inset-0 w-full h-full rounded-lg"
-                    loading="lazy"
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-presentation"
-                  />
-                </div>
+                <DrillVideoEmbed url={drillData.video} title="Video Demonstration" />
                 {/* Thumbnail + link - only visible when printing */}
                 <div className="hidden print:flex items-center gap-4">
                   {videoThumbnail && (
@@ -354,6 +320,68 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 Watch Video →
               </a>
             )}
+          </div>
+        )}
+
+        {drillData.drill_progressions && drillData.drill_progressions.length > 0 && (
+          <div
+            className={`mb-6 print:mb-3 ${shouldMoveProgressionsToSecondPage ? "print-break-before-page" : ""}`}
+          >
+            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
+              Drill Progressions
+            </h2>
+            <div className="space-y-4">
+              {drillData.drill_progressions.map((progression, index) => {
+                const progressionImageUrl = progressionImageUrls[index];
+                const hasProgressionImage = progressionImageUrl.length > 0;
+                const hasProgressionVideo = !!progression.progression_video;
+                const hasProgressionMedia = hasProgressionImage || hasProgressionVideo;
+                return (
+                  <div key={`${progression.progression_name}-${index}`}>
+                    <DrillMarkdown
+                      markdown={progression.progression_name}
+                      className="text-lg font-bold text-gray-800 dark:text-gray-200 print:text-base print:text-gray-900 space-y-1"
+                    />
+                    {hasProgressionMedia ? (
+                      <div
+                        className={`grid md:grid-cols-2 gap-4 mt-2 items-start ${
+                          hasProgressionImage ? "print:grid-cols-2" : "print:grid-cols-1"
+                        }`}
+                      >
+                        <DrillMarkdown
+                          markdown={progression.progression_description}
+                          className="text-gray-700 dark:text-gray-300 print:text-[9pt] print:text-gray-900 space-y-2"
+                        />
+                        <div className="space-y-3">
+                          {hasProgressionImage && (
+                            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden print:bg-white">
+                              <img
+                                src={progressionImageUrl}
+                                alt={`${progression.progression_name} diagram`}
+                                className="w-full h-auto object-contain"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            </div>
+                          )}
+                          {progression.progression_video && (
+                            <DrillVideoEmbed
+                              url={progression.progression_video}
+                              title={`${progression.progression_name} progression video ${index + 1}`}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <DrillMarkdown
+                        markdown={progression.progression_description}
+                        className="mt-2 text-gray-700 dark:text-gray-300 print:text-[9pt] print:text-gray-900 space-y-2"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -463,7 +491,11 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img src="/images/coachthem/ct-banner.png" alt="CoachThem" className="w-full h-auto dark:opacity-90 dark:brightness-90" />
+            <img
+              src="/images/coachthem/ct-banner.png"
+              alt="CoachThem"
+              className="w-full h-auto dark:opacity-90 dark:brightness-90"
+            />
           </a>
         </div>
       </main>

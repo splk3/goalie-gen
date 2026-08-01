@@ -42,6 +42,10 @@ export default function CoachResources() {
             <NavigationButton to="/about-goalie-journals">Goalie Journal</NavigationButton>
             <NavigationButton to="/goalie-evals">Goalie Evaluations</NavigationButton>
             <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
+            <DownloadMaterialButton
+              title="Goalie-Friendly Practice Checklist"
+              fileName="goalie-check-list.pdf"
+            />
             <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
           </div>
         </div>

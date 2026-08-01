@@ -57,12 +57,15 @@ Create `drills/{folder-name}/drill.yml` using the field mapping below.
 | Tags - Equipment | `tags.equipment` | Array of checked values |
 | Tags - Space Required | `tags.space_required` | Array of checked values — **required**; default to `[flexible]` if none checked |
 | Drill Diagram | `drill_image` | See Step 4; value is the derived filename string |
-| Progression [#] Name + Description | `drill_progressions` | See progressions rules below; descriptions remain markdown text |
+| Progression [#] Name + Description + Video | `drill_progressions` | See progressions rules below; descriptions remain markdown text and video is optional |
 
 ### Progressions Rules
 
 - Build `drill_progressions` from Progression 1–8 fields (up to 8 entries)
 - Include a progression entry **only when both** `progression_name` and `progression_description` are provided
+- Omit `progression_video` when its issue field is blank
+- Treat a provided progression video without both a name and description as an intake error; do not silently omit it
+- When provided, map Progression [#] Video to `progression_video`; it must use one of the same accepted HTTPS YouTube/Vimeo formats as the main `video`
 - If no valid progressions exist, omit `drill_progressions` entirely
 - Preserve markdown formatting in `progression_description` (including nested list indentation up to 3 levels)
 - Author every `progression_description` as a YAML block scalar (`|-`) so intentional line breaks and single-level lists are preserved
@@ -81,6 +84,7 @@ drill_progressions:
       Purpose: Add timing pressure.
       - Point one
       - Point two
+    progression_video: https://youtu.be/VIDEO_ID
 ```
 
 ### YAML Authoring Rules
@@ -136,6 +140,7 @@ Before building:
   - `https://www.youtube.com/watch?v=VIDEO_ID`
   - `https://youtu.be/VIDEO_ID`
   - `https://vimeo.com/NUMERIC_ID`
+- Confirm every `progression_video` uses those same formats, is omitted when blank, and belongs to an entry with both a non-empty progression name and description
 - Confirm `drill_creation_date` is a valid YYYY-MM-DD calendar date
 - If `drill_updated_date` is present, confirm it is a valid YYYY-MM-DD calendar date and not earlier than `drill_creation_date`
 - Confirm `team_drill` is a plain string (`yes` or `no`), not a list
@@ -177,6 +182,12 @@ coaching_focus_points: |-
   - Maintain depth on the push across.
     - Match edge angle to movement path.
   - Keep head and eyes up tracking the puck.
+
+drill_progressions:
+  - progression_name: Add Traffic
+    progression_description: |-
+      Add a screen before the second shot.
+    progression_video: https://vimeo.com/123456789
 
 drill_image: rim-stop-cut-across.png
 

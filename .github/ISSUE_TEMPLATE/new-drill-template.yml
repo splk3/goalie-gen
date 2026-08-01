@@ -242,6 +242,17 @@ body:
       description: Enter progression 1 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 1 here. Attach a progression image file here if needed.
 
+  - type: textarea
+    id: progression_1_video
+    attributes:
+      label: Progression 1 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
+
   - type: input
     id: progression_2_name
     attributes:
@@ -255,6 +266,17 @@ body:
       label: Progression 2 Description and Diagram (Optional)
       description: Enter progression 2 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 2 here. Attach a progression image file here if needed.
+
+  - type: textarea
+    id: progression_2_video
+    attributes:
+      label: Progression 2 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
 
   - type: input
     id: progression_3_name
@@ -270,6 +292,17 @@ body:
       description: Enter progression 3 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 3 here. Attach a progression image file here if needed.
 
+  - type: textarea
+    id: progression_3_video
+    attributes:
+      label: Progression 3 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
+
   - type: input
     id: progression_4_name
     attributes:
@@ -283,6 +316,17 @@ body:
       label: Progression 4 Description and Diagram (Optional)
       description: Enter progression 4 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 4 here. Attach a progression image file here if needed.
+
+  - type: textarea
+    id: progression_4_video
+    attributes:
+      label: Progression 4 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
 
   - type: input
     id: progression_5_name
@@ -298,6 +342,17 @@ body:
       description: Enter progression 5 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 5 here. Attach a progression image file here if needed.
 
+  - type: textarea
+    id: progression_5_video
+    attributes:
+      label: Progression 5 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
+
   - type: input
     id: progression_6_name
     attributes:
@@ -311,6 +366,17 @@ body:
       label: Progression 6 Description and Diagram (Optional)
       description: Enter progression 6 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 6 here. Attach a progression image file here if needed.
+
+  - type: textarea
+    id: progression_6_video
+    attributes:
+      label: Progression 6 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
 
   - type: input
     id: progression_7_name
@@ -326,6 +392,17 @@ body:
       description: Enter progression 7 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 7 here. Attach a progression image file here if needed.
 
+  - type: textarea
+    id: progression_7_video
+    attributes:
+      label: Progression 7 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
+
   - type: input
     id: progression_8_name
     attributes:
@@ -339,6 +416,17 @@ body:
       label: Progression 8 Description and Diagram (Optional)
       description: Enter progression 8 details as markdown text (paragraphs/lists; nested lists supported up to 3 levels). Attach a progression image file here if applicable.
       placeholder: Describe progression 8 here. Attach a progression image file here if needed.
+
+  - type: textarea
+    id: progression_8_video
+    attributes:
+      label: Progression 8 Video (Optional)
+      description: Enter a YouTube or Vimeo URL. Leave blank when not applicable.
+      placeholder: |
+        HTTPS-only YouTube or Vimeo URL. Accepted formats:
+        https://www.youtube.com/watch?v=VIDEO_ID
+        https://youtu.be/VIDEO_ID
+        https://vimeo.com/NUMERIC_ID
 
   - type: markdown
     attributes:

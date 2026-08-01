@@ -1,3 +1,5 @@
+import { isValidDrillVideoUrl } from "./drillVideo";
+
 export const getYouTubeVideoId = (url: string): string => {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/);
   return match ? match[1] : "";
@@ -9,6 +11,7 @@ export const getVimeoVideoId = (url: string): string => {
 };
 
 export const getEmbedUrl = (videoUrl: string): string => {
+  if (!isValidDrillVideoUrl(videoUrl)) return "";
   const youtubeId = getYouTubeVideoId(videoUrl);
   if (youtubeId) return `https://www.youtube.com/embed/${youtubeId}`;
   const vimeoId = getVimeoVideoId(videoUrl);

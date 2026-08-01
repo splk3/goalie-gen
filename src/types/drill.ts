@@ -2,6 +2,7 @@ export interface DrillProgression {
   progression_name: string;
   progression_description: string;
   progression_image?: string;
+  progression_video?: string;
 }
 
 export type LegacyCoachingFocusPoint = string | Record<string, string[]>;
