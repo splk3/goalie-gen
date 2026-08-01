@@ -26,6 +26,9 @@ type JsPdfModule = typeof import("jspdf");
 
 type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
 
+export const GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT =
+  "The goalie journal generator was developed as part of the USA Hockey Goaltending Gold Certification Program. The goal of this journal is to help you develop into the best and most resilient goalie that you can be. Share your journal with your family and coaches so they can help you on your journey.";
+
 function setInlineFont(doc: JournalDocument, segment: InlineMarkdownSegment): void {
   const bold = segment.bold === true;
   const italics = segment.italics === true || segment.type === "placeholder";
@@ -97,7 +100,7 @@ function drawInlineText(
   return lines.length;
 }
 
-function renderJournalContentPage(doc: JournalDocument, markdown: string, primary: string): void {
+function renderJournalContentPage(doc: JournalDocument, markdown: string, primary: string): number {
   const blocks = parseMarkdown(markdown);
   const title = blocks.find((block) => block.type === "heading")?.text ?? "";
   const bodyBlocks = blocks.filter(
@@ -116,6 +119,39 @@ function renderJournalContentPage(doc: JournalDocument, markdown: string, primar
     const lineCount = drawInlineText(doc, text, 20, y, 170, 6);
     y += lineCount * 6 + 6;
   });
+
+  return y;
+}
+
+function drawGoldCertificationBlock(
+  doc: JournalDocument,
+  badge: JournalLogoData | null,
+  y: number
+): void {
+  const imageMaxSize = 24;
+  const gap = 8;
+  const textX = badge ? 20 + imageMaxSize + gap : 20;
+  const textWidth = badge ? 170 - imageMaxSize - gap : 170;
+
+  if (badge) {
+    const sourceWidth = badge.width > 0 ? badge.width : imageMaxSize;
+    const sourceHeight = badge.height > 0 ? badge.height : imageMaxSize;
+    const scale = Math.min(imageMaxSize / sourceWidth, imageMaxSize / sourceHeight);
+    const width = sourceWidth * scale;
+    const height = sourceHeight * scale;
+    doc.addImage(
+      badge.dataUrl,
+      "PNG",
+      20 + (imageMaxSize - width) / 2,
+      y + (imageMaxSize - height) / 2,
+      width,
+      height
+    );
+  }
+
+  doc.setTextColor("#000000");
+  doc.setFontSize(10);
+  drawInlineText(doc, GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT, textX, y + 4, textWidth, 6);
 }
 
 function drawCoverIdentityField(
@@ -211,7 +247,8 @@ export function buildGoalieJournalPdf(
   jsPdf: JsPdfModule,
   qrCodeDataUrl: string | null = null,
   footerLogo: JournalLogoData | null = null,
-  goaliePhoto: JournalLogoData | null = null
+  goaliePhoto: JournalLogoData | null = null,
+  goldCertificationBadge: JournalLogoData | null = null
 ): InstanceType<JsPdfModule["jsPDF"]> {
   const { jsPDF } = jsPdf;
   const {
@@ -304,7 +341,8 @@ export function buildGoalieJournalPdf(
   // ── Acknowledgements page ───────────────────────────────────────────────────
 
   doc.addPage();
-  renderJournalContentPage(doc, acknowledgementsMd, primary);
+  const acknowledgementsEndY = renderJournalContentPage(doc, acknowledgementsMd, primary);
+  drawGoldCertificationBlock(doc, goldCertificationBadge, acknowledgementsEndY + 4);
 
   // ── How to Use this Journal page ────────────────────────────────────────────
 

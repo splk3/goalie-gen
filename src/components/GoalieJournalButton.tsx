@@ -31,6 +31,9 @@ import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
 import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
+const DEFAULT_LOGO_PATH = "/images/logos/logo-alt-light.png";
+const GOLD_CERTIFICATION_BADGE_PATH = "/images/usahockey/usahockey-gold-certification.png";
+
 export default function GoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
@@ -105,13 +108,8 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     };
   }, [logoPreview]);
 
-  const getLogoAsBase64 = (previewUrl: string | null = logoPreview): Promise<string | null> => {
+  const getStaticImageAsBase64 = (assetPath: string, label: string): Promise<string | null> => {
     return new Promise((resolve) => {
-      if (previewUrl) {
-        resolve(previewUrl);
-        return;
-      }
-
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -123,20 +121,25 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
           resolve(canvas.toDataURL("image/png"));
         } else {
           console.error(
-            "GoalieJournalButton: Failed to obtain 2D canvas context for default logo. The journal will be generated without a logo."
+            `GoalieJournalButton: Failed to obtain 2D canvas context for ${label}. The journal will be generated without it.`
           );
           resolve(null);
         }
       };
       img.onerror = () => {
         console.warn(
-          "GoalieJournalButton: Failed to load default logo. The journal will be generated without a logo."
+          `GoalieJournalButton: Failed to load ${label}. The journal will be generated without it.`
         );
         resolve(null);
       };
-      img.src = withPrefix(buildCacheBustedAssetPath("/images/logos/logo-alt-light.png"));
+      img.src = withPrefix(buildCacheBustedAssetPath(assetPath));
     });
   };
+
+  const getLogoAsBase64 = (): Promise<string | null> =>
+    logoPreview
+      ? Promise.resolve(logoPreview)
+      : getStaticImageAsBase64(DEFAULT_LOGO_PATH, "default logo");
 
   const generatePdf = async (
     normalizedSeason: string,
@@ -154,8 +157,11 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     } catch (error) {
       console.error("Failed to generate goalie journal QR code", error);
     }
-    const logoBase64 = await getLogoAsBase64();
-    const footerLogoBase64 = await getLogoAsBase64(null);
+    const [logoBase64, footerLogoBase64, goldCertificationBadgeBase64] = await Promise.all([
+      getLogoAsBase64(),
+      getStaticImageAsBase64(DEFAULT_LOGO_PATH, "footer logo"),
+      getStaticImageAsBase64(GOLD_CERTIFICATION_BADGE_PATH, "Gold Certification badge"),
+    ]);
 
     const resolveLogoData = async (
       dataUrl: string | null
@@ -184,6 +190,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     const logoData = await resolveLogoData(logoBase64);
     const footerLogoData = await resolveLogoData(footerLogoBase64);
     const goaliePhotoData = await resolveLogoData(goaliePhotoPreview);
+    const goldCertificationBadgeData = await resolveLogoData(goldCertificationBadgeBase64);
 
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
       goalieName: writeInGoalieName ? "" : goalieName.trim(),
@@ -214,7 +221,8 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       jsPdfModule,
       qrCodeDataUrl,
       footerLogoData,
-      goaliePhotoData
+      goaliePhotoData,
+      goldCertificationBadgeData
     );
 
     const sanitizedName = writeInGoalieName

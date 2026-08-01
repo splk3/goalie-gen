@@ -168,16 +168,11 @@ Options:
   const goaliePhotoData = loadJournalImage(goaliePhotoPath, "Goalie photo");
 
   const footerLogoPath = path.join(__dirname, "static/images/logos/logo-alt-light.png");
-  let footerLogoData: JournalLogoData | null = null;
-  if (fs.existsSync(footerLogoPath)) {
-    const footerLogoBuffer = fs.readFileSync(footerLogoPath);
-    const dimensions = getImageDimensions(footerLogoPath);
-    footerLogoData = {
-      dataUrl: `data:image/png;base64,${footerLogoBuffer.toString("base64")}`,
-      width: dimensions?.width ?? 60,
-      height: dimensions?.height ?? 60,
-    };
-  }
+  const footerLogoData = loadJournalImage(footerLogoPath, "Footer logo");
+  const goldCertificationBadgeData = loadJournalImage(
+    path.join(__dirname, "static/images/usahockey/usahockey-gold-certification.png"),
+    "Gold Certification badge"
+  );
 
   const config: GoalieJournalConfig = {
     goalieName: writeInGoalieName ? "" : goalieName,
@@ -203,7 +198,8 @@ Options:
     jsPdfModule,
     qrCodeDataUrl,
     footerLogoData,
-    goaliePhotoData
+    goaliePhotoData,
+    goldCertificationBadgeData
   );
   const arrayBuffer = doc.output("arraybuffer");
   fs.writeFileSync(outputPath, Buffer.from(arrayBuffer));

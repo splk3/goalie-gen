@@ -12,7 +12,10 @@ import {
   buildTeamPlanDocument,
   formatTeamPlanEventHeading,
 } from "../teamPlanBuilder";
-import { buildGoalieJournalPdf } from "../goalieJournalBuilder";
+import {
+  GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT,
+  buildGoalieJournalPdf,
+} from "../goalieJournalBuilder";
 import {
   GOALIE_JOURNAL_COVER_PROMOTION_LINES,
   GOALIE_JOURNAL_PROMOTION_URL,
@@ -997,6 +1000,38 @@ describe("buildGoalieJournalPdf", () => {
           width: 14,
           height: 14,
           url: GOALIE_JOURNAL_PROMOTION_URL,
+        }),
+      ])
+    );
+  });
+
+  it("renders the Gold Certification badge beside its acknowledgement text", () => {
+    const mockModule = makeMockJsPdfModule();
+    const goldCertificationBadge = {
+      dataUrl: "data:image/png;base64,gold-certification",
+      width: 601,
+      height: 600,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf"),
+      null,
+      null,
+      null,
+      goldCertificationBadge
+    );
+
+    expect(mockModule.texts.join("")).toContain(GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT);
+    expect(mockModule.imageCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          data: goldCertificationBadge.dataUrl,
+          page: 2,
+          x: 20,
+          width: 24,
         }),
       ])
     );

@@ -216,6 +216,9 @@ describe("GoalieJournalButton", () => {
           expect.anything(),
           expect.objectContaining({
             dataUrl: "data:image/png;base64,journal-goalie-photo",
+          }),
+          expect.objectContaining({
+            dataUrl: "data:image/png;base64,default-logo",
           })
         );
       });
@@ -349,7 +352,10 @@ describe("GoalieJournalButton", () => {
           expect.anything(),
           expect.anything(),
           expect.anything(),
-          null
+          null,
+          expect.objectContaining({
+            dataUrl: "data:image/png;base64,default-logo",
+          })
         );
       });
       expect(screen.queryByText(/Please enter/)).not.toBeInTheDocument();
