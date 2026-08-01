@@ -21,16 +21,19 @@ shooter_focus_points: |-
   - Lateral = Shuffle/Power Push.
   - Layering these cues forces the goalie to process multiple cues in real time.
 drill_image: read-and-react.png
+video: https://youtu.be/0mSmOuQknq0
 drill_progressions:
   - progression_name: Progression 1 - Add Angle Changes
     progression_description: |-
       Coach moves in a semicircle around the crease. Goalie must maintain angle and depth discipline.
     progression_image: progression-add-angle-changes.png
+    progression_video: https://youtu.be/fQNL7hLYGJw
   - progression_name: Progression 2 - Add a Shot
     progression_description: |-
       Coach shoots only when inside the threat line. Goalie must stay ready during movement.
+    progression_video: https://youtu.be/EnhI0afJ1C4
 drill_creation_date: 2026-05-22
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-07-30
 tags:
   skill_level:
     - beginner
