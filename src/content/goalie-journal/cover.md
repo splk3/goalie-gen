@@ -2,4 +2,4 @@
 
 # Goalie Journal
 
-Track your development and growth as a goaltender throughout the season.
+_Track your development and growth as a goaltender throughout the season._

@@ -55,11 +55,6 @@ export default function Home() {
               <HamburgerMenu />
               <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
             </div>
-            <div className="hidden md:block flex-1 mx-4">
-              <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
-                Making every coach a goalie coach!
-              </p>
-            </div>
             <DarkModeToggle />
           </div>
         </div>
