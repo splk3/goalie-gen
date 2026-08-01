@@ -80,6 +80,7 @@ describe("CoachResources page", () => {
       "Goalie Journal",
       "Goalie Evaluations",
       "Coach Z's Zone Map",
+      "Goalie-Friendly Practice Checklist",
       "Equipment Fitting",
     ]);
   });
