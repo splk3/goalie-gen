@@ -96,13 +96,24 @@ A module-level cache (`_drillsCache`) means disk reads happen once per build pro
 
 ### 3. Plan & Journal Document Generation
 
-The document generators assemble Word documents (`.docx`) from markdown content stored in `src/content/`:
+The plan generators assemble Word documents (`.docx`) from markdown content stored in `src/content/`, while the Goalie Journal generator assembles a PDF with `jsPDF`:
 
 - [GenerateTeamPlanButton.tsx](file:///home/patrick/github/splk3/goalie-gen/src/components/GenerateTeamPlanButton.tsx)
 - [GenerateClubPlanButton.tsx](file:///home/patrick/github/splk3/goalie-gen/src/components/GenerateClubPlanButton.tsx)
 - [GoalieJournalButton.tsx](file:///home/patrick/github/splk3/goalie-gen/src/components/GoalieJournalButton.tsx)
 
-All three use the `docx` library. Shared helpers live in `src/utils/docxContent.ts` and `src/utils/docxImageType.ts`. Use `OBJECT_URL_REVOKE_DELAY_MS` (from `src/utils/staticAsset.ts`) when creating object URLs for the download trigger.
+The plan generators use shared helpers in `src/utils/docxContent.ts` and `src/utils/docxImageType.ts`. The journal's canonical page assembly lives in `src/utils/builders/goalieJournalBuilder.ts` and is shared by the browser and Node test generator. Use `OBJECT_URL_REVOKE_DELAY_MS` (from `src/utils/staticAsset.ts`) when creating object URLs for the download trigger.
+
+#### Goalie Journal Cover Configuration
+
+`GoalieJournalConfig` includes goalie/team identity, season, entry count, colors, and per-field write-in flags. The browser modal and `generate-test-goalie-journal.ts` must remain in parity; CLI-only output paths remain separate from browser download behavior.
+
+- The **Team Logo (Optional)** uses `ImageUploader` cropping and drives palette extraction. If omitted in the browser, the GoalieGen logo is used.
+- The **Goalie Photo (Optional)** uses the same upload/cropping pipeline but must not change team colors.
+- When both cover images are present, render them horizontally at equal displayed height with preserved aspect ratios and a bounded combined width.
+- Goalie Name, Team Name, and Season can be marked for later handwriting. Disabled/write-in fields render as labeled vector underlines on the cover, not underscore characters.
+- Every journal QR code uses `https://goaliegen.com/goalie-resources`. The cover promotion text and QR image are clickable PDF regions using the same URL.
+- The Node generator supports `--goalie-photo`, `--write-in-goalie-name`, `--write-in-team-name`, and `--write-in-season`. Keep `generate-test-goalie-journal.sh` working as the quick visual sample.
 
 #### Team Plan Event Detail Fill-In Fields
 
@@ -131,7 +142,7 @@ form for longer notes and the paired form for short event details.
 - `isValidHexRgbColor(input)` — strict `#RRGGBB` validation.
 - `extractPaletteHexColorsFromDataUrl(dataUrl, colorCount?)` — browser-only async function that loads the image into a canvas and calls `colorthief` asynchronously (using `getPalette` with quality set to `1`) to extract and return up to `colorCount` (default `6`) unique normalized hex colors.
 
-When a logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Colors are reset on form close/cancel.
+When a team/club logo image is uploaded, an `useEffect` in each generator calls `extractPaletteHexColorsFromDataUrl` and pre-populates `primaryTeamColor` (palette[0]) and `secondaryTeamColor` (palette[1]). Clearing the logo resets both colors to the USA defaults. Goalie photos never affect the palette. Colors are reset on form close/cancel.
 
 The Goalie Journal PDF builder receives these colors through `GoalieJournalConfig`: primary is used for journal headings, secondary for entry borders and writing lines, and body/prompts remain black. The Node test generator must keep parity with the browser config and support `--primary` and `--secondary` using the same USA defaults.
 

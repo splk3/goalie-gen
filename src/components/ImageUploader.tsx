@@ -13,12 +13,14 @@ interface ImageUploaderProps {
   onImageCropped: (file: File | null, previewUrl: string | null) => void;
   disabled?: boolean;
   label?: string;
+  inputId?: string;
 }
 
 export default function ImageUploader({
   onImageCropped,
   disabled = false,
   label = "Image (Optional)",
+  inputId = "image-upload-input",
 }: ImageUploaderProps) {
   const [imgSrc, setImgSrc] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
@@ -164,14 +166,14 @@ export default function ImageUploader({
   return (
     <div className="mb-6">
       <label
-        htmlFor="image-upload-input"
+        htmlFor={inputId}
         className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
       >
         {label}
       </label>
       <input
         type="file"
-        id="image-upload-input"
+        id={inputId}
         accept="image/*"
         onChange={handleImageChange}
         disabled={disabled}

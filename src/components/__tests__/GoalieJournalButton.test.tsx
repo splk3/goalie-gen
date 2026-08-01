@@ -8,6 +8,7 @@ import {
   DEFAULT_JOURNAL_ENTRY_COUNT,
   getDefaultJournalSeason,
 } from "../../utils/generatorDefaults";
+import { extractPaletteHexColorsFromDataUrl } from "../../utils/teamColors";
 
 const mockBuildGoalieJournalPdf = jest.fn((..._args: unknown[]) => ({
   output: jest.fn(() => new Blob()),
@@ -43,16 +44,20 @@ jest.mock("../Logo", () => {
 jest.mock("../ImageUploader", () => {
   function MockImageUploader({
     onImageCropped,
+    label = "Image (Optional)",
+    inputId = "image-upload-input",
   }: {
     onImageCropped: (_file: File | null, previewUrl: string | null) => void;
+    label?: string;
+    inputId?: string;
   }) {
     return (
       <button
         type="button"
-        data-testid="image-uploader"
-        onClick={() => onImageCropped(null, "data:image/png;base64,test")}
+        data-testid={inputId}
+        onClick={() => onImageCropped(null, `data:image/png;base64,${inputId}`)}
       >
-        Upload logo
+        {label}
       </button>
     );
   }
@@ -60,10 +65,48 @@ jest.mock("../ImageUploader", () => {
   return MockImageUploader;
 });
 
+function installImageMocks(): () => void {
+  const originalImage = global.Image;
+  const originalGetContext = HTMLCanvasElement.prototype.getContext;
+  const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
+  class MockImage {
+    width = 1;
+    height = 1;
+    onload: (() => void) | null = null;
+    onerror: (() => void) | null = null;
+
+    set src(_value: string) {
+      this.onload?.();
+    }
+  }
+  Object.defineProperty(global, "Image", { configurable: true, value: MockImage });
+  Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+    configurable: true,
+    value: jest.fn(() => ({ drawImage: jest.fn() })),
+  });
+  Object.defineProperty(HTMLCanvasElement.prototype, "toDataURL", {
+    configurable: true,
+    value: jest.fn(() => "data:image/png;base64,default-logo"),
+  });
+
+  return () => {
+    Object.defineProperty(global, "Image", { configurable: true, value: originalImage });
+    Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+      configurable: true,
+      value: originalGetContext,
+    });
+    Object.defineProperty(HTMLCanvasElement.prototype, "toDataURL", {
+      configurable: true,
+      value: originalToDataURL,
+    });
+  };
+}
+
 describe("GoalieJournalButton", () => {
   beforeEach(() => {
     mockBuildGoalieJournalPdf.mockClear();
     jest.mocked(qrCode.toDataURL).mockClear();
+    jest.mocked(extractPaletteHexColorsFromDataUrl).mockClear();
   });
 
   it("shows season and journal entry controls with shared defaults", async () => {
@@ -76,6 +119,11 @@ describe("GoalieJournalButton", () => {
     expect(screen.getByLabelText("Number of Journal Entries")).toHaveValue(
       DEFAULT_JOURNAL_ENTRY_COUNT
     );
+    const teamLogoInput = screen.getByRole("button", { name: "Team Logo (Optional)" });
+    const goaliePhotoInput = screen.getByRole("button", { name: "Goalie Photo (Optional)" });
+    expect(
+      goaliePhotoInput.compareDocumentPosition(teamLogoInput) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
   });
 
   it("shows primary and secondary team color controls with USA defaults", async () => {
@@ -107,34 +155,24 @@ describe("GoalieJournalButton", () => {
 
   it("passes edited journal settings to the journal PDF builder", async () => {
     const user = userEvent.setup();
-    const originalImage = global.Image;
-    const originalGetContext = HTMLCanvasElement.prototype.getContext;
-    const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
-    class MockImage {
-      width = 1;
-      height = 1;
-      onload: (() => void) | null = null;
-      onerror: (() => void) | null = null;
-
-      set src(_value: string) {
-        this.onload?.();
-      }
-    }
-    Object.defineProperty(global, "Image", { configurable: true, value: MockImage });
-    Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
-      configurable: true,
-      value: jest.fn(() => ({ drawImage: jest.fn() })),
-    });
-    Object.defineProperty(HTMLCanvasElement.prototype, "toDataURL", {
-      configurable: true,
-      value: jest.fn(() => "data:image/png;base64,default-logo"),
-    });
+    const restoreImageMocks = installImageMocks();
 
     render(<GoalieJournalButton />);
 
     try {
       await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
-      await user.click(screen.getByTestId("image-uploader"));
+      await user.click(screen.getByTestId("journal-team-logo"));
+      await user.click(screen.getByTestId("journal-goalie-photo"));
+      await waitFor(() => {
+        expect(extractPaletteHexColorsFromDataUrl).toHaveBeenCalledWith(
+          "data:image/png;base64,journal-team-logo",
+          6
+        );
+      });
+      expect(extractPaletteHexColorsFromDataUrl).not.toHaveBeenCalledWith(
+        "data:image/png;base64,journal-goalie-photo",
+        expect.anything()
+      );
 
       const goalieNameInput = screen.getByLabelText("Goalie Name");
       const teamNameInput = screen.getByLabelText("Team Name");
@@ -167,24 +205,22 @@ describe("GoalieJournalButton", () => {
             secondaryColor: "#ABCDEF",
             season: "Middle-School",
             entryCount: 36,
+            writeInGoalieName: false,
+            writeInTeamName: false,
+            writeInSeason: false,
           }),
           expect.anything(),
           expect.anything(),
           expect.anything(),
           expect.anything(),
-          expect.anything()
+          expect.anything(),
+          expect.objectContaining({
+            dataUrl: "data:image/png;base64,journal-goalie-photo",
+          })
         );
       });
     } finally {
-      Object.defineProperty(global, "Image", { configurable: true, value: originalImage });
-      Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
-        configurable: true,
-        value: originalGetContext,
-      });
-      Object.defineProperty(HTMLCanvasElement.prototype, "toDataURL", {
-        configurable: true,
-        value: originalToDataURL,
-      });
+      restoreImageMocks();
     }
   });
 
@@ -235,5 +271,90 @@ describe("GoalieJournalButton", () => {
     expect(screen.getByLabelText("Number of Journal Entries")).toHaveValue(
       DEFAULT_JOURNAL_ENTRY_COUNT
     );
+  });
+
+  it("disables fields selected for writing in later and restores them after cancelling", async () => {
+    const user = userEvent.setup();
+    render(<GoalieJournalButton />);
+
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+    const goalieNameInput = screen.getByLabelText("Goalie Name");
+    const teamNameInput = screen.getByLabelText("Team Name");
+    const seasonInput = screen.getByLabelText("Season");
+
+    await user.click(
+      screen.getByRole("checkbox", {
+        name: "Write Goalie Name in later on printed journal",
+      })
+    );
+    await user.click(
+      screen.getByRole("checkbox", {
+        name: "Write Team Name in later on printed journal",
+      })
+    );
+    await user.click(
+      screen.getByRole("checkbox", {
+        name: "Write Season in later on printed journal",
+      })
+    );
+
+    expect(goalieNameInput).toBeDisabled();
+    expect(teamNameInput).toBeDisabled();
+    expect(seasonInput).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+
+    expect(screen.getByLabelText("Goalie Name")).toBeEnabled();
+    expect(screen.getByLabelText("Team Name")).toBeEnabled();
+    expect(screen.getByLabelText("Season")).toBeEnabled();
+  });
+
+  it("generates with blank identity values when all fields are marked for writing in later", async () => {
+    const user = userEvent.setup();
+    const restoreImageMocks = installImageMocks();
+    render(<GoalieJournalButton />);
+
+    try {
+      await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+      await user.click(
+        screen.getByRole("checkbox", {
+          name: "Write Goalie Name in later on printed journal",
+        })
+      );
+      await user.click(
+        screen.getByRole("checkbox", {
+          name: "Write Team Name in later on printed journal",
+        })
+      );
+      await user.click(
+        screen.getByRole("checkbox", {
+          name: "Write Season in later on printed journal",
+        })
+      );
+      await user.click(screen.getByRole("button", { name: "Generate" }));
+
+      await waitFor(() => {
+        expect(mockBuildGoalieJournalPdf).toHaveBeenCalledWith(
+          expect.objectContaining({
+            goalieName: "",
+            teamName: "",
+            season: getDefaultJournalSeason(),
+            writeInGoalieName: true,
+            writeInTeamName: true,
+            writeInSeason: true,
+          }),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          null
+        );
+      });
+      expect(screen.queryByText(/Please enter/)).not.toBeInTheDocument();
+    } finally {
+      restoreImageMocks();
+    }
   });
 });

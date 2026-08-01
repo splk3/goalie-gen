@@ -13,7 +13,10 @@ import {
   formatTeamPlanEventHeading,
 } from "../teamPlanBuilder";
 import { buildGoalieJournalPdf } from "../goalieJournalBuilder";
-import { GOALIE_JOURNAL_COVER_PROMOTION_LINES } from "../../goalieJournalPromotion";
+import {
+  GOALIE_JOURNAL_COVER_PROMOTION_LINES,
+  GOALIE_JOURNAL_PROMOTION_URL,
+} from "../../goalieJournalPromotion";
 import type {
   ClubPlanConfig,
   ClubPlanContent,
@@ -112,6 +115,9 @@ const JOURNAL_CONFIG: GoalieJournalConfig = {
   secondaryColor: "#AF272F",
   season: "2026-2027",
   entryCount: 2,
+  writeInGoalieName: false,
+  writeInTeamName: false,
+  writeInSeason: false,
 };
 
 const JOURNAL_CONTENT: GoalieJournalContent = {
@@ -136,6 +142,13 @@ function makeMockJsPdfModule() {
   const drawColors: string[] = [];
   const lineDrawColors: string[] = [];
   const lineWidths: number[] = [];
+  const lineCalls: Array<{
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    page: number;
+  }> = [];
   let currentDrawColor = "#000000";
   let currentLineWidth = 0.2;
   const fonts: string[] = [];
@@ -147,6 +160,14 @@ function makeMockJsPdfModule() {
     y: number;
     width: number;
     height: number;
+    page: number;
+  }> = [];
+  const linkCalls: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    url: string;
     page: number;
   }> = [];
   class MockJsPDF {
@@ -178,9 +199,10 @@ function makeMockJsPdfModule() {
       texts.push(Array.isArray(_text) ? _text.join("\n") : _text);
       return this;
     }
-    line(_x1: number, _y1: number, _x2: number, _y2: number) {
+    line(x1: number, y1: number, x2: number, y2: number) {
       lineDrawColors.push(currentDrawColor);
       lineWidths.push(currentLineWidth);
+      lineCalls.push({ x1, y1, x2, y2, page: pages.length });
       return this;
     }
     rect(_x: number, _y: number, _w: number, _h: number) {
@@ -201,6 +223,10 @@ function makeMockJsPdfModule() {
       imageCalls.push({ data, x, y, width, height, page: pages.length });
       return this;
     }
+    link(x: number, y: number, width: number, height: number, options: { url: string }) {
+      linkCalls.push({ x, y, width, height, url: options.url, page: pages.length });
+      return this;
+    }
     output(_type: string): unknown {
       return _type === "blob" ? new Blob() : new ArrayBuffer(0);
     }
@@ -211,10 +237,12 @@ function makeMockJsPdfModule() {
     drawColors,
     lineDrawColors,
     lineWidths,
+    lineCalls,
     fonts,
     texts,
     images,
     imageCalls,
+    linkCalls,
   };
 }
 
@@ -778,6 +806,76 @@ describe("buildGoalieJournalPdf", () => {
     }).not.toThrow();
   });
 
+  it("renders team logo and goalie photo side-by-side at equal height", () => {
+    const mockModule = makeMockJsPdfModule();
+    const teamLogo = {
+      dataUrl: "data:image/png;base64,team-logo",
+      width: 100,
+      height: 100,
+    };
+    const goaliePhoto = {
+      dataUrl: "data:image/png;base64,goalie-photo",
+      width: 50,
+      height: 100,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      teamLogo,
+      mockModule as unknown as typeof import("jspdf"),
+      null,
+      null,
+      goaliePhoto
+    );
+
+    const teamLogoCall = mockModule.imageCalls.find((call) => call.data === teamLogo.dataUrl);
+    const goaliePhotoCall = mockModule.imageCalls.find((call) => call.data === goaliePhoto.dataUrl);
+    expect(teamLogoCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        height: 60,
+      })
+    );
+    expect(goaliePhotoCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        height: 60,
+      })
+    );
+    expect(teamLogoCall?.x).toBeLessThan(goaliePhotoCall?.x ?? 0);
+  });
+
+  it("renders selected cover identity fields as labeled vector underlines", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      {
+        ...JOURNAL_CONFIG,
+        goalieName: "",
+        teamName: "",
+        season: "",
+        writeInGoalieName: true,
+        writeInTeamName: true,
+        writeInSeason: true,
+      },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toEqual(
+      expect.arrayContaining(["Goalie Name:", "Team Name:", "Season:"])
+    );
+    expect(mockModule.lineCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ page: 1, y1: 59, y2: 59, x2: 170 }),
+        expect.objectContaining({ page: 1, y1: 73, y2: 73, x2: 170 }),
+        expect.objectContaining({ page: 1, y1: 87, y2: 87, x2: 170 }),
+      ])
+    );
+  });
+
   it("uses configured primary and secondary colors for PDF accents", () => {
     const mockModule = makeMockJsPdfModule();
     const config: GoalieJournalConfig = {
@@ -884,6 +982,21 @@ describe("buildGoalieJournalPdf", () => {
           x: 172,
           width: 18,
           height: 18,
+        }),
+      ])
+    );
+    expect(mockModule.linkCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          page: 1,
+          url: GOALIE_JOURNAL_PROMOTION_URL,
+        }),
+        expect.objectContaining({
+          page: expect.any(Number),
+          x: 178,
+          width: 14,
+          height: 14,
+          url: GOALIE_JOURNAL_PROMOTION_URL,
         }),
       ])
     );

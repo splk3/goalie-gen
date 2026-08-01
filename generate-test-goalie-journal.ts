@@ -20,6 +20,26 @@ import type {
   JournalLogoData,
 } from "./src/types/generatorConfig";
 
+function loadJournalImage(imagePath: string, label: string): JournalLogoData | null {
+  if (!imagePath) {
+    return null;
+  }
+  if (!fs.existsSync(imagePath)) {
+    console.warn(`Warning: ${label} file not found at: ${imagePath}`);
+    return null;
+  }
+
+  const imageBuffer = fs.readFileSync(imagePath);
+  const dimensions = getImageDimensions(imagePath);
+  const ext = path.extname(imagePath).toLowerCase();
+  const mimeType = ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
+  return {
+    dataUrl: `data:${mimeType};base64,${imageBuffer.toString("base64")}`,
+    width: dimensions?.width ?? 60,
+    height: dimensions?.height ?? 60,
+  };
+}
+
 async function run() {
   const args = process.argv.slice(2);
   let goalieName = "Test Goalie";
@@ -27,9 +47,13 @@ async function run() {
   let primaryColor = DEFAULT_PRIMARY_TEAM_COLOR;
   let secondaryColor = DEFAULT_SECONDARY_TEAM_COLOR;
   let logoPath = "";
+  let goaliePhotoPath = "";
   let outputPath = "test-goalie-journal.pdf";
   let season = getDefaultJournalSeason();
   let entryCount = DEFAULT_JOURNAL_ENTRY_COUNT;
+  let writeInGoalieName = false;
+  let writeInTeamName = false;
+  let writeInSeason = false;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--name" && args[i + 1]) {
@@ -46,6 +70,9 @@ async function run() {
       i++;
     } else if (args[i] === "--logo" && args[i + 1]) {
       logoPath = args[i + 1];
+      i++;
+    } else if (args[i] === "--goalie-photo" && args[i + 1]) {
+      goaliePhotoPath = args[i + 1];
       i++;
     } else if (args[i] === "--out" && args[i + 1]) {
       outputPath = args[i + 1];
@@ -70,6 +97,12 @@ async function run() {
       }
       entryCount = parsedEntryCount;
       i++;
+    } else if (args[i] === "--write-in-goalie-name") {
+      writeInGoalieName = true;
+    } else if (args[i] === "--write-in-team-name") {
+      writeInTeamName = true;
+    } else if (args[i] === "--write-in-season") {
+      writeInSeason = true;
     } else if (args[i] === "--help" || args[i] === "-h") {
       console.log(`
 Usage: tsx generate-test-goalie-journal.ts [options]
@@ -80,9 +113,13 @@ Options:
   --primary <hex>      Primary Color (default: "${DEFAULT_PRIMARY_TEAM_COLOR}")
   --secondary <hex>    Secondary Color (default: "${DEFAULT_SECONDARY_TEAM_COLOR}")
   --logo <path>        Path to logo image file (optional, PNG/JPEG)
+  --goalie-photo <path> Path to goalie photo (optional, PNG/JPEG)
   --out <path>         Path to output .pdf file (default: "test-goalie-journal.pdf")
   --season <string>    Season label (default: "${getDefaultJournalSeason()}")
   --entries <number>   Number of journal entries (default: ${DEFAULT_JOURNAL_ENTRY_COUNT})
+  --write-in-goalie-name  Render a printable Goalie Name field
+  --write-in-team-name    Render a printable Team Name field
+  --write-in-season       Render a printable Season field
       `);
       return;
     }
@@ -104,8 +141,12 @@ Options:
   console.log(`  Team Name:   ${teamName}`);
   console.log(`  Colors:      Primary: ${primaryColor}, Secondary: ${secondaryColor}`);
   console.log(`  Logo:        ${logoPath || "None"}`);
+  console.log(`  Goalie Photo: ${goaliePhotoPath || "None"}`);
   console.log(`  Season:      ${season}`);
   console.log(`  Entries:     ${entryCount}`);
+  console.log(
+    `  Write-ins:   Goalie Name: ${writeInGoalieName}, Team Name: ${writeInTeamName}, Season: ${writeInSeason}`
+  );
   console.log(`  Output:      ${outputPath}\n`);
 
   // Load markdown content from the filesystem
@@ -123,25 +164,8 @@ Options:
     endOfSeasonMd: fs.readFileSync(path.join(contentDir, "end-of-season.md"), "utf8"),
   };
 
-  // Resolve logo to a base64 data URL (jsPDF's addImage accepts data URLs)
-  let logoData: JournalLogoData | null = null;
-  if (logoPath) {
-    if (fs.existsSync(logoPath)) {
-      const logoBuffer = fs.readFileSync(logoPath);
-      const dimensions = getImageDimensions(logoPath);
-      const base64 = logoBuffer.toString("base64");
-      const ext = path.extname(logoPath).toLowerCase();
-      const mimeType = ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
-      const dataUrl = `data:${mimeType};base64,${base64}`;
-      logoData = {
-        dataUrl,
-        width: dimensions?.width ?? 60,
-        height: dimensions?.height ?? 60,
-      };
-    } else {
-      console.warn(`Warning: Logo file not found at: ${logoPath}`);
-    }
-  }
+  const logoData = loadJournalImage(logoPath, "Logo");
+  const goaliePhotoData = loadJournalImage(goaliePhotoPath, "Goalie photo");
 
   const footerLogoPath = path.join(__dirname, "static/images/logos/logo-alt-light.png");
   let footerLogoData: JournalLogoData | null = null;
@@ -156,12 +180,15 @@ Options:
   }
 
   const config: GoalieJournalConfig = {
-    goalieName,
-    teamName,
+    goalieName: writeInGoalieName ? "" : goalieName,
+    teamName: writeInTeamName ? "" : teamName,
     primaryColor,
     secondaryColor,
-    season,
+    season: writeInSeason ? "" : season,
     entryCount,
+    writeInGoalieName,
+    writeInTeamName,
+    writeInSeason,
   };
 
   const qrCodeDataUrl = await qrCode.toDataURL(GOALIE_JOURNAL_PROMOTION_URL, {
@@ -175,7 +202,8 @@ Options:
     logoData,
     jsPdfModule,
     qrCodeDataUrl,
-    footerLogoData
+    footerLogoData,
+    goaliePhotoData
   );
   const arrayBuffer = doc.output("arraybuffer");
   fs.writeFileSync(outputPath, Buffer.from(arrayBuffer));

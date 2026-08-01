@@ -39,6 +39,10 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
   const [season, setSeason] = React.useState<string>(() => getDefaultJournalSeason());
   const [entryCount, setEntryCount] = React.useState<string>(String(DEFAULT_JOURNAL_ENTRY_COUNT));
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
+  const [goaliePhotoPreview, setGoaliePhotoPreview] = React.useState<string | null>(null);
+  const [writeInGoalieName, setWriteInGoalieName] = React.useState<boolean>(false);
+  const [writeInTeamName, setWriteInTeamName] = React.useState<boolean>(false);
+  const [writeInSeason, setWriteInSeason] = React.useState<boolean>(false);
   const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
     DEFAULT_PRIMARY_TEAM_COLOR
   );
@@ -63,6 +67,13 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
   const handleImageCropped = React.useCallback((_file: File | null, previewUrl: string | null) => {
     setLogoPreview(previewUrl);
   }, []);
+
+  const handleGoaliePhotoCropped = React.useCallback(
+    (_file: File | null, previewUrl: string | null) => {
+      setGoaliePhotoPreview(previewUrl);
+    },
+    []
+  );
 
   React.useEffect(() => {
     let isCancelled = false;
@@ -172,14 +183,18 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
 
     const logoData = await resolveLogoData(logoBase64);
     const footerLogoData = await resolveLogoData(footerLogoBase64);
+    const goaliePhotoData = await resolveLogoData(goaliePhotoPreview);
 
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
-      goalieName,
-      teamName,
+      goalieName: writeInGoalieName ? "" : goalieName.trim(),
+      teamName: writeInTeamName ? "" : teamName.trim(),
       primaryColor: primaryTeamColor,
       secondaryColor: secondaryTeamColor,
       season: normalizedSeason,
       entryCount: normalizedEntryCount,
+      writeInGoalieName,
+      writeInTeamName,
+      writeInSeason,
     };
 
     const journalContent: import("../types/generatorConfig").GoalieJournalContent = {
@@ -198,11 +213,16 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       logoData,
       jsPdfModule,
       qrCodeDataUrl,
-      footerLogoData
+      footerLogoData,
+      goaliePhotoData
     );
 
-    const sanitizedName = sanitizeJournalFilenamePart(goalieName, "Goalie");
-    const sanitizedSeason = sanitizeJournalFilenamePart(normalizedSeason, "Season");
+    const sanitizedName = writeInGoalieName
+      ? "Goalie"
+      : sanitizeJournalFilenamePart(goalieName, "Goalie");
+    const sanitizedSeason = writeInSeason
+      ? "Season"
+      : sanitizeJournalFilenamePart(normalizedSeason, "Season");
     const blob = doc.output("blob");
     setGeneratedBlob(blob);
     setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${sanitizedSeason}.pdf`);
@@ -212,20 +232,20 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setValidationError("");
     shouldScrollValidationErrorRef.current = false;
 
-    if (!goalieName.trim()) {
+    if (!writeInGoalieName && !goalieName.trim()) {
       shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a goalie name");
       return;
     }
 
-    if (!teamName.trim()) {
+    if (!writeInTeamName && !teamName.trim()) {
       shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a team name");
       return;
     }
 
     const normalizedSeason = normalizeJournalSeason(season);
-    if (!normalizedSeason) {
+    if (!writeInSeason && !normalizedSeason) {
       shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a season");
       return;
@@ -243,7 +263,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setIsGenerating(true);
 
     try {
-      await generatePdf(normalizedSeason, normalizedEntryCount);
+      await generatePdf(normalizedSeason ?? "", normalizedEntryCount);
 
       trackEvent("generate_journal", {
         format: "pdf",
@@ -279,6 +299,10 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       setSeason(getDefaultJournalSeason());
       setEntryCount(String(DEFAULT_JOURNAL_ENTRY_COUNT));
       setLogoPreview(null);
+      setGoaliePhotoPreview(null);
+      setWriteInGoalieName(false);
+      setWriteInTeamName(false);
+      setWriteInSeason(false);
       setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
@@ -295,6 +319,10 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setSeason(getDefaultJournalSeason());
     setEntryCount(String(DEFAULT_JOURNAL_ENTRY_COUNT));
     setLogoPreview(null);
+    setGoaliePhotoPreview(null);
+    setWriteInGoalieName(false);
+    setWriteInTeamName(false);
+    setWriteInSeason(false);
     setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
@@ -356,10 +384,21 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
               id="goalieName"
               value={goalieName}
               onChange={(e) => setGoalieName(e.target.value)}
-              disabled={!!generatedBlob || isGenerating}
+              disabled={writeInGoalieName || !!generatedBlob || isGenerating}
               className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter goalie name"
             />
+            <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                aria-label="Write Goalie Name in later on printed journal"
+                checked={writeInGoalieName}
+                onChange={(e) => setWriteInGoalieName(e.target.checked)}
+                disabled={!!generatedBlob || isGenerating}
+                className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+              />
+              Write in later on printed journal
+            </label>
           </div>
 
           <div className="mb-4">
@@ -374,10 +413,21 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
               id="journal-team-name"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
-              disabled={!!generatedBlob || isGenerating}
+              disabled={writeInTeamName || !!generatedBlob || isGenerating}
               className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter team name"
             />
+            <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                aria-label="Write Team Name in later on printed journal"
+                checked={writeInTeamName}
+                onChange={(e) => setWriteInTeamName(e.target.checked)}
+                disabled={!!generatedBlob || isGenerating}
+                className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+              />
+              Write in later on printed journal
+            </label>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -393,10 +443,21 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
                 id="journal-season"
                 value={season}
                 onChange={(e) => setSeason(e.target.value)}
-                disabled={!!generatedBlob || isGenerating}
+                disabled={writeInSeason || !!generatedBlob || isGenerating}
                 className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="e.g. 2026-2027 or Spring"
               />
+              <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  aria-label="Write Season in later on printed journal"
+                  checked={writeInSeason}
+                  onChange={(e) => setWriteInSeason(e.target.checked)}
+                  disabled={!!generatedBlob || isGenerating}
+                  className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+                />
+                Write in later on printed journal
+              </label>
             </div>
 
             <div>
@@ -420,10 +481,19 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
             </div>
           </div>
 
+          <ImageUploader
+            onImageCropped={handleGoaliePhotoCropped}
+            disabled={!!generatedBlob || isGenerating}
+            label="Goalie Photo (Optional)"
+            inputId="journal-goalie-photo"
+          />
+
           <div className="mb-4">
             <ImageUploader
               onImageCropped={handleImageCropped}
               disabled={!!generatedBlob || isGenerating}
+              label="Team Logo (Optional)"
+              inputId="journal-team-logo"
             />
             {!logoPreview && (
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

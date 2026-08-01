@@ -17,7 +17,10 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   normalizeHexRgbColor,
 } from "../teamColors";
-import { GOALIE_JOURNAL_COVER_PROMOTION_LINES } from "../goalieJournalPromotion";
+import {
+  GOALIE_JOURNAL_COVER_PROMOTION_LINES,
+  GOALIE_JOURNAL_PROMOTION_URL,
+} from "../goalieJournalPromotion";
 
 type JsPdfModule = typeof import("jspdf");
 
@@ -115,6 +118,78 @@ function renderJournalContentPage(doc: JournalDocument, markdown: string, primar
   });
 }
 
+function drawCoverIdentityField(
+  doc: JournalDocument,
+  label: string,
+  value: string,
+  y: number,
+  secondary: string,
+  writeIn: boolean
+): void {
+  doc.setTextColor(secondary);
+  if (!writeIn) {
+    doc.setFontSize(18);
+    doc.text(value, 105, y, { align: "center" });
+    return;
+  }
+
+  doc.setFontSize(12);
+  const labelText = `${label}:`;
+  const fieldStartX = 40;
+  doc.text(labelText, fieldStartX, y);
+  const lineStartX = fieldStartX + doc.getTextWidth(labelText) + 3;
+  doc.setDrawColor(secondary);
+  doc.setLineWidth(0.5);
+  doc.line(lineStartX, y + 1, 170, y + 1);
+}
+
+function drawCoverImages(
+  doc: JournalDocument,
+  teamLogo: JournalLogoData | null,
+  goaliePhoto: JournalLogoData | null
+): void {
+  const images = [teamLogo, goaliePhoto].filter(
+    (image): image is JournalLogoData => image !== null
+  );
+  if (images.length === 0) {
+    return;
+  }
+
+  if (images.length === 1) {
+    const image = images[0];
+    const maxWidth = 60;
+    const maxHeight = 60;
+    const sourceWidth = image.width > 0 ? image.width : maxWidth;
+    const sourceHeight = image.height > 0 ? image.height : maxHeight;
+    const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
+    const width = sourceWidth * scale;
+    const height = sourceHeight * scale;
+    doc.addImage(image.dataUrl, "PNG", 105 - width / 2, 110, width, height);
+    return;
+  }
+
+  const gap = 8;
+  const maxCombinedWidth = 160;
+  const maxHeight = 60;
+  const aspectRatios = images.map((image) => {
+    const sourceWidth = image.width > 0 ? image.width : maxHeight;
+    const sourceHeight = image.height > 0 ? image.height : maxHeight;
+    return sourceWidth / sourceHeight;
+  });
+  const height = Math.min(
+    maxHeight,
+    (maxCombinedWidth - gap) / aspectRatios.reduce((sum, ratio) => sum + ratio, 0)
+  );
+  const widths = aspectRatios.map((ratio) => ratio * height);
+  const combinedWidth = widths.reduce((sum, width) => sum + width, 0) + gap;
+  let x = 105 - combinedWidth / 2;
+
+  images.forEach((image, index) => {
+    doc.addImage(image.dataUrl, "PNG", x, 110, widths[index], height);
+    x += widths[index] + gap;
+  });
+}
+
 /**
  * Builds a Goalie Journal PDF and returns the `jsPDF` document instance.
  *
@@ -135,10 +210,21 @@ export function buildGoalieJournalPdf(
   logo: JournalLogoData | null,
   jsPdf: JsPdfModule,
   qrCodeDataUrl: string | null = null,
-  footerLogo: JournalLogoData | null = null
+  footerLogo: JournalLogoData | null = null,
+  goaliePhoto: JournalLogoData | null = null
 ): InstanceType<JsPdfModule["jsPDF"]> {
   const { jsPDF } = jsPdf;
-  const { goalieName, teamName, primaryColor, secondaryColor, season, entryCount } = config;
+  const {
+    goalieName,
+    teamName,
+    primaryColor,
+    secondaryColor,
+    season,
+    entryCount,
+    writeInGoalieName,
+    writeInTeamName,
+    writeInSeason,
+  } = config;
   const {
     coverMd,
     acknowledgementsMd,
@@ -162,30 +248,19 @@ export function buildGoalieJournalPdf(
   doc.setTextColor(primary);
   doc.setFontSize(28);
   drawInlineText(doc, coverTitle, 105, 40, 170, 6, "center");
-  doc.setTextColor(secondary);
-  doc.setFontSize(18);
-  doc.text(goalieName, 105, 58, { align: "center" });
-  doc.text(teamName, 105, 72, { align: "center" });
-  doc.text(`Season ${season}`, 105, 86, { align: "center" });
+  drawCoverIdentityField(doc, "Goalie Name", goalieName, 58, secondary, writeInGoalieName);
+  drawCoverIdentityField(doc, "Team Name", teamName, 72, secondary, writeInTeamName);
+  drawCoverIdentityField(doc, "Season", `Season ${season}`, 86, secondary, writeInSeason);
   if (coverSubtitle) {
     doc.setFontSize(10);
     doc.setTextColor("#000000");
     drawInlineText(doc, coverSubtitle, 105, 97, 170, 5, "center");
   }
 
-  if (logo) {
-    try {
-      const maxW = 60;
-      const maxH = 60;
-      let w = logo.width > 0 ? logo.width : maxW;
-      let h = logo.height > 0 ? logo.height : maxH;
-      const ratio = Math.min(maxW / w, maxH / h);
-      w = w * ratio;
-      h = h * ratio;
-      doc.addImage(logo.dataUrl, "PNG", 105 - w / 2, 110, w, h);
-    } catch (e) {
-      console.error("Error adding logo to PDF:", e);
-    }
+  try {
+    drawCoverImages(doc, logo, goaliePhoto);
+  } catch (e) {
+    console.error("Error adding cover images to PDF:", e);
   }
 
   const coverPageHeight = doc.internal.pageSize.height;
@@ -211,6 +286,7 @@ export function buildGoalieJournalPdf(
   GOALIE_JOURNAL_COVER_PROMOTION_LINES.forEach((line, index) => {
     drawInlineText(doc, line, 105, coverPageHeight - 21 + index * 4.5, 120, 4.5, "center");
   });
+  doc.link(45, coverPageHeight - 25, 120, 12, { url: GOALIE_JOURNAL_PROMOTION_URL });
   if (qrCodeDataUrl) {
     doc.addImage(
       qrCodeDataUrl,
@@ -220,6 +296,9 @@ export function buildGoalieJournalPdf(
       coverFooterImageSize,
       coverFooterImageSize
     );
+    doc.link(172, coverFooterImageY, coverFooterImageSize, coverFooterImageSize, {
+      url: GOALIE_JOURNAL_PROMOTION_URL,
+    });
   }
 
   // ── Acknowledgements page ───────────────────────────────────────────────────
@@ -360,6 +439,9 @@ export function buildGoalieJournalPdf(
     doc.text(footerText, footerLogo ? 106 : 98, journalPageHeight - 10, { align: "center" });
     if (qrCodeDataUrl) {
       doc.addImage(qrCodeDataUrl, "PNG", 178, journalPageHeight - 24, 14, 14);
+      doc.link(178, journalPageHeight - 24, 14, 14, {
+        url: GOALIE_JOURNAL_PROMOTION_URL,
+      });
     }
   }
 
