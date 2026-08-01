@@ -13,6 +13,7 @@ import {
   formatTeamPlanEventHeading,
 } from "../teamPlanBuilder";
 import { buildGoalieJournalPdf } from "../goalieJournalBuilder";
+import { GOALIE_JOURNAL_COVER_PROMOTION_LINES } from "../../goalieJournalPromotion";
 import type {
   ClubPlanConfig,
   ClubPlanContent,
@@ -140,6 +141,14 @@ function makeMockJsPdfModule() {
   const fonts: string[] = [];
   const texts: string[] = [];
   const images: string[] = [];
+  const imageCalls: Array<{
+    data: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    page: number;
+  }> = [];
   class MockJsPDF {
     internal = {
       pageSize: { height: 297 },
@@ -187,8 +196,9 @@ function makeMockJsPdfModule() {
       pages.push(pages.length + 1);
       return this;
     }
-    addImage(_data: string, _format: string, _x: number, _y: number, _w: number, _h: number) {
-      images.push(_data);
+    addImage(data: string, _format: string, x: number, y: number, width: number, height: number) {
+      images.push(data);
+      imageCalls.push({ data, x, y, width, height, page: pages.length });
       return this;
     }
     output(_type: string): unknown {
@@ -204,6 +214,7 @@ function makeMockJsPdfModule() {
     fonts,
     texts,
     images,
+    imageCalls,
   };
 }
 
@@ -820,18 +831,27 @@ describe("buildGoalieJournalPdf", () => {
     });
   });
 
-  it("renders hand-fillable log labels, vector checkboxes, footer text, and QR code", () => {
+  it("renders the cover promotion and hand-fillable log page footers", () => {
     const mockModule = makeMockJsPdfModule();
     const qrCodeDataUrl = "data:image/png;base64,qr";
+    const footerLogoData = {
+      dataUrl: "data:image/png;base64,footer-logo",
+      width: 60,
+      height: 60,
+    };
 
     buildGoalieJournalPdf(
       JOURNAL_CONFIG,
       JOURNAL_CONTENT,
       null,
       mockModule as unknown as typeof import("jspdf"),
-      qrCodeDataUrl
+      qrCodeDataUrl,
+      footerLogoData
     );
 
+    GOALIE_JOURNAL_COVER_PROMOTION_LINES.forEach((line) => {
+      expect(mockModule.texts).toContain(line);
+    });
     expect(mockModule.texts).toContain("Page");
     expect(mockModule.texts).toContain("How to Use this Journal");
     expect(mockModule.texts).toContain("Acknowledgements");
@@ -851,21 +871,22 @@ describe("buildGoalieJournalPdf", () => {
       "If you need more space, make copies of this page or download the PDF at goaliegen.com"
     );
     expect(mockModule.images).toContain(qrCodeDataUrl);
-
-    const footerLogoData = {
-      dataUrl: "data:image/png;base64,footer-logo",
-      width: 60,
-      height: 60,
-    };
-    buildGoalieJournalPdf(
-      JOURNAL_CONFIG,
-      JOURNAL_CONTENT,
-      null,
-      mockModule as unknown as typeof import("jspdf"),
-      qrCodeDataUrl,
-      footerLogoData
-    );
     expect(mockModule.images).toContain(footerLogoData.dataUrl);
+    expect(mockModule.imageCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          data: footerLogoData.dataUrl,
+          page: 1,
+        }),
+        expect.objectContaining({
+          data: qrCodeDataUrl,
+          page: 1,
+          x: 172,
+          width: 18,
+          height: 18,
+        }),
+      ])
+    );
   });
 
   it("renders Markdown bold and italic styles in PDF text", () => {

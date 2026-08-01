@@ -5,6 +5,7 @@ import * as qrCode from "qrcode";
 import { DEFAULT_JOURNAL_ENTRY_COUNT } from "./src/utils/generatorDefaults";
 import { DEFAULT_PRIMARY_TEAM_COLOR, DEFAULT_SECONDARY_TEAM_COLOR } from "./src/utils/teamColors";
 import { buildGoalieJournalPdf } from "./src/utils/builders/goalieJournalBuilder";
+import { GOALIE_JOURNAL_PROMOTION_URL } from "./src/utils/goalieJournalPromotion";
 import { getImageDimensions } from "./generate-utils";
 import type {
   GoalieJournalConfig,
@@ -142,7 +143,7 @@ Options:
     entryCount,
   };
 
-  const qrCodeDataUrl = await qrCode.toDataURL("https://goaliegen.com", {
+  const qrCodeDataUrl = await qrCode.toDataURL(GOALIE_JOURNAL_PROMOTION_URL, {
     margin: 1,
     width: 160,
     color: { dark: "#000000", light: "#FFFFFF" },

@@ -17,6 +17,7 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   normalizeHexRgbColor,
 } from "../teamColors";
+import { GOALIE_JOURNAL_COVER_PROMOTION_LINES } from "../goalieJournalPromotion";
 
 type JsPdfModule = typeof import("jspdf");
 
@@ -185,6 +186,40 @@ export function buildGoalieJournalPdf(
     } catch (e) {
       console.error("Error adding logo to PDF:", e);
     }
+  }
+
+  const coverPageHeight = doc.internal.pageSize.height;
+  const coverFooterImageSize = 18;
+  const coverFooterImageY = coverPageHeight - 28;
+  if (footerLogo) {
+    const logoWidth = footerLogo.width > 0 ? footerLogo.width : coverFooterImageSize;
+    const logoHeight = footerLogo.height > 0 ? footerLogo.height : coverFooterImageSize;
+    const logoScale = Math.min(coverFooterImageSize / logoWidth, coverFooterImageSize / logoHeight);
+    const renderedLogoWidth = logoWidth * logoScale;
+    const renderedLogoHeight = logoHeight * logoScale;
+    doc.addImage(
+      footerLogo.dataUrl,
+      "PNG",
+      20 + (coverFooterImageSize - renderedLogoWidth) / 2,
+      coverFooterImageY + (coverFooterImageSize - renderedLogoHeight) / 2,
+      renderedLogoWidth,
+      renderedLogoHeight
+    );
+  }
+  doc.setFontSize(8);
+  doc.setTextColor("#000000");
+  GOALIE_JOURNAL_COVER_PROMOTION_LINES.forEach((line, index) => {
+    drawInlineText(doc, line, 105, coverPageHeight - 21 + index * 4.5, 120, 4.5, "center");
+  });
+  if (qrCodeDataUrl) {
+    doc.addImage(
+      qrCodeDataUrl,
+      "PNG",
+      172,
+      coverFooterImageY,
+      coverFooterImageSize,
+      coverFooterImageSize
+    );
   }
 
   // ── Acknowledgements page ───────────────────────────────────────────────────

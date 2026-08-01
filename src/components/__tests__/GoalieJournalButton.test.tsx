@@ -1,7 +1,9 @@
 import * as React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import * as qrCode from "qrcode";
 import GoalieJournalButton from "../GoalieJournalButton";
+import { GOALIE_JOURNAL_PROMOTION_URL } from "../../utils/goalieJournalPromotion";
 
 const mockBuildGoalieJournalPdf = jest.fn((..._args: unknown[]) => ({
   output: jest.fn(() => new Blob()),
@@ -127,6 +129,11 @@ describe("GoalieJournalButton", () => {
       await user.click(screen.getByRole("button", { name: "Generate" }));
 
       await waitFor(() => {
+        expect(qrCode.toDataURL).toHaveBeenCalledWith(GOALIE_JOURNAL_PROMOTION_URL, {
+          margin: 1,
+          width: 160,
+          color: { dark: "#000000", light: "#FFFFFF" },
+        });
         expect(mockBuildGoalieJournalPdf).toHaveBeenCalledWith(
           expect.objectContaining({
             primaryColor: "#123456",

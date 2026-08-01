@@ -14,6 +14,7 @@ import {
 } from "../utils/teamColors";
 import { DEFAULT_JOURNAL_ENTRY_COUNT } from "../utils/generatorDefaults";
 import { buildGoalieJournalPdf } from "../utils/builders/goalieJournalBuilder";
+import { GOALIE_JOURNAL_PROMOTION_URL } from "../utils/goalieJournalPromotion";
 import coverMd from "../content/goalie-journal/cover.md";
 import acknowledgementsMd from "../content/goalie-journal/acknowledgements.md";
 import howToUseMd from "../content/goalie-journal/how-to-use.md";
@@ -121,7 +122,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     let qrCodeDataUrl: string | null = null;
     try {
       const qrCode = await import("qrcode");
-      qrCodeDataUrl = await qrCode.toDataURL("https://goaliegen.com", {
+      qrCodeDataUrl = await qrCode.toDataURL(GOALIE_JOURNAL_PROMOTION_URL, {
         margin: 1,
         width: 160,
         color: { dark: "#000000", light: "#FFFFFF" },
