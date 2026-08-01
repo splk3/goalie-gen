@@ -8,11 +8,18 @@ jest.mock("../../utils/generateDrillPdf", () => ({
   generateDrillPdf: jest.fn(),
 }));
 jest.mock("../../utils/videoUtils", () => ({
-  getEmbedUrl: jest.fn((url: string) =>
-    url.includes("vimeo.com")
-      ? "https://player.vimeo.com/video/123456"
-      : "https://www.youtube.com/embed/video-id"
-  ),
+  getEmbedUrl: jest.fn((url: string) => {
+    try {
+      const { hostname } = new URL(url);
+      const normalizedHost = hostname.toLowerCase();
+      const allowedVimeoHosts = ["vimeo.com", "www.vimeo.com"];
+      return allowedVimeoHosts.includes(normalizedHost)
+        ? "https://player.vimeo.com/video/123456"
+        : "https://www.youtube.com/embed/video-id";
+    } catch {
+      return "https://www.youtube.com/embed/video-id";
+    }
+  }),
   getVideoThumbnail: jest.fn(() => ""),
 }));
 jest.mock("../../components/SEO", () => () => null);
