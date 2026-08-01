@@ -19,6 +19,7 @@ shooter_focus_points: |-
   - Read the goalie - If the goalie over-pushes, shoot back against the grain.
   - Keep body language consistent - Don't telegraph whether you're passing or shooting.
 drill_image: beat-the-pass.png
+video: https://youtu.be/JiUImpwBGew
 drill_progressions:
   - progression_name: Progression 1 - One-Touch Passing
     progression_description: |-
@@ -37,6 +38,7 @@ drill_progressions:
       - One-timer
       - Pull-and-shoot (drag laterally)
       Goalie adjusts depth and angle based on release type.
+    progression_video: https://youtu.be/9uwlQhiHLWU
   - progression_name: Progression 4 - Add a Middle "Screen" Player
     progression_description: |-
       Place a stationary or lightly moving screen player between shooters.
@@ -44,10 +46,12 @@ drill_progressions:
       - Goalie must track through traffic.
       - Goalie must stay patient on delayed releases.
     progression_image: progression-4.png
+    progression_video: https://youtu.be/12-lo2FTwsE
   - progression_name: Progression 5 - Add a Rebound Threat
     progression_description: |-
       After the shot, the opposite shooter crashes for a rebound.
       Goalie must control rebounds and recover quickly.
+    progression_video: https://youtu.be/P9-MNIIBNlo
   - progression_name: Progression 6 - Random Second Pass
     progression_description: |-
       After receiving the first pass, Shooter 1 may:
@@ -61,8 +65,9 @@ drill_progressions:
       Start goalie slightly off-angle or require a pre-movement shuffle.
       This increases difficulty in arriving set before the shot.
     progression_image: progression-7.png
+    progression_video: https://youtu.be/W8xTLCgBg5w
 drill_creation_date: 2026-05-22
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-07-30
 tags:
   skill_level:
     - beginner

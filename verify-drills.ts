@@ -17,6 +17,13 @@ interface DrillExpectation {
 
 const drillExpectations: DrillExpectation[] = [
   {
+    folder: "beat-the-pass",
+    expectSecondPageProgressions: true,
+    expectedTotalPages: 2,
+    expectedMainContentPages: 1,
+    expectedDedicatedProgressionPages: 1,
+  },
+  {
     folder: "read-and-react",
     expectSecondPageProgressions: true,
     expectedTotalPages: 2,

@@ -22,6 +22,7 @@ shooter_focus_points: |-
   - Reinforce posture: if the goalie rises too tall, slow the drill and reset technique.
   - Keep verbal cues minimal; let the lights be the stimulus.
 drill_image: blaze-pod-footwork.png
+video: https://youtu.be/zKb4wQwn2BE
 drill_progressions:
   - progression_name: Progression 1 - T-Push
     progression_description: |-
@@ -33,6 +34,7 @@ drill_progressions:
       - Use an explosive first push with a controlled stop.
       - Reinforce clean stops with no drifting past the pod.
     progression_image: progression-1.png
+    progression_video: https://youtu.be/bQhHRr1T8tg
   - progression_name: Progression 2 - Power Push
     progression_description: |-
       Goalie begins in a butterfly centered at the top of the crease.
@@ -42,6 +44,7 @@ drill_progressions:
       - Use a strong push leg by fully loading the edge before driving.
       - Keep chest tall in the butterfly and maintain glove and blocker positioning during slides.
     progression_image: progression-2.png
+    progression_video: https://youtu.be/oMY22g1ZE-k
   - progression_name: Progression 3 - Mirror
     progression_description: |-
       Place a large pad or divider in the crease area to separate two goalies.
@@ -65,7 +68,7 @@ drill_progressions:
       Adjust as desired for your goalie.
     progression_image: progression-4.png
 drill_creation_date: 2026-06-05
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-07-30
 tags:
   skill_level:
     - beginner

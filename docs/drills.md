@@ -40,6 +40,11 @@ The Gatsby build process automatically validates all drills using a strict build
   - `progression_name`: Markdown text.
   - `progression_description`: Markdown text authored as a YAML block scalar (`|-`) to preserve intentional paragraph breaks and single-level lists.
   - `progression_image`: Optional filename string.
+  - `progression_video`: Optional URL with the same validation as the main drill video.
+
+Progression videos render below their progression diagram on the web and are hidden from native
+print. Generated PDFs never include individual progression URLs; when any are present, the PDF
+includes one canonical drill-page link and QR code before the first progression.
 
 ---
 
@@ -86,7 +91,8 @@ For consistency and readability, format every `drill_progressions[*].progression
 
 ### 4. Video URL Regex Formats
 
-Only the following URL schemes are accepted:
+Only the following URL schemes are accepted for both `video` and
+`drill_progressions[*].progression_video`:
 
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` (first query parameter must be `v`) or `https://youtu.be/VIDEO_ID`
 - **Vimeo**: `https://vimeo.com/VIDEO_ID`

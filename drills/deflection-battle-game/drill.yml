@@ -21,6 +21,7 @@ shooter_focus_points: |-
   - Occasionally shoot slightly off-line to force the goalie to reach and adjust.
 
 drill_image: deflection-battle-game.png
+video: https://youtu.be/rqa4aEBRXvU
 
 drill_progressions:
   - progression_name: Progression 1. Angle Variation
@@ -83,6 +84,7 @@ drill_progressions:
       Goalie must read release, manage traffic, and control rebounds under unpredictable conditions.
 
 drill_creation_date: 2026-06-15
+drill_updated_date: 2026-07-30
 
 tags:
   skill_level:

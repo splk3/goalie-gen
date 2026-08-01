@@ -17,17 +17,20 @@ shooter_focus_points: |-
   - Keep release deceptive: slight delay, change blade angle late.
   - Maintain consistent body language so the goalie must read the puck, not the shooter's habits.
 drill_image: reaction-shot-read.png
+video: https://youtu.be/RF7WZHXs1jk
 drill_progressions:
   - progression_name: Progression 1. Tempo Variation
     progression_description: |-
       Shooter releases immediately or delays the shot/fake.
       - Forces the goalie to read timing, not just release angle.
+    progression_video: https://youtu.be/wZQss69n2vU
   - progression_name: Progression 2. Lateral Movement Start
     progression_description: |-
       Shooter takes one or two lateral steps before shooting.
       - Goalie adjusts angle.
       - Goalie still reads release.
     progression_image: progression-2.png
+    progression_video: https://youtu.be/d5WMllLNLaQ
   - progression_name: Progression 3. Screened Release
     progression_description: |-
       Add a stationary screen player between shooter and goalie (extra goalie, player, or pads).
@@ -35,13 +38,15 @@ drill_progressions:
       - Goalie tracks puck late.
       - Goalie maintains patience.
     progression_image: progression-3.png
+    progression_video: https://youtu.be/Qvx3YjupYCM
   - progression_name: Progression 4. Rebound Reaction Layer
     progression_description: |-
       After the initial shot, shooter immediately shoots any rebound.
       - Goalie recovers quickly.
       - Goalie reacts quickly.
+    progression_video: https://youtu.be/UDvzDY3ckEo
 drill_creation_date: 2026-05-25
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-07-30
 tags:
   skill_level:
     - beginner

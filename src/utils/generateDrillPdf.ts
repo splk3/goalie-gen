@@ -5,12 +5,12 @@ import {
   PROGRESSION_SECTION_MAX_PAGES,
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
+  PROGRESSION_VIDEO_NOTE_HEIGHT,
   SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
   SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
   SKILLS_FOCUS_TOP_GAP,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
-  shouldUseFullWidthFirstPageDiagram,
 } from "./estimateDrillPdfPages";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
 import {
@@ -52,6 +52,8 @@ const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_MAX_IMAGE_HEIGHT = 30;
 const LINK_QR_CODE_SIZE_MM = 9;
 const LINK_QR_CODE_GAP_MM = 2;
+const PROGRESSION_VIDEO_NOTE_FONT_SIZE = 8;
+const PROGRESSION_VIDEO_NOTE_LABEL = "View Progression Videos Here:";
 const MAX_QR_CACHE_ENTRIES = 32;
 const qrCodeDataCache = new Map<string, string>();
 let qrCodeModulePromise: Promise<typeof import("qrcode")> | null = null;
@@ -476,6 +478,10 @@ export const generateDrillPdf = async (
   }
 
   const progressions = drillData.drill_progressions || [];
+  const hasProgressionVideos = progressions.some(
+    (progression) =>
+      progression.progression_video !== undefined && progression.progression_video.trim().length > 0
+  );
   const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
   const hasProgressionImages = progressions.some(
     (progression) =>
@@ -517,6 +523,58 @@ export const generateDrillPdf = async (
 
   const mainLineHeight = 3.2;
   const videoQrCodeDataURL = drillData.video ? await getQrCodeDataURL(drillData.video) : null;
+
+  const fitProgressionVideoUrl = (maxWidth: number): string => {
+    if (doc.getTextWidth(drillUrl) <= maxWidth) {
+      return drillUrl;
+    }
+
+    const ellipsis = "...";
+    let low = 0;
+    let high = drillUrl.length;
+    while (low < high) {
+      const middle = Math.ceil((low + high) / 2);
+      if (doc.getTextWidth(`${drillUrl.slice(0, middle)}${ellipsis}`) <= maxWidth) {
+        low = middle;
+      } else {
+        high = middle - 1;
+      }
+    }
+    return `${drillUrl.slice(0, low)}${ellipsis}`;
+  };
+
+  const drawProgressionVideoNote = (startX: number, baselineY: number, draw: boolean): void => {
+    const qrX = pageWidth - margin - LINK_QR_CODE_SIZE_MM;
+
+    doc.setFontSize(PROGRESSION_VIDEO_NOTE_FONT_SIZE);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    const labelWidth = doc.getTextWidth(PROGRESSION_VIDEO_NOTE_LABEL);
+    const linkX = startX + labelWidth + 1.5;
+
+    doc.setFont("helvetica", "normal");
+    const displayedUrl = fitProgressionVideoUrl(Math.max(0, qrX - LINK_QR_CODE_GAP_MM - linkX));
+
+    if (draw) {
+      doc.setFont("helvetica", "bold");
+      doc.text(PROGRESSION_VIDEO_NOTE_LABEL, startX, baselineY);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.textWithLink(displayedUrl, linkX, baselineY, { url: drillUrl });
+      if (drillQrCodeDataURL) {
+        doc.addImage(
+          drillQrCodeDataURL,
+          "PNG",
+          qrX,
+          baselineY - 3,
+          LINK_QR_CODE_SIZE_MM,
+          LINK_QR_CODE_SIZE_MM
+        );
+      }
+    }
+    doc.setTextColor(0, 0, 0);
+  };
+
   type MainLayoutMode = "single-column" | "two-column";
 
   const renderMainSection = (
@@ -804,6 +862,11 @@ export const generateDrillPdf = async (
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
+      if (hasProgressionVideos) {
+        sectionY = ensureSpaceForPass(sectionY, PROGRESSION_VIDEO_NOTE_HEIGHT);
+        drawProgressionVideoNote(margin + 3, sectionY, draw);
+        sectionY += PROGRESSION_VIDEO_NOTE_HEIGHT;
+      }
       for (const [index, progression] of progressions.entries()) {
         const progressionName = `• ${drillMarkdownToPlainLines(progression.progression_name).join(" ")}:`;
         const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
@@ -961,12 +1024,7 @@ export const generateDrillPdf = async (
   };
 
   const singleColumnProbe = renderMainSection("single-column", false);
-  const preferSingleColumnForProgressionHeavyLayout = shouldUseFullWidthFirstPageDiagram(
-    drillData,
-    drillImageInfo ? drillImageInfo.width / drillImageInfo.height : undefined
-  );
-  const useSingleColumnMainLayout =
-    singleColumnProbe.endPageNum === currentPageNum || preferSingleColumnForProgressionHeavyLayout;
+  const useSingleColumnMainLayout = singleColumnProbe.endPageNum === currentPageNum;
   renderMainSection(useSingleColumnMainLayout ? "single-column" : "two-column", true);
 
   // Dedicated progression pages are triggered by overall inline overflow. When used,
@@ -1099,7 +1157,9 @@ export const generateDrillPdf = async (
       };
     };
 
-    const drawProgressionPageHeader = (): {
+    const drawProgressionPageHeader = (
+      includeVideoNote: boolean
+    ): {
       columnStartY: number;
       leftY: number;
       rightY: number;
@@ -1110,12 +1170,16 @@ export const generateDrillPdf = async (
       doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
       doc.text("Drill Progressions", margin, progressionsY);
-      const columnStartY = progressionsY + 6;
+      let columnStartY = progressionsY + 6;
+      if (includeVideoNote && hasProgressionVideos) {
+        drawProgressionVideoNote(margin, columnStartY, true);
+        columnStartY += PROGRESSION_VIDEO_NOTE_HEIGHT;
+      }
       return { columnStartY, leftY: columnStartY, rightY: columnStartY };
     };
 
     startNewPage();
-    let { columnStartY, leftY, rightY } = drawProgressionPageHeader();
+    let { columnStartY, leftY, rightY } = drawProgressionPageHeader(true);
     const columnCapacity = contentBottomLimit - columnStartY;
     const progressionPlan = planDedicatedProgressionCards(
       progressionLayouts.map((layouts) => {
@@ -1130,7 +1194,8 @@ export const generateDrillPdf = async (
         };
       }),
       {
-        columnCapacity,
+        columnCapacity: columnCapacity + (hasProgressionVideos ? PROGRESSION_VIDEO_NOTE_HEIGHT : 0),
+        firstPageColumnCapacity: columnCapacity,
         columns: 2,
         cardGap: PROGRESSION_CARD_GAP,
         maxPages: PROGRESSION_SECTION_MAX_PAGES,
@@ -1151,7 +1216,7 @@ export const generateDrillPdf = async (
           `Progression '${progression.progression_name}' exceeded progression pagination limits; rendering placeholder card instead.`
         );
         startNewPage();
-        ({ columnStartY, rightY } = drawProgressionPageHeader());
+        ({ columnStartY, rightY } = drawProgressionPageHeader(false));
         renderedProgressionPageIndex += 1;
 
         const omittedLayout = buildOmittedProgressionLayout(progression.progression_name);
@@ -1162,7 +1227,7 @@ export const generateDrillPdf = async (
 
       while (renderedProgressionPageIndex < placement.pageIndex) {
         startNewPage();
-        ({ columnStartY, leftY, rightY } = drawProgressionPageHeader());
+        ({ columnStartY, leftY, rightY } = drawProgressionPageHeader(false));
         renderedProgressionPageIndex += 1;
       }
 
