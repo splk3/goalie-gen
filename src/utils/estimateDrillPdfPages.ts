@@ -14,13 +14,18 @@ const CHARS_PER_LINE_PROGRESSION = 112; // progression name + description at lar
 const HEADING_HEIGHT = 7.5; // section heading + compact gap
 const LINE_HEIGHT = 3.2; // body text / bullet line
 const SECTION_GAP = 2; // gap between sections
-const SEPARATOR_AND_GAP = 8; // horizontal rule + spacing
+const SKILLS_SECTION_TOP_GAP = 4;
+const VIDEO_URL_CHARS_PER_LINE = 116;
+const VIDEO_SECTION_TOP_GAP = 3;
+const VIDEO_SEPARATOR_TITLE_SPACING = 8;
+const VIDEO_QR_MIN_HEIGHT = 9;
 export const SKILLS_FOCUS_TOP_GAP = 4;
 export const SKILLS_FOCUS_LABEL_TO_VALUES_GAP = 4;
 export const PROGRESSION_TEXT_FONT_SIZE = 10;
 export const PROGRESSION_TEXT_LINE_HEIGHT = 4;
 export const PROGRESSION_IMAGE_TEXT_GAP = 4;
-export const PROGRESSION_VIDEO_NOTE_HEIGHT = 15;
+// One-line progression-video note, including clearance for its 9 mm QR code.
+export const PROGRESSION_VIDEO_NOTE_HEIGHT = 10;
 export const SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO = 0.75;
 
 // Page layout constants (mm, A4 portrait)
@@ -76,18 +81,18 @@ export function estimateSkillsFocusSectionHeight(drillData: DrillData): number {
   const columns: number[] = [];
 
   if (drillData.tags.fundamental_skill && drillData.tags.fundamental_skill.length > 0) {
-    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.fundamental_skill.length * 3);
+    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.fundamental_skill.length * 4);
   }
 
   if (drillData.tags.skating_skill && drillData.tags.skating_skill.length > 0) {
-    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.skating_skill.length * 3);
+    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.skating_skill.length * 4);
   }
 
   if (drillData.tags.game_situations && drillData.tags.game_situations.length > 0) {
-    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.game_situations.length * 3);
+    columns.push(SKILLS_FOCUS_LABEL_TO_VALUES_GAP + drillData.tags.game_situations.length * 4);
   }
 
-  return 7 + (columns.length > 0 ? Math.max(...columns) : 0);
+  return 8 + (columns.length > 0 ? Math.max(...columns) : 0);
 }
 
 function estimateLines(text: string, charsPerLine = CHARS_PER_LINE_COL): number {
@@ -205,28 +210,6 @@ interface FirstPageEstimateOptions extends EstimateOptions {
 }
 
 const DEFAULT_DRILL_IMAGE_ASPECT_RATIO = 16 / 9;
-const PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO = 0.63;
-
-function isProgressionHeavy(drillData: DrillData): boolean {
-  return (drillData.drill_progressions?.length || 0) >= 5;
-}
-
-function shouldUseProgressionHeavyFullWidthLayout(
-  drillData: DrillData,
-  normalizedDescription: string,
-  availableFirstPage: number,
-  drillImageAspectRatio?: number
-): boolean {
-  const fullWidthTopPhaseHeight = estimateTopPhaseHeight(
-    drillData,
-    normalizedDescription,
-    "full-width",
-    drillImageAspectRatio
-  );
-  const singleColumnTopPhaseLimit =
-    availableFirstPage * PROGRESSION_HEAVY_SINGLE_COLUMN_TOP_PHASE_RATIO;
-  return fullWidthTopPhaseHeight <= singleColumnTopPhaseLimit;
-}
 
 function getFirstPageLayoutMetrics(drillName: string): {
   availableFirstPage: number;
@@ -246,16 +229,6 @@ function chooseFirstPageLayoutMode(
   availableFirstPage: number,
   options: EstimateOptions
 ): FirstPageLayoutMode {
-  if (options.forceSecondPageForProgressions && isProgressionHeavy(drillData)) {
-    return shouldUseProgressionHeavyFullWidthLayout(
-      drillData,
-      normalizedDescription,
-      availableFirstPage
-    )
-      ? "full-width"
-      : "two-column";
-  }
-
   const fullWidthFirstPageHeight = estimateFirstPageSegmentHeight(
     drillData,
     normalizedDescription,
@@ -385,10 +358,16 @@ function estimateFirstPageSegmentHeight(
 
   // --- Post-progression content: Skills Focus + optional Video ---
   const videoSectionHeight = drillData.video
-    ? 7 + estimateLines(drillData.video, CHARS_PER_LINE_FULL) * LINE_HEIGHT
+    ? VIDEO_SECTION_TOP_GAP +
+      VIDEO_SEPARATOR_TITLE_SPACING +
+      Math.max(
+        estimateLines(drillData.video.trim(), VIDEO_URL_CHARS_PER_LINE) *
+          PROGRESSION_TEXT_LINE_HEIGHT,
+        VIDEO_QR_MIN_HEIGHT
+      )
     : 0;
   const postProgressionHeight =
-    SEPARATOR_AND_GAP + estimateSkillsFocusSectionHeight(drillData) + videoSectionHeight;
+    SKILLS_SECTION_TOP_GAP + estimateSkillsFocusSectionHeight(drillData) + videoSectionHeight;
 
   return topPhaseHeight + preProgressionHeight + progressionHeight + postProgressionHeight;
 }
@@ -402,14 +381,6 @@ export function shouldUseFullWidthFirstPageDiagram(
     ? drillMarkdownToPlainLines(drillData.description).join("\n")
     : "";
   const placeProgressionsOnSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
-  if (placeProgressionsOnSecondPage && isProgressionHeavy(drillData)) {
-    return shouldUseProgressionHeavyFullWidthLayout(
-      drillData,
-      normalizedDescription,
-      availableFirstPage,
-      drillImageAspectRatio
-    );
-  }
 
   const fullWidthFirstPageHeight = estimateFirstPageSegmentHeight(
     drillData,

@@ -11,7 +11,6 @@ import {
   SKILLS_FOCUS_TOP_GAP,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
-  shouldUseFullWidthFirstPageDiagram,
 } from "./estimateDrillPdfPages";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
 import {
@@ -53,6 +52,8 @@ const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_MAX_IMAGE_HEIGHT = 30;
 const LINK_QR_CODE_SIZE_MM = 9;
 const LINK_QR_CODE_GAP_MM = 2;
+const PROGRESSION_VIDEO_NOTE_FONT_SIZE = 8;
+const PROGRESSION_VIDEO_NOTE_LABEL = "View Progression Videos Here:";
 const MAX_QR_CACHE_ENTRIES = 32;
 const qrCodeDataCache = new Map<string, string>();
 let qrCodeModulePromise: Promise<typeof import("qrcode")> | null = null;
@@ -522,6 +523,58 @@ export const generateDrillPdf = async (
 
   const mainLineHeight = 3.2;
   const videoQrCodeDataURL = drillData.video ? await getQrCodeDataURL(drillData.video) : null;
+
+  const fitProgressionVideoUrl = (maxWidth: number): string => {
+    if (doc.getTextWidth(drillUrl) <= maxWidth) {
+      return drillUrl;
+    }
+
+    const ellipsis = "...";
+    let low = 0;
+    let high = drillUrl.length;
+    while (low < high) {
+      const middle = Math.ceil((low + high) / 2);
+      if (doc.getTextWidth(`${drillUrl.slice(0, middle)}${ellipsis}`) <= maxWidth) {
+        low = middle;
+      } else {
+        high = middle - 1;
+      }
+    }
+    return `${drillUrl.slice(0, low)}${ellipsis}`;
+  };
+
+  const drawProgressionVideoNote = (startX: number, baselineY: number, draw: boolean): void => {
+    const qrX = pageWidth - margin - LINK_QR_CODE_SIZE_MM;
+
+    doc.setFontSize(PROGRESSION_VIDEO_NOTE_FONT_SIZE);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    const labelWidth = doc.getTextWidth(PROGRESSION_VIDEO_NOTE_LABEL);
+    const linkX = startX + labelWidth + 1.5;
+
+    doc.setFont("helvetica", "normal");
+    const displayedUrl = fitProgressionVideoUrl(Math.max(0, qrX - LINK_QR_CODE_GAP_MM - linkX));
+
+    if (draw) {
+      doc.setFont("helvetica", "bold");
+      doc.text(PROGRESSION_VIDEO_NOTE_LABEL, startX, baselineY);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+      doc.textWithLink(displayedUrl, linkX, baselineY, { url: drillUrl });
+      if (drillQrCodeDataURL) {
+        doc.addImage(
+          drillQrCodeDataURL,
+          "PNG",
+          qrX,
+          baselineY - 3,
+          LINK_QR_CODE_SIZE_MM,
+          LINK_QR_CODE_SIZE_MM
+        );
+      }
+    }
+    doc.setTextColor(0, 0, 0);
+  };
+
   type MainLayoutMode = "single-column" | "two-column";
 
   const renderMainSection = (
@@ -811,29 +864,7 @@ export const generateDrillPdf = async (
       doc.setFontSize(9);
       if (hasProgressionVideos) {
         sectionY = ensureSpaceForPass(sectionY, PROGRESSION_VIDEO_NOTE_HEIGHT);
-        doc.setFont("helvetica", "bold");
-        drawText("View Progression Videos Here:", margin + 3, sectionY);
-
-        const progressionLinkY = sectionY + 5;
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-        const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
-        if (draw && typeof linkMethod === "function") {
-          linkMethod.call(doc, drillUrl, margin + 3, progressionLinkY, { url: drillUrl });
-        } else {
-          drawText(drillUrl, margin + 3, progressionLinkY);
-        }
-        if (drillQrCodeDataURL) {
-          drawImage(
-            drillQrCodeDataURL,
-            "PNG",
-            pageWidth - margin - LINK_QR_CODE_SIZE_MM,
-            sectionY - 3,
-            LINK_QR_CODE_SIZE_MM,
-            LINK_QR_CODE_SIZE_MM
-          );
-        }
-        doc.setTextColor(0, 0, 0);
+        drawProgressionVideoNote(margin + 3, sectionY, draw);
         sectionY += PROGRESSION_VIDEO_NOTE_HEIGHT;
       }
       for (const [index, progression] of progressions.entries()) {
@@ -993,12 +1024,7 @@ export const generateDrillPdf = async (
   };
 
   const singleColumnProbe = renderMainSection("single-column", false);
-  const preferSingleColumnForProgressionHeavyLayout = shouldUseFullWidthFirstPageDiagram(
-    drillData,
-    drillImageInfo ? drillImageInfo.width / drillImageInfo.height : undefined
-  );
-  const useSingleColumnMainLayout =
-    singleColumnProbe.endPageNum === currentPageNum || preferSingleColumnForProgressionHeavyLayout;
+  const useSingleColumnMainLayout = singleColumnProbe.endPageNum === currentPageNum;
   renderMainSection(useSingleColumnMainLayout ? "single-column" : "two-column", true);
 
   // Dedicated progression pages are triggered by overall inline overflow. When used,
@@ -1146,30 +1172,7 @@ export const generateDrillPdf = async (
       doc.text("Drill Progressions", margin, progressionsY);
       let columnStartY = progressionsY + 6;
       if (includeVideoNote && hasProgressionVideos) {
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "bold");
-        doc.text("View Progression Videos Here:", margin, columnStartY);
-
-        const progressionLinkY = columnStartY + 5;
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
-        const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
-        if (typeof linkMethod === "function") {
-          linkMethod.call(doc, drillUrl, margin, progressionLinkY, { url: drillUrl });
-        } else {
-          doc.text(drillUrl, margin, progressionLinkY);
-        }
-        if (drillQrCodeDataURL) {
-          doc.addImage(
-            drillQrCodeDataURL,
-            "PNG",
-            pageWidth - margin - LINK_QR_CODE_SIZE_MM,
-            columnStartY - 3,
-            LINK_QR_CODE_SIZE_MM,
-            LINK_QR_CODE_SIZE_MM
-          );
-        }
+        drawProgressionVideoNote(margin, columnStartY, true);
         columnStartY += PROGRESSION_VIDEO_NOTE_HEIGHT;
       }
       return { columnStartY, leftY: columnStartY, rightY: columnStartY };

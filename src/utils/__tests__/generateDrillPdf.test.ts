@@ -591,24 +591,6 @@ describe("generateDrillPdf layout selection", () => {
     expect(hasSingleColumnDrillImage).toBe(true);
   });
 
-  it("uses single-column image width for beat-the-pass", async () => {
-    setupMocks({ imageWidth: 1081, imageHeight: 523 });
-    const jspdf = await import("jspdf");
-    const addImageSpy = jest.spyOn(
-      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
-      "addImage"
-    );
-    const drillData = loadDrillFixture("beat-the-pass");
-
-    await generateDrillPdf(drillData, "beat-the-pass");
-
-    const hasSingleColumnDrillImage = addImageSpy.mock.calls.some((call) => {
-      const width = call[4];
-      return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
-    });
-    expect(hasSingleColumnDrillImage).toBe(true);
-  });
-
   it("renders video URL as a clickable link and adds an inline QR code image", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
@@ -900,6 +882,9 @@ describe("generateDrillPdf overflow handling", () => {
       expect.any(Number),
       expect.objectContaining({ url: canonicalUrl })
     );
+    const linkCall = textWithLinkSpy.mock.calls[0];
+    const progressionQrCall = addImageSpy.mock.calls.find((call) => call[4] === 9 && call[5] === 9);
+    expect(linkCall[2]).toBe((progressionQrCall![3] as number) + 3);
     expect(textWithLinkSpy).not.toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
@@ -916,6 +901,10 @@ describe("generateDrillPdf overflow handling", () => {
       .spyOn(estimateDrillPdfPagesModule, "shouldPlaceProgressionsOnSecondPage")
       .mockReturnValue(true);
     const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
     const textWithLinkSpy = jest.spyOn(
       jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
       "textWithLink"
@@ -955,6 +944,72 @@ describe("generateDrillPdf overflow handling", () => {
       expect.any(Number),
       expect.objectContaining({ url: canonicalUrl })
     );
+    const linkCall = textWithLinkSpy.mock.calls[0];
+    const progressionQrCall = addImageSpy.mock.calls.find((call) => call[4] === 9 && call[5] === 9);
+    expect(linkCall[2]).toBe((progressionQrCall![3] as number) + 3);
+  });
+
+  it("truncates only the displayed canonical progression URL before the QR", async () => {
+    const previousSiteUrl = process.env.GATSBY_SITE_URL;
+    process.env.GATSBY_SITE_URL =
+      "https://goaliegen.example.com/a-very-long-deployment-prefix-that-cannot-fit-on-one-line";
+
+    try {
+      const jspdf = await import("jspdf");
+      const addImageSpy = jest.spyOn(
+        jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+        "addImage"
+      );
+      const textWithLinkSpy = jest.spyOn(
+        jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
+        "textWithLink"
+      );
+      const canonicalUrl = `${process.env.GATSBY_SITE_URL}/drills/${"long-folder-name-".repeat(8)}`;
+
+      const doc = await generateDrillPdf(
+        {
+          name: "Long Canonical URL",
+          drill_steps: ["Step one"],
+          coaching_focus_points: ["Focus one"],
+          tags: { team_drill: "no", space_required: ["flexible"] },
+          drill_creation_date: "2026-01-01",
+          drill_progressions: [
+            {
+              progression_name: "Progression",
+              progression_description: "Details",
+              progression_video: "https://youtu.be/progression-video",
+            },
+          ],
+        },
+        "long-folder-name-".repeat(8)
+      );
+
+      const [displayedUrl, linkX, , options] = textWithLinkSpy.mock.calls[0] as [
+        string,
+        number,
+        number,
+        { url: string },
+      ];
+      const progressionQrCall = addImageSpy.mock.calls.find(
+        (call) => call[4] === 9 && call[5] === 9
+      );
+
+      expect(displayedUrl.endsWith("...")).toBe(true);
+      expect(displayedUrl).not.toBe(canonicalUrl);
+      expect(options.url).toBe(canonicalUrl);
+      expect(progressionQrCall).toBeDefined();
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      expect(linkX + doc.getTextWidth(displayedUrl)).toBeLessThanOrEqual(
+        (progressionQrCall![2] as number) - 2
+      );
+    } finally {
+      if (previousSiteUrl === undefined) {
+        delete process.env.GATSBY_SITE_URL;
+      } else {
+        process.env.GATSBY_SITE_URL = previousSiteUrl;
+      }
+    }
   });
 
   it("renders a placeholder card when a progression cannot be placed", async () => {
@@ -1001,5 +1056,66 @@ describe("generateDrillPdf overflow handling", () => {
         JSON.stringify(call[0]).includes("This progression was omitted from the PDF")
       )
     ).toBe(true);
+  });
+});
+
+describe("generateDrillPdf Beat The Pass cutoff regression", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1081, imageHeight: 523 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("uses two columns and produces one main plus one dedicated progression page", async () => {
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const textWithLinkSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
+      "textWithLink"
+    );
+    const drillData = loadDrillFixture("beat-the-pass");
+    const estimate = estimateDrillPdfPages(drillData);
+
+    expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
+    expect(estimate).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 1,
+      totalPages: 2,
+    });
+
+    const doc = await generateDrillPdf(drillData, "beat-the-pass");
+
+    expect(doc.getNumberOfPages()).toBe(2);
+    expect(doc.getNumberOfPages()).toBe(estimate.totalPages);
+    expect(
+      addImageSpy.mock.calls.some((call) => {
+        const width = call[4];
+        return typeof width === "number" && Math.abs(width - 68.88) < 0.6;
+      })
+    ).toBe(true);
+    expect(
+      addImageSpy.mock.calls.some((call) => {
+        const width = call[4];
+        return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
+      })
+    ).toBe(false);
+    expect(textWithLinkSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Number),
+      expect.any(Number),
+      expect.objectContaining({ url: drillData.video })
+    );
+
+    const pages = (doc.internal as unknown as { pages: Array<Array<string>> }).pages.map((page) =>
+      page.join("\n")
+    );
+    expect(pages[1]).toContain("Video Demonstration");
+    expect(pages[2]).toContain("Drill Progressions");
   });
 });

@@ -172,6 +172,32 @@ describe("DrillTemplate", () => {
     expect(shareButtons.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("renders the main video before drill progressions for screen and browser print", () => {
+    render(
+      <DrillTemplate
+        pageContext={{
+          ...basePageContext,
+          drillData: {
+            ...basePageContext.drillData,
+            video: "https://youtu.be/video-id",
+            drill_progressions: [
+              {
+                progression_name: "Progression 1",
+                progression_description: "Progression details",
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    const videoHeading = screen.getByText("Video Demonstration");
+    const progressionHeading = screen.getByText("Drill Progressions");
+    expect(
+      videoHeading.compareDocumentPosition(progressionHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
   it("renders progression name, description, and optional image", () => {
     render(
       <DrillTemplate

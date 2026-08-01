@@ -8,6 +8,7 @@ import {
   PROGRESSION_IMAGE_TEXT_GAP,
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
+  PROGRESSION_VIDEO_NOTE_HEIGHT,
   shouldUseFullWidthFirstPageDiagram,
   shouldPlaceProgressionsOnSecondPage,
   SKILLS_FOCUS_TOP_GAP,
@@ -47,6 +48,7 @@ describe("estimateDrillPdfPages", () => {
     expect(PROGRESSION_TEXT_FONT_SIZE).toBe(10);
     expect(PROGRESSION_TEXT_LINE_HEIGHT).toBe(4);
     expect(PROGRESSION_IMAGE_TEXT_GAP).toBe(4);
+    expect(PROGRESSION_VIDEO_NOTE_HEIGHT).toBe(10);
     expect(SKILLS_FOCUS_TOP_GAP).toBe(4);
   });
 
@@ -77,11 +79,16 @@ describe("estimateDrillPdfPages", () => {
     expect(estimateDrillPdfPages(readAndReact!.drillData).totalPages).toBe(2);
   });
 
-  it("keeps beat-the-pass on full-width first-page layout with its actual diagram aspect ratio", () => {
+  it("uses two columns for beat-the-pass and keeps its main content on one page", () => {
     const beatThePass = drills.find((entry) => entry.folder === "beat-the-pass");
     expect(beatThePass).toBeDefined();
     expect(shouldPlaceProgressionsOnSecondPage(beatThePass!.drillData)).toBe(true);
-    expect(shouldUseFullWidthFirstPageDiagram(beatThePass!.drillData, 1081 / 523)).toBe(true);
+    expect(shouldUseFullWidthFirstPageDiagram(beatThePass!.drillData, 1081 / 523)).toBe(false);
+    expect(estimateDrillPdfPages(beatThePass!.drillData)).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 1,
+      totalPages: 2,
+    });
   });
 
   it("keeps butterfly-map-series and crease-footwork in two-column first-page layout", () => {
@@ -468,6 +475,29 @@ describe("estimateDrillPdfPages", () => {
     expect(pagesWith.totalPages).toBeGreaterThanOrEqual(pagesWithout.totalPages);
     // Additionally verify that video measurably increases the page estimate height
     expect(pagesWith.mainContentPages).toBeGreaterThanOrEqual(pagesWithout.mainContentPages);
+  });
+
+  it("counts 4 mm Skills Focus rows and video URL/QR boundary space", () => {
+    const boundaryData = {
+      name: "Skills And Video Boundary",
+      description: "Short description",
+      drill_steps: ["Step one"],
+      coaching_focus_points: Array.from({ length: 24 }, () => "Focus detail"),
+      tags: {
+        team_drill: "no",
+        fundamental_skill: ["skating", "positioning", "stance", "recovery"],
+      },
+      drill_creation_date: "2026-01-01",
+    } as DrillData;
+
+    expect(estimateDrillPdfPages(boundaryData).mainContentPages).toBe(1);
+    expect(
+      estimateDrillPdfPages({
+        ...boundaryData,
+        video:
+          "https://example.com/video/demonstration?session=skills-focus-boundary-and-qr-spacing",
+      }).mainContentPages
+    ).toBe(2);
   });
 
   it("accounts for one progression-video note without forcing dedicated progressions", () => {

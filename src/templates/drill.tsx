@@ -260,7 +260,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           </div>
         </div>
 
-        {/* Full-width sections: Coaching Focus Points, Shooter Focus Points, Drill Progressions */}
+        {/* Full-width sections: Coaching Focus Points, Shooter Focus Points, Video, Progressions */}
         <div className="mb-6 print:mb-3">
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-3 print:text-lg print:mb-2 print:text-usa-blue">
             Coaching Focus Points
@@ -280,6 +280,46 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
               markdown={drillData.shooter_focus_points}
               className="text-gray-700 dark:text-gray-300 print:text-sm print:text-gray-900 space-y-2"
             />
+          </div>
+        )}
+
+        {/* Video Section */}
+        {drillData.video && (
+          <div className="mb-8 print:mb-4">
+            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4 print:text-lg print:mb-2 print:text-usa-blue">
+              Video Demonstration
+            </h2>
+            {embedUrl ? (
+              <>
+                {/* Embedded player - hidden when printing */}
+                <DrillVideoEmbed url={drillData.video} title="Video Demonstration" />
+                {/* Thumbnail + link - only visible when printing */}
+                <div className="hidden print:flex items-center gap-4">
+                  {videoThumbnail && (
+                    <img
+                      src={videoThumbnail}
+                      alt="Video thumbnail"
+                      className="w-32 h-24 object-cover rounded"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
+                  <span className="text-usa-blue font-semibold print:text-sm break-all">
+                    Video: {drillData.video}
+                  </span>
+                </div>
+              </>
+            ) : (
+              /* Fallback link for non-YouTube/Vimeo video URLs */
+              <a
+                href={drillData.video}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-usa-blue dark:text-blue-400 hover:underline font-semibold break-all"
+              >
+                Watch Video →
+              </a>
+            )}
           </div>
         )}
 
@@ -342,46 +382,6 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
                 );
               })}
             </div>
-          </div>
-        )}
-
-        {/* Video Section */}
-        {drillData.video && (
-          <div className="mb-8 print:mb-4">
-            <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-4 print:text-lg print:mb-2 print:text-usa-blue">
-              Video Demonstration
-            </h2>
-            {embedUrl ? (
-              <>
-                {/* Embedded player - hidden when printing */}
-                <DrillVideoEmbed url={drillData.video} title="Video Demonstration" />
-                {/* Thumbnail + link - only visible when printing */}
-                <div className="hidden print:flex items-center gap-4">
-                  {videoThumbnail && (
-                    <img
-                      src={videoThumbnail}
-                      alt="Video thumbnail"
-                      className="w-32 h-24 object-cover rounded"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                  <span className="text-usa-blue font-semibold print:text-sm break-all">
-                    Video: {drillData.video}
-                  </span>
-                </div>
-              </>
-            ) : (
-              /* Fallback link for non-YouTube/Vimeo video URLs */
-              <a
-                href={drillData.video}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-usa-blue dark:text-blue-400 hover:underline font-semibold break-all"
-              >
-                Watch Video →
-              </a>
-            )}
           </div>
         )}
 
