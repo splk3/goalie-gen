@@ -469,4 +469,45 @@ describe("estimateDrillPdfPages", () => {
     // Additionally verify that video measurably increases the page estimate height
     expect(pagesWith.mainContentPages).toBeGreaterThanOrEqual(pagesWithout.mainContentPages);
   });
+
+  it("accounts for one progression-video note without forcing dedicated progressions", () => {
+    const baseData = {
+      name: "Progression Video Note Estimate",
+      description: "Short description",
+      drill_steps: ["Step one"],
+      coaching_focus_points: ["Focus detail"],
+      drill_image: "",
+      tags: {
+        team_drill: "no",
+        space_required: ["flexible"],
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: [
+        {
+          progression_name: "Progression 1",
+          progression_description: "Quick adjustment.",
+        },
+      ],
+    } as DrillData;
+    const withVideos: DrillData = {
+      ...baseData,
+      drill_progressions: [
+        {
+          ...baseData.drill_progressions![0],
+          progression_video: "https://youtu.be/first-video",
+        },
+        {
+          progression_name: "Progression 2",
+          progression_description: "Another adjustment.",
+          progression_video: "https://vimeo.com/123456",
+        },
+      ],
+    };
+
+    expect(shouldPlaceProgressionsOnSecondPage(withVideos)).toBe(false);
+    expect(estimateDrillPdfPages(withVideos).dedicatedProgressionPages).toBe(0);
+    expect(estimateDrillPdfPages(withVideos).totalPages).toBeGreaterThanOrEqual(
+      estimateDrillPdfPages(baseData).totalPages
+    );
+  });
 });

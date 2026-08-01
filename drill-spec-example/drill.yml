@@ -63,6 +63,7 @@ drill_progressions:
       Shooter 1 takes a shot on goal, and Shooter 2 reacts to the rebound.
       Goalie must make the initial save and recover to face the second shot.
       Coaching emphasis: Focus on proper save technique and quick recovery.
+    progression_video: https://youtu.be/dQw4w9WgXcQ
   - progression_name: Progression 2 - Controlled Edges
     progression_description: |-
       Purpose: Add timing pressure and force controlled edges.

@@ -5,6 +5,7 @@ export interface DedicatedProgressionCardMeasurement {
 
 export interface DedicatedProgressionPlannerOptions {
   columnCapacity: number;
+  firstPageColumnCapacity?: number;
   columns: number;
   cardGap: number;
   maxPages: number;
@@ -37,7 +38,7 @@ export function planDedicatedProgressionCards(
     };
   }
 
-  const { columnCapacity, columns, cardGap, maxPages } = options;
+  const { columnCapacity, firstPageColumnCapacity, columns, cardGap, maxPages } = options;
   const placements: DedicatedProgressionPlacement[] = [];
   const compactedCardIndices: number[] = [];
   const overflowCardIndices: number[] = [];
@@ -46,6 +47,10 @@ export function planDedicatedProgressionCards(
   let pageIndex = 0;
   let activeColumn = 0;
   let columnHeights = Array<number>(columns).fill(0);
+  const getCurrentPageColumnCapacity = (): number =>
+    pageIndex === 0 && firstPageColumnCapacity !== undefined
+      ? firstPageColumnCapacity
+      : columnCapacity;
 
   const placeInColumn = (
     cardIndex: number,
@@ -71,7 +76,7 @@ export function planDedicatedProgressionCards(
   const canFitInColumn = (columnIndex: number, height: number): boolean => {
     const usedHeight = columnHeights[columnIndex];
     const gap = usedHeight > 0 ? cardGap : 0;
-    return usedHeight + gap + height <= columnCapacity;
+    return usedHeight + gap + height <= getCurrentPageColumnCapacity();
   };
 
   const buildColumnOrder = (): number[] => {

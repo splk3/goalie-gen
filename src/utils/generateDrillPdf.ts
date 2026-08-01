@@ -5,6 +5,7 @@ import {
   PROGRESSION_SECTION_MAX_PAGES,
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
+  PROGRESSION_VIDEO_NOTE_HEIGHT,
   SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
   SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
   SKILLS_FOCUS_TOP_GAP,
@@ -476,6 +477,10 @@ export const generateDrillPdf = async (
   }
 
   const progressions = drillData.drill_progressions || [];
+  const hasProgressionVideos = progressions.some(
+    (progression) =>
+      progression.progression_video !== undefined && progression.progression_video.trim().length > 0
+  );
   const shouldMoveProgressionsToSecondPage = shouldPlaceProgressionsOnSecondPage(drillData);
   const hasProgressionImages = progressions.some(
     (progression) =>
@@ -804,6 +809,33 @@ export const generateDrillPdf = async (
 
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(9);
+      if (hasProgressionVideos) {
+        sectionY = ensureSpaceForPass(sectionY, PROGRESSION_VIDEO_NOTE_HEIGHT);
+        doc.setFont("helvetica", "bold");
+        drawText("View Progression Videos Here:", margin + 3, sectionY);
+
+        const progressionLinkY = sectionY + 5;
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+        const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
+        if (draw && typeof linkMethod === "function") {
+          linkMethod.call(doc, drillUrl, margin + 3, progressionLinkY, { url: drillUrl });
+        } else {
+          drawText(drillUrl, margin + 3, progressionLinkY);
+        }
+        if (drillQrCodeDataURL) {
+          drawImage(
+            drillQrCodeDataURL,
+            "PNG",
+            pageWidth - margin - LINK_QR_CODE_SIZE_MM,
+            sectionY - 3,
+            LINK_QR_CODE_SIZE_MM,
+            LINK_QR_CODE_SIZE_MM
+          );
+        }
+        doc.setTextColor(0, 0, 0);
+        sectionY += PROGRESSION_VIDEO_NOTE_HEIGHT;
+      }
       for (const [index, progression] of progressions.entries()) {
         const progressionName = `• ${drillMarkdownToPlainLines(progression.progression_name).join(" ")}:`;
         const nameLines = doc.splitTextToSize(progressionName, fullWidth - 5);
@@ -1099,7 +1131,9 @@ export const generateDrillPdf = async (
       };
     };
 
-    const drawProgressionPageHeader = (): {
+    const drawProgressionPageHeader = (
+      includeVideoNote: boolean
+    ): {
       columnStartY: number;
       leftY: number;
       rightY: number;
@@ -1110,12 +1144,39 @@ export const generateDrillPdf = async (
       doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
       doc.text("Drill Progressions", margin, progressionsY);
-      const columnStartY = progressionsY + 6;
+      let columnStartY = progressionsY + 6;
+      if (includeVideoNote && hasProgressionVideos) {
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.text("View Progression Videos Here:", margin, columnStartY);
+
+        const progressionLinkY = columnStartY + 5;
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(usaBlue[0], usaBlue[1], usaBlue[2]);
+        const linkMethod = (doc as unknown as Record<string, unknown>).textWithLink;
+        if (typeof linkMethod === "function") {
+          linkMethod.call(doc, drillUrl, margin, progressionLinkY, { url: drillUrl });
+        } else {
+          doc.text(drillUrl, margin, progressionLinkY);
+        }
+        if (drillQrCodeDataURL) {
+          doc.addImage(
+            drillQrCodeDataURL,
+            "PNG",
+            pageWidth - margin - LINK_QR_CODE_SIZE_MM,
+            columnStartY - 3,
+            LINK_QR_CODE_SIZE_MM,
+            LINK_QR_CODE_SIZE_MM
+          );
+        }
+        columnStartY += PROGRESSION_VIDEO_NOTE_HEIGHT;
+      }
       return { columnStartY, leftY: columnStartY, rightY: columnStartY };
     };
 
     startNewPage();
-    let { columnStartY, leftY, rightY } = drawProgressionPageHeader();
+    let { columnStartY, leftY, rightY } = drawProgressionPageHeader(true);
     const columnCapacity = contentBottomLimit - columnStartY;
     const progressionPlan = planDedicatedProgressionCards(
       progressionLayouts.map((layouts) => {
@@ -1130,7 +1191,8 @@ export const generateDrillPdf = async (
         };
       }),
       {
-        columnCapacity,
+        columnCapacity: columnCapacity + (hasProgressionVideos ? PROGRESSION_VIDEO_NOTE_HEIGHT : 0),
+        firstPageColumnCapacity: columnCapacity,
         columns: 2,
         cardGap: PROGRESSION_CARD_GAP,
         maxPages: PROGRESSION_SECTION_MAX_PAGES,
@@ -1151,7 +1213,7 @@ export const generateDrillPdf = async (
           `Progression '${progression.progression_name}' exceeded progression pagination limits; rendering placeholder card instead.`
         );
         startNewPage();
-        ({ columnStartY, rightY } = drawProgressionPageHeader());
+        ({ columnStartY, rightY } = drawProgressionPageHeader(false));
         renderedProgressionPageIndex += 1;
 
         const omittedLayout = buildOmittedProgressionLayout(progression.progression_name);
@@ -1162,7 +1224,7 @@ export const generateDrillPdf = async (
 
       while (renderedProgressionPageIndex < placement.pageIndex) {
         startNewPage();
-        ({ columnStartY, leftY, rightY } = drawProgressionPageHeader());
+        ({ columnStartY, leftY, rightY } = drawProgressionPageHeader(false));
         renderedProgressionPageIndex += 1;
       }
 

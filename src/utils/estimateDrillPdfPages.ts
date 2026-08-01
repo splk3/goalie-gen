@@ -20,6 +20,7 @@ export const SKILLS_FOCUS_LABEL_TO_VALUES_GAP = 4;
 export const PROGRESSION_TEXT_FONT_SIZE = 10;
 export const PROGRESSION_TEXT_LINE_HEIGHT = 4;
 export const PROGRESSION_IMAGE_TEXT_GAP = 4;
+export const PROGRESSION_VIDEO_NOTE_HEIGHT = 15;
 export const SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO = 0.75;
 
 // Page layout constants (mm, A4 portrait)
@@ -59,7 +60,7 @@ function estimateTitleHeaderHeight(drillName: string): number {
 
 const INLINE_PROGRESSION_IMAGE_HEIGHT = 34;
 const DEDICATED_PROGRESSION_IMAGE_HEIGHT = 30;
-const CHARS_PER_LINE_PROGRESSION_CARD = 52;
+const CHARS_PER_LINE_PROGRESSION_CARD = 40;
 const PROGRESSION_CARD_GAP = 4;
 const PROGRESSION_CARD_PADDING = 3;
 const PROGRESSION_CARD_TEXT_TOP_OFFSET = 2;
@@ -157,6 +158,7 @@ function estimateDedicatedProgressionPages(
     return 0;
   }
 
+  const hasProgressionVideo = progressions.some((progression) => !!progression.progression_video);
   const columnCapacity = estimateDedicatedProgressionColumnCapacity(drillName);
   const cardMeasurements = progressions.map((progression) => {
     const preferredHeight = estimateDedicatedProgressionCardHeight(
@@ -176,6 +178,8 @@ function estimateDedicatedProgressionPages(
 
   return planDedicatedProgressionCards(cardMeasurements, {
     columnCapacity,
+    firstPageColumnCapacity:
+      columnCapacity - (hasProgressionVideo ? PROGRESSION_VIDEO_NOTE_HEIGHT : 0),
     columns: PROGRESSION_PAGE_COLUMNS,
     cardGap: PROGRESSION_CARD_GAP,
     maxPages: PROGRESSION_SECTION_MAX_PAGES,
@@ -190,6 +194,7 @@ export function estimateDedicatedProgressionSectionPages(drillData: DrillData): 
 interface EstimateOptions {
   forceInlineProgressions: boolean;
   forceSecondPageForProgressions: boolean;
+  accountForProgressionVideoNote: boolean;
 }
 
 type FirstPageLayoutMode = "two-column" | "full-width";
@@ -258,6 +263,7 @@ function chooseFirstPageLayoutMode(
       layoutMode: "full-width",
       forceInlineProgressions: options.forceInlineProgressions,
       forceSecondPageForProgressions: options.forceSecondPageForProgressions,
+      accountForProgressionVideoNote: options.accountForProgressionVideoNote,
     }
   );
   return fullWidthFirstPageHeight <= availableFirstPage ? "full-width" : "two-column";
@@ -360,6 +366,12 @@ function estimateFirstPageSegmentHeight(
   let progressionHeight = 0;
   if (includeInlineProgressions) {
     progressionHeight += SECTION_GAP + HEADING_HEIGHT;
+    if (
+      options.accountForProgressionVideoNote &&
+      progressions.some((progression) => !!progression.progression_video)
+    ) {
+      progressionHeight += PROGRESSION_VIDEO_NOTE_HEIGHT;
+    }
     for (const progression of progressions) {
       const hasInlineImage = options.forceInlineProgressions && !!progression.progression_image;
       progressionHeight += estimateProgressionHeight(
@@ -407,6 +419,7 @@ export function shouldUseFullWidthFirstPageDiagram(
       drillImageAspectRatio,
       forceInlineProgressions: !placeProgressionsOnSecondPage,
       forceSecondPageForProgressions: placeProgressionsOnSecondPage,
+      accountForProgressionVideoNote: !placeProgressionsOnSecondPage,
     }
   );
 
@@ -431,6 +444,7 @@ function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOp
     layoutMode,
     forceInlineProgressions: options.forceInlineProgressions,
     forceSecondPageForProgressions: options.forceSecondPageForProgressions,
+    accountForProgressionVideoNote: options.accountForProgressionVideoNote,
   });
 
   // All content in normal flow (single continuous pagination model)
@@ -454,10 +468,12 @@ function estimateDrillPdfPagesInternal(drillData: DrillData, options: EstimateOp
         {
           forceInlineProgressions: false,
           forceSecondPageForProgressions: true,
+          accountForProgressionVideoNote: false,
         }
       ),
       forceInlineProgressions: false,
       forceSecondPageForProgressions: true,
+      accountForProgressionVideoNote: false,
     }
   );
   const firstSegmentPages =
@@ -480,6 +496,9 @@ export function shouldPlaceProgressionsOnSecondPage(drillData: DrillData): boole
     estimateDrillPdfPagesInternal(drillData, {
       forceInlineProgressions: true,
       forceSecondPageForProgressions: false,
+      // The aggregate note participates in normal pagination, but a progression
+      // video alone must not switch the drill to dedicated progression pages.
+      accountForProgressionVideoNote: false,
     }) > 1
   );
 }
@@ -516,6 +535,7 @@ export function estimateDrillPdfPages(drillData: DrillData): DrillPageEstimate {
     const inlinePages = estimateDrillPdfPagesInternal(drillData, {
       forceInlineProgressions: true,
       forceSecondPageForProgressions: false,
+      accountForProgressionVideoNote: true,
     });
 
     return {
@@ -542,10 +562,12 @@ export function estimateDrillPdfPages(drillData: DrillData): DrillPageEstimate {
         {
           forceInlineProgressions: false,
           forceSecondPageForProgressions: true,
+          accountForProgressionVideoNote: false,
         }
       ),
       forceInlineProgressions: false,
       forceSecondPageForProgressions: true,
+      accountForProgressionVideoNote: false,
     }
   );
 

@@ -765,6 +765,38 @@ describe("generateDrillPdf pagination regression alignment", () => {
     const doc = await generateDrillPdf(textOnlyProgressions, "test-folder");
     expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
   });
+
+  it("accounts for progression video note space at a dedicated-page boundary", async () => {
+    const sentence =
+      "Track the puck through traffic, stay square with controlled depth, and recover with balanced edges before the next shot.";
+    const progressionText = [sentence, sentence, sentence].join(" ");
+    const progressionVideoBoundary = {
+      name: "Eight Moderate Progressions With Video",
+      description: "Short.",
+      drill_steps: ["Step one."],
+      coaching_focus_points: ["Focus detail."],
+      tags: {
+        team_drill: "no",
+        space_required: ["flexible"],
+      },
+      drill_creation_date: "2026-01-01",
+      drill_progressions: Array.from({ length: 8 }, (_, index) => ({
+        progression_name: `Progression ${index + 1}`,
+        progression_description: progressionText,
+        ...(index === 0 ? { progression_video: "https://youtu.be/example-video" } : {}),
+      })),
+    } as DrillData;
+
+    expect(shouldPlaceProgressionsOnSecondPage(progressionVideoBoundary)).toBe(true);
+    expect(estimateDrillPdfPages(progressionVideoBoundary)).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 2,
+      totalPages: 3,
+    });
+
+    const doc = await generateDrillPdf(progressionVideoBoundary, "test-folder");
+    expect(doc.getNumberOfPages()).toBe(3);
+  });
 });
 
 describe("generateDrillPdf visual regression traces", () => {
@@ -816,6 +848,113 @@ describe("generateDrillPdf overflow handling", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  it("adds one canonical progression-video note/link/QR without individual video URLs", async () => {
+    const jspdf = await import("jspdf");
+    const addImageSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { addImage: (...args: unknown[]) => unknown },
+      "addImage"
+    );
+    const textWithLinkSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
+      "textWithLink"
+    );
+    const firstVideo = "https://youtu.be/first-video";
+    const secondVideo = "https://vimeo.com/123456";
+    const canonicalUrl = "https://goaliegen.com/drills/test-folder";
+
+    const doc = await generateDrillPdf(
+      {
+        name: "Progression Video PDF",
+        description: "Short",
+        drill_steps: ["Step one"],
+        coaching_focus_points: ["Focus one"],
+        tags: { team_drill: "no", space_required: ["flexible"] },
+        drill_creation_date: "2026-01-01",
+        drill_progressions: [
+          {
+            progression_name: "First Progression",
+            progression_description: "First details",
+            progression_video: firstVideo,
+          },
+          {
+            progression_name: "Second Progression",
+            progression_description: "Second details",
+            progression_video: secondVideo,
+          },
+        ],
+      },
+      "test-folder"
+    );
+
+    const output = doc.output();
+    expect(output.match(/View Progression Videos Here:/g)).toHaveLength(1);
+    expect(output.indexOf("View Progression Videos Here:")).toBeLessThan(
+      output.indexOf("First Progression")
+    );
+    expect(textWithLinkSpy).toHaveBeenCalledTimes(1);
+    expect(textWithLinkSpy).toHaveBeenCalledWith(
+      canonicalUrl,
+      expect.any(Number),
+      expect.any(Number),
+      expect.objectContaining({ url: canonicalUrl })
+    );
+    expect(textWithLinkSpy).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ url: firstVideo })
+    );
+    expect(output).not.toContain(firstVideo);
+    expect(output).not.toContain(secondVideo);
+    expect(addImageSpy.mock.calls.filter((call) => call[4] === 9 && call[5] === 9)).toHaveLength(1);
+  });
+
+  it("adds the aggregate progression-video note once on a dedicated progression page", async () => {
+    jest
+      .spyOn(estimateDrillPdfPagesModule, "shouldPlaceProgressionsOnSecondPage")
+      .mockReturnValue(true);
+    const jspdf = await import("jspdf");
+    const textWithLinkSpy = jest.spyOn(
+      jspdf.jsPDF.API as unknown as { textWithLink: (...args: unknown[]) => unknown },
+      "textWithLink"
+    );
+    const progressionVideo = "https://youtu.be/dedicated-video";
+    const canonicalUrl = "https://goaliegen.com/drills/test-folder";
+
+    const doc = await generateDrillPdf(
+      {
+        name: "Dedicated Progression Video PDF",
+        drill_steps: ["Step one"],
+        coaching_focus_points: ["Focus one"],
+        tags: { team_drill: "no", space_required: ["flexible"] },
+        drill_creation_date: "2026-01-01",
+        drill_progressions: [
+          {
+            progression_name: "Only Card",
+            progression_description: "Dedicated details",
+            progression_video: progressionVideo,
+          },
+        ],
+      },
+      "test-folder"
+    );
+
+    expect(doc.getNumberOfPages()).toBeGreaterThan(1);
+    const output = doc.output();
+    expect(output.match(/View Progression Videos Here:/g)).toHaveLength(1);
+    expect(output.indexOf("View Progression Videos Here:")).toBeLessThan(
+      output.indexOf("Only Card")
+    );
+    expect(output).not.toContain(progressionVideo);
+    expect(textWithLinkSpy).toHaveBeenCalledTimes(1);
+    expect(textWithLinkSpy).toHaveBeenCalledWith(
+      canonicalUrl,
+      expect.any(Number),
+      expect.any(Number),
+      expect.objectContaining({ url: canonicalUrl })
+    );
   });
 
   it("renders a placeholder card when a progression cannot be placed", async () => {

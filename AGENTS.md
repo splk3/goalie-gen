@@ -224,9 +224,10 @@ The build will fail if any `drill.yml` does not strictly follow these rules:
 7. **Drill Images & Progressions:**
    - `drill_image`: Optional, must be a single filename string (not an array) referencing an image in the same drill folder.
    - _PDF Diagram Rule:_ If the source drill diagram is a PDF, capture a screenshot of the rink/drill diagram from the PDF and use that screenshot as `drill_image` instead of the PDF file itself (reference example: issue `#449` / `Cross Ice 2v2 Breakout Game`).
-   - `drill_progressions`: Supports up to 8 objects with required `progression_name` and `progression_description`, and optional `progression_image`.
+   - `drill_progressions`: Supports up to 8 objects with required `progression_name` and `progression_description`, plus optional `progression_image` and `progression_video`.
 8. **Videos:**
    - `video`: Optional. Must be an HTTPS YouTube or Vimeo format URL that passes validation in `gatsby-node.ts`.
+   - `drill_progressions[*].progression_video`: Optional. Uses exactly the same URL validation as `video`. Web pages embed it below the progression image; generated PDFs link only to the canonical drill page once before the first progression.
 9. **Badges:**
    - Drills created or updated within the last 30 days automatically receive a "New Content!" or "Updated Content!" badge on the library page.
 
