@@ -793,6 +793,42 @@ describe("buildGoalieJournalPdf", () => {
     // just confirm the function completes without throwing.
   });
 
+  it("uses the reduced heading gap on all journal content pages", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    [
+      ["Thank you to the people who support your development.", 2],
+      ["Use this journal to track your progress.", 3],
+      ["Choose one small improvement to practice today.", 4],
+      ["Set your goals here.", 5],
+      ["Reflect on your season.", 7],
+    ].forEach(([text, page]) => {
+      expect(mockModule.textCalls.find((call) => call.text === text)).toEqual(
+        expect.objectContaining({
+          page,
+          y: 31,
+        })
+      );
+    });
+    expect(mockModule.lineCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          page: 5,
+          x1: 30,
+          y1: 46,
+          y2: 46,
+        }),
+      ])
+    );
+  });
+
   it("produces consistent output when called twice with same config", () => {
     const mockA = makeMockJsPdfModule();
     const mockB = makeMockJsPdfModule();

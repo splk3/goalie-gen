@@ -27,6 +27,8 @@ type JsPdfModule = typeof import("jspdf");
 
 type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
 
+const JOURNAL_CONTENT_START_Y = 31;
+
 export const GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT =
   "The goalie journal generator was developed as part of the USA Hockey Goaltending Gold Certification Program. The goal of this journal is to help you develop into the best and most resilient goalie that you can be. Share your journal with your family and coaches so they can help you on your journey.";
 
@@ -125,7 +127,7 @@ function renderJournalContentPage(
 
   doc.setTextColor("#000000");
   doc.setFontSize(11);
-  let y = 42;
+  let y = JOURNAL_CONTENT_START_Y;
   bodyBlocks.forEach((block) => {
     if (block.type === "heading") {
       y += 4;
@@ -413,11 +415,11 @@ export function buildGoalieJournalPdf(
   doc.setFontSize(12);
   doc.setTextColor("#000000");
   if (goalsPrompt) {
-    drawInlineText(doc, goalsPrompt, 20, 40, 170, 5);
+    drawInlineText(doc, goalsPrompt, 20, JOURNAL_CONTENT_START_Y, 170, 5);
   }
 
   for (let i = 0; i < 8; i++) {
-    const y = 55 + i * 25;
+    const y = JOURNAL_CONTENT_START_Y + 15 + i * 25;
     doc.text(`${i + 1}.`, 20, y);
     doc.setDrawColor(secondary);
     doc.line(30, y, 190, y);
@@ -548,7 +550,7 @@ export function buildGoalieJournalPdf(
   const eosBlockHeight = 10 + eosAnswerLines * eosAnswerLineSpacing;
   doc.setFontSize(12);
   doc.setTextColor("#000000");
-  let eosY = 40;
+  let eosY = JOURNAL_CONTENT_START_Y;
   eosPrompts.forEach((prompt) => {
     if (eosY + eosBlockHeight > eosPageHeight) {
       doc.addPage();
