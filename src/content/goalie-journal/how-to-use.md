@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD041 -->
 
-## How to Use this Journal
+## How to Use This Journal
 
 Use this journal to prepare for practices and games, record what you notice, and track your progress throughout the season.
 

@@ -123,8 +123,23 @@ const JOURNAL_CONFIG: GoalieJournalConfig = {
   writeInSeason: false,
 };
 
+const JOURNAL_QUOTATION = '"Every day I wake up, it\'s a good day."';
+const JOURNAL_QUOTATION_ATTRIBUTION = "-Abbey Levy, PWHL Goalie.";
+
 const JOURNAL_CONTENT: GoalieJournalContent = {
-  coverMd: "# Goalie Journal\n\nA journal for your season.",
+  coverMd: [
+    "# Goalie Journal",
+    "",
+    "### Subtitle",
+    "",
+    "A journal for your season.",
+    "",
+    "### Quotation",
+    "",
+    JOURNAL_QUOTATION,
+    "",
+    JOURNAL_QUOTATION_ATTRIBUTION,
+  ].join("\n"),
   acknowledgementsMd: "# Acknowledgements\n\nThank you to the people who support your development.",
   howToUseMd:
     "# How to Use this Journal\n\nUse this journal to track your progress.\n\n- Review your entries.",
@@ -153,9 +168,11 @@ function makeMockJsPdfModule() {
     page: number;
   }> = [];
   let currentDrawColor = "#000000";
+  let currentTextColor = "#000000";
   let currentLineWidth = 0.2;
   const fonts: string[] = [];
   const texts: string[] = [];
+  const textCalls: Array<{ text: string; x: number; y: number; page: number; color: string }> = [];
   const images: string[] = [];
   const imageCalls: Array<{
     data: string;
@@ -186,6 +203,7 @@ function makeMockJsPdfModule() {
       return this;
     }
     setTextColor(color: string) {
+      currentTextColor = color;
       textColors.push(color);
       return this;
     }
@@ -199,7 +217,9 @@ function makeMockJsPdfModule() {
       return this;
     }
     text(_text: string | string[], _x: number, _y: number, _options?: object) {
-      texts.push(Array.isArray(_text) ? _text.join("\n") : _text);
+      const text = Array.isArray(_text) ? _text.join("\n") : _text;
+      texts.push(text);
+      textCalls.push({ text, x: _x, y: _y, page: pages.length, color: currentTextColor });
       return this;
     }
     line(x1: number, y1: number, x2: number, y2: number) {
@@ -243,6 +263,7 @@ function makeMockJsPdfModule() {
     lineCalls,
     fonts,
     texts,
+    textCalls,
     images,
     imageCalls,
     linkCalls,
@@ -849,6 +870,83 @@ describe("buildGoalieJournalPdf", () => {
     expect(teamLogoCall?.x).toBeLessThan(goaliePhotoCall?.x ?? 0);
   });
 
+  it("renders the cover quotation higher when no cover images are available", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const quotationCall = mockModule.textCalls.find((call) =>
+      call.text.includes("Every day I wake up")
+    );
+    expect(mockModule.texts.join("")).toContain(
+      `${JOURNAL_QUOTATION}${JOURNAL_QUOTATION_ATTRIBUTION}`
+    );
+    expect(quotationCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        y: 125,
+        color: JOURNAL_CONFIG.secondaryColor,
+      })
+    );
+    expect(mockModule.textCalls.find((call) => call.text.includes("Abbey Levy"))).toEqual(
+      expect.objectContaining({
+        page: 1,
+        y: 132.5,
+        color: JOURNAL_CONFIG.secondaryColor,
+      })
+    );
+  });
+
+  it("renders the cover quotation below the cover images", () => {
+    const mockModule = makeMockJsPdfModule();
+    const teamLogo = {
+      dataUrl: "data:image/png;base64,team-logo",
+      width: 100,
+      height: 100,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      teamLogo,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const quotationCall = mockModule.textCalls.find((call) =>
+      call.text.includes("Every day I wake up")
+    );
+    expect(quotationCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        y: 182,
+        color: JOURNAL_CONFIG.secondaryColor,
+      })
+    );
+  });
+
+  it("renders the cover subtitle in the primary color", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.textCalls.find((call) => call.text === "A journal for your season.")).toEqual(
+      expect.objectContaining({
+        page: 1,
+        color: JOURNAL_CONFIG.primaryColor,
+      })
+    );
+  });
+
   it("renders selected cover identity fields as labeled vector underlines", () => {
     const mockModule = makeMockJsPdfModule();
 
@@ -877,6 +975,19 @@ describe("buildGoalieJournalPdf", () => {
         expect.objectContaining({ page: 1, y1: 87, y2: 87, x2: 170 }),
       ])
     );
+  });
+
+  it("renders a colon after the populated cover season label", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toContain(`Season: ${JOURNAL_CONFIG.season}`);
   });
 
   it("uses configured primary and secondary colors for PDF accents", () => {
@@ -1035,6 +1146,32 @@ describe("buildGoalieJournalPdf", () => {
         }),
       ])
     );
+  });
+
+  it("renders level-3 headings and compact bullets on the improvement page", () => {
+    const mockModule = makeMockJsPdfModule();
+    const content: GoalieJournalContent = {
+      ...JOURNAL_CONTENT,
+      howToImproveEveryDayMd:
+        "# How to Improve Every Day\n\n### Practice Growth\n\n- First action\n- Second action",
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      content,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toContain("Practice Growth");
+    const firstBullet = mockModule.textCalls.find(
+      (call) => call.page === 4 && call.text === "- First action"
+    );
+    const secondBullet = mockModule.textCalls.find(
+      (call) => call.page === 4 && call.text === "- Second action"
+    );
+    expect(firstBullet).toBeDefined();
+    expect(secondBullet?.y).toBe((firstBullet?.y ?? 0) + 6);
   });
 
   it("renders Markdown bold and italic styles in PDF text", () => {

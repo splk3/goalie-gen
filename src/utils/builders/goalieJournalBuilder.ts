@@ -5,7 +5,7 @@
  * concerns (loading the logo image, resolving dimensions) are injected as pre-resolved
  * data so the same builder runs unchanged in both the browser and Node.
  */
-import { parseMarkdown } from "../markdownParser";
+import { parseMarkdown, type MarkdownBlock } from "../markdownParser";
 import { parseInlineMarkdown, type InlineMarkdownSegment } from "../inlineMarkdown";
 import type {
   GoalieJournalConfig,
@@ -17,6 +17,7 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   normalizeHexRgbColor,
 } from "../teamColors";
+import { extractLevel3Section } from "../generatorDefaults";
 import {
   GOALIE_JOURNAL_COVER_PROMOTION_LINES,
   GOALIE_JOURNAL_PROMOTION_URL,
@@ -100,11 +101,22 @@ function drawInlineText(
   return lines.length;
 }
 
-function renderJournalContentPage(doc: JournalDocument, markdown: string, primary: string): number {
+function renderJournalContentPage(
+  doc: JournalDocument,
+  markdown: string,
+  primary: string,
+  options: { compactBulletSpacing?: boolean } = {}
+): number {
   const blocks = parseMarkdown(markdown);
-  const title = blocks.find((block) => block.type === "heading")?.text ?? "";
+  const titleIndex = blocks.findIndex((block) => block.type === "heading");
+  const titleBlock = titleIndex >= 0 ? blocks[titleIndex] : null;
+  const title = titleBlock?.type === "heading" ? titleBlock.text : "";
   const bodyBlocks = blocks.filter(
-    (block) => block.type === "paragraph" || block.type === "bullet"
+    (block, index): block is Extract<MarkdownBlock, { type: "heading" | "paragraph" | "bullet" }> =>
+      index !== titleIndex &&
+      (block.type === "paragraph" ||
+        block.type === "bullet" ||
+        (block.type === "heading" && block.level === 3))
   );
 
   doc.setTextColor(primary);
@@ -115,9 +127,21 @@ function renderJournalContentPage(doc: JournalDocument, markdown: string, primar
   doc.setFontSize(11);
   let y = 42;
   bodyBlocks.forEach((block) => {
+    if (block.type === "heading") {
+      y += 4;
+      doc.setTextColor(primary);
+      doc.setFontSize(14);
+      const lineCount = drawInlineText(doc, `**${block.text}**`, 20, y, 170, 6);
+      y += lineCount * 6 + 4;
+      doc.setTextColor("#000000");
+      doc.setFontSize(11);
+      return;
+    }
+
     const text = block.type === "bullet" ? `- ${block.text}` : block.text;
     const lineCount = drawInlineText(doc, text, 20, y, 170, 6);
-    y += lineCount * 6 + 6;
+    const spacingAfter = block.type === "bullet" && options.compactBulletSpacing ? 0 : 6;
+    y += lineCount * 6 + spacingAfter;
   });
 
   return y;
@@ -183,12 +207,12 @@ function drawCoverImages(
   doc: JournalDocument,
   teamLogo: JournalLogoData | null,
   goaliePhoto: JournalLogoData | null
-): void {
+): number | null {
   const images = [teamLogo, goaliePhoto].filter(
     (image): image is JournalLogoData => image !== null
   );
   if (images.length === 0) {
-    return;
+    return null;
   }
 
   if (images.length === 1) {
@@ -201,7 +225,7 @@ function drawCoverImages(
     const width = sourceWidth * scale;
     const height = sourceHeight * scale;
     doc.addImage(image.dataUrl, "PNG", 105 - width / 2, 110, width, height);
-    return;
+    return 110 + height;
   }
 
   const gap = 8;
@@ -224,6 +248,8 @@ function drawCoverImages(
     doc.addImage(image.dataUrl, "PNG", x, 110, widths[index], height);
     x += widths[index] + gap;
   });
+
+  return 110 + height;
 }
 
 /**
@@ -280,24 +306,42 @@ export function buildGoalieJournalPdf(
 
   const coverBlocks = parseMarkdown(coverMd);
   const coverTitle = coverBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Journal";
-  const coverSubtitle = coverBlocks.find((b) => b.type === "paragraph")?.text ?? "";
+  const coverSubtitle =
+    extractLevel3Section(coverMd, "Subtitle") ||
+    coverBlocks.find((b) => b.type === "paragraph")?.text ||
+    "";
+  const coverQuotation = extractLevel3Section(coverMd, "Quotation");
 
   doc.setTextColor(primary);
   doc.setFontSize(28);
   drawInlineText(doc, coverTitle, 105, 40, 170, 6, "center");
   drawCoverIdentityField(doc, "Goalie Name", goalieName, 58, secondary, writeInGoalieName);
   drawCoverIdentityField(doc, "Team Name", teamName, 72, secondary, writeInTeamName);
-  drawCoverIdentityField(doc, "Season", `Season ${season}`, 86, secondary, writeInSeason);
+  drawCoverIdentityField(doc, "Season", `Season: ${season}`, 86, secondary, writeInSeason);
   if (coverSubtitle) {
     doc.setFontSize(10);
-    doc.setTextColor("#000000");
+    doc.setTextColor(primary);
     drawInlineText(doc, coverSubtitle, 105, 97, 170, 5, "center");
   }
 
+  let coverImagesBottom: number | null = null;
   try {
-    drawCoverImages(doc, logo, goaliePhoto);
+    coverImagesBottom = drawCoverImages(doc, logo, goaliePhoto);
   } catch (e) {
     console.error("Error adding cover images to PDF:", e);
+  }
+
+  if (coverQuotation) {
+    const quotationBlocks = parseMarkdown(coverQuotation).filter(
+      (block): block is Extract<MarkdownBlock, { type: "paragraph" }> => block.type === "paragraph"
+    );
+    let quotationY = coverImagesBottom === null ? 125 : coverImagesBottom + 12;
+    doc.setFontSize(11);
+    doc.setTextColor(secondary);
+    quotationBlocks.forEach((block) => {
+      const lineCount = drawInlineText(doc, block.text, 105, quotationY, 150, 5.5, "center");
+      quotationY += lineCount * 5.5 + 2;
+    });
   }
 
   const coverPageHeight = doc.internal.pageSize.height;
@@ -352,7 +396,9 @@ export function buildGoalieJournalPdf(
   // ── How to Improve Every Day page ───────────────────────────────────────────
 
   doc.addPage();
-  renderJournalContentPage(doc, howToImproveEveryDayMd, primary);
+  renderJournalContentPage(doc, howToImproveEveryDayMd, primary, {
+    compactBulletSpacing: true,
+  });
 
   // ── Season Goals page ──────────────────────────────────────────────────────
 
