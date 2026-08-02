@@ -600,6 +600,32 @@ export const generateDrillPdf = async (
       indentLevel?: number;
     }
 
+    interface InlineMarkdownRun {
+      text: string;
+      bold: boolean;
+    }
+
+    const parseInlineMarkdownRuns = (text: string): InlineMarkdownRun[] => {
+      const runs: InlineMarkdownRun[] = [];
+      const strongPattern = /\*\*(.+?)\*\*/g;
+      let cursor = 0;
+      let match: RegExpExecArray | null;
+
+      while ((match = strongPattern.exec(text)) !== null) {
+        if (match.index > cursor) {
+          runs.push({ text: text.slice(cursor, match.index), bold: false });
+        }
+        runs.push({ text: match[1], bold: true });
+        cursor = match.index + match[0].length;
+      }
+
+      if (cursor < text.length) {
+        runs.push({ text: text.slice(cursor), bold: false });
+      }
+
+      return runs.length > 0 ? runs : [{ text, bold: false }];
+    };
+
     const pushRenderableListLines = (
       list: DrillMarkdownListBlock,
       lines: RenderableMarkdownLine[],
@@ -676,12 +702,51 @@ export const generateDrillPdf = async (
       const indentLevel = options?.indentLevel ?? getIndentLevel(line);
       const indentOffset = indentLevel * MARKDOWN_NESTED_INDENT_MM;
       const availableWidth = Math.max(16, maxWidth - indentOffset);
-      const wrapped = doc.splitTextToSize(stripLeadingIndent(line), availableWidth);
+      const inlineRuns = parseInlineMarkdownRuns(stripLeadingIndent(line));
+      const visibleText = inlineRuns.map((run) => run.text).join("");
+      const wrapped = doc.splitTextToSize(visibleText, availableWidth) as string[];
       const startY = ensureSpaceForPass(currentYForPass, wrapped.length * lineHeight + 1);
       if (draw) {
-        doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+        const hasInlineBold = inlineRuns.some((run) => run.bold);
+        if (!hasInlineBold) {
+          doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+          doc.text(wrapped, baseX + indentOffset, startY, {
+            lineHeightFactor: (lineHeight * doc.internal.scaleFactor) / doc.getFontSize(),
+          });
+          return startY + wrapped.length * lineHeight + 1;
+        }
+
+        const boldByCharacter = inlineRuns.flatMap((run) =>
+          Array.from(run.text, () => options?.bold || run.bold)
+        );
+        let sourceOffset = 0;
+
+        wrapped.forEach((wrappedLine, lineIndex) => {
+          const lineOffset = visibleText.indexOf(wrappedLine, sourceOffset);
+          const resolvedOffset = lineOffset >= 0 ? lineOffset : sourceOffset;
+          let chunkStart = 0;
+          let chunkX = baseX + indentOffset;
+
+          while (chunkStart < wrappedLine.length) {
+            const bold = !!boldByCharacter[resolvedOffset + chunkStart];
+            let chunkEnd = chunkStart + 1;
+            while (
+              chunkEnd < wrappedLine.length &&
+              !!boldByCharacter[resolvedOffset + chunkEnd] === bold
+            ) {
+              chunkEnd += 1;
+            }
+
+            const chunk = wrappedLine.slice(chunkStart, chunkEnd);
+            doc.setFont("helvetica", bold ? "bold" : "normal");
+            doc.text(chunk, chunkX, startY + lineIndex * lineHeight);
+            chunkX += doc.getTextWidth(chunk);
+            chunkStart = chunkEnd;
+          }
+
+          sourceOffset = resolvedOffset + wrappedLine.length;
+        });
       }
-      drawText(wrapped, baseX + indentOffset, startY);
       return startY + wrapped.length * lineHeight + 1;
     };
     const drawMarkdownBlocks = (

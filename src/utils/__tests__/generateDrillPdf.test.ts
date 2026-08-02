@@ -1143,3 +1143,33 @@ describe("generateDrillPdf Beat The Pass cutoff regression", () => {
     expect(pages[2]).toContain("Drill Progressions");
   });
 });
+
+describe("generateDrillPdf inline markdown regression", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("renders the wall-entry NOTE inline in bold with non-overlapping line spacing", async () => {
+    const drillData = loadDrillFixture("wall-entry-attack-zones");
+
+    const doc = await generateDrillPdf(drillData, "wall-entry-attack-zones");
+    const output = doc.output();
+    const noteIndex = output.indexOf("(NOTE:)");
+    const precedingTextIndex = output.indexOf("(Run from both sides of the ice.)");
+    const precedingTextOperators = output.slice(
+      Math.max(0, precedingTextIndex - 500),
+      precedingTextIndex
+    );
+
+    expect(precedingTextIndex).toBeGreaterThanOrEqual(0);
+    expect(noteIndex).toBeGreaterThanOrEqual(0);
+    expect(precedingTextOperators).toMatch(/9\.0708\d* TL/);
+    expect(output.slice(Math.max(0, noteIndex - 80), noteIndex)).toMatch(/F2 9 Tf/);
+    expect(output).not.toContain("(**NOTE:**)");
+  });
+});
