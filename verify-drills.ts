@@ -40,8 +40,8 @@ const drillExpectations: DrillExpectation[] = [
   {
     folder: "rvh-low-to-high-release",
     expectSecondPageProgressions: true,
-    expectedTotalPages: 2,
-    expectedMainContentPages: 1,
+    expectedTotalPages: 3,
+    expectedMainContentPages: 2,
     expectedDedicatedProgressionPages: 1,
   },
   {

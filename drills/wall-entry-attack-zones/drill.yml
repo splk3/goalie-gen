@@ -16,6 +16,7 @@ drill_steps: |-
     3. Release a shot or attempt a tight-angle attack depending on the zone.
 coaching_focus_points: |-
   - Zone 1 - High Wall Shot (Angle & Depth Control)
+    - [Watch Zone 1 video](https://youtu.be/0-gYWF3r8kU)
     - Goalie Focus
       - Strong angle with chest square to puck.
       - Maintain optimal depth (1-2 feet above top of crease).
@@ -23,6 +24,7 @@ coaching_focus_points: |-
       - Avoid drifting backward as shooter releases.
     - Shooter Coaching: shoot in stride.
   - Zone 2 - MidWall Shot (Overlap Positioning)
+    - [Watch Zone 2 video](https://youtu.be/oOOsDW_rmyk)
     - Goalie Focus
       - Use overlap technique with skate blade outside post.
       - Keep hands tight with no reaching.
@@ -32,23 +34,27 @@ coaching_focus_points: |-
       - Release quickly off the wall.
       - Aim for short side high or far-side pad.
   - Zone 3 - Low Wall, Tight Angle (Foot on Post)
+    - [Watch Zone 3 video](https://youtu.be/57l9NkDqmMo)
     - Goalie Focus
       - Inside skate on the post.
       - Stay tall and do not drop early.
     - Shooter Coaching: Attack downhill with speed.
   - Zone 4 - Low Corner Entry (Foot on Post)
+    - [Watch Zone 4 video](https://youtu.be/PfAMYx0WBKI)
     - Goalie Focus
       - Use the same mechanics as Zone 3.
       - Avoid leaning off the post.
       - Prepare for jam, sharp-angle shot, or pass below goal line.
     - Shooter Coaching: drive hard to the goal line.
   - Zone 5 - Tight-Angle Threat (RVH When Shot Threat Exists)
+    - [Watch Zone 5 video](https://youtu.be/Ae-8pY-lDLQ)
     - Goalie Focus
       - Enter RVH only when shooter is below the dot line and shot threat is real.
       - Maintain a strong short-side seal.
       - Be ready to push out if shooter passes puck up ice.
     - Shooter Coaching: sell shot to force RVH.
   - Zone 6 - Below the Hashmarks (RVH)
+    - [Watch Zone 6 video](https://youtu.be/GJTVKGag52g)
     - Goalie Focus
       - Full RVH integration.
       - Stick blade seals ice.
@@ -56,6 +62,7 @@ coaching_focus_points: |-
       - Maintain ability to push up and out if shooter climbs the wall.
     - Shooter Coaching: look for far-side openings if goalie over leans.
   - Zone 7 - Goal Line / Below Goal Line (RVH)
+    - [Watch Zone 7 video](https://youtu.be/Ow2Nenmjy3A)
     - Goalie Focus
       - Strong RVH seal.
       - Prepare for jam, walkout, or pass to slot.
@@ -68,25 +75,30 @@ drill_progressions:
       Coach calls out a zone number as the shooter enters the zone.
       - Forces late goalie reaction.
       - Builds reading and adjustment speed.
+    progression_video: https://youtu.be/VPP6hdRNzMI
   - progression_name: Progression 2 - Shooter Deception Layer
     progression_description: |-
       Shooter fakes entering one zone, then cuts into another.
       - Goalie reads hips instead of the stick.
       - Builds discipline and patience.
     progression_image: progression-2.png
+    progression_video: https://youtu.be/Uwvuo3XP-Ls
   - progression_name: Progression 3 - Add a Second Shooter
     progression_description: |-
       Add a second attacker in the slot or weak side.
       - Forces goalie management of shot-versus-pass threat.
       - Teaches proper RVH exit mechanics.
     progression_image: progression-3.png
+    progression_video: https://youtu.be/33YYFJJKk7c
   - progression_name: Progression 4 - Screen
     progression_description: |-
       Add a player or barrier as a screen.
       - Forces goalie tracking through traffic.
       - Helps the shooter learn to use the screen effectively.
     progression_image: progression-4.png
+    progression_video: https://youtu.be/SJ3n8LKBVI4
 drill_creation_date: 2026-06-05
+drill_updated_date: 2026-08-01
 tags:
   skill_level:
     - intermediate

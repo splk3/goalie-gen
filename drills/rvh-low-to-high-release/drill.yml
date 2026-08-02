@@ -19,6 +19,7 @@ shooter_focus_points: |-
   - Shoot off the pass — force the goalie to move and set under time pressure.
   - Change the release angle — pull, push, or drag the puck to create lateral deception.
   - Hit the net — prioritize accuracy over power to create realistic rebound scenarios.
+video: https://youtu.be/CGrp-dZQR9U
 drill_image: rvh-low-to-high-release.png
 drill_progressions:
   - progression_name: Progression 1 — Passer Walkout Threat
@@ -27,10 +28,12 @@ drill_progressions:
       - Pass to the slot
       - Walk out short-side for a jam attempt
     progression_image: progression-1-passer-walkout-threat.png
+    progression_video: https://youtu.be/vJzdv52BeVE
   - progression_name: Progression 2 — High Slot Movement
     progression_description: |-
       Shooter starts high, then times a downhill cut into the slot.
     progression_image: progression-2-high-slot-movement.png
+    progression_video: https://youtu.be/zE0ql5b1nJY
   - progression_name: Progression 3 — Second Shooter Option
     progression_description: |-
       Add a second shooter on the weak-side flank.
@@ -41,11 +44,14 @@ drill_progressions:
   - progression_name: Progression 4 — Rebound Live
     progression_description: |-
       After the initial shot, the puck is live for 2-3 seconds.
+    progression_video: https://youtu.be/VvcVI_IrBxc
   - progression_name: Progression 5 — High Slot Screen
     progression_description: |-
       Add a second goalie or skater in the high slot as a screen.
     progression_image: progression-5-high-slot-screen.png
+    progression_video: https://youtu.be/yiCBkT2VTTI
 drill_creation_date: 2026-05-22
+drill_updated_date: 2026-08-01
 tags:
   skill_level:
     - beginner
