@@ -269,7 +269,10 @@ function drawCoverImages(
   let x = 105 - combinedWidth / 2;
 
   images.forEach((image, index) => {
-    doc.addImage(image.dataUrl, "PNG", x, 110, widths[index], height);
+    const format = image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
+      ? "JPEG"
+      : "PNG";
+    doc.addImage(image.dataUrl, format, x, 110, widths[index], height);
     x += widths[index] + gap;
   });
 
