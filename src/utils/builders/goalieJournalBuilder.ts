@@ -246,9 +246,10 @@ function drawCoverImages(
     const sourceWidth = image.width > 0 ? image.width : maxWidth;
     const sourceHeight = image.height > 0 ? image.height : maxHeight;
     const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
-    const format = image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
-      ? "JPEG"
-      : "PNG";
+    const format =
+      image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
+        ? "JPEG"
+        : "PNG";
     doc.addImage(image.dataUrl, format, 105 - width / 2, 110, width, height);
     return 110 + height;
   }
@@ -270,9 +271,10 @@ function drawCoverImages(
   let x = 105 - combinedWidth / 2;
 
   images.forEach((image, index) => {
-    const format = image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
-      ? "JPEG"
-      : "PNG";
+    const format =
+      image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
+        ? "JPEG"
+        : "PNG";
     doc.addImage(image.dataUrl, format, x, 110, widths[index], height);
     x += widths[index] + gap;
   });
