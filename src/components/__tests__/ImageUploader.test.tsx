@@ -33,6 +33,21 @@ describe("ImageUploader", () => {
     expect(screen.getByLabelText("Image (Optional)")).toBeInTheDocument();
   });
 
+  it("supports a custom label and input ID", () => {
+    render(
+      <ImageUploader
+        onImageCropped={onImageCropped}
+        label="Goalie Photo (Optional)"
+        inputId="goalie-photo-input"
+      />
+    );
+
+    expect(screen.getByLabelText("Goalie Photo (Optional)")).toHaveAttribute(
+      "id",
+      "goalie-photo-input"
+    );
+  });
+
   it("calls onImageCropped(null, null) when a non-image file is selected", async () => {
     render(<ImageUploader onImageCropped={onImageCropped} />);
 

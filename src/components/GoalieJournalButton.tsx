@@ -12,19 +12,46 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   extractPaletteHexColorsFromDataUrl,
 } from "../utils/teamColors";
-import { DEFAULT_JOURNAL_ENTRY_COUNT } from "../utils/generatorDefaults";
+import {
+  DEFAULT_JOURNAL_ENTRY_COUNT,
+  JOURNAL_SEASON_GOAL_COUNT,
+  MAX_JOURNAL_ENTRY_COUNT,
+  MIN_JOURNAL_ENTRY_COUNT,
+  getDefaultJournalSeason,
+  normalizeJournalSeason,
+  normalizeJournalSeasonGoals,
+  parseJournalEntryCount,
+  sanitizeJournalFilenamePart,
+} from "../utils/generatorDefaults";
 import { buildGoalieJournalPdf } from "../utils/builders/goalieJournalBuilder";
+import { GOALIE_JOURNAL_PROMOTION_URL } from "../utils/goalieJournalPromotion";
 import coverMd from "../content/goalie-journal/cover.md";
+import acknowledgementsMd from "../content/goalie-journal/acknowledgements.md";
+import howToUseMd from "../content/goalie-journal/how-to-use.md";
+import howToImproveEveryDayMd from "../content/goalie-journal/how-to-improve-every-day.md";
 import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
 import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
+
+const DEFAULT_LOGO_PATH = "/images/logos/logo-alt-light.png";
+const GOLD_CERTIFICATION_BADGE_PATH = "/images/usahockey/usahockey-gold-certification.png";
 
 export default function GoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [goalieName, setGoalieName] = React.useState<string>("");
   const [teamName, setTeamName] = React.useState<string>("");
+  const [season, setSeason] = React.useState<string>(() => getDefaultJournalSeason());
+  const [entryCount, setEntryCount] = React.useState<string>(String(DEFAULT_JOURNAL_ENTRY_COUNT));
+  const [seasonGoals, setSeasonGoals] = React.useState<string[]>(() =>
+    Array(JOURNAL_SEASON_GOAL_COUNT).fill("")
+  );
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
+  const [goaliePhotoPreview, setGoaliePhotoPreview] = React.useState<string | null>(null);
+  const [writeInGoalieName, setWriteInGoalieName] = React.useState<boolean>(false);
+  const [writeInTeamName, setWriteInTeamName] = React.useState<boolean>(false);
+  const [writeInSeason, setWriteInSeason] = React.useState<boolean>(false);
+  const [writeInSeasonGoals, setWriteInSeasonGoals] = React.useState<boolean>(false);
   const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
     DEFAULT_PRIMARY_TEAM_COLOR
   );
@@ -49,6 +76,13 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
   const handleImageCropped = React.useCallback((_file: File | null, previewUrl: string | null) => {
     setLogoPreview(previewUrl);
   }, []);
+
+  const handleGoaliePhotoCropped = React.useCallback(
+    (_file: File | null, previewUrl: string | null) => {
+      setGoaliePhotoPreview(previewUrl);
+    },
+    []
+  );
 
   React.useEffect(() => {
     let isCancelled = false;
@@ -80,13 +114,8 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     };
   }, [logoPreview]);
 
-  const getLogoAsBase64 = (): Promise<string | null> => {
+  const getStaticImageAsBase64 = (assetPath: string, label: string): Promise<string | null> => {
     return new Promise((resolve) => {
-      if (logoPreview) {
-        resolve(logoPreview);
-        return;
-      }
-
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -98,31 +127,55 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
           resolve(canvas.toDataURL("image/png"));
         } else {
           console.error(
-            "GoalieJournalButton: Failed to obtain 2D canvas context for default logo. The journal will be generated without a logo."
+            `GoalieJournalButton: Failed to obtain 2D canvas context for ${label}. The journal will be generated without it.`
           );
           resolve(null);
         }
       };
       img.onerror = () => {
         console.warn(
-          "GoalieJournalButton: Failed to load default logo. The journal will be generated without a logo."
+          `GoalieJournalButton: Failed to load ${label}. The journal will be generated without it.`
         );
         resolve(null);
       };
-      img.src = withPrefix(buildCacheBustedAssetPath("/images/logos/logo-alt-light.png"));
+      img.src = withPrefix(buildCacheBustedAssetPath(assetPath));
     });
   };
 
-  const generatePdf = async (): Promise<void> => {
+  const getLogoAsBase64 = (): Promise<string | null> =>
+    logoPreview
+      ? Promise.resolve(logoPreview)
+      : getStaticImageAsBase64(DEFAULT_LOGO_PATH, "default logo");
+
+  const generatePdf = async (
+    normalizedSeason: string,
+    normalizedEntryCount: number
+  ): Promise<void> => {
     const jsPdfModule = await loadJsPdfModule();
-    const currentYear = new Date().getFullYear();
-    const season = `${currentYear}-${currentYear + 1}`;
+    let qrCodeDataUrl: string | null = null;
+    try {
+      const qrCode = await import("qrcode");
+      qrCodeDataUrl = await qrCode.toDataURL(GOALIE_JOURNAL_PROMOTION_URL, {
+        margin: 1,
+        width: 160,
+        color: { dark: "#000000", light: "#FFFFFF" },
+      });
+    } catch (error) {
+      console.error("Failed to generate goalie journal QR code", error);
+    }
+    const [logoBase64, footerLogoBase64, goldCertificationBadgeBase64] = await Promise.all([
+      getLogoAsBase64(),
+      getStaticImageAsBase64(DEFAULT_LOGO_PATH, "footer logo"),
+      getStaticImageAsBase64(GOLD_CERTIFICATION_BADGE_PATH, "Gold Certification badge"),
+    ]);
 
-    const logoBase64 = await getLogoAsBase64();
+    const resolveLogoData = async (
+      dataUrl: string | null
+    ): Promise<import("../types/generatorConfig").JournalLogoData | null> => {
+      if (!dataUrl) {
+        return null;
+      }
 
-    // Resolve logo dimensions for the builder
-    let logoData: import("../types/generatorConfig").JournalLogoData | null = null;
-    if (logoBase64) {
       let logoWidth = 60;
       let logoHeight = 60;
       try {
@@ -130,65 +183,104 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
         await new Promise((resolve) => {
           img.onload = resolve;
           img.onerror = resolve;
-          img.src = logoBase64;
+          img.src = dataUrl;
         });
         logoWidth = img.width > 0 ? img.width : 60;
         logoHeight = img.height > 0 ? img.height : 60;
       } catch (e) {
         console.error("Failed to parse logo dimensions", e);
       }
-      logoData = { dataUrl: logoBase64, width: logoWidth, height: logoHeight };
-    }
+      return { dataUrl, width: logoWidth, height: logoHeight };
+    };
+
+    const logoData = await resolveLogoData(logoBase64);
+    const footerLogoData = await resolveLogoData(footerLogoBase64);
+    const goaliePhotoData = await resolveLogoData(goaliePhotoPreview);
+    const goldCertificationBadgeData = await resolveLogoData(goldCertificationBadgeBase64);
+    const normalizedSeasonGoals = normalizeJournalSeasonGoals(seasonGoals);
 
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
-      goalieName,
-      teamName,
+      goalieName: writeInGoalieName ? "" : goalieName.trim(),
+      teamName: writeInTeamName ? "" : teamName.trim(),
       primaryColor: primaryTeamColor,
       secondaryColor: secondaryTeamColor,
-      season,
-      entryCount: DEFAULT_JOURNAL_ENTRY_COUNT,
+      season: normalizedSeason,
+      entryCount: normalizedEntryCount,
+      seasonGoals: normalizedSeasonGoals,
+      writeInGoalieName,
+      writeInTeamName,
+      writeInSeason,
+      writeInSeasonGoals: writeInSeasonGoals || normalizedSeasonGoals.length === 0,
     };
 
     const journalContent: import("../types/generatorConfig").GoalieJournalContent = {
       coverMd,
+      acknowledgementsMd,
+      howToUseMd,
+      howToImproveEveryDayMd,
       seasonGoalsMd,
       practiceEntryMd,
       endOfSeasonMd,
     };
 
-    const doc = buildGoalieJournalPdf(config, journalContent, logoData, jsPdfModule);
+    const doc = buildGoalieJournalPdf(
+      config,
+      journalContent,
+      logoData,
+      jsPdfModule,
+      qrCodeDataUrl,
+      footerLogoData,
+      goaliePhotoData,
+      goldCertificationBadgeData
+    );
 
-    const sanitizedName =
-      goalieName
-        .replace(/[<>:"/\\|?*]+/g, "_")
-        .replace(/^\.+|\.+$/g, "")
-        .replace(/\s+/g, "_")
-        .trim() || "Goalie";
+    const sanitizedName = writeInGoalieName
+      ? "Goalie"
+      : sanitizeJournalFilenamePart(goalieName, "Goalie");
+    const sanitizedSeason = writeInSeason
+      ? "Season"
+      : sanitizeJournalFilenamePart(normalizedSeason, "Season");
     const blob = doc.output("blob");
     setGeneratedBlob(blob);
-    setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${season}.pdf`);
+    setGeneratedFileName(`${sanitizedName}_Goalie_Journal_${sanitizedSeason}.pdf`);
   };
 
   const generateJournal = async () => {
     setValidationError("");
     shouldScrollValidationErrorRef.current = false;
 
-    if (!goalieName.trim()) {
+    if (!writeInGoalieName && !goalieName.trim()) {
       shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a goalie name");
       return;
     }
 
-    if (!teamName.trim()) {
+    if (!writeInTeamName && !teamName.trim()) {
       shouldScrollValidationErrorRef.current = true;
       setValidationError("Please enter a team name");
+      return;
+    }
+
+    const normalizedSeason = normalizeJournalSeason(season);
+    if (!writeInSeason && !normalizedSeason) {
+      shouldScrollValidationErrorRef.current = true;
+      setValidationError("Please enter a season");
+      return;
+    }
+
+    const normalizedEntryCount = parseJournalEntryCount(entryCount);
+    if (normalizedEntryCount === null) {
+      shouldScrollValidationErrorRef.current = true;
+      setValidationError(
+        `Number of journal entries must be a whole number between ${MIN_JOURNAL_ENTRY_COUNT} and ${MAX_JOURNAL_ENTRY_COUNT}`
+      );
       return;
     }
 
     setIsGenerating(true);
 
     try {
-      await generatePdf();
+      await generatePdf(normalizedSeason ?? "", normalizedEntryCount);
 
       trackEvent("generate_journal", {
         format: "pdf",
@@ -221,7 +313,15 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       setShowModal(false);
       setGoalieName("");
       setTeamName("");
+      setSeason(getDefaultJournalSeason());
+      setEntryCount(String(DEFAULT_JOURNAL_ENTRY_COUNT));
+      setSeasonGoals(Array(JOURNAL_SEASON_GOAL_COUNT).fill(""));
       setLogoPreview(null);
+      setGoaliePhotoPreview(null);
+      setWriteInGoalieName(false);
+      setWriteInTeamName(false);
+      setWriteInSeason(false);
+      setWriteInSeasonGoals(false);
       setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
@@ -235,7 +335,15 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setShowModal(false);
     setGoalieName("");
     setTeamName("");
+    setSeason(getDefaultJournalSeason());
+    setEntryCount(String(DEFAULT_JOURNAL_ENTRY_COUNT));
+    setSeasonGoals(Array(JOURNAL_SEASON_GOAL_COUNT).fill(""));
     setLogoPreview(null);
+    setGoaliePhotoPreview(null);
+    setWriteInGoalieName(false);
+    setWriteInTeamName(false);
+    setWriteInSeason(false);
+    setWriteInSeasonGoals(false);
     setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
@@ -297,10 +405,21 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
               id="goalieName"
               value={goalieName}
               onChange={(e) => setGoalieName(e.target.value)}
-              disabled={!!generatedBlob || isGenerating}
+              disabled={writeInGoalieName || !!generatedBlob || isGenerating}
               className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter goalie name"
             />
+            <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                aria-label="Write Goalie Name in later on printed journal"
+                checked={writeInGoalieName}
+                onChange={(e) => setWriteInGoalieName(e.target.checked)}
+                disabled={!!generatedBlob || isGenerating}
+                className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+              />
+              Write in later on printed journal
+            </label>
           </div>
 
           <div className="mb-4">
@@ -315,16 +434,129 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
               id="journal-team-name"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
-              disabled={!!generatedBlob || isGenerating}
+              disabled={writeInTeamName || !!generatedBlob || isGenerating}
               className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter team name"
             />
+            <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                aria-label="Write Team Name in later on printed journal"
+                checked={writeInTeamName}
+                onChange={(e) => setWriteInTeamName(e.target.checked)}
+                disabled={!!generatedBlob || isGenerating}
+                className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+              />
+              Write in later on printed journal
+            </label>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label
+                htmlFor="journal-season"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
+                Season
+              </label>
+              <input
+                type="text"
+                id="journal-season"
+                value={season}
+                onChange={(e) => setSeason(e.target.value)}
+                disabled={writeInSeason || !!generatedBlob || isGenerating}
+                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="e.g. 2026-2027 or Spring"
+              />
+              <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  aria-label="Write Season in later on printed journal"
+                  checked={writeInSeason}
+                  onChange={(e) => setWriteInSeason(e.target.checked)}
+                  disabled={!!generatedBlob || isGenerating}
+                  className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+                />
+                Write in later on printed journal
+              </label>
+            </div>
+
+            <div>
+              <label
+                htmlFor="journal-entry-count"
+                className="block text-gray-700 dark:text-gray-300 font-semibold mb-2"
+              >
+                Number of Journal Entries
+              </label>
+              <input
+                type="number"
+                id="journal-entry-count"
+                min={MIN_JOURNAL_ENTRY_COUNT}
+                max={MAX_JOURNAL_ENTRY_COUNT}
+                step="1"
+                value={entryCount}
+                onChange={(e) => setEntryCount(e.target.value)}
+                disabled={!!generatedBlob || isGenerating}
+                className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+            </div>
+          </div>
+
+          <fieldset className="mb-4">
+            <legend className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              Season Goals
+            </legend>
+            <label className="mb-3 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                aria-label="Write Season Goals in later on printed journal"
+                checked={writeInSeasonGoals}
+                onChange={(e) => setWriteInSeasonGoals(e.target.checked)}
+                disabled={!!generatedBlob || isGenerating}
+                className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+              />
+              Write in later on printed journal
+            </label>
+            <div className="space-y-3">
+              {seasonGoals.map((goal, index) => (
+                <div key={index}>
+                  <label
+                    htmlFor={`journal-season-goal-${index + 1}`}
+                    className="block text-sm text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Goal {index + 1}
+                  </label>
+                  <input
+                    type="text"
+                    id={`journal-season-goal-${index + 1}`}
+                    value={goal}
+                    onChange={(e) => {
+                      const nextGoals = [...seasonGoals];
+                      nextGoals[index] = e.target.value;
+                      setSeasonGoals(nextGoals);
+                    }}
+                    disabled={writeInSeasonGoals || !!generatedBlob || isGenerating}
+                    className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder={`Enter season goal ${index + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <ImageUploader
+            onImageCropped={handleGoaliePhotoCropped}
+            disabled={!!generatedBlob || isGenerating}
+            label="Goalie Photo (Optional)"
+            inputId="journal-goalie-photo"
+          />
 
           <div className="mb-4">
             <ImageUploader
               onImageCropped={handleImageCropped}
               disabled={!!generatedBlob || isGenerating}
+              label="Team Logo (Optional)"
+              inputId="journal-team-logo"
             />
             {!logoPreview && (
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

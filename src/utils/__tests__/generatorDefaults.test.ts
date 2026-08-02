@@ -1,7 +1,12 @@
 import {
   extractLevel3SectionsByPrefix,
+  getDefaultJournalSeason,
   getEventContentMarkdown,
   getSeasonOverviewMarkdown,
+  normalizeJournalSeason,
+  normalizeJournalSeasonGoals,
+  parseJournalEntryCount,
+  sanitizeJournalFilenamePart,
   selectRandomLevel3Section,
 } from "../generatorDefaults";
 
@@ -35,6 +40,44 @@ const seasonOverviewMd = `## Season Overview
 
 [SEASON_OVERVIEW_16U_AND_OLDER_STARTER]
 `;
+
+describe("goalie journal defaults", () => {
+  it("builds the default season from the supplied date", () => {
+    expect(getDefaultJournalSeason(new Date("2026-08-01T12:00:00Z"))).toBe("2026-2027");
+  });
+
+  it("normalizes non-empty free-form seasons", () => {
+    expect(normalizeJournalSeason("  Middle-School  ")).toBe("Middle-School");
+    expect(normalizeJournalSeason("   ")).toBeNull();
+  });
+
+  it("normalizes up to three nonblank Season Goals", () => {
+    expect(
+      normalizeJournalSeasonGoals([" First goal ", " ", "Second goal", "Third goal", "Fourth goal"])
+    ).toEqual(["First goal", "Second goal", "Third goal"]);
+  });
+
+  it.each([
+    ["1", 1],
+    ["24", 24],
+    ["100", 100],
+    [24, 24],
+  ])("parses valid journal entry count %p", (value, expected) => {
+    expect(parseJournalEntryCount(value)).toBe(expected);
+  });
+
+  it.each(["", "0", "101", "1.5", "abc", -1, 24.5])(
+    "rejects invalid journal entry count %p",
+    (value) => {
+      expect(parseJournalEntryCount(value)).toBeNull();
+    }
+  );
+
+  it("sanitizes free-form values for journal filenames", () => {
+    expect(sanitizeJournalFilenamePart(" Middle / School ", "Season")).toBe("Middle_School");
+    expect(sanitizeJournalFilenamePart("...", "Season")).toBe("Season");
+  });
+});
 
 describe("getSeasonOverviewMarkdown", () => {
   it("uses all-ages content followed by the selected age-group content", () => {

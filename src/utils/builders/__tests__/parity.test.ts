@@ -12,7 +12,14 @@ import {
   buildTeamPlanDocument,
   formatTeamPlanEventHeading,
 } from "../teamPlanBuilder";
-import { buildGoalieJournalPdf } from "../goalieJournalBuilder";
+import {
+  GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT,
+  buildGoalieJournalPdf,
+} from "../goalieJournalBuilder";
+import {
+  GOALIE_JOURNAL_COVER_PROMOTION_LINES,
+  GOALIE_JOURNAL_PROMOTION_URL,
+} from "../../goalieJournalPromotion";
 import type {
   ClubPlanConfig,
   ClubPlanContent,
@@ -111,12 +118,55 @@ const JOURNAL_CONFIG: GoalieJournalConfig = {
   secondaryColor: "#AF272F",
   season: "2026-2027",
   entryCount: 2,
+  seasonGoals: [],
+  writeInGoalieName: false,
+  writeInTeamName: false,
+  writeInSeason: false,
+  writeInSeasonGoals: true,
 };
 
+const JOURNAL_QUOTATION = '"Every day I wake up, it\'s a good day."';
+const JOURNAL_QUOTATION_ATTRIBUTION = "-Abbey Levy, PWHL Goalie.";
+
 const JOURNAL_CONTENT: GoalieJournalContent = {
-  coverMd: "# Goalie Journal\n\nA journal for your season.",
+  coverMd: [
+    "# Goalie Journal",
+    "",
+    "### Subtitle",
+    "",
+    "A journal for your season.",
+    "",
+    "### Quotation",
+    "",
+    JOURNAL_QUOTATION,
+    "",
+    JOURNAL_QUOTATION_ATTRIBUTION,
+  ].join("\n"),
+  acknowledgementsMd: "# Acknowledgements\n\nThank you to the people who support your development.",
+  howToUseMd:
+    "# How to Use this Journal\n\nUse this journal to track your progress.\n\n- Review your entries.",
+  howToImproveEveryDayMd:
+    "# How to Improve Every Day\n\nChoose one small improvement to practice today.",
   seasonGoalsMd: "# Season Goals\n\nSet your goals here.",
-  practiceEntryMd: "# Practice & Game Log\n\nNotes from today's practice.",
+  practiceEntryMd: [
+    "# Goalie Event Log",
+    "",
+    "### Before",
+    "",
+    "What am I feeling?",
+    "",
+    "What are my goals?",
+    "",
+    "How will I prepare?",
+    "",
+    "### After",
+    "",
+    "What am I feeling?",
+    "",
+    "How did I prepare?",
+    "",
+    "Self-Evaluation:",
+  ].join("\n"),
   endOfSeasonMd: "# End of Season Review\n\nReflect on your season.",
 };
 
@@ -128,7 +178,45 @@ function makeMockJsPdfModule() {
   const pages: number[] = [1];
   const textColors: string[] = [];
   const drawColors: string[] = [];
+  const lineDrawColors: string[] = [];
+  const lineWidths: number[] = [];
+  const lineCalls: Array<{
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    page: number;
+  }> = [];
+  const rectCalls: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    page: number;
+  }> = [];
+  let currentDrawColor = "#000000";
+  let currentTextColor = "#000000";
+  let currentLineWidth = 0.2;
   const fonts: string[] = [];
+  const texts: string[] = [];
+  const textCalls: Array<{ text: string; x: number; y: number; page: number; color: string }> = [];
+  const images: string[] = [];
+  const imageCalls: Array<{
+    data: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    page: number;
+  }> = [];
+  const linkCalls: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    url: string;
+    page: number;
+  }> = [];
   class MockJsPDF {
     internal = {
       pageSize: { height: 297 },
@@ -142,23 +230,33 @@ function makeMockJsPdfModule() {
       return this;
     }
     setTextColor(color: string) {
+      currentTextColor = color;
       textColors.push(color);
       return this;
     }
     setDrawColor(color: string) {
+      currentDrawColor = color;
       drawColors.push(color);
       return this;
     }
-    setLineWidth(_w: number) {
+    setLineWidth(width: number) {
+      currentLineWidth = width;
       return this;
     }
     text(_text: string | string[], _x: number, _y: number, _options?: object) {
+      const text = Array.isArray(_text) ? _text.join("\n") : _text;
+      texts.push(text);
+      textCalls.push({ text, x: _x, y: _y, page: pages.length, color: currentTextColor });
       return this;
     }
-    line(_x1: number, _y1: number, _x2: number, _y2: number) {
+    line(x1: number, y1: number, x2: number, y2: number) {
+      lineDrawColors.push(currentDrawColor);
+      lineWidths.push(currentLineWidth);
+      lineCalls.push({ x1, y1, x2, y2, page: pages.length });
       return this;
     }
-    rect(_x: number, _y: number, _w: number, _h: number) {
+    rect(x: number, y: number, width: number, height: number) {
+      rectCalls.push({ x, y, width, height, page: pages.length });
       return this;
     }
     splitTextToSize(text: string, _maxWidth: number): string[] {
@@ -171,14 +269,34 @@ function makeMockJsPdfModule() {
       pages.push(pages.length + 1);
       return this;
     }
-    addImage(_data: string, _format: string, _x: number, _y: number, _w: number, _h: number) {
+    addImage(data: string, _format: string, x: number, y: number, width: number, height: number) {
+      images.push(data);
+      imageCalls.push({ data, x, y, width, height, page: pages.length });
+      return this;
+    }
+    link(x: number, y: number, width: number, height: number, options: { url: string }) {
+      linkCalls.push({ x, y, width, height, url: options.url, page: pages.length });
       return this;
     }
     output(_type: string): unknown {
       return _type === "blob" ? new Blob() : new ArrayBuffer(0);
     }
   }
-  return { jsPDF: MockJsPDF, textColors, drawColors, fonts };
+  return {
+    jsPDF: MockJsPDF,
+    textColors,
+    drawColors,
+    lineDrawColors,
+    lineWidths,
+    lineCalls,
+    rectCalls,
+    fonts,
+    texts,
+    textCalls,
+    images,
+    imageCalls,
+    linkCalls,
+  };
 }
 
 // ─── Club Plan builder tests ──────────────────────────────────────────────────
@@ -690,7 +808,7 @@ describe("buildGoalieJournalPdf", () => {
     expect(typeof result.output).toBe("function");
   });
 
-  it("adds at least 3 pages (cover + goals + log + EOS)", () => {
+  it("adds introductory pages before the season goals and log sections", () => {
     const mockModule = makeMockJsPdfModule();
     buildGoalieJournalPdf(
       JOURNAL_CONFIG,
@@ -702,6 +820,42 @@ describe("buildGoalieJournalPdf", () => {
     expect(mockModule.jsPDF.prototype || mockModule).toBeDefined();
     // Since we can't inspect pages on the mock without accessing internals,
     // just confirm the function completes without throwing.
+  });
+
+  it("uses the reduced heading gap on all journal content pages", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    [
+      ["Thank you to the people who support your development.", 2],
+      ["Use this journal to track your progress.", 3],
+      ["Choose one small improvement to practice today.", 4],
+      ["Set your goals here.", 5],
+      ["Reflect on your season.", 7],
+    ].forEach(([text, page]) => {
+      expect(mockModule.textCalls.find((call) => call.text === text)).toEqual(
+        expect.objectContaining({
+          page,
+          y: 31,
+        })
+      );
+    });
+    expect(mockModule.lineCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          page: 5,
+          x1: 30,
+          y1: 51,
+          y2: 51,
+        }),
+      ])
+    );
   });
 
   it("produces consistent output when called twice with same config", () => {
@@ -741,6 +895,312 @@ describe("buildGoalieJournalPdf", () => {
     }).not.toThrow();
   });
 
+  it("renders team logo and goalie photo side-by-side at equal height", () => {
+    const mockModule = makeMockJsPdfModule();
+    const teamLogo = {
+      dataUrl: "data:image/png;base64,team-logo",
+      width: 100,
+      height: 100,
+    };
+    const goaliePhoto = {
+      dataUrl: "data:image/png;base64,goalie-photo",
+      width: 50,
+      height: 100,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      teamLogo,
+      mockModule as unknown as typeof import("jspdf"),
+      null,
+      null,
+      goaliePhoto
+    );
+
+    const teamLogoCall = mockModule.imageCalls.find((call) => call.data === teamLogo.dataUrl);
+    const goaliePhotoCall = mockModule.imageCalls.find((call) => call.data === goaliePhoto.dataUrl);
+    expect(teamLogoCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        height: 60,
+      })
+    );
+    expect(goaliePhotoCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        height: 60,
+      })
+    );
+    expect(teamLogoCall?.x).toBeLessThan(goaliePhotoCall?.x ?? 0);
+  });
+
+  it("renders the cover quotation higher when no cover images are available", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const quotationCall = mockModule.textCalls.find((call) =>
+      call.text.includes("Every day I wake up")
+    );
+    expect(mockModule.texts.join("")).toContain(
+      `${JOURNAL_QUOTATION}${JOURNAL_QUOTATION_ATTRIBUTION}`
+    );
+    expect(quotationCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        y: 125,
+        color: JOURNAL_CONFIG.secondaryColor,
+      })
+    );
+    expect(mockModule.textCalls.find((call) => call.text.includes("Abbey Levy"))).toEqual(
+      expect.objectContaining({
+        page: 1,
+        y: 132.5,
+        color: JOURNAL_CONFIG.secondaryColor,
+      })
+    );
+  });
+
+  it("renders the cover quotation below the cover images", () => {
+    const mockModule = makeMockJsPdfModule();
+    const teamLogo = {
+      dataUrl: "data:image/png;base64,team-logo",
+      width: 100,
+      height: 100,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      teamLogo,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const quotationCall = mockModule.textCalls.find((call) =>
+      call.text.includes("Every day I wake up")
+    );
+    expect(quotationCall).toEqual(
+      expect.objectContaining({
+        page: 1,
+        y: 182,
+        color: JOURNAL_CONFIG.secondaryColor,
+      })
+    );
+  });
+
+  it("renders the cover subtitle in the primary color", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.textCalls.find((call) => call.text === "A journal for your season.")).toEqual(
+      expect.objectContaining({
+        page: 1,
+        color: JOURNAL_CONFIG.primaryColor,
+      })
+    );
+  });
+
+  it("renders selected cover identity fields as labeled vector underlines", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      {
+        ...JOURNAL_CONFIG,
+        goalieName: "",
+        teamName: "",
+        season: "",
+        writeInGoalieName: true,
+        writeInTeamName: true,
+        writeInSeason: true,
+      },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toEqual(
+      expect.arrayContaining(["Goalie Name:", "Team Name:", "Season:"])
+    );
+    expect(mockModule.lineCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ page: 1, y1: 59, y2: 59, x2: 170 }),
+        expect.objectContaining({ page: 1, y1: 73, y2: 73, x2: 170 }),
+        expect.objectContaining({ page: 1, y1: 87, y2: 87, x2: 170 }),
+      ])
+    );
+  });
+
+  it("renders a colon after the populated cover season label", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toContain(`Season: ${JOURNAL_CONFIG.season}`);
+  });
+
+  it("renders configured Season Goals in order and omits blank values", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      {
+        ...JOURNAL_CONFIG,
+        seasonGoals: ["Improve rebound control", "  ", "Track the puck through traffic"],
+        writeInSeasonGoals: false,
+      },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toEqual(
+      expect.arrayContaining(["Improve rebound control", "Track the puck through traffic"])
+    );
+    expect(mockModule.texts).not.toContain("  ");
+    expect(
+      mockModule.textCalls
+        .filter((call) =>
+          ["Improve rebound control", "Track the puck through traffic"].includes(call.text)
+        )
+        .map((call) => call.y)
+    ).toEqual([51, 61]);
+  });
+
+  it("renders three printable Season Goal areas when goals are blank", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      {
+        ...JOURNAL_CONFIG,
+        seasonGoals: ["", " ", ""],
+        writeInSeasonGoals: false,
+      },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const goalLines = mockModule.lineCalls.filter(
+      (call) => call.page === 5 && call.x1 === 30 && call.x2 === 190
+    );
+    expect(goalLines).toHaveLength(6);
+    expect(goalLines.map((call) => call.y1)).toEqual([51, 63, 86, 98, 121, 133]);
+    expect(
+      mockModule.textCalls
+        .filter((call) => call.page === 5 && ["1.", "2.", "3."].includes(call.text))
+        .map((call) => call.y)
+    ).toEqual([51, 86, 121]);
+  });
+
+  it("renders Before and After columns instead of the legacy event prompts", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      { ...JOURNAL_CONFIG, entryCount: 1 },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toEqual(
+      expect.arrayContaining([
+        "Before",
+        "After",
+        "What am I feeling?",
+        "What are my goals?",
+        "How will I prepare?",
+        "How did I prepare?",
+        "Self-Evaluation:",
+      ])
+    );
+    expect(mockModule.texts).not.toContain("Goals for today:");
+    expect(mockModule.texts).not.toContain("Skills/Drills:");
+  });
+
+  it("fits three two-column event entries on each full log page", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      { ...JOURNAL_CONFIG, entryCount: 4 },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(
+      mockModule.textCalls.filter((call) => call.page === 6 && call.text === "Entry #")
+    ).toHaveLength(3);
+    expect(
+      mockModule.textCalls.filter((call) => call.page === 7 && call.text === "Entry #")
+    ).toHaveLength(1);
+    expect(
+      mockModule.textCalls.find((call) => call.page === 8 && call.text === "End of Season Review")
+    ).toBeDefined();
+
+    const dividers = mockModule.lineCalls.filter(
+      (call) => call.page === 6 && call.x1 === 105 && call.x2 === 105
+    );
+    expect(dividers).toEqual([
+      expect.objectContaining({ y1: 52, y2: 96 }),
+      expect.objectContaining({ y1: 128, y2: 172 }),
+      expect.objectContaining({ y1: 204, y2: 248 }),
+    ]);
+
+    const promptUnderlines = mockModule.lineCalls.filter(
+      (call) =>
+        call.page === 6 &&
+        ((call.x1 === 20 && call.x2 === 101) || (call.x1 === 109 && call.x2 === 190))
+    );
+    expect(promptUnderlines).toHaveLength(24);
+    expect(promptUnderlines.map((call) => call.y1)).toEqual([
+      69, 79, 89, 96, 69, 79, 89, 96, 145, 155, 165, 172, 145, 155, 165, 172, 221, 231, 241, 248,
+      221, 231, 241, 248,
+    ]);
+    const entryBoxes = mockModule.rectCalls.filter(
+      (call) => call.page === 6 && call.x === 15 && call.width === 180
+    );
+    expect(entryBoxes).toHaveLength(3);
+    expect(
+      entryBoxes.map((box, index) => box.y + box.height - promptUnderlines[index * 8 + 3].y1)
+    ).toEqual([3, 3, 3]);
+  });
+
+  it("renders two compact answer lines for each End of Season Review prompt", () => {
+    const mockModule = makeMockJsPdfModule();
+    const content: GoalieJournalContent = {
+      ...JOURNAL_CONTENT,
+      endOfSeasonMd: "# End of Season Review\n\nFirst reflection?\n\nSecond reflection?",
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      content,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const reviewLines = mockModule.lineCalls.filter(
+      (call) => call.page === 7 && call.x1 === 20 && call.x2 === 190
+    );
+    expect(reviewLines.map((call) => call.y1)).toEqual([39, 47, 65, 73]);
+  });
+
   it("uses configured primary and secondary colors for PDF accents", () => {
     const mockModule = makeMockJsPdfModule();
     const config: GoalieJournalConfig = {
@@ -757,8 +1217,172 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(mockModule.textColors).toContain("#123456");
+    expect(mockModule.textColors).toContain("#ABCDEF");
     expect(mockModule.drawColors).toContain("#ABCDEF");
+    expect(mockModule.drawColors).toContain("#000000");
     expect(mockModule.textColors).toContain("#000000");
+  });
+
+  it("alternates journal entry box borders between configured colors", () => {
+    const mockModule = makeMockJsPdfModule();
+    const config: GoalieJournalConfig = {
+      ...JOURNAL_CONFIG,
+      primaryColor: "#123456",
+      secondaryColor: "#ABCDEF",
+      entryCount: 5,
+    };
+
+    buildGoalieJournalPdf(
+      config,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const firstEntryBorderIndex = mockModule.drawColors.indexOf("#123456");
+    const secondEntryBorderIndex = mockModule.drawColors.indexOf(
+      "#ABCDEF",
+      firstEntryBorderIndex + 1
+    );
+    expect(firstEntryBorderIndex).toBeGreaterThanOrEqual(0);
+    expect(secondEntryBorderIndex).toBeGreaterThan(firstEntryBorderIndex);
+    expect(mockModule.lineDrawColors.filter((color) => color === "#123456")).toHaveLength(2);
+    mockModule.lineDrawColors.forEach((color, index) => {
+      if (color === "#123456") {
+        expect(mockModule.lineWidths[index]).toBe(0.5);
+      }
+    });
+  });
+
+  it("renders the cover promotion and hand-fillable log page footers", () => {
+    const mockModule = makeMockJsPdfModule();
+    const qrCodeDataUrl = "data:image/png;base64,qr";
+    const footerLogoData = {
+      dataUrl: "data:image/png;base64,footer-logo",
+      width: 60,
+      height: 60,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf"),
+      qrCodeDataUrl,
+      footerLogoData
+    );
+
+    GOALIE_JOURNAL_COVER_PROMOTION_LINES.forEach((line) => {
+      expect(mockModule.texts).toContain(line);
+    });
+    expect(mockModule.texts).toContain("Page");
+    expect(mockModule.texts).toContain("How to Use this Journal");
+    expect(mockModule.texts).toContain("Acknowledgements");
+    expect(mockModule.texts).toContain("How to Improve Every Day");
+    expect(mockModule.texts.indexOf("Acknowledgements")).toBeLessThan(
+      mockModule.texts.indexOf("How to Use this Journal")
+    );
+    expect(mockModule.texts.indexOf("How to Use this Journal")).toBeLessThan(
+      mockModule.texts.indexOf("How to Improve Every Day")
+    );
+    expect(mockModule.texts).toContain("Entry #");
+    expect(mockModule.texts).toContain("Time:");
+    expect(mockModule.texts).toContain("Practice");
+    expect(mockModule.texts).toContain("Game");
+    expect(mockModule.texts).toContain("Other:");
+    expect(mockModule.texts).toContain(
+      "If you need more space, make copies of this page or download the PDF at goaliegen.com"
+    );
+    expect(mockModule.images).toContain(qrCodeDataUrl);
+    expect(mockModule.images).toContain(footerLogoData.dataUrl);
+    expect(mockModule.imageCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          data: footerLogoData.dataUrl,
+          page: 1,
+        }),
+        expect.objectContaining({
+          data: qrCodeDataUrl,
+          page: 1,
+          x: 172,
+          width: 18,
+          height: 18,
+        }),
+      ])
+    );
+    expect(mockModule.linkCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          page: 1,
+          url: GOALIE_JOURNAL_PROMOTION_URL,
+        }),
+        expect.objectContaining({
+          page: expect.any(Number),
+          x: 178,
+          width: 14,
+          height: 14,
+          url: GOALIE_JOURNAL_PROMOTION_URL,
+        }),
+      ])
+    );
+  });
+
+  it("renders the Gold Certification badge beside its acknowledgement text", () => {
+    const mockModule = makeMockJsPdfModule();
+    const goldCertificationBadge = {
+      dataUrl: "data:image/png;base64,gold-certification",
+      width: 601,
+      height: 600,
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf"),
+      null,
+      null,
+      null,
+      goldCertificationBadge
+    );
+
+    expect(mockModule.texts.join("")).toContain(GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT);
+    expect(mockModule.imageCalls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          data: goldCertificationBadge.dataUrl,
+          page: 2,
+          x: 20,
+          width: 24,
+        }),
+      ])
+    );
+  });
+
+  it("renders level-3 headings and compact bullets on the improvement page", () => {
+    const mockModule = makeMockJsPdfModule();
+    const content: GoalieJournalContent = {
+      ...JOURNAL_CONTENT,
+      howToImproveEveryDayMd:
+        "# How to Improve Every Day\n\n### Practice Growth\n\n- First action\n- Second action",
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      content,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toContain("Practice Growth");
+    const firstBullet = mockModule.textCalls.find(
+      (call) => call.page === 4 && call.text === "- First action"
+    );
+    const secondBullet = mockModule.textCalls.find(
+      (call) => call.page === 4 && call.text === "- Second action"
+    );
+    expect(firstBullet).toBeDefined();
+    expect(secondBullet?.y).toBe((firstBullet?.y ?? 0) + 6);
   });
 
   it("renders Markdown bold and italic styles in PDF text", () => {
@@ -766,7 +1390,7 @@ describe("buildGoalieJournalPdf", () => {
     const content: GoalieJournalContent = {
       ...JOURNAL_CONTENT,
       coverMd: "# **Bold Journal**\n\n*Italic subtitle*",
-      practiceEntryMd: "# Practice & Game Log\n\n**Bold prompt** and _italic prompt_.",
+      practiceEntryMd: "# Goalie Event Log\n\n**Bold prompt** and _italic prompt_.",
     };
 
     buildGoalieJournalPdf(

@@ -55,11 +55,6 @@ export default function Home() {
               <HamburgerMenu />
               <Logo variant="full" format="png" className="w-24 md:w-32 lg:w-48" />
             </div>
-            <div className="hidden md:block flex-1 mx-4">
-              <p className="text-lg md:text-xl lg:text-2xl font-semibold text-center">
-                Making every coach a goalie coach!
-              </p>
-            </div>
             <DarkModeToggle />
           </div>
         </div>
@@ -114,9 +109,6 @@ export default function Home() {
               <NavigationButton to="/goalie-drills" variant="red">
                 Goalie Drills
               </NavigationButton>
-              <NavigationButton to="/goalie-evals" variant="red">
-                Goalie Evaluations
-              </NavigationButton>
               <NavigationButton to="/coach-resources" variant="red">
                 More Coach Resources
               </NavigationButton>
@@ -133,7 +125,7 @@ export default function Home() {
             <div className="w-full px-4 flex flex-col gap-3 items-stretch">
               <GoalieJournalButton label="Generate Goalie Journal" />
               <NavigationButton to="/about-goalie-journals">About Goalie Journals</NavigationButton>
-              <NavigationButton to="/goalie-resources">Goalie Resources</NavigationButton>
+              <NavigationButton to="/goalie-resources">More Goalie Resources</NavigationButton>
               <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
             </div>
           </div>
@@ -148,7 +140,7 @@ export default function Home() {
               <NavigationButton to="/patrick-boyle-project" variant="red">
                 Patrick Boyle&apos;s Project
               </NavigationButton>
-              <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
+              <p className="text-left text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
                 Creating a website and tools to help clubs, coaches, and goalies equip themselves
                 for success in recruiting, developing, and retaining goalies while building a love
                 for the position.
@@ -166,8 +158,9 @@ export default function Home() {
               <NavigationButton to="/katie-jablynski-project" variant="red">
                 Katie Jablynski&apos;s Project
               </NavigationButton>
-              <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
-                Integrating Goalie Development into Team Practices and Drills.
+              <p className="text-left text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
+                Integrating Goalie Development into Team Practices and Drills using USA
+                Hockey&apos;s Drill Design Continuum and 5 Elements of Good Drill Design.
                 <span className="block mt-2">
                   <a
                     href="mailto:katie@goaliegen.com"
@@ -182,7 +175,7 @@ export default function Home() {
               <NavigationButton to="/james-kujawski-project" variant="red">
                 James Kujawski&apos;s Project
               </NavigationButton>
-              <p className="text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
+              <p className="text-left text-gray-700 dark:text-gray-300 mt-3 text-sm leading-relaxed">
                 Modernizing Goalie Drill Design using a constraints-led approach and flexible,
                 progression and options-based adaptability.
                 <span className="block mt-2">

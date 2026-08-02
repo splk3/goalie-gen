@@ -84,4 +84,19 @@ describe("CoachResources page", () => {
       "Equipment Fitting",
     ]);
   });
+
+  it("renders the Thomas Magnusson quote before Coach Tools", () => {
+    render(<CoachResources />);
+
+    const quote = screen.getByText(
+      /A gardener doesn't grow flowers, they create environments that make flowers grow\./
+    );
+    const attribution = screen.getByText("Thomas Magnusson, Director of Goaltending in Sweden");
+    const coachToolsHeading = screen.getByRole("heading", { name: "Coach Tools" });
+
+    expect(quote.closest("blockquote")).toContainElement(attribution);
+    expect(
+      quote.compareDocumentPosition(coachToolsHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
 });

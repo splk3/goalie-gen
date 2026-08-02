@@ -175,11 +175,21 @@ export interface GoalieJournalConfig {
   season: string;
   /** Number of weekly practice/game entry pages to generate. */
   entryCount: number;
+  /** Up to three nonblank goals to render on the Season Goals page. */
+  seasonGoals: string[];
+  writeInGoalieName: boolean;
+  writeInTeamName: boolean;
+  writeInSeason: boolean;
+  /** Render printable goal fields instead of configured Season Goals. */
+  writeInSeasonGoals: boolean;
 }
 
 /** Pre-loaded markdown content for the Goalie Journal builder. */
 export interface GoalieJournalContent {
   coverMd: string;
+  acknowledgementsMd: string;
+  howToUseMd: string;
+  howToImproveEveryDayMd: string;
   seasonGoalsMd: string;
   practiceEntryMd: string;
   endOfSeasonMd: string;

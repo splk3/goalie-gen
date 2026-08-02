@@ -1,9 +1,19 @@
 <!-- markdownlint-disable MD041 -->
 
-## Practice & Game Log
+## Goalie Event Log
 
-Goals for today:
+### Before
 
-Skills/Drills:
+What am I feeling?
 
-Self-Evaluation:
+What are my goals?
+
+How will I prepare to help meet my goals?
+
+### After
+
+What am I feeling?
+
+How did I prepare?
+
+Did I meet my goals? / Self-Evaluation:

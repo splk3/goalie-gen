@@ -77,4 +77,34 @@ describe("GoalieResources page", () => {
       "/equipment-fitting"
     );
   });
+
+  it("renders the goalie quotes in order before Goalie Tools", () => {
+    render(<GoalieResources />);
+
+    const quotes = [
+      screen.getByText(/Every day I wake up, it's a good day/),
+      screen.getByText(/The most important part of development is facing adversity\./),
+      screen.getByText(/I wouldn’t change the people I’ve met;/),
+    ];
+    const attributions = [
+      screen.getByText("Abbey Levy, PWHL Goalie, Team USA IIHF World Champion"),
+      screen.getByText("Brian Daccord, StopItGoaltending CEO & Former NHL Goalie Coach"),
+      screen.getByText("Scott Wedgewood, NHL Goalie"),
+    ];
+    const goalieToolsHeading = screen.getByRole("heading", { name: "Goalie Tools" });
+
+    quotes.forEach((quote, index) => {
+      expect(quote.closest("blockquote")).toContainElement(attributions[index]);
+      expect(
+        quote.compareDocumentPosition(goalieToolsHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+      ).toBeTruthy();
+    });
+
+    expect(quotes[0].compareDocumentPosition(quotes[1]) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+    expect(quotes[1].compareDocumentPosition(quotes[2]) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+  });
 });

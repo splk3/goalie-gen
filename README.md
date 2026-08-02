@@ -6,7 +6,7 @@ Goalie Gen (Goaltending Development Plan Generator) makes it easy for youth ice 
 
 - **Individual Development Plans**: Generate personalized goaltending development plans
 - **Team Development Plans**: Create development plans for entire goaltending rosters
-- **Goalie Journal**: Export printable goalie journals for tracking progress
+- **Goalie Journal**: Export printable journals with team branding, an optional goalie photo, configurable entries, and write-in cover fields
 - **Drill Library**: Access and download various goaltending drills
 - **Content Freshness Indicators**: Automatically highlights new and recently updated drills with "New Content!" or "Updated Content!" badges
 - **PDF/DOCX Export**: Export plans in multiple formats using jsPDF and docx libraries
