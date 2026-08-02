@@ -34,6 +34,22 @@ const ENTERED_SEASON_GOAL_MIN_STEP = 10;
 const ENTERED_SEASON_GOAL_TEXT_GAP = 5;
 const WRITE_IN_SEASON_GOAL_STEP = 35;
 const WRITE_IN_SEASON_GOAL_LINE_GAP = 12;
+const END_OF_SEASON_ANSWER_LINES = 2;
+const END_OF_SEASON_LINE_SPACING = 8;
+const END_OF_SEASON_BLOCK_PADDING = 10;
+const JOURNAL_ENTRIES_PER_PAGE = 3;
+const JOURNAL_ENTRY_HEIGHT = 76;
+const JOURNAL_ENTRY_COLUMN_DIVIDER_X = 105;
+const JOURNAL_ENTRY_LEFT_X = 20;
+const JOURNAL_ENTRY_LEFT_END_X = 101;
+const JOURNAL_ENTRY_RIGHT_X = 109;
+const JOURNAL_ENTRY_RIGHT_END_X = 190;
+const JOURNAL_ENTRY_COLUMN_TITLE_OFFSET = 31;
+const JOURNAL_ENTRY_FIRST_PROMPT_OFFSET = 40;
+const JOURNAL_ENTRY_PROMPT_STEP = 10;
+const JOURNAL_ENTRY_UNDERLINE_OFFSET = 4;
+const JOURNAL_ENTRY_FINAL_PROMPT_INDEX = 2;
+const JOURNAL_ENTRY_EXTRA_LINE_GAP = 7;
 
 export const GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT =
   "The goalie journal generator was developed as part of the USA Hockey Goaltending Gold Certification Program. The goal of this journal is to help you develop into the best and most resilient goalie that you can be. Share your journal with your family and coaches so they can help you on your journey.";
@@ -448,30 +464,16 @@ export function buildGoalieJournalPdf(
 
   const entryBlocks = parseMarkdown(practiceEntryMd);
   const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Event Log";
-  const entryLabels = entryBlocks
-    .filter((b) => b.type === "paragraph" || b.type === "bullet")
-    .map((b) => b.text);
+  const getEntryColumnPrompts = (heading: string): string[] =>
+    parseMarkdown(extractLevel3Section(practiceEntryMd, heading))
+      .filter((block) => block.type === "paragraph" || block.type === "bullet")
+      .map((block) => block.text)
+      .slice(0, 3);
+  const beforePrompts = getEntryColumnPrompts("Before");
+  const afterPrompts = getEntryColumnPrompts("After");
 
-  // Compute entry box height accounting for label text wrapping so long
-  // prompts don't collide with the underline or the next field.
-  const labelMaxWidth = 165; // mm available for label text at x=20
-  const labelLineHeight = 5; // mm per wrapped text line
-  const labelRowGap = 8; // mm from last text line to underline + to next prompt start
-  const entryHeaderHeight = 30; // mm from box top to first prompt (entry label + event rows)
-  const entryBorderPadding = 2; // mm for the box border
-  const entryMinHeight = 50; // mm minimum so the box is always readable
-
-  doc.setFontSize(9);
-  const labelWrapped = entryLabels.map((label) => inlineTextLines(doc, label, labelMaxWidth));
-  const computedEntryHeight =
-    entryHeaderHeight +
-    labelWrapped.reduce((sum, lines) => sum + lines.length * labelLineHeight + labelRowGap, 0) +
-    entryBorderPadding;
-  const entryHeight = Math.max(entryMinHeight, computedEntryHeight);
   const journalPageHeight = doc.internal.pageSize.height;
-  const availablePerPage = journalPageHeight - 58;
-  const entriesPerPage = Math.max(1, Math.floor(availablePerPage / entryHeight));
-  const numLogPages = Math.ceil(entryCount / entriesPerPage);
+  const numLogPages = Math.ceil(entryCount / JOURNAL_ENTRIES_PER_PAGE);
 
   for (let page = 0; page < numLogPages; page++) {
     doc.addPage();
@@ -484,14 +486,14 @@ export function buildGoalieJournalPdf(
     doc.setLineWidth(0.5);
     doc.line(177, 15, 195, 15);
 
-    const firstEntry = page * entriesPerPage;
-    const lastEntry = Math.min(firstEntry + entriesPerPage, entryCount);
+    const firstEntry = page * JOURNAL_ENTRIES_PER_PAGE;
+    const lastEntry = Math.min(firstEntry + JOURNAL_ENTRIES_PER_PAGE, entryCount);
     for (let entry = firstEntry; entry < lastEntry; entry++) {
-      const startY = 25 + (entry - firstEntry) * entryHeight;
+      const startY = 25 + (entry - firstEntry) * JOURNAL_ENTRY_HEIGHT;
 
       doc.setDrawColor(entry % 2 === 0 ? primary : secondary);
       doc.setLineWidth(0.5);
-      doc.rect(15, startY, 180, entryHeight - 2);
+      doc.rect(15, startY, 180, JOURNAL_ENTRY_HEIGHT - 2);
       doc.setDrawColor("#000000");
 
       doc.setTextColor("#000000");
@@ -516,20 +518,64 @@ export function buildGoalieJournalPdf(
       doc.text("Opponent:", 20, startY + 23);
       doc.line(42, startY + 23, 100, startY + 23);
 
-      let promptY = startY + entryHeaderHeight;
-      entryLabels.forEach((label) => {
-        const lines = inlineTextLines(doc, label, labelMaxWidth);
-        lines.forEach((line, lineIdx) => {
-          let promptX = 20;
-          line.forEach((segment) => {
-            setInlineFont(doc, segment);
-            doc.text(segment.text, promptX, promptY + lineIdx * labelLineHeight);
-            promptX += doc.getTextWidth(segment.text);
-          });
+      doc.setDrawColor("#B0B0B0");
+      doc.setLineWidth(0.2);
+      doc.line(
+        JOURNAL_ENTRY_COLUMN_DIVIDER_X,
+        startY + 27,
+        JOURNAL_ENTRY_COLUMN_DIVIDER_X,
+        startY + JOURNAL_ENTRY_HEIGHT - 5
+      );
+
+      doc.setTextColor("#000000");
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.text(
+        "Before",
+        (JOURNAL_ENTRY_LEFT_X + JOURNAL_ENTRY_LEFT_END_X) / 2,
+        startY + JOURNAL_ENTRY_COLUMN_TITLE_OFFSET,
+        { align: "center" }
+      );
+      doc.text(
+        "After",
+        (JOURNAL_ENTRY_RIGHT_X + JOURNAL_ENTRY_RIGHT_END_X) / 2,
+        startY + JOURNAL_ENTRY_COLUMN_TITLE_OFFSET,
+        { align: "center" }
+      );
+      doc.setFont("helvetica", "normal");
+      doc.setDrawColor("#000000");
+
+      [
+        {
+          prompts: beforePrompts,
+          x: JOURNAL_ENTRY_LEFT_X,
+          endX: JOURNAL_ENTRY_LEFT_END_X,
+        },
+        {
+          prompts: afterPrompts,
+          x: JOURNAL_ENTRY_RIGHT_X,
+          endX: JOURNAL_ENTRY_RIGHT_END_X,
+        },
+      ].forEach(({ prompts, x, endX }) => {
+        prompts.forEach((prompt, promptIndex) => {
+          const promptY =
+            startY + JOURNAL_ENTRY_FIRST_PROMPT_OFFSET + promptIndex * JOURNAL_ENTRY_PROMPT_STEP;
+          drawInlineText(doc, prompt, x, promptY, endX - x, 4);
+          doc.line(
+            x,
+            promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET,
+            endX,
+            promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET
+          );
+          if (promptIndex === JOURNAL_ENTRY_FINAL_PROMPT_INDEX) {
+            doc.line(
+              x,
+              promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET + JOURNAL_ENTRY_EXTRA_LINE_GAP,
+              endX,
+              promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET + JOURNAL_ENTRY_EXTRA_LINE_GAP
+            );
+          }
         });
-        const underlineY = promptY + lines.length * labelLineHeight + 1;
-        doc.line(20, underlineY, 190, underlineY);
-        promptY += lines.length * labelLineHeight + labelRowGap;
       });
     }
 
@@ -563,9 +609,8 @@ export function buildGoalieJournalPdf(
   drawInlineText(doc, eosTitle, 105, 20, 170, 6, "center");
 
   const eosPageHeight = doc.internal.pageSize.height - 15;
-  const eosAnswerLines = 3;
-  const eosAnswerLineSpacing = 15;
-  const eosBlockHeight = 10 + eosAnswerLines * eosAnswerLineSpacing;
+  const eosBlockHeight =
+    END_OF_SEASON_BLOCK_PADDING + END_OF_SEASON_ANSWER_LINES * END_OF_SEASON_LINE_SPACING;
   doc.setFontSize(12);
   doc.setTextColor("#000000");
   let eosY = JOURNAL_CONTENT_START_Y;
@@ -584,12 +629,12 @@ export function buildGoalieJournalPdf(
       });
     });
     const eosAnswerStart = eosY + promptLines.length * 6 + 2;
-    for (let i = 0; i < eosAnswerLines; i++) {
+    for (let i = 0; i < END_OF_SEASON_ANSWER_LINES; i++) {
       doc.line(
         20,
-        eosAnswerStart + i * eosAnswerLineSpacing,
+        eosAnswerStart + i * END_OF_SEASON_LINE_SPACING,
         190,
-        eosAnswerStart + i * eosAnswerLineSpacing
+        eosAnswerStart + i * END_OF_SEASON_LINE_SPACING
       );
     }
     eosY += eosBlockHeight + (promptLines.length - 1) * 6;

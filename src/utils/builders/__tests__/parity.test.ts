@@ -148,7 +148,25 @@ const JOURNAL_CONTENT: GoalieJournalContent = {
   howToImproveEveryDayMd:
     "# How to Improve Every Day\n\nChoose one small improvement to practice today.",
   seasonGoalsMd: "# Season Goals\n\nSet your goals here.",
-  practiceEntryMd: "# Goalie Event Log\n\nNotes from today's practice.",
+  practiceEntryMd: [
+    "# Goalie Event Log",
+    "",
+    "### Before",
+    "",
+    "What am I feeling?",
+    "",
+    "What are my goals?",
+    "",
+    "How will I prepare?",
+    "",
+    "### After",
+    "",
+    "What am I feeling?",
+    "",
+    "How did I prepare?",
+    "",
+    "Self-Evaluation:",
+  ].join("\n"),
   endOfSeasonMd: "# End of Season Review\n\nReflect on your season.",
 };
 
@@ -167,6 +185,13 @@ function makeMockJsPdfModule() {
     y1: number;
     x2: number;
     y2: number;
+    page: number;
+  }> = [];
+  const rectCalls: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
     page: number;
   }> = [];
   let currentDrawColor = "#000000";
@@ -230,7 +255,8 @@ function makeMockJsPdfModule() {
       lineCalls.push({ x1, y1, x2, y2, page: pages.length });
       return this;
     }
-    rect(_x: number, _y: number, _w: number, _h: number) {
+    rect(x: number, y: number, width: number, height: number) {
+      rectCalls.push({ x, y, width, height, page: pages.length });
       return this;
     }
     splitTextToSize(text: string, _maxWidth: number): string[] {
@@ -263,6 +289,7 @@ function makeMockJsPdfModule() {
     lineDrawColors,
     lineWidths,
     lineCalls,
+    rectCalls,
     fonts,
     texts,
     textCalls,
@@ -1079,6 +1106,99 @@ describe("buildGoalieJournalPdf", () => {
         .filter((call) => call.page === 5 && ["1.", "2.", "3."].includes(call.text))
         .map((call) => call.y)
     ).toEqual([51, 86, 121]);
+  });
+
+  it("renders Before and After columns instead of the legacy event prompts", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      { ...JOURNAL_CONFIG, entryCount: 1 },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toEqual(
+      expect.arrayContaining([
+        "Before",
+        "After",
+        "What am I feeling?",
+        "What are my goals?",
+        "How will I prepare?",
+        "How did I prepare?",
+        "Self-Evaluation:",
+      ])
+    );
+    expect(mockModule.texts).not.toContain("Goals for today:");
+    expect(mockModule.texts).not.toContain("Skills/Drills:");
+  });
+
+  it("fits three two-column event entries on each full log page", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      { ...JOURNAL_CONFIG, entryCount: 4 },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(
+      mockModule.textCalls.filter((call) => call.page === 6 && call.text === "Entry #")
+    ).toHaveLength(3);
+    expect(
+      mockModule.textCalls.filter((call) => call.page === 7 && call.text === "Entry #")
+    ).toHaveLength(1);
+    expect(
+      mockModule.textCalls.find((call) => call.page === 8 && call.text === "End of Season Review")
+    ).toBeDefined();
+
+    const dividers = mockModule.lineCalls.filter(
+      (call) => call.page === 6 && call.x1 === 105 && call.x2 === 105
+    );
+    expect(dividers).toEqual([
+      expect.objectContaining({ y1: 52, y2: 96 }),
+      expect.objectContaining({ y1: 128, y2: 172 }),
+      expect.objectContaining({ y1: 204, y2: 248 }),
+    ]);
+
+    const promptUnderlines = mockModule.lineCalls.filter(
+      (call) =>
+        call.page === 6 &&
+        ((call.x1 === 20 && call.x2 === 101) || (call.x1 === 109 && call.x2 === 190))
+    );
+    expect(promptUnderlines).toHaveLength(24);
+    expect(promptUnderlines.map((call) => call.y1)).toEqual([
+      69, 79, 89, 96, 69, 79, 89, 96, 145, 155, 165, 172, 145, 155, 165, 172, 221, 231, 241, 248,
+      221, 231, 241, 248,
+    ]);
+    const entryBoxes = mockModule.rectCalls.filter(
+      (call) => call.page === 6 && call.x === 15 && call.width === 180
+    );
+    expect(entryBoxes).toHaveLength(3);
+    expect(
+      entryBoxes.map((box, index) => box.y + box.height - promptUnderlines[index * 8 + 3].y1)
+    ).toEqual([3, 3, 3]);
+  });
+
+  it("renders two compact answer lines for each End of Season Review prompt", () => {
+    const mockModule = makeMockJsPdfModule();
+    const content: GoalieJournalContent = {
+      ...JOURNAL_CONTENT,
+      endOfSeasonMd: "# End of Season Review\n\nFirst reflection?\n\nSecond reflection?",
+    };
+
+    buildGoalieJournalPdf(
+      JOURNAL_CONFIG,
+      content,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const reviewLines = mockModule.lineCalls.filter(
+      (call) => call.page === 7 && call.x1 === 20 && call.x2 === 190
+    );
+    expect(reviewLines.map((call) => call.y1)).toEqual([39, 47, 65, 73]);
   });
 
   it("uses configured primary and secondary colors for PDF accents", () => {
