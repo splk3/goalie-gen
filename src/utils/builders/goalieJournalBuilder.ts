@@ -29,6 +29,7 @@ type JsPdfModule = typeof import("jspdf");
 type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
 
 const JOURNAL_CONTENT_START_Y = 31;
+const JOURNAL_CONTENT_PARAGRAPH_GAP = 3;
 const SEASON_GOALS_START_OFFSET = 20;
 const ENTERED_SEASON_GOAL_MIN_STEP = 10;
 const ENTERED_SEASON_GOAL_TEXT_GAP = 5;
@@ -128,8 +129,7 @@ function drawInlineText(
 function renderJournalContentPage(
   doc: JournalDocument,
   markdown: string,
-  primary: string,
-  options: { compactBulletSpacing?: boolean } = {}
+  primary: string
 ): number {
   const blocks = parseMarkdown(markdown);
   const titleIndex = blocks.findIndex((block) => block.type === "heading");
@@ -150,7 +150,7 @@ function renderJournalContentPage(
   doc.setTextColor("#000000");
   doc.setFontSize(11);
   let y = JOURNAL_CONTENT_START_Y;
-  bodyBlocks.forEach((block) => {
+  bodyBlocks.forEach((block, index) => {
     if (block.type === "heading") {
       y += 4;
       doc.setTextColor(primary);
@@ -162,10 +162,13 @@ function renderJournalContentPage(
       return;
     }
 
+    if (block.type === "paragraph" && bodyBlocks[index - 1]?.type === "bullet") {
+      y += JOURNAL_CONTENT_PARAGRAPH_GAP;
+    }
+
     const text = block.type === "bullet" ? `- ${block.text}` : block.text;
     const lineCount = drawInlineText(doc, text, 20, y, 170, 6);
-    const spacingAfter = block.type === "bullet" && options.compactBulletSpacing ? 0 : 6;
-    y += lineCount * 6 + spacingAfter;
+    y += lineCount * 6 + (block.type === "paragraph" ? JOURNAL_CONTENT_PARAGRAPH_GAP : 0);
   });
 
   return y;
@@ -430,9 +433,7 @@ export function buildGoalieJournalPdf(
   // ── How to Improve Every Day page ───────────────────────────────────────────
 
   doc.addPage();
-  renderJournalContentPage(doc, howToImproveEveryDayMd, primary, {
-    compactBulletSpacing: true,
-  });
+  renderJournalContentPage(doc, howToImproveEveryDayMd, primary);
 
   // ── Season Goals page ──────────────────────────────────────────────────────
 

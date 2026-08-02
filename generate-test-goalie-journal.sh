@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Generate the documented sample goalie journal.
 npx tsx generate-test-goalie-journal.ts \
-	--name "Greg Goldberg" \
+	--name "Paddy McStacks" \
 	--team "Delaware Stars" \
 	--logo static/images/test/logos/stars.jpg \
 	--goalie-photo static/images/test/goalie-headshot.png \

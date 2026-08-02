@@ -1359,10 +1359,22 @@ describe("buildGoalieJournalPdf", () => {
     );
   });
 
-  it("renders level-3 headings and compact bullets on the improvement page", () => {
+  it("renders level-3 headings and compact bullets on every journal content page", () => {
     const mockModule = makeMockJsPdfModule();
     const content: GoalieJournalContent = {
       ...JOURNAL_CONTENT,
+      howToUseMd: [
+        "# How to Use This Journal",
+        "",
+        "First paragraph.",
+        "",
+        "Second paragraph.",
+        "",
+        "- First instruction",
+        "- Second instruction",
+        "",
+        "Closing paragraph.",
+      ].join("\n"),
       howToImproveEveryDayMd:
         "# How to Improve Every Day\n\n### Practice Growth\n\n- First action\n- Second action",
     };
@@ -1375,12 +1387,33 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(mockModule.texts).toContain("Practice Growth");
+    const firstParagraph = mockModule.textCalls.find(
+      (call) => call.page === 3 && call.text === "First paragraph."
+    );
+    const secondParagraph = mockModule.textCalls.find(
+      (call) => call.page === 3 && call.text === "Second paragraph."
+    );
+    const firstInstruction = mockModule.textCalls.find(
+      (call) => call.page === 3 && call.text === "- First instruction"
+    );
+    const secondInstruction = mockModule.textCalls.find(
+      (call) => call.page === 3 && call.text === "- Second instruction"
+    );
+    const closingParagraph = mockModule.textCalls.find(
+      (call) => call.page === 3 && call.text === "Closing paragraph."
+    );
     const firstBullet = mockModule.textCalls.find(
       (call) => call.page === 4 && call.text === "- First action"
     );
     const secondBullet = mockModule.textCalls.find(
       (call) => call.page === 4 && call.text === "- Second action"
     );
+    expect(firstParagraph).toBeDefined();
+    expect(secondParagraph?.y).toBe((firstParagraph?.y ?? 0) + 9);
+    expect(firstInstruction).toBeDefined();
+    expect(firstInstruction?.y).toBe((secondParagraph?.y ?? 0) + 9);
+    expect(secondInstruction?.y).toBe((firstInstruction?.y ?? 0) + 6);
+    expect(closingParagraph?.y).toBe((secondInstruction?.y ?? 0) + 9);
     expect(firstBullet).toBeDefined();
     expect(secondBullet?.y).toBe((firstBullet?.y ?? 0) + 6);
   });
