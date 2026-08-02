@@ -155,6 +155,13 @@ function setupMocks(opts?: {
   });
 
   // Override document.createElement to capture canvas dimensions.
+  if (jest.isMockFunction(document.createElement)) {
+    (
+      document.createElement as typeof document.createElement & {
+        mockRestore: () => void;
+      }
+    ).mockRestore();
+  }
   const originalCreate = document.createElement.bind(document);
   jest.spyOn(document, "createElement").mockImplementation((tagName: string) => {
     if (tagName === "canvas") {
@@ -570,7 +577,7 @@ describe("generateDrillPdf layout selection", () => {
     expect(output.slice(Math.max(0, headingIndex - 80), headingIndex)).toMatch(/F2 9 Tf/);
   });
 
-  it("uses single-column image width for shot-rebound-recovery", async () => {
+  it("uses two-column image width for shot-rebound-recovery", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
     const addImageSpy = jest.spyOn(
@@ -588,7 +595,7 @@ describe("generateDrillPdf layout selection", () => {
       const width = call[4];
       return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
     });
-    expect(hasSingleColumnDrillImage).toBe(true);
+    expect(hasSingleColumnDrillImage).toBe(false);
   });
 
   it("renders video URL as a clickable link and adds an inline QR code image", async () => {
@@ -671,19 +678,36 @@ describe("generateDrillPdf pagination regression alignment", () => {
 
   it("keeps rim-stop-cut-across in dedicated progression-page mode", async () => {
     const folder = "rim-stop-cut-across";
+    setupMocks({ imageWidth: 815, imageHeight: 744 });
     const drillData = loadDrillFixture(folder);
 
     expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
     const pageEstimate = estimateDrillPdfPages(drillData);
     expect(pageEstimate).toMatchObject({
-      mainContentPages: 2,
+      mainContentPages: 1,
       dedicatedProgressionPages: 1,
-      totalPages: 3,
+      totalPages: 2,
     });
 
     const doc = await generateDrillPdf(drillData, folder);
-    expect(doc.getNumberOfPages()).toBeGreaterThan(1);
-    expect(doc.getNumberOfPages()).toBeLessThanOrEqual(pageEstimate.totalPages);
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
+  });
+
+  it("keeps rvh-low-to-high-release aligned between estimator and generator", async () => {
+    const folder = "rvh-low-to-high-release";
+    setupMocks({ imageWidth: 1066, imageHeight: 512 });
+    const drillData = loadDrillFixture(folder);
+
+    expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    expect(pageEstimate).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 1,
+      totalPages: 2,
+    });
+
+    const doc = await generateDrillPdf(drillData, folder);
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
   });
 
   it("keeps progression-image drills aligned between estimator and generator", async () => {
