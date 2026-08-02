@@ -121,6 +121,10 @@ describe("GoalieJournalButton", () => {
     );
     const teamLogoInput = screen.getByRole("button", { name: "Team Logo (Optional)" });
     const goaliePhotoInput = screen.getByRole("button", { name: "Goalie Photo (Optional)" });
+    const seasonGoalsGroup = screen.getByRole("group", { name: "Season Goals" });
+    expect(
+      seasonGoalsGroup.compareDocumentPosition(goaliePhotoInput) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
     expect(
       goaliePhotoInput.compareDocumentPosition(teamLogoInput) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
@@ -180,6 +184,8 @@ describe("GoalieJournalButton", () => {
       const entryCountInput = screen.getByLabelText("Number of Journal Entries");
       const primaryHexInput = screen.getByLabelText("Primary Team Color Hex");
       const secondaryHexInput = screen.getByLabelText("Secondary Team Color Hex");
+      const firstGoalInput = screen.getByLabelText("Goal 1");
+      const thirdGoalInput = screen.getByLabelText("Goal 3");
 
       await user.type(goalieNameInput, "Test Goalie");
       await user.type(teamNameInput, "Test Team");
@@ -191,6 +197,8 @@ describe("GoalieJournalButton", () => {
       await user.type(primaryHexInput, "#123456");
       await user.clear(secondaryHexInput);
       await user.type(secondaryHexInput, "#ABCDEF");
+      await user.type(firstGoalInput, "Improve rebound control");
+      await user.type(thirdGoalInput, "Communicate with defenders");
       await user.click(screen.getByRole("button", { name: "Generate" }));
 
       await waitFor(() => {
@@ -205,9 +213,11 @@ describe("GoalieJournalButton", () => {
             secondaryColor: "#ABCDEF",
             season: "Middle-School",
             entryCount: 36,
+            seasonGoals: ["Improve rebound control", "Communicate with defenders"],
             writeInGoalieName: false,
             writeInTeamName: false,
             writeInSeason: false,
+            writeInSeasonGoals: false,
           }),
           expect.anything(),
           expect.anything(),
@@ -284,6 +294,8 @@ describe("GoalieJournalButton", () => {
     const goalieNameInput = screen.getByLabelText("Goalie Name");
     const teamNameInput = screen.getByLabelText("Team Name");
     const seasonInput = screen.getByLabelText("Season");
+    const seasonGoalInputs = [1, 2, 3].map((number) => screen.getByLabelText(`Goal ${number}`));
+    await user.type(seasonGoalInputs[0], "Improve positioning");
 
     await user.click(
       screen.getByRole("checkbox", {
@@ -300,10 +312,16 @@ describe("GoalieJournalButton", () => {
         name: "Write Season in later on printed journal",
       })
     );
+    await user.click(
+      screen.getByRole("checkbox", {
+        name: "Write Season Goals in later on printed journal",
+      })
+    );
 
     expect(goalieNameInput).toBeDisabled();
     expect(teamNameInput).toBeDisabled();
     expect(seasonInput).toBeDisabled();
+    seasonGoalInputs.forEach((input) => expect(input).toBeDisabled());
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
@@ -311,6 +329,39 @@ describe("GoalieJournalButton", () => {
     expect(screen.getByLabelText("Goalie Name")).toBeEnabled();
     expect(screen.getByLabelText("Team Name")).toBeEnabled();
     expect(screen.getByLabelText("Season")).toBeEnabled();
+    [1, 2, 3].forEach((number) => expect(screen.getByLabelText(`Goal ${number}`)).toBeEnabled());
+    expect(screen.getByLabelText("Goal 1")).toHaveValue("");
+  });
+
+  it("uses printable Season Goal fields when all goal inputs are blank", async () => {
+    const user = userEvent.setup();
+    const restoreImageMocks = installImageMocks();
+    render(<GoalieJournalButton />);
+
+    try {
+      await user.click(screen.getByRole("button", { name: "Goalie Journal" }));
+      await user.type(screen.getByLabelText("Goalie Name"), "Test Goalie");
+      await user.type(screen.getByLabelText("Team Name"), "Test Team");
+      await user.click(screen.getByRole("button", { name: "Generate" }));
+
+      await waitFor(() => {
+        expect(mockBuildGoalieJournalPdf).toHaveBeenCalledWith(
+          expect.objectContaining({
+            seasonGoals: [],
+            writeInSeasonGoals: true,
+          }),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          null,
+          expect.anything()
+        );
+      });
+    } finally {
+      restoreImageMocks();
+    }
   });
 
   it("generates with blank identity values when all fields are marked for writing in later", async () => {
@@ -343,9 +394,11 @@ describe("GoalieJournalButton", () => {
             goalieName: "",
             teamName: "",
             season: getDefaultJournalSeason(),
+            seasonGoals: [],
             writeInGoalieName: true,
             writeInTeamName: true,
             writeInSeason: true,
+            writeInSeasonGoals: true,
           }),
           expect.anything(),
           expect.anything(),

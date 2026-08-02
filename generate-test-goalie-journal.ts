@@ -4,10 +4,12 @@ import * as jsPdfModule from "jspdf";
 import * as qrCode from "qrcode";
 import {
   DEFAULT_JOURNAL_ENTRY_COUNT,
+  JOURNAL_SEASON_GOAL_COUNT,
   MAX_JOURNAL_ENTRY_COUNT,
   MIN_JOURNAL_ENTRY_COUNT,
   getDefaultJournalSeason,
   normalizeJournalSeason,
+  normalizeJournalSeasonGoals,
   parseJournalEntryCount,
 } from "./src/utils/generatorDefaults";
 import { DEFAULT_PRIMARY_TEAM_COLOR, DEFAULT_SECONDARY_TEAM_COLOR } from "./src/utils/teamColors";
@@ -54,6 +56,8 @@ async function run() {
   let writeInGoalieName = false;
   let writeInTeamName = false;
   let writeInSeason = false;
+  const seasonGoals: string[] = [];
+  let writeInSeasonGoals = false;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--name" && args[i + 1]) {
@@ -103,6 +107,14 @@ async function run() {
       writeInTeamName = true;
     } else if (args[i] === "--write-in-season") {
       writeInSeason = true;
+    } else if (args[i] === "--season-goal" && args[i + 1]) {
+      if (seasonGoals.length >= JOURNAL_SEASON_GOAL_COUNT) {
+        throw new Error(`--season-goal may be provided at most ${JOURNAL_SEASON_GOAL_COUNT} times`);
+      }
+      seasonGoals.push(args[i + 1]);
+      i++;
+    } else if (args[i] === "--write-in-season-goals") {
+      writeInSeasonGoals = true;
     } else if (args[i] === "--help" || args[i] === "-h") {
       console.log(`
 Usage: tsx generate-test-goalie-journal.ts [options]
@@ -120,6 +132,8 @@ Options:
   --write-in-goalie-name  Render a printable Goalie Name field
   --write-in-team-name    Render a printable Team Name field
   --write-in-season       Render a printable Season field
+  --season-goal <string>  Add a Season Goal (repeat up to ${JOURNAL_SEASON_GOAL_COUNT} times)
+  --write-in-season-goals Render ${JOURNAL_SEASON_GOAL_COUNT} printable Season Goal fields
       `);
       return;
     }
@@ -146,6 +160,10 @@ Options:
   console.log(`  Entries:     ${entryCount}`);
   console.log(
     `  Write-ins:   Goalie Name: ${writeInGoalieName}, Team Name: ${writeInTeamName}, Season: ${writeInSeason}`
+  );
+  const normalizedSeasonGoals = normalizeJournalSeasonGoals(seasonGoals);
+  console.log(
+    `  Season Goals: ${normalizedSeasonGoals.length > 0 ? normalizedSeasonGoals.join(" | ") : "Write in later"}`
   );
   console.log(`  Output:      ${outputPath}\n`);
 
@@ -181,9 +199,11 @@ Options:
     secondaryColor,
     season: writeInSeason ? "" : season,
     entryCount,
+    seasonGoals: normalizedSeasonGoals,
     writeInGoalieName,
     writeInTeamName,
     writeInSeason,
+    writeInSeasonGoals: writeInSeasonGoals || normalizedSeasonGoals.length === 0,
   };
 
   const qrCodeDataUrl = await qrCode.toDataURL(GOALIE_JOURNAL_PROMOTION_URL, {

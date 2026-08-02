@@ -14,10 +14,12 @@ import {
 } from "../utils/teamColors";
 import {
   DEFAULT_JOURNAL_ENTRY_COUNT,
+  JOURNAL_SEASON_GOAL_COUNT,
   MAX_JOURNAL_ENTRY_COUNT,
   MIN_JOURNAL_ENTRY_COUNT,
   getDefaultJournalSeason,
   normalizeJournalSeason,
+  normalizeJournalSeasonGoals,
   parseJournalEntryCount,
   sanitizeJournalFilenamePart,
 } from "../utils/generatorDefaults";
@@ -41,11 +43,15 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
   const [teamName, setTeamName] = React.useState<string>("");
   const [season, setSeason] = React.useState<string>(() => getDefaultJournalSeason());
   const [entryCount, setEntryCount] = React.useState<string>(String(DEFAULT_JOURNAL_ENTRY_COUNT));
+  const [seasonGoals, setSeasonGoals] = React.useState<string[]>(() =>
+    Array(JOURNAL_SEASON_GOAL_COUNT).fill("")
+  );
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
   const [goaliePhotoPreview, setGoaliePhotoPreview] = React.useState<string | null>(null);
   const [writeInGoalieName, setWriteInGoalieName] = React.useState<boolean>(false);
   const [writeInTeamName, setWriteInTeamName] = React.useState<boolean>(false);
   const [writeInSeason, setWriteInSeason] = React.useState<boolean>(false);
+  const [writeInSeasonGoals, setWriteInSeasonGoals] = React.useState<boolean>(false);
   const [primaryTeamColor, setPrimaryTeamColor] = React.useState<string>(
     DEFAULT_PRIMARY_TEAM_COLOR
   );
@@ -191,6 +197,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     const footerLogoData = await resolveLogoData(footerLogoBase64);
     const goaliePhotoData = await resolveLogoData(goaliePhotoPreview);
     const goldCertificationBadgeData = await resolveLogoData(goldCertificationBadgeBase64);
+    const normalizedSeasonGoals = normalizeJournalSeasonGoals(seasonGoals);
 
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
       goalieName: writeInGoalieName ? "" : goalieName.trim(),
@@ -199,9 +206,11 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       secondaryColor: secondaryTeamColor,
       season: normalizedSeason,
       entryCount: normalizedEntryCount,
+      seasonGoals: normalizedSeasonGoals,
       writeInGoalieName,
       writeInTeamName,
       writeInSeason,
+      writeInSeasonGoals: writeInSeasonGoals || normalizedSeasonGoals.length === 0,
     };
 
     const journalContent: import("../types/generatorConfig").GoalieJournalContent = {
@@ -306,11 +315,13 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       setTeamName("");
       setSeason(getDefaultJournalSeason());
       setEntryCount(String(DEFAULT_JOURNAL_ENTRY_COUNT));
+      setSeasonGoals(Array(JOURNAL_SEASON_GOAL_COUNT).fill(""));
       setLogoPreview(null);
       setGoaliePhotoPreview(null);
       setWriteInGoalieName(false);
       setWriteInTeamName(false);
       setWriteInSeason(false);
+      setWriteInSeasonGoals(false);
       setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
       setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
       setLogoPaletteColors([]);
@@ -326,11 +337,13 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
     setTeamName("");
     setSeason(getDefaultJournalSeason());
     setEntryCount(String(DEFAULT_JOURNAL_ENTRY_COUNT));
+    setSeasonGoals(Array(JOURNAL_SEASON_GOAL_COUNT).fill(""));
     setLogoPreview(null);
     setGoaliePhotoPreview(null);
     setWriteInGoalieName(false);
     setWriteInTeamName(false);
     setWriteInSeason(false);
+    setWriteInSeasonGoals(false);
     setPrimaryTeamColor(DEFAULT_PRIMARY_TEAM_COLOR);
     setSecondaryTeamColor(DEFAULT_SECONDARY_TEAM_COLOR);
     setLogoPaletteColors([]);
@@ -488,6 +501,48 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
               />
             </div>
           </div>
+
+          <fieldset className="mb-4">
+            <legend className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
+              Season Goals
+            </legend>
+            <label className="mb-3 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                aria-label="Write Season Goals in later on printed journal"
+                checked={writeInSeasonGoals}
+                onChange={(e) => setWriteInSeasonGoals(e.target.checked)}
+                disabled={!!generatedBlob || isGenerating}
+                className="h-4 w-4 accent-usa-blue dark:accent-blue-400 disabled:cursor-not-allowed"
+              />
+              Write in later on printed journal
+            </label>
+            <div className="space-y-3">
+              {seasonGoals.map((goal, index) => (
+                <div key={index}>
+                  <label
+                    htmlFor={`journal-season-goal-${index + 1}`}
+                    className="block text-sm text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Goal {index + 1}
+                  </label>
+                  <input
+                    type="text"
+                    id={`journal-season-goal-${index + 1}`}
+                    value={goal}
+                    onChange={(e) => {
+                      const nextGoals = [...seasonGoals];
+                      nextGoals[index] = e.target.value;
+                      setSeasonGoals(nextGoals);
+                    }}
+                    disabled={writeInSeasonGoals || !!generatedBlob || isGenerating}
+                    className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder={`Enter season goal ${index + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
           <ImageUploader
             onImageCropped={handleGoaliePhotoCropped}

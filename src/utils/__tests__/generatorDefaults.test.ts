@@ -4,6 +4,7 @@ import {
   getEventContentMarkdown,
   getSeasonOverviewMarkdown,
   normalizeJournalSeason,
+  normalizeJournalSeasonGoals,
   parseJournalEntryCount,
   sanitizeJournalFilenamePart,
   selectRandomLevel3Section,
@@ -48,6 +49,12 @@ describe("goalie journal defaults", () => {
   it("normalizes non-empty free-form seasons", () => {
     expect(normalizeJournalSeason("  Middle-School  ")).toBe("Middle-School");
     expect(normalizeJournalSeason("   ")).toBeNull();
+  });
+
+  it("normalizes up to three nonblank Season Goals", () => {
+    expect(
+      normalizeJournalSeasonGoals([" First goal ", " ", "Second goal", "Third goal", "Fourth goal"])
+    ).toEqual(["First goal", "Second goal", "Third goal"]);
   });
 
   it.each([

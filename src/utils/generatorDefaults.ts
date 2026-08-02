@@ -27,6 +27,9 @@ export const DEFAULT_GOALIE_DISCOUNT = "ex. 50%, $500";
 /** Default number of weekly practice/game log entries in the journal. */
 export const DEFAULT_JOURNAL_ENTRY_COUNT = 24;
 
+/** Number of configurable goals shown in the journal generator. */
+export const JOURNAL_SEASON_GOAL_COUNT = 3;
+
 export const MIN_JOURNAL_ENTRY_COUNT = 1;
 
 export const MAX_JOURNAL_ENTRY_COUNT = 100;
@@ -41,6 +44,14 @@ export function getDefaultJournalSeason(date = new Date()): string {
 export function normalizeJournalSeason(value: string): string | null {
   const normalized = value.trim();
   return normalized || null;
+}
+
+/** Trims journal goals, removes blanks, and caps the result at the supported count. */
+export function normalizeJournalSeasonGoals(values: string[]): string[] {
+  return values
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .slice(0, JOURNAL_SEASON_GOAL_COUNT);
 }
 
 /** Parses a journal entry count using the shared whole-number range. */

@@ -118,9 +118,11 @@ const JOURNAL_CONFIG: GoalieJournalConfig = {
   secondaryColor: "#AF272F",
   season: "2026-2027",
   entryCount: 2,
+  seasonGoals: [],
   writeInGoalieName: false,
   writeInTeamName: false,
   writeInSeason: false,
+  writeInSeasonGoals: true,
 };
 
 const JOURNAL_QUOTATION = '"Every day I wake up, it\'s a good day."';
@@ -822,8 +824,8 @@ describe("buildGoalieJournalPdf", () => {
         expect.objectContaining({
           page: 5,
           x1: 30,
-          y1: 46,
-          y2: 46,
+          y1: 51,
+          y2: 51,
         }),
       ])
     );
@@ -1024,6 +1026,59 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(mockModule.texts).toContain(`Season: ${JOURNAL_CONFIG.season}`);
+  });
+
+  it("renders configured Season Goals in order and omits blank values", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      {
+        ...JOURNAL_CONFIG,
+        seasonGoals: ["Improve rebound control", "  ", "Track the puck through traffic"],
+        writeInSeasonGoals: false,
+      },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    expect(mockModule.texts).toEqual(
+      expect.arrayContaining(["Improve rebound control", "Track the puck through traffic"])
+    );
+    expect(mockModule.texts).not.toContain("  ");
+    expect(
+      mockModule.textCalls
+        .filter((call) =>
+          ["Improve rebound control", "Track the puck through traffic"].includes(call.text)
+        )
+        .map((call) => call.y)
+    ).toEqual([51, 61]);
+  });
+
+  it("renders three printable Season Goal areas when goals are blank", () => {
+    const mockModule = makeMockJsPdfModule();
+
+    buildGoalieJournalPdf(
+      {
+        ...JOURNAL_CONFIG,
+        seasonGoals: ["", " ", ""],
+        writeInSeasonGoals: false,
+      },
+      JOURNAL_CONTENT,
+      null,
+      mockModule as unknown as typeof import("jspdf")
+    );
+
+    const goalLines = mockModule.lineCalls.filter(
+      (call) => call.page === 5 && call.x1 === 30 && call.x2 === 190
+    );
+    expect(goalLines).toHaveLength(6);
+    expect(goalLines.map((call) => call.y1)).toEqual([51, 63, 86, 98, 121, 133]);
+    expect(
+      mockModule.textCalls
+        .filter((call) => call.page === 5 && ["1.", "2.", "3."].includes(call.text))
+        .map((call) => call.y)
+    ).toEqual([51, 86, 121]);
   });
 
   it("uses configured primary and secondary colors for PDF accents", () => {

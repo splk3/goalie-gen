@@ -17,6 +17,7 @@ import {
   DEFAULT_SECONDARY_TEAM_COLOR,
   normalizeHexRgbColor,
 } from "../teamColors";
+import { JOURNAL_SEASON_GOAL_COUNT, normalizeJournalSeasonGoals } from "../generatorDefaults";
 import { extractLevel3Section } from "../generatorDefaults";
 import {
   GOALIE_JOURNAL_COVER_PROMOTION_LINES,
@@ -28,6 +29,11 @@ type JsPdfModule = typeof import("jspdf");
 type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
 
 const JOURNAL_CONTENT_START_Y = 31;
+const SEASON_GOALS_START_OFFSET = 20;
+const ENTERED_SEASON_GOAL_MIN_STEP = 10;
+const ENTERED_SEASON_GOAL_TEXT_GAP = 5;
+const WRITE_IN_SEASON_GOAL_STEP = 35;
+const WRITE_IN_SEASON_GOAL_LINE_GAP = 12;
 
 export const GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT =
   "The goalie journal generator was developed as part of the USA Hockey Goaltending Gold Certification Program. The goal of this journal is to help you develop into the best and most resilient goalie that you can be. Share your journal with your family and coaches so they can help you on your journey.";
@@ -286,9 +292,11 @@ export function buildGoalieJournalPdf(
     secondaryColor,
     season,
     entryCount,
+    seasonGoals,
     writeInGoalieName,
     writeInTeamName,
     writeInSeason,
+    writeInSeasonGoals,
   } = config;
   const {
     coverMd,
@@ -418,12 +426,22 @@ export function buildGoalieJournalPdf(
     drawInlineText(doc, goalsPrompt, 20, JOURNAL_CONTENT_START_Y, 170, 5);
   }
 
-  for (let i = 0; i < 8; i++) {
-    const y = JOURNAL_CONTENT_START_Y + 15 + i * 25;
-    doc.text(`${i + 1}.`, 20, y);
-    doc.setDrawColor(secondary);
-    doc.line(30, y, 190, y);
-    doc.line(30, y + 10, 190, y + 10);
+  const normalizedSeasonGoals = normalizeJournalSeasonGoals(seasonGoals);
+  if (writeInSeasonGoals || normalizedSeasonGoals.length === 0) {
+    for (let i = 0; i < JOURNAL_SEASON_GOAL_COUNT; i++) {
+      const y = JOURNAL_CONTENT_START_Y + SEASON_GOALS_START_OFFSET + i * WRITE_IN_SEASON_GOAL_STEP;
+      doc.text(`${i + 1}.`, 20, y);
+      doc.setDrawColor(secondary);
+      doc.line(30, y, 190, y);
+      doc.line(30, y + WRITE_IN_SEASON_GOAL_LINE_GAP, 190, y + WRITE_IN_SEASON_GOAL_LINE_GAP);
+    }
+  } else {
+    let goalY = JOURNAL_CONTENT_START_Y + SEASON_GOALS_START_OFFSET;
+    normalizedSeasonGoals.forEach((goal, index) => {
+      doc.text(`${index + 1}.`, 20, goalY);
+      const lineCount = drawInlineText(doc, goal, 30, goalY, 160, 5);
+      goalY += Math.max(ENTERED_SEASON_GOAL_MIN_STEP, lineCount * 5 + ENTERED_SEASON_GOAL_TEXT_GAP);
+    });
   }
 
   // ── Practice/Game Log pages ────────────────────────────────────────────────
