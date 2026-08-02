@@ -246,6 +246,8 @@ function drawCoverImages(
     const sourceWidth = image.width > 0 ? image.width : maxWidth;
     const sourceHeight = image.height > 0 ? image.height : maxHeight;
     const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
+    const width = sourceWidth * scale;
+    const height = sourceHeight * scale;
     const format =
       image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
         ? "JPEG"
