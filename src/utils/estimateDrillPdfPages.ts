@@ -16,7 +16,6 @@ import {
   DRILL_VIDEO_SECTION_TOP_GAP_MM,
   DRILL_VIDEO_SEPARATOR_TITLE_SPACING_MM,
   PROGRESSION_IMAGE_TEXT_GAP,
-  PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
   PROGRESSION_VIDEO_NOTE_HEIGHT,
   SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
@@ -47,7 +46,6 @@ const CHARS_PER_LINE_PROGRESSION = 112; // progression name + description at lar
 const HEADING_HEIGHT = 7.5; // section heading + compact gap
 const LINE_HEIGHT = 3.2; // body text / bullet line
 const SECTION_GAP = 2; // gap between sections
-const SKILLS_SECTION_TOP_GAP = 4;
 const VIDEO_URL_CHARS_PER_LINE = 116;
 
 // Page layout constants (mm, A4 portrait)
@@ -385,7 +383,7 @@ function estimateFirstPageSegmentHeight(
       )
     : 0;
   const postProgressionHeight =
-    SKILLS_SECTION_TOP_GAP + estimateSkillsFocusSectionHeight(drillData) + videoSectionHeight;
+    SKILLS_FOCUS_TOP_GAP + estimateSkillsFocusSectionHeight(drillData) + videoSectionHeight;
 
   return topPhaseHeight + preProgressionHeight + progressionHeight + postProgressionHeight;
 }
