@@ -29,7 +29,6 @@ import coverMd from "../content/goalie-journal/cover.md";
 import acknowledgementsMd from "../content/goalie-journal/acknowledgements.md";
 import howToUseMd from "../content/goalie-journal/how-to-use.md";
 import howToImproveEveryDayMd from "../content/goalie-journal/how-to-improve-every-day.md";
-import seasonGoalsMd from "../content/goalie-journal/season-goals.md";
 import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
 import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
@@ -218,7 +217,6 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       acknowledgementsMd,
       howToUseMd,
       howToImproveEveryDayMd,
-      seasonGoalsMd,
       practiceEntryMd,
       endOfSeasonMd,
     };

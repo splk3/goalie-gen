@@ -147,7 +147,6 @@ const JOURNAL_CONTENT: GoalieJournalContent = {
     "# How to Use this Journal\n\nUse this journal to track your progress.\n\n- Review your entries.",
   howToImproveEveryDayMd:
     "# How to Improve Every Day\n\nChoose one small improvement to practice today.",
-  seasonGoalsMd: "# Season Goals\n\nSet your goals here.",
   practiceEntryMd: [
     "# Goalie Event Log",
     "",
@@ -193,13 +192,22 @@ function makeMockJsPdfModule() {
     width: number;
     height: number;
     page: number;
+    color: string;
   }> = [];
   let currentDrawColor = "#000000";
   let currentTextColor = "#000000";
   let currentLineWidth = 0.2;
   const fonts: string[] = [];
   const texts: string[] = [];
-  const textCalls: Array<{ text: string; x: number; y: number; page: number; color: string }> = [];
+  let currentFontSize = 16;
+  const textCalls: Array<{
+    text: string;
+    x: number;
+    y: number;
+    page: number;
+    color: string;
+    fontSize: number;
+  }> = [];
   const images: string[] = [];
   const imageCalls: Array<{
     data: string;
@@ -222,7 +230,8 @@ function makeMockJsPdfModule() {
       pageSize: { height: 297 },
       pages,
     };
-    setFontSize(_size: number) {
+    setFontSize(size: number) {
+      currentFontSize = size;
       return this;
     }
     setFont(_name: string, _style?: string) {
@@ -246,7 +255,14 @@ function makeMockJsPdfModule() {
     text(_text: string | string[], _x: number, _y: number, _options?: object) {
       const text = Array.isArray(_text) ? _text.join("\n") : _text;
       texts.push(text);
-      textCalls.push({ text, x: _x, y: _y, page: pages.length, color: currentTextColor });
+      textCalls.push({
+        text,
+        x: _x,
+        y: _y,
+        page: pages.length,
+        color: currentTextColor,
+        fontSize: currentFontSize,
+      });
       return this;
     }
     line(x1: number, y1: number, x2: number, y2: number) {
@@ -256,7 +272,7 @@ function makeMockJsPdfModule() {
       return this;
     }
     rect(x: number, y: number, width: number, height: number) {
-      rectCalls.push({ x, y, width, height, page: pages.length });
+      rectCalls.push({ x, y, width, height, page: pages.length, color: currentDrawColor });
       return this;
     }
     splitTextToSize(text: string, _maxWidth: number): string[] {
@@ -822,7 +838,7 @@ describe("buildGoalieJournalPdf", () => {
     // just confirm the function completes without throwing.
   });
 
-  it("uses the reduced heading gap on all journal content pages", () => {
+  it("combines the requested journal sections in their intended order", () => {
     const mockModule = makeMockJsPdfModule();
 
     buildGoalieJournalPdf(
@@ -831,28 +847,31 @@ describe("buildGoalieJournalPdf", () => {
       null,
       mockModule as unknown as typeof import("jspdf")
     );
-
     [
-      ["Thank you to the people who support your development.", 2],
-      ["Use this journal to track your progress.", 3],
-      ["Choose one small improvement to practice today.", 4],
-      ["Set your goals here.", 5],
-      ["Reflect on your season.", 7],
-    ].forEach(([text, page]) => {
+      ["Use this journal to track your progress.", 2, 31],
+      ["Thank you to the people who support your development.", 2, 64],
+      ["Choose one small improvement to practice today.", 3, 31],
+      ["Reflect on your season.", 4, 109],
+    ].forEach(([text, page, y]) => {
       expect(mockModule.textCalls.find((call) => call.text === text)).toEqual(
         expect.objectContaining({
           page,
-          y: 31,
+          y,
         })
       );
     });
+    expect(
+      mockModule.textCalls
+        .filter((call) => ["Season Goals", "End of Season Review"].includes(call.text))
+        .map((call) => call.fontSize)
+    ).toEqual([20, 20]);
     expect(mockModule.lineCalls).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          page: 5,
+          page: 4,
           x1: 30,
-          y1: 51,
-          y2: 51,
+          y1: 34,
+          y2: 34,
         }),
       ])
     );
@@ -1079,7 +1098,12 @@ describe("buildGoalieJournalPdf", () => {
           ["Improve rebound control", "Track the puck through traffic"].includes(call.text)
         )
         .map((call) => call.y)
-    ).toEqual([51, 61]);
+    ).toEqual([34, 44]);
+    expect(
+      mockModule.rectCalls.find(
+        (call) => call.page === 4 && call.color === JOURNAL_CONFIG.primaryColor
+      )
+    ).toEqual(expect.objectContaining({ y: 12, height: 41 }));
   });
 
   it("renders three printable Season Goal areas when goals are blank", () => {
@@ -1097,15 +1121,24 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     const goalLines = mockModule.lineCalls.filter(
-      (call) => call.page === 5 && call.x1 === 30 && call.x2 === 190
+      (call) => call.page === 4 && call.x1 === 30 && call.x2 === 190
     );
     expect(goalLines).toHaveLength(6);
-    expect(goalLines.map((call) => call.y1)).toEqual([51, 63, 86, 98, 121, 133]);
+    expect(goalLines.map((call) => call.y1)).toEqual([34, 42, 55, 63, 76, 84]);
+    expect(
+      goalLines.map((call) => mockModule.lineDrawColors[mockModule.lineCalls.indexOf(call)])
+    ).toEqual(Array(6).fill("#000000"));
     expect(
       mockModule.textCalls
-        .filter((call) => call.page === 5 && ["1.", "2.", "3."].includes(call.text))
+        .filter((call) => call.page === 4 && ["1.", "2.", "3."].includes(call.text))
         .map((call) => call.y)
-    ).toEqual([51, 86, 121]);
+    ).toEqual([34, 55, 76]);
+    expect(
+      mockModule.rectCalls.filter((call) => call.page === 4 && call.x === 15 && call.width === 180)
+    ).toEqual([
+      expect.objectContaining({ color: JOURNAL_CONFIG.primaryColor }),
+      expect.objectContaining({ color: JOURNAL_CONFIG.secondaryColor }),
+    ]);
   });
 
   it("renders Before and After columns instead of the legacy event prompts", () => {
@@ -1122,6 +1155,7 @@ describe("buildGoalieJournalPdf", () => {
       expect.arrayContaining([
         "Before",
         "After",
+        "Opponent:",
         "What am I feeling?",
         "What are my goals?",
         "How will I prepare?",
@@ -1131,6 +1165,18 @@ describe("buildGoalieJournalPdf", () => {
     );
     expect(mockModule.texts).not.toContain("Goals for today:");
     expect(mockModule.texts).not.toContain("Skills/Drills:");
+    expect(
+      mockModule.lineCalls.find((call) => call.page === 5 && call.x1 === 121 && call.x2 === 190)
+    ).toEqual(expect.objectContaining({ y1: 40 }));
+    expect(
+      mockModule.textCalls.find((call) => call.page === 5 && call.text === "Opponent:")
+    ).toEqual(expect.objectContaining({ y: 40, fontSize: 9 }));
+    expect(
+      mockModule.lineCalls.find((call) => call.page === 5 && call.x1 === 30 && call.x2 === 57)
+    ).toEqual(expect.objectContaining({ y1: 32 }));
+    expect(
+      mockModule.lineCalls.find((call) => call.page === 5 && call.x1 === 157 && call.x2 === 190)
+    ).toEqual(expect.objectContaining({ y1: 32 }));
   });
 
   it("fits three two-column event entries on each full log page", () => {
@@ -1144,17 +1190,19 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(
-      mockModule.textCalls.filter((call) => call.page === 6 && call.text === "Entry #")
+      mockModule.textCalls.filter((call) => call.page === 5 && call.text === "Entry #")
     ).toHaveLength(3);
+    const pageLineIndex = mockModule.lineCalls.findIndex(
+      (call) => call.page === 5 && call.x1 === 177 && call.x2 === 195 && call.y1 === 15
+    );
+    expect(pageLineIndex).toBeGreaterThanOrEqual(0);
+    expect(mockModule.lineWidths[pageLineIndex]).toBe(0.2);
     expect(
-      mockModule.textCalls.filter((call) => call.page === 7 && call.text === "Entry #")
+      mockModule.textCalls.filter((call) => call.page === 6 && call.text === "Entry #")
     ).toHaveLength(1);
-    expect(
-      mockModule.textCalls.find((call) => call.page === 8 && call.text === "End of Season Review")
-    ).toBeDefined();
 
     const dividers = mockModule.lineCalls.filter(
-      (call) => call.page === 6 && call.x1 === 105 && call.x2 === 105
+      (call) => call.page === 5 && call.x1 === 105 && call.x2 === 105
     );
     expect(dividers).toEqual([
       expect.objectContaining({ y1: 52, y2: 96 }),
@@ -1164,21 +1212,49 @@ describe("buildGoalieJournalPdf", () => {
 
     const promptUnderlines = mockModule.lineCalls.filter(
       (call) =>
-        call.page === 6 &&
+        call.page === 5 &&
         ((call.x1 === 20 && call.x2 === 101) || (call.x1 === 109 && call.x2 === 190))
     );
-    expect(promptUnderlines).toHaveLength(24);
+    expect(promptUnderlines).toHaveLength(36);
     expect(promptUnderlines.map((call) => call.y1)).toEqual([
-      69, 79, 89, 96, 69, 79, 89, 96, 145, 155, 165, 172, 145, 155, 165, 172, 221, 231, 241, 248,
-      221, 231, 241, 248,
+      57, 64, 73, 80, 89, 96, 57, 64, 73, 80, 89, 96, 133, 140, 149, 156, 165, 172, 133, 140, 149,
+      156, 165, 172, 209, 216, 225, 232, 241, 248, 209, 216, 225, 232, 241, 248,
     ]);
+    expect(
+      promptUnderlines.map((call) => mockModule.lineWidths[mockModule.lineCalls.indexOf(call)])
+    ).toEqual(Array(36).fill(0.2));
+    const topFieldLines = mockModule.lineCalls.filter(
+      (call) => call.page === 5 && [32, 40, 108, 116, 184, 192].includes(call.y1)
+    );
+    expect(topFieldLines).toHaveLength(15);
+    expect(
+      topFieldLines.map((call) => mockModule.lineWidths[mockModule.lineCalls.indexOf(call)])
+    ).toEqual(Array(15).fill(0.2));
     const entryBoxes = mockModule.rectCalls.filter(
-      (call) => call.page === 6 && call.x === 15 && call.width === 180
+      (call) => call.page === 5 && call.x === 15 && call.width === 180
     );
     expect(entryBoxes).toHaveLength(3);
     expect(
-      entryBoxes.map((box, index) => box.y + box.height - promptUnderlines[index * 8 + 3].y1)
+      entryBoxes.map((box, index) => box.y + box.height - promptUnderlines[index * 12 + 5].y1)
     ).toEqual([3, 3, 3]);
+    const promptText = mockModule.textCalls.filter(
+      (call) =>
+        call.page === 5 &&
+        [
+          "What am I feeling?",
+          "What are my goals?",
+          "How will I prepare?",
+          "How did I prepare?",
+          "Self-Evaluation:",
+          "What did I learn?",
+        ].includes(call.text)
+    );
+    expect(promptText).toHaveLength(18);
+    promptText.forEach((prompt, index) => {
+      if (index % 3 !== 0) {
+        expect(prompt.y - promptUnderlines[index * 2 - 1].y1).toBeGreaterThanOrEqual(4);
+      }
+    });
   });
 
   it("renders two compact answer lines for each End of Season Review prompt", () => {
@@ -1196,9 +1272,20 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     const reviewLines = mockModule.lineCalls.filter(
-      (call) => call.page === 7 && call.x1 === 20 && call.x2 === 190
+      (call) => call.page === 4 && call.x1 === 20 && call.x2 === 190
     );
-    expect(reviewLines.map((call) => call.y1)).toEqual([39, 47, 65, 73]);
+    expect(reviewLines.map((call) => call.y1)).toEqual([117, 123, 137, 143]);
+    expect(
+      reviewLines.map((call) => mockModule.lineDrawColors[mockModule.lineCalls.indexOf(call)])
+    ).toEqual(Array(4).fill("#000000"));
+    expect(
+      reviewLines.map((call) => mockModule.lineWidths[mockModule.lineCalls.indexOf(call)])
+    ).toEqual(Array(4).fill(0.2));
+    expect(
+      mockModule.rectCalls.find(
+        (call) => call.page === 4 && call.color === JOURNAL_CONFIG.secondaryColor
+      )
+    ).toEqual(expect.objectContaining({ y: 89 }));
   });
 
   it("uses configured primary and secondary colors for PDF accents", () => {
@@ -1248,7 +1335,7 @@ describe("buildGoalieJournalPdf", () => {
     expect(secondEntryBorderIndex).toBeGreaterThan(firstEntryBorderIndex);
     expect(mockModule.lineDrawColors.filter((color) => color === "#123456")).toHaveLength(2);
     mockModule.lineDrawColors.forEach((color, index) => {
-      if (color === "#123456") {
+      if (color === "#123456" && mockModule.lineCalls[index].y1 !== 15) {
         expect(mockModule.lineWidths[index]).toBe(0.5);
       }
     });
@@ -1279,10 +1366,10 @@ describe("buildGoalieJournalPdf", () => {
     expect(mockModule.texts).toContain("How to Use this Journal");
     expect(mockModule.texts).toContain("Acknowledgements");
     expect(mockModule.texts).toContain("How to Improve Every Day");
-    expect(mockModule.texts.indexOf("Acknowledgements")).toBeLessThan(
-      mockModule.texts.indexOf("How to Use this Journal")
-    );
     expect(mockModule.texts.indexOf("How to Use this Journal")).toBeLessThan(
+      mockModule.texts.indexOf("Acknowledgements")
+    );
+    expect(mockModule.texts.indexOf("Acknowledgements")).toBeLessThan(
       mockModule.texts.indexOf("How to Improve Every Day")
     );
     expect(mockModule.texts).toContain("Entry #");
@@ -1347,16 +1434,20 @@ describe("buildGoalieJournalPdf", () => {
     );
 
     expect(mockModule.texts.join("")).toContain(GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT);
-    expect(mockModule.imageCalls).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          data: goldCertificationBadge.dataUrl,
-          page: 2,
-          x: 20,
-          width: 24,
-        }),
-      ])
+    const acknowledgementText = mockModule.textCalls.find(
+      (call) => call.text === "Thank you to the people who support your development."
     );
+    const goldBadgeCall = mockModule.imageCalls.find(
+      (call) => call.data === goldCertificationBadge.dataUrl
+    );
+    expect(goldBadgeCall).toEqual(
+      expect.objectContaining({
+        page: 2,
+        x: 20,
+        width: 24,
+      })
+    );
+    expect(goldBadgeCall?.y).toBeGreaterThan(acknowledgementText?.y ?? 0);
   });
 
   it("renders level-3 headings and compact bullets on every journal content page", () => {
@@ -1388,25 +1479,25 @@ describe("buildGoalieJournalPdf", () => {
 
     expect(mockModule.texts).toContain("Practice Growth");
     const firstParagraph = mockModule.textCalls.find(
-      (call) => call.page === 3 && call.text === "First paragraph."
+      (call) => call.page === 2 && call.text === "First paragraph."
     );
     const secondParagraph = mockModule.textCalls.find(
-      (call) => call.page === 3 && call.text === "Second paragraph."
+      (call) => call.page === 2 && call.text === "Second paragraph."
     );
     const firstInstruction = mockModule.textCalls.find(
-      (call) => call.page === 3 && call.text === "- First instruction"
+      (call) => call.page === 2 && call.text === "- First instruction"
     );
     const secondInstruction = mockModule.textCalls.find(
-      (call) => call.page === 3 && call.text === "- Second instruction"
+      (call) => call.page === 2 && call.text === "- Second instruction"
     );
     const closingParagraph = mockModule.textCalls.find(
-      (call) => call.page === 3 && call.text === "Closing paragraph."
+      (call) => call.page === 2 && call.text === "Closing paragraph."
     );
     const firstBullet = mockModule.textCalls.find(
-      (call) => call.page === 4 && call.text === "- First action"
+      (call) => call.page === 3 && call.text === "- First action"
     );
     const secondBullet = mockModule.textCalls.find(
-      (call) => call.page === 4 && call.text === "- Second action"
+      (call) => call.page === 3 && call.text === "- Second action"
     );
     expect(firstParagraph).toBeDefined();
     expect(secondParagraph?.y).toBe((firstParagraph?.y ?? 0) + 9);
