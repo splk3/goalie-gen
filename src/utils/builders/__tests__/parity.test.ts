@@ -851,7 +851,7 @@ describe("buildGoalieJournalPdf", () => {
       ["Use this journal to track your progress.", 2, 31],
       ["Thank you to the people who support your development.", 2, 64],
       ["Choose one small improvement to practice today.", 3, 31],
-      ["Reflect on your season.", 4, 109],
+      ["Reflect on your season.", 4, 107],
     ].forEach(([text, page, y]) => {
       expect(mockModule.textCalls.find((call) => call.text === text)).toEqual(
         expect.objectContaining({
@@ -870,8 +870,8 @@ describe("buildGoalieJournalPdf", () => {
         expect.objectContaining({
           page: 4,
           x1: 30,
-          y1: 34,
-          y2: 34,
+          y1: 32,
+          y2: 32,
         }),
       ])
     );
@@ -1098,12 +1098,12 @@ describe("buildGoalieJournalPdf", () => {
           ["Improve rebound control", "Track the puck through traffic"].includes(call.text)
         )
         .map((call) => call.y)
-    ).toEqual([34, 44]);
+    ).toEqual([32, 42]);
     expect(
       mockModule.rectCalls.find(
         (call) => call.page === 4 && call.color === JOURNAL_CONFIG.primaryColor
       )
-    ).toEqual(expect.objectContaining({ y: 12, height: 41 }));
+    ).toEqual(expect.objectContaining({ y: 12, height: 39 }));
   });
 
   it("renders three printable Season Goal areas when goals are blank", () => {
@@ -1124,7 +1124,7 @@ describe("buildGoalieJournalPdf", () => {
       (call) => call.page === 4 && call.x1 === 30 && call.x2 === 190
     );
     expect(goalLines).toHaveLength(6);
-    expect(goalLines.map((call) => call.y1)).toEqual([34, 42, 55, 63, 76, 84]);
+    expect(goalLines.map((call) => call.y1)).toEqual([32, 40, 53, 61, 74, 82]);
     expect(
       goalLines.map((call) => mockModule.lineDrawColors[mockModule.lineCalls.indexOf(call)])
     ).toEqual(Array(6).fill("#000000"));
@@ -1132,7 +1132,7 @@ describe("buildGoalieJournalPdf", () => {
       mockModule.textCalls
         .filter((call) => call.page === 4 && ["1.", "2.", "3."].includes(call.text))
         .map((call) => call.y)
-    ).toEqual([34, 55, 76]);
+    ).toEqual([32, 53, 74]);
     expect(
       mockModule.rectCalls.filter((call) => call.page === 4 && call.x === 15 && call.width === 180)
     ).toEqual([
@@ -1274,7 +1274,7 @@ describe("buildGoalieJournalPdf", () => {
     const reviewLines = mockModule.lineCalls.filter(
       (call) => call.page === 4 && call.x1 === 20 && call.x2 === 190
     );
-    expect(reviewLines.map((call) => call.y1)).toEqual([117, 123, 137, 143]);
+    expect(reviewLines.map((call) => call.y1)).toEqual([115, 121, 135, 141]);
     expect(
       reviewLines.map((call) => mockModule.lineDrawColors[mockModule.lineCalls.indexOf(call)])
     ).toEqual(Array(4).fill("#000000"));
@@ -1285,7 +1285,7 @@ describe("buildGoalieJournalPdf", () => {
       mockModule.rectCalls.find(
         (call) => call.page === 4 && call.color === JOURNAL_CONFIG.secondaryColor
       )
-    ).toEqual(expect.objectContaining({ y: 89 }));
+    ).toEqual(expect.objectContaining({ y: 87 }));
   });
 
   it("uses configured primary and secondary colors for PDF accents", () => {
