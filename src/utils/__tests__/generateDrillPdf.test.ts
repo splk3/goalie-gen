@@ -155,6 +155,13 @@ function setupMocks(opts?: {
   });
 
   // Override document.createElement to capture canvas dimensions.
+  if (jest.isMockFunction(document.createElement)) {
+    (
+      document.createElement as typeof document.createElement & {
+        mockRestore: () => void;
+      }
+    ).mockRestore();
+  }
   const originalCreate = document.createElement.bind(document);
   jest.spyOn(document, "createElement").mockImplementation((tagName: string) => {
     if (tagName === "canvas") {
@@ -570,7 +577,7 @@ describe("generateDrillPdf layout selection", () => {
     expect(output.slice(Math.max(0, headingIndex - 80), headingIndex)).toMatch(/F2 9 Tf/);
   });
 
-  it("uses single-column image width for shot-rebound-recovery", async () => {
+  it("uses two-column image width for shot-rebound-recovery", async () => {
     setupMocks({ imageWidth: 1200, imageHeight: 800 });
     const jspdf = await import("jspdf");
     const addImageSpy = jest.spyOn(
@@ -588,7 +595,7 @@ describe("generateDrillPdf layout selection", () => {
       const width = call[4];
       return typeof width === "number" && Math.abs(width - 127.5) < 0.6;
     });
-    expect(hasSingleColumnDrillImage).toBe(true);
+    expect(hasSingleColumnDrillImage).toBe(false);
   });
 
   it("renders video URL as a clickable link and adds an inline QR code image", async () => {
@@ -671,19 +678,36 @@ describe("generateDrillPdf pagination regression alignment", () => {
 
   it("keeps rim-stop-cut-across in dedicated progression-page mode", async () => {
     const folder = "rim-stop-cut-across";
+    setupMocks({ imageWidth: 815, imageHeight: 744 });
     const drillData = loadDrillFixture(folder);
 
     expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
     const pageEstimate = estimateDrillPdfPages(drillData);
     expect(pageEstimate).toMatchObject({
-      mainContentPages: 2,
+      mainContentPages: 1,
       dedicatedProgressionPages: 1,
-      totalPages: 3,
+      totalPages: 2,
     });
 
     const doc = await generateDrillPdf(drillData, folder);
-    expect(doc.getNumberOfPages()).toBeGreaterThan(1);
-    expect(doc.getNumberOfPages()).toBeLessThanOrEqual(pageEstimate.totalPages);
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
+  });
+
+  it("keeps rvh-low-to-high-release aligned between estimator and generator", async () => {
+    const folder = "rvh-low-to-high-release";
+    setupMocks({ imageWidth: 1066, imageHeight: 512 });
+    const drillData = loadDrillFixture(folder);
+
+    expect(shouldPlaceProgressionsOnSecondPage(drillData)).toBe(true);
+    const pageEstimate = estimateDrillPdfPages(drillData);
+    expect(pageEstimate).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 1,
+      totalPages: 2,
+    });
+
+    const doc = await generateDrillPdf(drillData, folder);
+    expect(doc.getNumberOfPages()).toBe(pageEstimate.totalPages);
   });
 
   it("keeps progression-image drills aligned between estimator and generator", async () => {
@@ -1117,5 +1141,35 @@ describe("generateDrillPdf Beat The Pass cutoff regression", () => {
     );
     expect(pages[1]).toContain("Video Demonstration");
     expect(pages[2]).toContain("Drill Progressions");
+  });
+});
+
+describe("generateDrillPdf inline markdown regression", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMocks({ imageWidth: 1200, imageHeight: 800 });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("renders the wall-entry NOTE inline in bold with non-overlapping line spacing", async () => {
+    const drillData = loadDrillFixture("wall-entry-attack-zones");
+
+    const doc = await generateDrillPdf(drillData, "wall-entry-attack-zones");
+    const output = doc.output();
+    const noteIndex = output.indexOf("(NOTE:)");
+    const precedingTextIndex = output.indexOf("(Run from both sides of the ice.)");
+    const precedingTextOperators = output.slice(
+      Math.max(0, precedingTextIndex - 500),
+      precedingTextIndex
+    );
+
+    expect(precedingTextIndex).toBeGreaterThanOrEqual(0);
+    expect(noteIndex).toBeGreaterThanOrEqual(0);
+    expect(precedingTextOperators).toMatch(/9\.0708\d* TL/);
+    expect(output.slice(Math.max(0, noteIndex - 80), noteIndex)).toMatch(/F2 9 Tf/);
+    expect(output).not.toContain("(**NOTE:**)");
   });
 });

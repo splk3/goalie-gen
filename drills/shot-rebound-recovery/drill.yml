@@ -12,6 +12,7 @@ coaching_focus_points: |-
 shooter_focus_points: |-
   - Shooter 1: Deliver a purposeful low shot to the far pad to create a predictable rebound.
   - Shooter 2: Attack the rebound immediately with a quick, decisive shot.
+video: https://youtu.be/obwPJwVq-mQ
 drill_progressions:
   - progression_name: Progression 1 - Variable Rebound Location
     progression_description: |-
@@ -20,6 +21,7 @@ drill_progressions:
       - Shooter 2 adjusts to the rebound instead of standing in a fixed spot.
       Goalie must locate the puck before committing to the slide.
       Coaching emphasis: Eyes find the puck first, movement second.
+    progression_video: https://youtu.be/tFuPLIbyjkY
   - progression_name: Progression 2 - Shooter 2 Delay or Quick Release Options
     progression_description: |-
       Purpose: Add timing pressure and force controlled edges.
@@ -29,6 +31,7 @@ drill_progressions:
       - or pull the puck laterally before shooting.
       Goalie must maintain balance and avoid over-sliding.
       Coaching emphasis: Stay tall in the slide; don't chase.
+    progression_video: https://youtu.be/eu6dwQue39Q
   - progression_name: Progression 3 - Coach Shot Fake Before Pass
     progression_description: |-
       Purpose: Add deception and force the goalie to manage visual cues.
@@ -56,7 +59,7 @@ drill_progressions:
     progression_image: progression-5-traffic-screen-layer.png
 drill_image: shot-rebound-recovery.png
 drill_creation_date: 2026-05-22
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-08-01
 tags:
   skill_level:
     - beginner

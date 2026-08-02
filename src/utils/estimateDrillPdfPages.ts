@@ -1,6 +1,38 @@
 import type { DrillData } from "../types/drill";
 import { planDedicatedProgressionCards } from "./drillPdfPaginationShared";
+import {
+  DRILL_PDF_FOOTER_CONTENT_GAP_MM,
+  DRILL_PDF_FOOTER_LOGO_HEIGHT_MM,
+  DRILL_PDF_FOOTER_SEPARATOR_GAP_MM,
+  DRILL_PDF_HEADER_LOGO_BOTTOM_GAP_MM,
+  DRILL_PDF_HEADER_LOGO_HEIGHT_MM,
+  DRILL_PDF_HEADER_SEPARATOR_BOTTOM_GAP_MM,
+  DRILL_PDF_HEADER_START_Y_MM,
+  DRILL_PDF_MARGIN_MM,
+  DRILL_PDF_NEW_PAGE_TOP_GAP_MM,
+  DRILL_PDF_PAGE_HEIGHT_MM,
+  DRILL_PDF_TAGS_HEIGHT_MM,
+  DRILL_VIDEO_QR_FLOW_CLEARANCE_MM,
+  DRILL_VIDEO_SECTION_TOP_GAP_MM,
+  DRILL_VIDEO_SEPARATOR_TITLE_SPACING_MM,
+  PROGRESSION_IMAGE_TEXT_GAP,
+  PROGRESSION_TEXT_LINE_HEIGHT,
+  PROGRESSION_VIDEO_NOTE_HEIGHT,
+  SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
+  SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
+  SKILLS_FOCUS_TOP_GAP,
+} from "./drillPdfLayout";
 import { drillMarkdownToPlainLines } from "./drillMarkdown";
+
+export {
+  PROGRESSION_IMAGE_TEXT_GAP,
+  PROGRESSION_TEXT_FONT_SIZE,
+  PROGRESSION_TEXT_LINE_HEIGHT,
+  PROGRESSION_VIDEO_NOTE_HEIGHT,
+  SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
+  SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
+  SKILLS_FOCUS_TOP_GAP,
+} from "./drillPdfLayout";
 
 // Approximate characters per line at fontSize 9 (Helvetica):
 //   - Left column (~95 mm after gap reduction + text-priority split): ~68 chars/line
@@ -14,27 +46,13 @@ const CHARS_PER_LINE_PROGRESSION = 112; // progression name + description at lar
 const HEADING_HEIGHT = 7.5; // section heading + compact gap
 const LINE_HEIGHT = 3.2; // body text / bullet line
 const SECTION_GAP = 2; // gap between sections
-const SKILLS_SECTION_TOP_GAP = 4;
 const VIDEO_URL_CHARS_PER_LINE = 116;
-const VIDEO_SECTION_TOP_GAP = 3;
-const VIDEO_SEPARATOR_TITLE_SPACING = 8;
-const VIDEO_QR_MIN_HEIGHT = 9;
-export const SKILLS_FOCUS_TOP_GAP = 4;
-export const SKILLS_FOCUS_LABEL_TO_VALUES_GAP = 4;
-export const PROGRESSION_TEXT_FONT_SIZE = 10;
-export const PROGRESSION_TEXT_LINE_HEIGHT = 4;
-export const PROGRESSION_IMAGE_TEXT_GAP = 4;
-// One-line progression-video note, including clearance for its 9 mm QR code.
-export const PROGRESSION_VIDEO_NOTE_HEIGHT = 10;
-export const SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO = 0.75;
 
 // Page layout constants (mm, A4 portrait)
-const PAGE_HEIGHT = 297;
-const MARGIN = 20;
-const GOLD_LOGO_HEIGHT = 16;
-const FOOTER_LOGO_Y = PAGE_HEIGHT - MARGIN - GOLD_LOGO_HEIGHT;
-const FOOTER_SEPARATOR_Y = FOOTER_LOGO_Y - 4;
-const CONTENT_BOTTOM_LIMIT = FOOTER_SEPARATOR_Y - 8;
+const FOOTER_LOGO_Y =
+  DRILL_PDF_PAGE_HEIGHT_MM - DRILL_PDF_MARGIN_MM - DRILL_PDF_FOOTER_LOGO_HEIGHT_MM;
+const FOOTER_SEPARATOR_Y = FOOTER_LOGO_Y - DRILL_PDF_FOOTER_SEPARATOR_GAP_MM;
+const CONTENT_BOTTOM_LIMIT = FOOTER_SEPARATOR_Y - DRILL_PDF_FOOTER_CONTENT_GAP_MM;
 
 // Title header constants (fontSize 16, Helvetica bold)
 // LOGO_HEIGHT_MM: minimum header area height set by the logo images.
@@ -42,16 +60,8 @@ const CONTENT_BOTTOM_LIMIT = FOOTER_SEPARATOR_Y - 8;
 // TITLE_CHARS_PER_LINE: approximate characters that fit across the title area at fontSize 16.
 //   Derived from body text calibration: 54 chars / 81 mm at fontSize 9, scaled to fontSize 16
 //   across the ~107 mm gap between the logos (~107 mm * 9/16 / (81/54) ≈ 40 chars/line).
-const LOGO_HEIGHT_MM = 16;
 const TITLE_LINE_HEIGHT_MM = 7;
 const TITLE_CHARS_PER_LINE = 40;
-
-// Fixed overhead consumed by everything EXCEPT the title area:
-//   initial Y offset + gap after logos + red separator gap + tags rows.
-// HEADER_AND_TAGS_BASE = LOGO_HEIGHT_MM (16) contributes the minimum title area height,
-// so the overhead is the former fixed constant (52) minus that minimum (16) = 36.
-// Note: Increased by 2mm (from 36 to 38) to account for the inline QR code and column tags on page 1.
-const HEADER_AND_TAGS_BASE = 38;
 
 /**
  * Estimates the height in mm of the PDF title header area for the given drill name.
@@ -60,7 +70,7 @@ const HEADER_AND_TAGS_BASE = 38;
  */
 function estimateTitleHeaderHeight(drillName: string): number {
   const estimatedLines = Math.max(1, Math.ceil(drillName.length / TITLE_CHARS_PER_LINE));
-  return Math.max(LOGO_HEIGHT_MM, estimatedLines * TITLE_LINE_HEIGHT_MM);
+  return Math.max(DRILL_PDF_HEADER_LOGO_HEIGHT_MM, estimatedLines * TITLE_LINE_HEIGHT_MM);
 }
 
 const INLINE_PROGRESSION_IMAGE_HEIGHT = 34;
@@ -216,10 +226,16 @@ function getFirstPageLayoutMetrics(drillName: string): {
   availableOtherPages: number;
 } {
   const titleHeaderHeight = estimateTitleHeaderHeight(drillName);
-  const contentStartY = MARGIN + titleHeaderHeight + HEADER_AND_TAGS_BASE;
+  const contentStartY =
+    DRILL_PDF_HEADER_START_Y_MM +
+    titleHeaderHeight +
+    DRILL_PDF_HEADER_LOGO_BOTTOM_GAP_MM +
+    DRILL_PDF_HEADER_SEPARATOR_BOTTOM_GAP_MM +
+    DRILL_PDF_TAGS_HEIGHT_MM;
   return {
     availableFirstPage: CONTENT_BOTTOM_LIMIT - contentStartY,
-    availableOtherPages: CONTENT_BOTTOM_LIMIT - (MARGIN + 5),
+    availableOtherPages:
+      CONTENT_BOTTOM_LIMIT - (DRILL_PDF_MARGIN_MM + DRILL_PDF_NEW_PAGE_TOP_GAP_MM),
   };
 }
 
@@ -290,7 +306,7 @@ function estimateTopPhaseHeight(
     }
 
     if (drillData.drill_image) {
-      const fullWidth = (210 - 2 * MARGIN) * SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO;
+      const fullWidth = (210 - 2 * DRILL_PDF_MARGIN_MM) * SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO;
       const aspectRatio =
         drillImageAspectRatio && drillImageAspectRatio > 0
           ? drillImageAspectRatio
@@ -358,16 +374,16 @@ function estimateFirstPageSegmentHeight(
 
   // --- Post-progression content: Skills Focus + optional Video ---
   const videoSectionHeight = drillData.video
-    ? VIDEO_SECTION_TOP_GAP +
-      VIDEO_SEPARATOR_TITLE_SPACING +
+    ? DRILL_VIDEO_SECTION_TOP_GAP_MM +
+      DRILL_VIDEO_SEPARATOR_TITLE_SPACING_MM +
       Math.max(
         estimateLines(drillData.video.trim(), VIDEO_URL_CHARS_PER_LINE) *
           PROGRESSION_TEXT_LINE_HEIGHT,
-        VIDEO_QR_MIN_HEIGHT
+        DRILL_VIDEO_QR_FLOW_CLEARANCE_MM
       )
     : 0;
   const postProgressionHeight =
-    SKILLS_SECTION_TOP_GAP + estimateSkillsFocusSectionHeight(drillData) + videoSectionHeight;
+    SKILLS_FOCUS_TOP_GAP + estimateSkillsFocusSectionHeight(drillData) + videoSectionHeight;
 
   return topPhaseHeight + preProgressionHeight + progressionHeight + postProgressionHeight;
 }

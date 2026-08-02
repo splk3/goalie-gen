@@ -24,6 +24,7 @@ shooter_focus_points: |-
   - Shooter 2: Open up to the puck - hips facing the goalie for a clean catch-and-release pass.
   - Shooter 2: Scan before receiving to locate Shooter 1.
   - Shooter 2: Deliver a firm, flat pass into Shooter 1's shooting lane.
+video: https://youtu.be/vUxHg30fsHY
 drill_image: rim-and-shot.png
 drill_progressions:
   - progression_name: Progression 1 - Add Shot Options
@@ -56,8 +57,9 @@ drill_progressions:
       - Decision-making
       - Scanning
       - Puck tracking
+    progression_video: https://youtu.be/dLfqDz53laY
 drill_creation_date: 2026-05-25
-drill_updated_date: 2026-07-30
+drill_updated_date: 2026-08-01
 tags:
   skill_level:
     - beginner

@@ -1,14 +1,29 @@
 import type { jsPDF } from "jspdf";
 import type { DrillData } from "../types/drill";
 import {
+  DRILL_PDF_FOOTER_CONTENT_GAP_MM,
+  DRILL_PDF_FOOTER_LOGO_HEIGHT_MM,
+  DRILL_PDF_FOOTER_SEPARATOR_GAP_MM,
+  DRILL_PDF_HEADER_LOGO_BOTTOM_GAP_MM,
+  DRILL_PDF_HEADER_LOGO_HEIGHT_MM,
+  DRILL_PDF_HEADER_SEPARATOR_BOTTOM_GAP_MM,
+  DRILL_PDF_HEADER_START_Y_MM,
+  DRILL_PDF_MARGIN_MM,
+  DRILL_PDF_NEW_PAGE_TOP_GAP_MM,
+  DRILL_PDF_TAGS_HEIGHT_MM,
+  DRILL_VIDEO_QR_GAP_MM,
+  DRILL_VIDEO_QR_SIZE_MM,
+  DRILL_VIDEO_SECTION_TOP_GAP_MM,
   PROGRESSION_IMAGE_TEXT_GAP,
-  PROGRESSION_SECTION_MAX_PAGES,
   PROGRESSION_TEXT_FONT_SIZE,
   PROGRESSION_TEXT_LINE_HEIGHT,
   PROGRESSION_VIDEO_NOTE_HEIGHT,
   SINGLE_COLUMN_DRILL_IMAGE_WIDTH_RATIO,
   SKILLS_FOCUS_LABEL_TO_VALUES_GAP,
   SKILLS_FOCUS_TOP_GAP,
+} from "./drillPdfLayout";
+import {
+  PROGRESSION_SECTION_MAX_PAGES,
   estimateSkillsFocusSectionHeight,
   shouldPlaceProgressionsOnSecondPage,
 } from "./estimateDrillPdfPages";
@@ -50,8 +65,6 @@ const PROGRESSION_CARD_TEXT_TOP_OFFSET = 2;
 const PROGRESSION_CARD_NAME_BOTTOM_GAP = 2;
 const PROGRESSION_SECTION_TITLE_HEIGHT = 8;
 const PROGRESSION_MAX_IMAGE_HEIGHT = 30;
-const LINK_QR_CODE_SIZE_MM = 9;
-const LINK_QR_CODE_GAP_MM = 2;
 const PROGRESSION_VIDEO_NOTE_FONT_SIZE = 8;
 const PROGRESSION_VIDEO_NOTE_LABEL = "View Progression Videos Here:";
 const MAX_QR_CACHE_ENTRIES = 32;
@@ -222,16 +235,16 @@ export const generateDrillPdf = async (
 
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
-  const margin = 20;
+  const margin = DRILL_PDF_MARGIN_MM;
   const usaBlue = [0, 32, 91] as const; // #00205B
   const usaRed = [175, 39, 47] as const; // #AF272F
 
   // Footer (gold logo) dimensions — fixed at the bottom of every page
-  const goldLogoHeight = 16;
+  const goldLogoHeight = DRILL_PDF_FOOTER_LOGO_HEIGHT_MM;
   const footerLogoY = pageHeight - margin - goldLogoHeight;
-  const footerSeparatorY = footerLogoY - 4;
+  const footerSeparatorY = footerLogoY - DRILL_PDF_FOOTER_SEPARATOR_GAP_MM;
   // Content must not exceed this Y value on any page
-  const contentBottomLimit = footerSeparatorY - 8;
+  const contentBottomLimit = footerSeparatorY - DRILL_PDF_FOOTER_CONTENT_GAP_MM;
 
   // Pre-load all static header/footer images and the drill QR code in parallel so none
   // of the network round-trips blocks the others.
@@ -312,7 +325,7 @@ export const generateDrillPdf = async (
     drawPageFooter();
     doc.addPage();
     currentPageNum++;
-    return margin + 5;
+    return margin + DRILL_PDF_NEW_PAGE_TOP_GAP_MM;
   };
 
   // If `neededHeight` mm of content won't fit below `currentY`, draw the footer on the
@@ -325,14 +338,14 @@ export const generateDrillPdf = async (
   };
 
   const drawPageHeader = (title: string): number => {
-    let headerY = 15;
+    let headerY = DRILL_PDF_HEADER_START_Y_MM;
 
     // Header with USA Hockey logos and title — use the already-loaded results.
     if (leftLogoResult.status === "fulfilled" && rightLogoResult.status === "fulfilled") {
       const leftLogoInfo = leftLogoResult.value;
       const rightLogoInfo = rightLogoResult.value;
 
-      const logoHeight = 16;
+      const logoHeight = DRILL_PDF_HEADER_LOGO_HEIGHT_MM;
       const leftLogoWidth = (leftLogoInfo.width / leftLogoInfo.height) * logoHeight;
       const rightLogoWidth = (rightLogoInfo.width / rightLogoInfo.height) * logoHeight;
 
@@ -365,7 +378,7 @@ export const generateDrillPdf = async (
         headerY + (effectiveHeaderHeight - titleTotalHeight) / 2 + titleCharHeight;
       doc.text(titleLines, titleCenterX, titleFirstLineY, { align: "center" });
 
-      headerY += effectiveHeaderHeight + 4;
+      headerY += effectiveHeaderHeight + DRILL_PDF_HEADER_LOGO_BOTTOM_GAP_MM;
     } else {
       if (leftLogoResult.status === "rejected") {
         console.error("Error loading header images:", leftLogoResult.reason);
@@ -381,14 +394,14 @@ export const generateDrillPdf = async (
         maxWidth: fallbackTitleWidth,
       });
       doc.text(fallbackTitleLines, pageWidth / 2, headerY, { align: "center" });
-      headerY += fallbackDimensions.h + 4;
+      headerY += fallbackDimensions.h + DRILL_PDF_HEADER_LOGO_BOTTOM_GAP_MM;
     }
 
     doc.setDrawColor(usaRed[0], usaRed[1], usaRed[2]);
     doc.setLineWidth(2);
     doc.line(margin, headerY, pageWidth - margin, headerY);
 
-    return headerY + 8;
+    return headerY + DRILL_PDF_HEADER_SEPARATOR_BOTTOM_GAP_MM;
   };
 
   let currentY = drawPageHeader(drillData.name);
@@ -447,7 +460,7 @@ export const generateDrillPdf = async (
   // Advance currentY to clear both tags columns and the QR code section.
   // QR code height is 10mm. Row 2 of tags is at startOfTagsY + 5.
   // Pushing currentY to startOfTagsY + 12 leaves a clean margin.
-  currentY = startOfTagsY + 12;
+  currentY = startOfTagsY + DRILL_PDF_TAGS_HEIGHT_MM;
 
   const rightColumnStartY = currentY;
   const fullWidth = pageWidth - 2 * margin;
@@ -544,7 +557,7 @@ export const generateDrillPdf = async (
   };
 
   const drawProgressionVideoNote = (startX: number, baselineY: number, draw: boolean): void => {
-    const qrX = pageWidth - margin - LINK_QR_CODE_SIZE_MM;
+    const qrX = pageWidth - margin - DRILL_VIDEO_QR_SIZE_MM;
 
     doc.setFontSize(PROGRESSION_VIDEO_NOTE_FONT_SIZE);
     doc.setFont("helvetica", "bold");
@@ -553,7 +566,7 @@ export const generateDrillPdf = async (
     const linkX = startX + labelWidth + 1.5;
 
     doc.setFont("helvetica", "normal");
-    const displayedUrl = fitProgressionVideoUrl(Math.max(0, qrX - LINK_QR_CODE_GAP_MM - linkX));
+    const displayedUrl = fitProgressionVideoUrl(Math.max(0, qrX - DRILL_VIDEO_QR_GAP_MM - linkX));
 
     if (draw) {
       doc.setFont("helvetica", "bold");
@@ -567,8 +580,8 @@ export const generateDrillPdf = async (
           "PNG",
           qrX,
           baselineY - 3,
-          LINK_QR_CODE_SIZE_MM,
-          LINK_QR_CODE_SIZE_MM
+          DRILL_VIDEO_QR_SIZE_MM,
+          DRILL_VIDEO_QR_SIZE_MM
         );
       }
     }
@@ -586,6 +599,32 @@ export const generateDrillPdf = async (
       bold?: boolean;
       indentLevel?: number;
     }
+
+    interface InlineMarkdownRun {
+      text: string;
+      bold: boolean;
+    }
+
+    const parseInlineMarkdownRuns = (text: string): InlineMarkdownRun[] => {
+      const runs: InlineMarkdownRun[] = [];
+      const strongPattern = /\*\*(.+?)\*\*/g;
+      let cursor = 0;
+      let match: RegExpExecArray | null;
+
+      while ((match = strongPattern.exec(text)) !== null) {
+        if (match.index > cursor) {
+          runs.push({ text: text.slice(cursor, match.index), bold: false });
+        }
+        runs.push({ text: match[1], bold: true });
+        cursor = match.index + match[0].length;
+      }
+
+      if (cursor < text.length) {
+        runs.push({ text: text.slice(cursor), bold: false });
+      }
+
+      return runs.length > 0 ? runs : [{ text, bold: false }];
+    };
 
     const pushRenderableListLines = (
       list: DrillMarkdownListBlock,
@@ -663,12 +702,51 @@ export const generateDrillPdf = async (
       const indentLevel = options?.indentLevel ?? getIndentLevel(line);
       const indentOffset = indentLevel * MARKDOWN_NESTED_INDENT_MM;
       const availableWidth = Math.max(16, maxWidth - indentOffset);
-      const wrapped = doc.splitTextToSize(stripLeadingIndent(line), availableWidth);
+      const inlineRuns = parseInlineMarkdownRuns(stripLeadingIndent(line));
+      const visibleText = inlineRuns.map((run) => run.text).join("");
+      const wrapped = doc.splitTextToSize(visibleText, availableWidth) as string[];
       const startY = ensureSpaceForPass(currentYForPass, wrapped.length * lineHeight + 1);
       if (draw) {
-        doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+        const hasInlineBold = inlineRuns.some((run) => run.bold);
+        if (!hasInlineBold) {
+          doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+          doc.text(wrapped, baseX + indentOffset, startY, {
+            lineHeightFactor: (lineHeight * doc.internal.scaleFactor) / doc.getFontSize(),
+          });
+          return startY + wrapped.length * lineHeight + 1;
+        }
+
+        const boldByCharacter = inlineRuns.flatMap((run) =>
+          Array.from(run.text, () => options?.bold || run.bold)
+        );
+        let sourceOffset = 0;
+
+        wrapped.forEach((wrappedLine, lineIndex) => {
+          const lineOffset = visibleText.indexOf(wrappedLine, sourceOffset);
+          const resolvedOffset = lineOffset >= 0 ? lineOffset : sourceOffset;
+          let chunkStart = 0;
+          let chunkX = baseX + indentOffset;
+
+          while (chunkStart < wrappedLine.length) {
+            const bold = !!boldByCharacter[resolvedOffset + chunkStart];
+            let chunkEnd = chunkStart + 1;
+            while (
+              chunkEnd < wrappedLine.length &&
+              !!boldByCharacter[resolvedOffset + chunkEnd] === bold
+            ) {
+              chunkEnd += 1;
+            }
+
+            const chunk = wrappedLine.slice(chunkStart, chunkEnd);
+            doc.setFont("helvetica", bold ? "bold" : "normal");
+            doc.text(chunk, chunkX, startY + lineIndex * lineHeight);
+            chunkX += doc.getTextWidth(chunk);
+            chunkStart = chunkEnd;
+          }
+
+          sourceOffset = resolvedOffset + wrappedLine.length;
+        });
       }
-      drawText(wrapped, baseX + indentOffset, startY);
       return startY + wrapped.length * lineHeight + 1;
     };
     const drawMarkdownBlocks = (
@@ -970,11 +1048,15 @@ export const generateDrillPdf = async (
     }
 
     if (drillData.video) {
-      sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + 3;
+      sectionY = Math.max(skillsLeftY, skillsRightY, skillsThirdY) + DRILL_VIDEO_SECTION_TOP_GAP_MM;
       const videoUrl = drillData.video.trim();
-      const maxVideoLineWidth = pageWidth - 2 * margin - LINK_QR_CODE_SIZE_MM - LINK_QR_CODE_GAP_MM;
+      const maxVideoLineWidth =
+        pageWidth - 2 * margin - DRILL_VIDEO_QR_SIZE_MM - DRILL_VIDEO_QR_GAP_MM;
       const videoLines = doc.splitTextToSize(videoUrl, maxVideoLineWidth) as string[];
-      sectionY = ensureSpaceForPass(sectionY, 9 + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT);
+      sectionY = ensureSpaceForPass(
+        sectionY,
+        DRILL_VIDEO_QR_SIZE_MM + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT
+      );
 
       doc.setDrawColor(150, 150, 150);
       doc.setLineWidth(0.5);
@@ -1003,12 +1085,19 @@ export const generateDrillPdf = async (
 
       if (videoQrCodeDataURL && videoLines.length > 0) {
         const firstLineWidth = doc.getTextWidth(videoLines[0]);
-        const qrX = margin + Math.min(firstLineWidth, maxVideoLineWidth) + LINK_QR_CODE_GAP_MM;
+        const qrX = margin + Math.min(firstLineWidth, maxVideoLineWidth) + DRILL_VIDEO_QR_GAP_MM;
         const lineTextHeight = doc.getTextDimensions(videoLines[0]).h;
-        const qrY = sectionY - lineTextHeight + (lineTextHeight - LINK_QR_CODE_SIZE_MM) / 2;
-        drawImage(videoQrCodeDataURL, "PNG", qrX, qrY, LINK_QR_CODE_SIZE_MM, LINK_QR_CODE_SIZE_MM);
+        const qrY = sectionY - lineTextHeight + (lineTextHeight - DRILL_VIDEO_QR_SIZE_MM) / 2;
+        drawImage(
+          videoQrCodeDataURL,
+          "PNG",
+          qrX,
+          qrY,
+          DRILL_VIDEO_QR_SIZE_MM,
+          DRILL_VIDEO_QR_SIZE_MM
+        );
         // Ensure sectionY clears the bottom of the QR code
-        const qrBottomY = qrY + LINK_QR_CODE_SIZE_MM;
+        const qrBottomY = qrY + DRILL_VIDEO_QR_SIZE_MM;
         sectionY = Math.max(sectionY + videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT, qrBottomY);
       } else {
         sectionY += videoLines.length * PROGRESSION_TEXT_LINE_HEIGHT;

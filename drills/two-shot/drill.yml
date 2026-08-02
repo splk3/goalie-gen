@@ -17,12 +17,14 @@ shooter_focus_points: |-
   - Accuracy over power — two precise shots are more valuable than two hard but uncontrolled ones.
   - Consistent approach speed — don't slow down between pucks; maintain flow.
   - Repetition with purpose — vary shot types: first low, second high; first blocker, second glove; etc.
+video: https://youtu.be/j4B9AnY_1IE
 drill_progressions:
   - progression_name: Progression 1 — Increased Distance
     progression_description: |-
       Move pucks farther apart.
       - Forces longer goalie recoveries.
     progression_image: progression-1-increased-distance.png
+    progression_video: https://youtu.be/9nKOLJKOR2Q
   - progression_name: Progression 2 — Lane Variation
     progression_description: |-
       Shooter approaches from different entry points:
@@ -30,11 +32,14 @@ drill_progressions:
       - Left lane
       - Right lane
     progression_image: progression-2-lane-variation.png
+    progression_video: https://youtu.be/R9g5qHDgcmI
   - progression_name: Progression 3 — Rebound Activation
     progression_description: |-
       After the second shot, shooter plays any rebound for 1-2 seconds.
+    progression_video: https://youtu.be/q-59pHBRDlo
 drill_image: two-shot.png
 drill_creation_date: 2026-05-22
+drill_updated_date: 2026-08-01
 tags:
   skill_level:
     - beginner

@@ -33,8 +33,8 @@ const drillExpectations: DrillExpectation[] = [
   {
     folder: "rim-stop-cut-across",
     expectSecondPageProgressions: true,
-    expectedTotalPages: 3,
-    expectedMainContentPages: 2,
+    expectedTotalPages: 2,
+    expectedMainContentPages: 1,
     expectedDedicatedProgressionPages: 1,
   },
   {

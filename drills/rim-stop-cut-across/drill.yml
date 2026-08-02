@@ -25,6 +25,7 @@ shooter_focus_points: |-
   - Cut across with intent — force the goalie to move laterally.
   - Shoot against the grain back to the original side.
   - Change release point (pull and drag, push release, delay) to challenge the goalie.
+video: https://youtu.be/RbpGQEfFI-E
 drill_image: rim-stop-cut-across.png
 drill_progressions:
   - progression_name: Progression 1 - Variable Rim Locations
@@ -54,7 +55,7 @@ drill_progressions:
       Add an extra goaltender or obstacle in the high slot. so the goalie must track the puck through a screen.
     progression_image: rim-stop-cut-across-progression-5.png
 drill_creation_date: 2026-05-13
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-08-01
 tags:
   skill_level:
     - intermediate

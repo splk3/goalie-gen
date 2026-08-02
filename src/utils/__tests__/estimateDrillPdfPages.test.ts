@@ -62,14 +62,26 @@ describe("estimateDrillPdfPages", () => {
     }
   });
 
-  it("reduces rim-stop-cut-across to three pages with denser progression packing", () => {
+  it("keeps rim-stop-cut-across to one main page plus one progression page", () => {
     const rimStop = drills.find((entry) => entry.folder === "rim-stop-cut-across");
     expect(rimStop).toBeDefined();
     expect(shouldPlaceProgressionsOnSecondPage(rimStop!.drillData)).toBe(true);
-    const pageEstimate = estimateDrillPdfPages(rimStop!.drillData);
-    expect(pageEstimate.mainContentPages).toBe(2);
-    expect(pageEstimate.dedicatedProgressionPages).toBe(1);
-    expect(pageEstimate.totalPages).toBe(3);
+    expect(estimateDrillPdfPages(rimStop!.drillData)).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 1,
+      totalPages: 2,
+    });
+  });
+
+  it("keeps rvh-low-to-high-release to one main page plus one progression page", () => {
+    const rvhLowToHigh = drills.find((entry) => entry.folder === "rvh-low-to-high-release");
+    expect(rvhLowToHigh).toBeDefined();
+    expect(shouldPlaceProgressionsOnSecondPage(rvhLowToHigh!.drillData)).toBe(true);
+    expect(estimateDrillPdfPages(rvhLowToHigh!.drillData)).toEqual({
+      mainContentPages: 1,
+      dedicatedProgressionPages: 1,
+      totalPages: 2,
+    });
   });
 
   it("keeps read-and-react to two pages total so Skills Focus stays on page one", () => {
@@ -477,7 +489,7 @@ describe("estimateDrillPdfPages", () => {
     expect(pagesWith.mainContentPages).toBeGreaterThanOrEqual(pagesWithout.mainContentPages);
   });
 
-  it("counts 4 mm Skills Focus rows and video URL/QR boundary space", () => {
+  it("accounts for overlapping video URL and QR boundary space", () => {
     const boundaryData = {
       name: "Skills And Video Boundary",
       description: "Short description",
@@ -497,7 +509,7 @@ describe("estimateDrillPdfPages", () => {
         video:
           "https://example.com/video/demonstration?session=skills-focus-boundary-and-qr-spacing",
       }).mainContentPages
-    ).toBe(2);
+    ).toBe(1);
   });
 
   it("accounts for one progression-video note without forcing dedicated progressions", () => {
