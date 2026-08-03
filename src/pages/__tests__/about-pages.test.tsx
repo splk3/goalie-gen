@@ -28,6 +28,16 @@ jest.mock("../../components/BackLinkButton", () => {
   };
 });
 
+jest.mock("../../components/GenerateClubPlanButton", () => {
+  return function MockGenerateClubPlanButton({
+    label = "Generate Club Development Plan",
+  }: {
+    label?: string;
+  }) {
+    return <button>{label}</button>;
+  };
+});
+
 describe("About pages", () => {
   describe("AboutClubPlans (/about-club-plans)", () => {
     beforeEach(() => render(<AboutClubPlans />));
@@ -41,8 +51,31 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders the Content Coming Soon notice", () => {
-      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    it("renders the requested section headings", () => {
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "What is a Goalie Development Plan?",
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Create a Goalie Development Plan for your Club",
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("renders section-end CTAs for the club generator", () => {
+      expect(
+        screen.getAllByRole("button", {
+          name: "Generate a Goalie Development Plan for Your Club",
+        })
+      ).toHaveLength(2);
+    });
+
+    it("does not render the Content Coming Soon notice", () => {
+      expect(screen.queryByText(/Content Coming Soon!/i)).not.toBeInTheDocument();
     });
 
     it("renders a Back to Home link", () => {
