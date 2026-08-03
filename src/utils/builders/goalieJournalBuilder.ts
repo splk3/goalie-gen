@@ -42,7 +42,7 @@ const END_OF_SEASON_ANSWER_LINES = 2;
 const END_OF_SEASON_LINE_SPACING = 6;
 const END_OF_SEASON_BLOCK_PADDING = 8;
 const JOURNAL_ENTRIES_PER_PAGE = 3;
-const JOURNAL_ENTRY_HEIGHT = 76;
+const JOURNAL_ENTRY_HEIGHT = 74;
 const JOURNAL_ENTRY_COLUMN_DIVIDER_X = 105;
 const JOURNAL_ENTRY_LEFT_X = 20;
 const JOURNAL_ENTRY_LEFT_END_X = 101;
@@ -405,7 +405,7 @@ export function buildGoalieJournalPdf(
   const primary = normalizeHexRgbColor(primaryColor) ?? DEFAULT_PRIMARY_TEAM_COLOR;
   const secondary = normalizeHexRgbColor(secondaryColor) ?? DEFAULT_SECONDARY_TEAM_COLOR;
 
-  const doc = new jsPDF();
+  const doc = new jsPDF({ format: "letter" });
 
   // ── Cover page ─────────────────────────────────────────────────────────────
 
@@ -451,7 +451,7 @@ export function buildGoalieJournalPdf(
 
   const coverPageHeight = doc.internal.pageSize.height;
   const coverFooterImageSize = 18;
-  const coverFooterImageY = coverPageHeight - 28;
+  const coverFooterImageY = coverPageHeight - 34;
   if (footerLogo) {
     const logoWidth = footerLogo.width > 0 ? footerLogo.width : coverFooterImageSize;
     const logoHeight = footerLogo.height > 0 ? footerLogo.height : coverFooterImageSize;
@@ -470,9 +470,9 @@ export function buildGoalieJournalPdf(
   doc.setFontSize(8);
   doc.setTextColor("#000000");
   GOALIE_JOURNAL_COVER_PROMOTION_LINES.forEach((line, index) => {
-    drawInlineText(doc, line, 105, coverPageHeight - 21 + index * 4.5, 120, 4.5, "center");
+    drawInlineText(doc, line, 105, coverPageHeight - 27 + index * 4.5, 120, 4.5, "center");
   });
-  doc.link(45, coverPageHeight - 25, 120, 12, { url: GOALIE_JOURNAL_PROMOTION_URL });
+  doc.link(45, coverPageHeight - 31, 120, 12, { url: GOALIE_JOURNAL_PROMOTION_URL });
   if (qrCodeDataUrl) {
     doc.addImage(
       qrCodeDataUrl,
@@ -685,12 +685,12 @@ export function buildGoalieJournalPdf(
     doc.setFontSize(7);
     doc.setTextColor("#000000");
     if (footerLogo) {
-      doc.addImage(footerLogo.dataUrl, "PNG", 20, journalPageHeight - 24, 14, 14);
+      doc.addImage(footerLogo.dataUrl, "PNG", 20, journalPageHeight - 30, 14, 14);
     }
-    doc.text(footerText, footerLogo ? 106 : 98, journalPageHeight - 10, { align: "center" });
+    doc.text(footerText, footerLogo ? 106 : 98, journalPageHeight - 14, { align: "center" });
     if (qrCodeDataUrl) {
-      doc.addImage(qrCodeDataUrl, "PNG", 178, journalPageHeight - 24, 14, 14);
-      doc.link(178, journalPageHeight - 24, 14, 14, {
+      doc.addImage(qrCodeDataUrl, "PNG", 178, journalPageHeight - 30, 14, 14);
+      doc.link(178, journalPageHeight - 30, 14, 14, {
         url: GOALIE_JOURNAL_PROMOTION_URL,
       });
     }
