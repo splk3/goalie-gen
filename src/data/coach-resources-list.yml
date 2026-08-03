@@ -23,6 +23,16 @@ resource-list:
   - name: "USA Hockey Goaltending Game Situation Drills"
     description: "A collection of drills designed to help coaches teach their goalies how to handle various game situations effectively."
     link: "https://www.usahockeygoaltending.com/page/show/890215-game-situation-drills"
+  - name: "EasyCrease Ice Drawing Tool"
+    description: >-
+      Retractable tool for drawing a crease anywhere on the ice.
+      Use one of these or make your own!
+    link: "https://www.easycrease.com/"
+  - name: "USA Hockey Goalie Game Rotation and Workload Management Information"
+    description: >-
+      USA Hockey information about how to rotate goalies by age group,
+      as well as how to help integrate them into team practices.
+    link: "https://www.usahockeygoaltending.com/news_article/show/1156979"
   - name: "USA Hockey Video - Mental Preparation - Pre-Game"
     description: "A video resource that provides insights into the mental preparation and pre-game routines for goaltenders."
     link: "https://www.usahockeygoaltending.com/video/mental-preparation-pre-game-routine"
