@@ -30,6 +30,8 @@ type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
 
 const JOURNAL_CONTENT_START_Y = 31;
 const JOURNAL_CONTENT_PARAGRAPH_GAP = 3;
+const ACKNOWLEDGEMENTS_SECTION_GAP = 4;
+const ACKNOWLEDGEMENTS_GOLD_GAP = 2;
 const SEASON_GOALS_START_Y = 32;
 const ENTERED_SEASON_GOAL_MIN_STEP = 10;
 const ENTERED_SEASON_GOAL_TEXT_GAP = 5;
@@ -397,7 +399,7 @@ export function buildGoalieJournalPdf(
     acknowledgementsMd,
     howToUseMd,
     howToImproveEveryDayMd,
-    practiceEntryMd,
+    eventEntryMd,
     endOfSeasonMd,
   } = content;
   const primary = normalizeHexRgbColor(primaryColor) ?? DEFAULT_PRIMARY_TEAM_COLOR;
@@ -495,7 +497,7 @@ export function buildGoalieJournalPdf(
     20,
     JOURNAL_CONTENT_START_Y
   );
-  const acknowledgementsTitleY = howToUseEndY + 8;
+  const acknowledgementsTitleY = howToUseEndY + ACKNOWLEDGEMENTS_SECTION_GAP;
   const acknowledgementsEndY = renderJournalContentSection(
     doc,
     acknowledgementsMd,
@@ -504,7 +506,11 @@ export function buildGoalieJournalPdf(
     acknowledgementsTitleY + 10,
     16
   );
-  drawGoldCertificationBlock(doc, goldCertificationBadge, acknowledgementsEndY + 4);
+  drawGoldCertificationBlock(
+    doc,
+    goldCertificationBadge,
+    acknowledgementsEndY + ACKNOWLEDGEMENTS_GOLD_GAP
+  );
 
   // ── How to Improve Every Day page ───────────────────────────────────────────
 
@@ -554,10 +560,10 @@ export function buildGoalieJournalPdf(
 
   // ── Practice/Game Log pages ────────────────────────────────────────────────
 
-  const entryBlocks = parseMarkdown(practiceEntryMd);
+  const entryBlocks = parseMarkdown(eventEntryMd);
   const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Event Log";
   const getEntryColumnPrompts = (heading: string): string[] =>
-    parseMarkdown(extractLevel3Section(practiceEntryMd, heading))
+    parseMarkdown(extractLevel3Section(eventEntryMd, heading))
       .filter((block) => block.type === "paragraph" || block.type === "bullet")
       .map((block) => block.text)
       .slice(0, 3);

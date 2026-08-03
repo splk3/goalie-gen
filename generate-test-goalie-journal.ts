@@ -177,7 +177,7 @@ Options:
       path.join(contentDir, "how-to-improve-every-day.md"),
       "utf8"
     ),
-    practiceEntryMd: fs.readFileSync(path.join(contentDir, "practice-entry.md"), "utf8"),
+    eventEntryMd: fs.readFileSync(path.join(contentDir, "event-entry.md"), "utf8"),
     endOfSeasonMd: fs.readFileSync(path.join(contentDir, "end-of-season.md"), "utf8"),
   };
 

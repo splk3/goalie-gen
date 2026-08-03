@@ -29,7 +29,7 @@ import coverMd from "../content/goalie-journal/cover.md";
 import acknowledgementsMd from "../content/goalie-journal/acknowledgements.md";
 import howToUseMd from "../content/goalie-journal/how-to-use.md";
 import howToImproveEveryDayMd from "../content/goalie-journal/how-to-improve-every-day.md";
-import practiceEntryMd from "../content/goalie-journal/practice-entry.md";
+import eventEntryMd from "../content/goalie-journal/event-entry.md";
 import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
 const DEFAULT_LOGO_PATH = "/images/logos/logo-alt-light.png";
@@ -217,7 +217,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       acknowledgementsMd,
       howToUseMd,
       howToImproveEveryDayMd,
-      practiceEntryMd,
+      eventEntryMd,
       endOfSeasonMd,
     };
 

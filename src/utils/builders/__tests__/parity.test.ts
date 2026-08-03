@@ -147,7 +147,7 @@ const JOURNAL_CONTENT: GoalieJournalContent = {
     "# How to Use this Journal\n\nUse this journal to track your progress.\n\n- Review your entries.",
   howToImproveEveryDayMd:
     "# How to Improve Every Day\n\nChoose one small improvement to practice today.",
-  practiceEntryMd: [
+  eventEntryMd: [
     "# Goalie Event Log",
     "",
     "### Before",
@@ -849,7 +849,7 @@ describe("buildGoalieJournalPdf", () => {
     );
     [
       ["Use this journal to track your progress.", 2, 31],
-      ["Thank you to the people who support your development.", 2, 64],
+      ["Thank you to the people who support your development.", 2, 60],
       ["Choose one small improvement to practice today.", 3, 31],
       ["Reflect on your season.", 4, 107],
     ].forEach(([text, page, y]) => {
@@ -1514,7 +1514,7 @@ describe("buildGoalieJournalPdf", () => {
     const content: GoalieJournalContent = {
       ...JOURNAL_CONTENT,
       coverMd: "# **Bold Journal**\n\n*Italic subtitle*",
-      practiceEntryMd: "# Goalie Event Log\n\n**Bold prompt** and _italic prompt_.",
+      eventEntryMd: "# Goalie Event Log\n\n**Bold prompt** and _italic prompt_.",
     };
 
     buildGoalieJournalPdf(
