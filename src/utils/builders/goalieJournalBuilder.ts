@@ -137,7 +137,10 @@ function renderJournalContentSection(
   primary: string,
   titleY: number,
   contentStartY: number,
-  titleFontSize = 20
+  titleFontSize = 20,
+  bodyFontSize = 11,
+  bodyLineHeight = 6,
+  subHeadingFontSize = 14
 ): number {
   const blocks = parseMarkdown(markdown);
   const titleIndex = blocks.findIndex((block) => block.type === "heading");
@@ -156,17 +159,17 @@ function renderJournalContentSection(
   drawInlineText(doc, title, 105, titleY, 170, 6, "center");
 
   doc.setTextColor("#000000");
-  doc.setFontSize(11);
+  doc.setFontSize(bodyFontSize);
   let y = contentStartY;
   bodyBlocks.forEach((block, index) => {
     if (block.type === "heading") {
-      y += 4;
+      y += 3;
       doc.setTextColor(primary);
-      doc.setFontSize(14);
-      const lineCount = drawInlineText(doc, `**${block.text}**`, 20, y, 170, 6);
-      y += lineCount * 6 + 4;
+      doc.setFontSize(subHeadingFontSize);
+      const lineCount = drawInlineText(doc, `**${block.text}**`, 20, y, 170, bodyLineHeight);
+      y += lineCount * bodyLineHeight + 3;
       doc.setTextColor("#000000");
-      doc.setFontSize(11);
+      doc.setFontSize(bodyFontSize);
       return;
     }
 
@@ -175,8 +178,8 @@ function renderJournalContentSection(
     }
 
     const text = block.type === "bullet" ? `- ${block.text}` : block.text;
-    const lineCount = drawInlineText(doc, text, 20, y, 170, 6);
-    y += lineCount * 6 + (block.type === "paragraph" ? JOURNAL_CONTENT_PARAGRAPH_GAP : 0);
+    const lineCount = drawInlineText(doc, text, 20, y, 170, bodyLineHeight);
+    y += lineCount * bodyLineHeight + (block.type === "paragraph" ? JOURNAL_CONTENT_PARAGRAPH_GAP : 0);
   });
 
   return y;
@@ -495,7 +498,11 @@ export function buildGoalieJournalPdf(
     howToUseMd,
     primary,
     20,
-    JOURNAL_CONTENT_START_Y
+    JOURNAL_CONTENT_START_Y,
+    16,
+    9,
+    5,
+    11
   );
   const acknowledgementsTitleY = howToUseEndY + ACKNOWLEDGEMENTS_SECTION_GAP;
   const acknowledgementsEndY = renderJournalContentSection(
@@ -503,8 +510,11 @@ export function buildGoalieJournalPdf(
     acknowledgementsMd,
     primary,
     acknowledgementsTitleY,
-    acknowledgementsTitleY + 10,
-    16
+    acknowledgementsTitleY + 9,
+    13,
+    9,
+    5,
+    11
   );
   drawGoldCertificationBlock(
     doc,
@@ -515,7 +525,7 @@ export function buildGoalieJournalPdf(
   // ── How to Improve Every Day page ───────────────────────────────────────────
 
   doc.addPage();
-  renderJournalContentSection(doc, howToImproveEveryDayMd, primary, 20, JOURNAL_CONTENT_START_Y);
+  renderJournalContentSection(doc, howToImproveEveryDayMd, primary, 20, JOURNAL_CONTENT_START_Y, 16, 9, 5, 11);
 
   // ── Season Goals and End of Season Review page ──────────────────────────────
 
