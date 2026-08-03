@@ -190,8 +190,7 @@ export interface GoalieJournalContent {
   acknowledgementsMd: string;
   howToUseMd: string;
   howToImproveEveryDayMd: string;
-  seasonGoalsMd: string;
-  practiceEntryMd: string;
+  eventEntryMd: string;
   endOfSeasonMd: string;
 }
 

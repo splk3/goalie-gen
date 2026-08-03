@@ -29,27 +29,33 @@ type JsPdfModule = typeof import("jspdf");
 type JournalDocument = InstanceType<JsPdfModule["jsPDF"]>;
 
 const JOURNAL_CONTENT_START_Y = 31;
-const SEASON_GOALS_START_OFFSET = 20;
+const JOURNAL_CONTENT_PARAGRAPH_GAP = 3;
+const ACKNOWLEDGEMENTS_SECTION_GAP = 4;
+const ACKNOWLEDGEMENTS_GOLD_GAP = 2;
+const SEASON_GOALS_START_Y = 32;
 const ENTERED_SEASON_GOAL_MIN_STEP = 10;
 const ENTERED_SEASON_GOAL_TEXT_GAP = 5;
-const WRITE_IN_SEASON_GOAL_STEP = 35;
-const WRITE_IN_SEASON_GOAL_LINE_GAP = 12;
+const ENTERED_SEASON_GOAL_END_TRIM = 4;
+const WRITE_IN_SEASON_GOAL_STEP = 21;
+const WRITE_IN_SEASON_GOAL_LINE_GAP = 8;
 const END_OF_SEASON_ANSWER_LINES = 2;
-const END_OF_SEASON_LINE_SPACING = 8;
-const END_OF_SEASON_BLOCK_PADDING = 10;
+const END_OF_SEASON_LINE_SPACING = 6;
+const END_OF_SEASON_BLOCK_PADDING = 8;
 const JOURNAL_ENTRIES_PER_PAGE = 3;
-const JOURNAL_ENTRY_HEIGHT = 76;
+const JOURNAL_ENTRY_HEIGHT = 74;
 const JOURNAL_ENTRY_COLUMN_DIVIDER_X = 105;
 const JOURNAL_ENTRY_LEFT_X = 20;
 const JOURNAL_ENTRY_LEFT_END_X = 101;
 const JOURNAL_ENTRY_RIGHT_X = 109;
 const JOURNAL_ENTRY_RIGHT_END_X = 190;
-const JOURNAL_ENTRY_COLUMN_TITLE_OFFSET = 31;
-const JOURNAL_ENTRY_FIRST_PROMPT_OFFSET = 40;
-const JOURNAL_ENTRY_PROMPT_STEP = 10;
-const JOURNAL_ENTRY_UNDERLINE_OFFSET = 4;
-const JOURNAL_ENTRY_FINAL_PROMPT_INDEX = 2;
-const JOURNAL_ENTRY_EXTRA_LINE_GAP = 7;
+const JOURNAL_ENTRY_COLUMN_TITLE_OFFSET = 23;
+const JOURNAL_ENTRY_FIRST_PROMPT_OFFSET = 27;
+const JOURNAL_ENTRY_PROMPT_STEP = 16;
+const JOURNAL_ENTRY_UNDERLINE_OFFSET = 5;
+const JOURNAL_ENTRY_SECOND_LINE_OFFSET = 10;
+const JOURNAL_ENTRY_FIELD_LINE_WIDTH = 0.2;
+const JOURNAL_SECTION_BORDER_X = 15;
+const JOURNAL_SECTION_BORDER_WIDTH = 180;
 
 export const GOALIE_JOURNAL_GOLD_CERTIFICATION_TEXT =
   "The goalie journal generator was developed as part of the USA Hockey Goaltending Gold Certification Program. The goal of this journal is to help you develop into the best and most resilient goalie that you can be. Share your journal with your family and coaches so they can help you on your journey.";
@@ -125,11 +131,16 @@ function drawInlineText(
   return lines.length;
 }
 
-function renderJournalContentPage(
+function renderJournalContentSection(
   doc: JournalDocument,
   markdown: string,
   primary: string,
-  options: { compactBulletSpacing?: boolean } = {}
+  titleY: number,
+  contentStartY: number,
+  titleFontSize = 20,
+  bodyFontSize = 11,
+  bodyLineHeight = 6,
+  subHeadingFontSize = 14
 ): number {
   const blocks = parseMarkdown(markdown);
   const titleIndex = blocks.findIndex((block) => block.type === "heading");
@@ -144,31 +155,96 @@ function renderJournalContentPage(
   );
 
   doc.setTextColor(primary);
-  doc.setFontSize(20);
-  drawInlineText(doc, title, 105, 20, 170, 6, "center");
+  doc.setFontSize(titleFontSize);
+  drawInlineText(doc, title, 105, titleY, 170, 6, "center");
 
   doc.setTextColor("#000000");
-  doc.setFontSize(11);
-  let y = JOURNAL_CONTENT_START_Y;
-  bodyBlocks.forEach((block) => {
+  doc.setFontSize(bodyFontSize);
+  let y = contentStartY;
+  bodyBlocks.forEach((block, index) => {
     if (block.type === "heading") {
-      y += 4;
+      y += 3;
       doc.setTextColor(primary);
-      doc.setFontSize(14);
-      const lineCount = drawInlineText(doc, `**${block.text}**`, 20, y, 170, 6);
-      y += lineCount * 6 + 4;
+      doc.setFontSize(subHeadingFontSize);
+      const lineCount = drawInlineText(doc, `**${block.text}**`, 20, y, 170, bodyLineHeight);
+      y += lineCount * bodyLineHeight + 3;
       doc.setTextColor("#000000");
-      doc.setFontSize(11);
+      doc.setFontSize(bodyFontSize);
       return;
     }
 
+    if (block.type === "paragraph" && bodyBlocks[index - 1]?.type === "bullet") {
+      y += JOURNAL_CONTENT_PARAGRAPH_GAP;
+    }
+
     const text = block.type === "bullet" ? `- ${block.text}` : block.text;
-    const lineCount = drawInlineText(doc, text, 20, y, 170, 6);
-    const spacingAfter = block.type === "bullet" && options.compactBulletSpacing ? 0 : 6;
-    y += lineCount * 6 + spacingAfter;
+    const lineCount = drawInlineText(doc, text, 20, y, 170, bodyLineHeight);
+    y +=
+      lineCount * bodyLineHeight + (block.type === "paragraph" ? JOURNAL_CONTENT_PARAGRAPH_GAP : 0);
   });
 
   return y;
+}
+
+function renderEndOfSeasonReview(
+  doc: JournalDocument,
+  markdown: string,
+  primary: string,
+  titleY: number,
+  contentStartY: number
+): number {
+  const eosBlocks = parseMarkdown(markdown);
+  const eosTitle =
+    eosBlocks.find((block) => block.type === "heading")?.text ?? "End of Season Review";
+  const eosPrompts = eosBlocks
+    .filter((block) => block.type === "paragraph" || block.type === "bullet")
+    .map((block) => block.text);
+
+  doc.setTextColor(primary);
+  doc.setFontSize(20);
+  drawInlineText(doc, eosTitle, 105, titleY, 170, 6, "center");
+
+  const eosBlockHeight =
+    END_OF_SEASON_BLOCK_PADDING + END_OF_SEASON_ANSWER_LINES * END_OF_SEASON_LINE_SPACING;
+  doc.setFontSize(12);
+  doc.setTextColor("#000000");
+  doc.setDrawColor("#000000");
+  doc.setLineWidth(JOURNAL_ENTRY_FIELD_LINE_WIDTH);
+  let eosY = contentStartY;
+  eosPrompts.forEach((prompt) => {
+    const promptLines = inlineTextLines(doc, prompt, 170);
+    promptLines.forEach((line, lineIndex) => {
+      let promptX = 20;
+      line.forEach((segment) => {
+        setInlineFont(doc, segment);
+        doc.text(segment.text, promptX, eosY + lineIndex * 6);
+        promptX += doc.getTextWidth(segment.text);
+      });
+    });
+    const eosAnswerStart = eosY + promptLines.length * 6 + 2;
+    for (let index = 0; index < END_OF_SEASON_ANSWER_LINES; index++) {
+      doc.line(
+        20,
+        eosAnswerStart + index * END_OF_SEASON_LINE_SPACING,
+        190,
+        eosAnswerStart + index * END_OF_SEASON_LINE_SPACING
+      );
+    }
+    eosY += eosBlockHeight + (promptLines.length - 1) * 6;
+  });
+
+  return eosY;
+}
+
+function drawJournalSectionBorder(
+  doc: JournalDocument,
+  color: string,
+  topY: number,
+  bottomY: number
+): void {
+  doc.setDrawColor(color);
+  doc.setLineWidth(0.5);
+  doc.rect(JOURNAL_SECTION_BORDER_X, topY, JOURNAL_SECTION_BORDER_WIDTH, bottomY - topY);
 }
 
 function drawGoldCertificationBlock(
@@ -327,14 +403,13 @@ export function buildGoalieJournalPdf(
     acknowledgementsMd,
     howToUseMd,
     howToImproveEveryDayMd,
-    seasonGoalsMd,
-    practiceEntryMd,
+    eventEntryMd,
     endOfSeasonMd,
   } = content;
   const primary = normalizeHexRgbColor(primaryColor) ?? DEFAULT_PRIMARY_TEAM_COLOR;
   const secondary = normalizeHexRgbColor(secondaryColor) ?? DEFAULT_SECONDARY_TEAM_COLOR;
 
-  const doc = new jsPDF();
+  const doc = new jsPDF({ format: "letter" });
 
   // ── Cover page ─────────────────────────────────────────────────────────────
 
@@ -380,7 +455,7 @@ export function buildGoalieJournalPdf(
 
   const coverPageHeight = doc.internal.pageSize.height;
   const coverFooterImageSize = 18;
-  const coverFooterImageY = coverPageHeight - 28;
+  const coverFooterImageY = coverPageHeight - 34;
   if (footerLogo) {
     const logoWidth = footerLogo.width > 0 ? footerLogo.width : coverFooterImageSize;
     const logoHeight = footerLogo.height > 0 ? footerLogo.height : coverFooterImageSize;
@@ -399,9 +474,9 @@ export function buildGoalieJournalPdf(
   doc.setFontSize(8);
   doc.setTextColor("#000000");
   GOALIE_JOURNAL_COVER_PROMOTION_LINES.forEach((line, index) => {
-    drawInlineText(doc, line, 105, coverPageHeight - 21 + index * 4.5, 120, 4.5, "center");
+    drawInlineText(doc, line, 105, coverPageHeight - 27 + index * 4.5, 120, 4.5, "center");
   });
-  doc.link(45, coverPageHeight - 25, 120, 12, { url: GOALIE_JOURNAL_PROMOTION_URL });
+  doc.link(45, coverPageHeight - 31, 120, 12, { url: GOALIE_JOURNAL_PROMOTION_URL });
   if (qrCodeDataUrl) {
     doc.addImage(
       qrCodeDataUrl,
@@ -416,64 +491,100 @@ export function buildGoalieJournalPdf(
     });
   }
 
-  // ── Acknowledgements page ───────────────────────────────────────────────────
+  // ── How to Use this Journal and Acknowledgements page ───────────────────────
 
   doc.addPage();
-  const acknowledgementsEndY = renderJournalContentPage(doc, acknowledgementsMd, primary);
-  drawGoldCertificationBlock(doc, goldCertificationBadge, acknowledgementsEndY + 4);
-
-  // ── How to Use this Journal page ────────────────────────────────────────────
-
-  doc.addPage();
-  renderJournalContentPage(doc, howToUseMd, primary);
+  const howToUseEndY = renderJournalContentSection(
+    doc,
+    howToUseMd,
+    primary,
+    20,
+    JOURNAL_CONTENT_START_Y,
+    16,
+    9,
+    5,
+    11
+  );
+  const acknowledgementsTitleY = howToUseEndY + ACKNOWLEDGEMENTS_SECTION_GAP;
+  const acknowledgementsEndY = renderJournalContentSection(
+    doc,
+    acknowledgementsMd,
+    primary,
+    acknowledgementsTitleY,
+    acknowledgementsTitleY + 9,
+    13,
+    9,
+    5,
+    11
+  );
+  drawGoldCertificationBlock(
+    doc,
+    goldCertificationBadge,
+    acknowledgementsEndY + ACKNOWLEDGEMENTS_GOLD_GAP
+  );
 
   // ── How to Improve Every Day page ───────────────────────────────────────────
 
   doc.addPage();
-  renderJournalContentPage(doc, howToImproveEveryDayMd, primary, {
-    compactBulletSpacing: true,
-  });
+  renderJournalContentSection(
+    doc,
+    howToImproveEveryDayMd,
+    primary,
+    20,
+    JOURNAL_CONTENT_START_Y,
+    16,
+    9,
+    5,
+    11
+  );
 
-  // ── Season Goals page ──────────────────────────────────────────────────────
+  // ── Season Goals and End of Season Review page ──────────────────────────────
 
   doc.addPage();
-  const goalsBlocks = parseMarkdown(seasonGoalsMd);
-  const goalsTitle = goalsBlocks.find((b) => b.type === "heading")?.text ?? "Season Goals";
-  const goalsPrompt = goalsBlocks.find((b) => b.type === "paragraph")?.text ?? "";
-
   doc.setTextColor(primary);
   doc.setFontSize(20);
-  drawInlineText(doc, goalsTitle, 105, 20, 170, 6, "center");
-  doc.setFontSize(12);
-  doc.setTextColor("#000000");
-  if (goalsPrompt) {
-    drawInlineText(doc, goalsPrompt, 20, JOURNAL_CONTENT_START_Y, 170, 5);
-  }
+  drawInlineText(doc, "Season Goals", 105, 20, 170, 6, "center");
 
   const normalizedSeasonGoals = normalizeJournalSeasonGoals(seasonGoals);
+  let seasonGoalsEndY = SEASON_GOALS_START_Y;
+  doc.setFontSize(12);
+  doc.setTextColor("#000000");
+  doc.setDrawColor("#000000");
   if (writeInSeasonGoals || normalizedSeasonGoals.length === 0) {
     for (let i = 0; i < JOURNAL_SEASON_GOAL_COUNT; i++) {
-      const y = JOURNAL_CONTENT_START_Y + SEASON_GOALS_START_OFFSET + i * WRITE_IN_SEASON_GOAL_STEP;
+      const y = SEASON_GOALS_START_Y + i * WRITE_IN_SEASON_GOAL_STEP;
       doc.text(`${i + 1}.`, 20, y);
-      doc.setDrawColor(secondary);
       doc.line(30, y, 190, y);
       doc.line(30, y + WRITE_IN_SEASON_GOAL_LINE_GAP, 190, y + WRITE_IN_SEASON_GOAL_LINE_GAP);
+      seasonGoalsEndY = y + WRITE_IN_SEASON_GOAL_LINE_GAP;
     }
   } else {
-    let goalY = JOURNAL_CONTENT_START_Y + SEASON_GOALS_START_OFFSET;
+    let goalY = SEASON_GOALS_START_Y;
     normalizedSeasonGoals.forEach((goal, index) => {
       doc.text(`${index + 1}.`, 20, goalY);
       const lineCount = drawInlineText(doc, goal, 30, goalY, 160, 5);
       goalY += Math.max(ENTERED_SEASON_GOAL_MIN_STEP, lineCount * 5 + ENTERED_SEASON_GOAL_TEXT_GAP);
     });
+    seasonGoalsEndY = goalY - ENTERED_SEASON_GOAL_END_TRIM;
   }
+  const seasonGoalsBoxBottomY = seasonGoalsEndY + 3;
+  drawJournalSectionBorder(doc, primary, 12, seasonGoalsBoxBottomY);
+  const endOfSeasonTitleY = seasonGoalsBoxBottomY + 10;
+  const endOfSeasonEndY = renderEndOfSeasonReview(
+    doc,
+    endOfSeasonMd,
+    primary,
+    endOfSeasonTitleY,
+    endOfSeasonTitleY + 12
+  );
+  drawJournalSectionBorder(doc, secondary, endOfSeasonTitleY - 8, endOfSeasonEndY + 3);
 
   // ── Practice/Game Log pages ────────────────────────────────────────────────
 
-  const entryBlocks = parseMarkdown(practiceEntryMd);
+  const entryBlocks = parseMarkdown(eventEntryMd);
   const entryTitle = entryBlocks.find((b) => b.type === "heading")?.text ?? "Goalie Event Log";
   const getEntryColumnPrompts = (heading: string): string[] =>
-    parseMarkdown(extractLevel3Section(practiceEntryMd, heading))
+    parseMarkdown(extractLevel3Section(eventEntryMd, heading))
       .filter((block) => block.type === "paragraph" || block.type === "bullet")
       .map((block) => block.text)
       .slice(0, 3);
@@ -491,7 +602,7 @@ export function buildGoalieJournalPdf(
     doc.setFontSize(9);
     doc.text("Page", 165, 15);
     doc.setDrawColor(primary);
-    doc.setLineWidth(0.5);
+    doc.setLineWidth(JOURNAL_ENTRY_FIELD_LINE_WIDTH);
     doc.line(177, 15, 195, 15);
 
     const firstEntry = page * JOURNAL_ENTRIES_PER_PAGE;
@@ -508,23 +619,27 @@ export function buildGoalieJournalPdf(
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
       doc.text("Entry #", 20, startY + 7);
-      doc.line(48, startY + 7, 75, startY + 7);
+      doc.setLineWidth(JOURNAL_ENTRY_FIELD_LINE_WIDTH);
+      const entryNumberLineStart = 20 + doc.getTextWidth("Entry #") + 3;
+      doc.line(entryNumberLineStart, startY + 7, entryNumberLineStart + 27, startY + 7);
       doc.setFont("helvetica", "normal");
 
       doc.setFontSize(9);
       doc.text("Date:", 20, startY + 15);
+      doc.setLineWidth(JOURNAL_ENTRY_FIELD_LINE_WIDTH);
       doc.line(31, startY + 15, 54, startY + 15);
       doc.text("Time:", 59, startY + 15);
       doc.line(70, startY + 15, 93, startY + 15);
-      doc.rect(101, startY + 11.5, 3, 3);
-      doc.text("Practice", 106, startY + 15);
-      doc.rect(124, startY + 11.5, 3, 3);
-      doc.text("Game", 129, startY + 15);
-      doc.rect(143, startY + 11.5, 3, 3);
-      doc.text("Other:", 148, startY + 15);
-      doc.line(161, startY + 15, 190, startY + 15);
-      doc.text("Opponent:", 20, startY + 23);
-      doc.line(42, startY + 23, 100, startY + 23);
+      doc.text("Opponent:", 109, startY + 15);
+      doc.line(109 + doc.getTextWidth("Opponent:") + 3, startY + 15, 190, startY + 15);
+
+      doc.rect(101, startY + 3.5, 3, 3);
+      doc.text("Practice", 106, startY + 7);
+      doc.rect(124, startY + 3.5, 3, 3);
+      doc.text("Game", 129, startY + 7);
+      doc.rect(143, startY + 3.5, 3, 3);
+      doc.text("Other:", 148, startY + 7);
+      doc.line(148 + doc.getTextWidth("Other:") + 3, startY + 7, 190, startY + 7);
 
       doc.setDrawColor("#B0B0B0");
       doc.setLineWidth(0.2);
@@ -536,6 +651,7 @@ export function buildGoalieJournalPdf(
       );
 
       doc.setTextColor("#000000");
+      doc.setLineWidth(JOURNAL_ENTRY_FIELD_LINE_WIDTH);
       doc.setFontSize(9);
       doc.setFont("helvetica", "bold");
       doc.text(
@@ -575,14 +691,12 @@ export function buildGoalieJournalPdf(
             endX,
             promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET
           );
-          if (promptIndex === JOURNAL_ENTRY_FINAL_PROMPT_INDEX) {
-            doc.line(
-              x,
-              promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET + JOURNAL_ENTRY_EXTRA_LINE_GAP,
-              endX,
-              promptY + JOURNAL_ENTRY_UNDERLINE_OFFSET + JOURNAL_ENTRY_EXTRA_LINE_GAP
-            );
-          }
+          doc.line(
+            x,
+            promptY + JOURNAL_ENTRY_SECOND_LINE_OFFSET,
+            endX,
+            promptY + JOURNAL_ENTRY_SECOND_LINE_OFFSET
+          );
         });
       });
     }
@@ -592,61 +706,16 @@ export function buildGoalieJournalPdf(
     doc.setFontSize(7);
     doc.setTextColor("#000000");
     if (footerLogo) {
-      doc.addImage(footerLogo.dataUrl, "PNG", 20, journalPageHeight - 24, 14, 14);
+      doc.addImage(footerLogo.dataUrl, "PNG", 20, journalPageHeight - 30, 14, 14);
     }
-    doc.text(footerText, footerLogo ? 106 : 98, journalPageHeight - 10, { align: "center" });
+    doc.text(footerText, footerLogo ? 106 : 98, journalPageHeight - 14, { align: "center" });
     if (qrCodeDataUrl) {
-      doc.addImage(qrCodeDataUrl, "PNG", 178, journalPageHeight - 24, 14, 14);
-      doc.link(178, journalPageHeight - 24, 14, 14, {
+      doc.addImage(qrCodeDataUrl, "PNG", 178, journalPageHeight - 30, 14, 14);
+      doc.link(178, journalPageHeight - 30, 14, 14, {
         url: GOALIE_JOURNAL_PROMOTION_URL,
       });
     }
   }
-
-  // ── End of Season Review page ──────────────────────────────────────────────
-
-  doc.addPage();
-  const eosBlocks = parseMarkdown(endOfSeasonMd);
-  const eosTitle = eosBlocks.find((b) => b.type === "heading")?.text ?? "End of Season Review";
-  const eosPrompts = eosBlocks
-    .filter((b) => b.type === "paragraph" || b.type === "bullet")
-    .map((b) => b.text);
-
-  doc.setTextColor(primary);
-  doc.setFontSize(20);
-  drawInlineText(doc, eosTitle, 105, 20, 170, 6, "center");
-
-  const eosPageHeight = doc.internal.pageSize.height - 15;
-  const eosBlockHeight =
-    END_OF_SEASON_BLOCK_PADDING + END_OF_SEASON_ANSWER_LINES * END_OF_SEASON_LINE_SPACING;
-  doc.setFontSize(12);
-  doc.setTextColor("#000000");
-  let eosY = JOURNAL_CONTENT_START_Y;
-  eosPrompts.forEach((prompt) => {
-    if (eosY + eosBlockHeight > eosPageHeight) {
-      doc.addPage();
-      eosY = 20;
-    }
-    const promptLines = inlineTextLines(doc, prompt, 170);
-    promptLines.forEach((line, lineIdx) => {
-      let promptX = 20;
-      line.forEach((segment) => {
-        setInlineFont(doc, segment);
-        doc.text(segment.text, promptX, eosY + lineIdx * 6);
-        promptX += doc.getTextWidth(segment.text);
-      });
-    });
-    const eosAnswerStart = eosY + promptLines.length * 6 + 2;
-    for (let i = 0; i < END_OF_SEASON_ANSWER_LINES; i++) {
-      doc.line(
-        20,
-        eosAnswerStart + i * END_OF_SEASON_LINE_SPACING,
-        190,
-        eosAnswerStart + i * END_OF_SEASON_LINE_SPACING
-      );
-    }
-    eosY += eosBlockHeight + (promptLines.length - 1) * 6;
-  });
 
   return doc;
 }
