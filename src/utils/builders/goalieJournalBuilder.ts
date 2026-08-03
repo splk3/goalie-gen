@@ -179,7 +179,8 @@ function renderJournalContentSection(
 
     const text = block.type === "bullet" ? `- ${block.text}` : block.text;
     const lineCount = drawInlineText(doc, text, 20, y, 170, bodyLineHeight);
-    y += lineCount * bodyLineHeight + (block.type === "paragraph" ? JOURNAL_CONTENT_PARAGRAPH_GAP : 0);
+    y +=
+      lineCount * bodyLineHeight + (block.type === "paragraph" ? JOURNAL_CONTENT_PARAGRAPH_GAP : 0);
   });
 
   return y;
@@ -525,7 +526,17 @@ export function buildGoalieJournalPdf(
   // ── How to Improve Every Day page ───────────────────────────────────────────
 
   doc.addPage();
-  renderJournalContentSection(doc, howToImproveEveryDayMd, primary, 20, JOURNAL_CONTENT_START_Y, 16, 9, 5, 11);
+  renderJournalContentSection(
+    doc,
+    howToImproveEveryDayMd,
+    primary,
+    20,
+    JOURNAL_CONTENT_START_Y,
+    16,
+    9,
+    5,
+    11
+  );
 
   // ── Season Goals and End of Season Review page ──────────────────────────────
 
