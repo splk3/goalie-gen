@@ -849,7 +849,7 @@ describe("buildGoalieJournalPdf", () => {
     );
     [
       ["Use this journal to track your progress.", 2, 31],
-      ["Thank you to the people who support your development.", 2, 60],
+      ["Thank you to the people who support your development.", 2, 57],
       ["Choose one small improvement to practice today.", 3, 31],
       ["Reflect on your season.", 4, 107],
     ].forEach(([text, page, y]) => {
@@ -1205,9 +1205,9 @@ describe("buildGoalieJournalPdf", () => {
       (call) => call.page === 5 && call.x1 === 105 && call.x2 === 105
     );
     expect(dividers).toEqual([
-      expect.objectContaining({ y1: 52, y2: 96 }),
-      expect.objectContaining({ y1: 128, y2: 172 }),
-      expect.objectContaining({ y1: 204, y2: 248 }),
+      expect.objectContaining({ y1: 52, y2: 94 }),
+      expect.objectContaining({ y1: 126, y2: 168 }),
+      expect.objectContaining({ y1: 200, y2: 242 }),
     ]);
 
     const promptUnderlines = mockModule.lineCalls.filter(
@@ -1217,14 +1217,14 @@ describe("buildGoalieJournalPdf", () => {
     );
     expect(promptUnderlines).toHaveLength(36);
     expect(promptUnderlines.map((call) => call.y1)).toEqual([
-      57, 64, 73, 80, 89, 96, 57, 64, 73, 80, 89, 96, 133, 140, 149, 156, 165, 172, 133, 140, 149,
-      156, 165, 172, 209, 216, 225, 232, 241, 248, 209, 216, 225, 232, 241, 248,
+      57, 62, 73, 78, 89, 94, 57, 62, 73, 78, 89, 94, 131, 136, 147, 152, 163, 168, 131, 136, 147,
+      152, 163, 168, 205, 210, 221, 226, 237, 242, 205, 210, 221, 226, 237, 242,
     ]);
     expect(
       promptUnderlines.map((call) => mockModule.lineWidths[mockModule.lineCalls.indexOf(call)])
     ).toEqual(Array(36).fill(0.2));
     const topFieldLines = mockModule.lineCalls.filter(
-      (call) => call.page === 5 && [32, 40, 108, 116, 184, 192].includes(call.y1)
+      (call) => call.page === 5 && [32, 40, 106, 114, 180, 188].includes(call.y1)
     );
     expect(topFieldLines).toHaveLength(15);
     expect(
@@ -1500,13 +1500,13 @@ describe("buildGoalieJournalPdf", () => {
       (call) => call.page === 3 && call.text === "- Second action"
     );
     expect(firstParagraph).toBeDefined();
-    expect(secondParagraph?.y).toBe((firstParagraph?.y ?? 0) + 9);
+    expect(secondParagraph?.y).toBe((firstParagraph?.y ?? 0) + 8);
     expect(firstInstruction).toBeDefined();
-    expect(firstInstruction?.y).toBe((secondParagraph?.y ?? 0) + 9);
-    expect(secondInstruction?.y).toBe((firstInstruction?.y ?? 0) + 6);
-    expect(closingParagraph?.y).toBe((secondInstruction?.y ?? 0) + 9);
+    expect(firstInstruction?.y).toBe((secondParagraph?.y ?? 0) + 8);
+    expect(secondInstruction?.y).toBe((firstInstruction?.y ?? 0) + 5);
+    expect(closingParagraph?.y).toBe((secondInstruction?.y ?? 0) + 8);
     expect(firstBullet).toBeDefined();
-    expect(secondBullet?.y).toBe((firstBullet?.y ?? 0) + 6);
+    expect(secondBullet?.y).toBe((firstBullet?.y ?? 0) + 5);
   });
 
   it("renders Markdown bold and italic styles in PDF text", () => {
