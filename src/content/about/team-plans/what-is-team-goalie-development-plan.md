@@ -1,3 +1,5 @@
+# What Is a Team Goalie Development Plan?
+
 A team goalie development plan is a practical, season-long guide that helps a coaching staff and its goalies align on priorities, expectations, and progression for one specific team.
 
 At the team level, plans should usually include:

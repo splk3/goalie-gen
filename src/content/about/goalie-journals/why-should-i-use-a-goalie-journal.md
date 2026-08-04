@@ -1,3 +1,5 @@
+# Why Should I Use a Goalie Journal?
+
 Goalies carry a unique mental and emotional load. Every save (and every goal against) is visible, pressure can be constant, and confidence can swing quickly without a process to reset and refocus on things the goalie can control.
 
 A journal gives goalies that process.

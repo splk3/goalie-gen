@@ -1,3 +1,5 @@
+# Create a Goalie Development Plan for Your Team
+
 Goalie Gen’s team plan generator helps coaches and goalies produce a structured, editable `.docx` team goalie development plan in minutes.
 
 Key capabilities include:

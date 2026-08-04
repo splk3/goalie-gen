@@ -1,3 +1,5 @@
+# What Is a Goalie Development Plan?
+
 A club-level goalie development plan is the organization’s shared roadmap for how it recruits, trains, supports, and retains goalies across all teams and age groups.
 
 At minimum, a complete plan should define:

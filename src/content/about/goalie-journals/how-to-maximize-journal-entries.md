@@ -1,3 +1,5 @@
+# How to Maximize Journal Entries
+
 Strong entries are specific, honest, and actionable.
 
 To maximize value:
