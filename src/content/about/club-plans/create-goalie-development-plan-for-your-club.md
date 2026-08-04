@@ -13,7 +13,7 @@ You can quickly configure:
 
 1. Click **Generate a Goalie Development Plan for Your Club** to open the generator.
 2. Enter your club details and optionally upload a logo, then crop the image as needed.
-3. If you upload a photo, the tool will detect and pre-fill primary and secondary colors. Change colors as needed.
+3. If you upload a logo, the tool will detect and pre-fill primary and secondary colors. Change colors as needed.
 4. Complete the goalie training/support options to reflect your current or target program model.
 5. Choose which starter sections to include.
 6. Select **Generate**, then **Download** your Word document.
