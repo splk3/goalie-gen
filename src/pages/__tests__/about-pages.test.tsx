@@ -142,12 +142,12 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders a top CTA and section CTAs for the team generator", () => {
+    it("renders section-end CTAs for the team generator", () => {
       expect(
         screen.getAllByRole("button", {
           name: "Generate a Goalie Development Plan for Your Team",
         })
-      ).toHaveLength(5);
+      ).toHaveLength(4);
     });
 
     it("does not render the Content Coming Soon notice", () => {

@@ -78,7 +78,6 @@ export default function AboutTeamPlans() {
       title="About Team Development Plans"
       subtitle="Learn how the Team Development Plan generator works and how to get the most out of it for your coaching staff."
       showComingSoonNotice={false}
-      topCta={<TeamPlanGeneratorCta />}
       sections={[
         {
           heading: "What is a Team Goalie Development Plan?",
