@@ -10,7 +10,7 @@ Key options include:
 - write-in cover options for printed journals to share with others
 - configurable season goal prompts and entry count
 
-### Quick walkthrough
+## Quick walkthrough
 
 1. Click **Generate Personalized Goalie Journal** to open the generator.
 2. Enter goalie/team details and choose season settings.

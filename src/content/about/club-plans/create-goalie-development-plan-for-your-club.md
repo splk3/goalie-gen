@@ -9,7 +9,7 @@ You can quickly configure:
 - club-level goalie support details (practice/training model, equipment support, mentorship, evaluations, goalie discounts)
 - optional starter sections for introduction, season goals, equipment, and external resources
 
-### Quick walkthrough
+## Quick walkthrough
 
 1. Click **Generate a Goalie Development Plan for Your Club** to open the generator.
 2. Enter your club details and optionally upload a logo, then crop the image as needed.

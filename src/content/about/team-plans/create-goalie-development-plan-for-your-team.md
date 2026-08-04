@@ -10,7 +10,7 @@ Key capabilities include:
 - optional shot tracker support for game entries
 - reusable resource and planning structure aligned with USA Hockey goaltending development themes
 
-### Quick walkthrough
+## Quick walkthrough
 
 1. Click **Generate a Goalie Development Plan for Your Team** to open the generator.
 2. Enter team profile details and age group, then optionally upload a team logo.
