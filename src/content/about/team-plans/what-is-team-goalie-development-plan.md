@@ -10,8 +10,6 @@ At the team level, plans should usually include:
 - season event planning and practice/game/video/evaluation detail structure
 - trusted external resources for coaches and goalies to reinforce development
 
-The sample team plans in `test-docs/*-team-plan.docx` and the source content in `src/content/team-plan/*.md` show this structure in action with recurring sections such as season overview, key development goals, event details, evaluations, and resources.
-
 This matters because goalie development is too important to leave to chance during a busy season. A written team plan improves communication between coaches, goalies, and families, keeps development consistent across practices and games, and creates accountability for progress checkpoints.
 
 Team plans are intended for internal team use (coaches, goalies, and hockey director coordination). They are not designed as public-facing documents.
