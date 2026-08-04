@@ -4,8 +4,8 @@ import Seo from "../components/SEO";
 import AboutPage from "../components/AboutPage";
 import DrillMarkdown from "../components/DrillMarkdown";
 import GenerateClubPlanButton from "../components/GenerateClubPlanButton";
-import whatIsGoalieDevelopmentPlanMd from "../content/about/club-plans/what-is-goalie-development-plan.md";
-import createClubPlanMd from "../content/about/club-plans/create-goalie-development-plan-for-your-club.md";
+import whatIsGoalieDevelopmentPlanMd from "../content/about/about-club-plans/what-is-goalie-development-plan.md";
+import createClubPlanMd from "../content/about/about-club-plans/create-goalie-development-plan-for-your-club.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 const ctaLabel = "Generate a Goalie Development Plan for Your Club";
@@ -14,12 +14,13 @@ const screenshotItems = [
   {
     src: "/images/about/club-plans/club-generator-home-card.png",
     alt: "Goalie Gen homepage For Organizations card with the club plan generator button",
-    caption: "From the homepage, start in the For Organizations section.",
+    caption:
+      "Click the Generate Club Plan button on this page or on the homepage (homepage shown).",
   },
   {
     src: "/images/about/club-plans/club-generator-modal-overview.png",
     alt: "Open club development plan generator modal with club details and logo section",
-    caption: "Enter club details and optionally upload a logo for automatic color extraction.",
+    caption: "Enter club details and optionally upload a logo and confirm/select club colors.",
   },
   {
     src: "/images/about/club-plans/club-generator-training-options.png",

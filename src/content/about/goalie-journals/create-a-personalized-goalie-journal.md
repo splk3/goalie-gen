@@ -1,6 +1,6 @@
 # Create a Personalized Goalie Journal
 
-GoalieGen’s journal generator creates a personalized PDF journal that goalies can use throughout the season for structured reflection, planning, and accountability.
+Goalie Gen’s journal generator creates a personalized PDF journal that goalies can use throughout the season for structured reflection, planning, and accountability.
 
 Key options include:
 

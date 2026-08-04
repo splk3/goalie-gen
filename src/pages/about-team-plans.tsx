@@ -4,10 +4,10 @@ import Seo from "../components/SEO";
 import AboutPage from "../components/AboutPage";
 import DrillMarkdown from "../components/DrillMarkdown";
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton";
-import whatIsTeamPlanMd from "../content/about/team-plans/what-is-team-goalie-development-plan.md";
-import createTeamPlanMd from "../content/about/team-plans/create-goalie-development-plan-for-your-team.md";
-import implementationInfoMd from "../content/about/team-plans/goalie-development-implementation-info.md";
-import sampleDrillsMd from "../content/about/team-plans/sample-drills-and-good-drill-design.md";
+import whatIsTeamPlanMd from "../content/about/about-team-plans/what-is-team-goalie-development-plan.md";
+import createTeamPlanMd from "../content/about/about-team-plans/create-goalie-development-plan-for-your-team.md";
+import implementationInfoMd from "../content/about/about-team-plans/goalie-development-implementation-info.md";
+import sampleDrillsMd from "../content/about/about-team-plans/sample-drills-and-good-drill-design.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 const ctaLabel = "Generate a Goalie Development Plan for Your Team";
@@ -16,12 +16,12 @@ const teamGeneratorScreenshots = [
   {
     src: "/images/about/team-plans/team-generator-home-card.png",
     alt: "Goalie Gen homepage For Coaches card with the team plan generator button",
-    caption: "Start from the For Coaches section on the homepage.",
+    caption: "Start here or from the For Coaches section on the homepage.",
   },
   {
     src: "/images/about/team-plans/team-generator-modal-overview.png",
     alt: "Open team plan generator modal with team profile and setup fields",
-    caption: "Enter team profile details and optional logo/branding inputs.",
+    caption: "Enter team information, upload a logo (optional), and select team colors.",
   },
   {
     src: "/images/about/team-plans/team-generator-evaluations-options.png",
@@ -31,12 +31,8 @@ const teamGeneratorScreenshots = [
   {
     src: "/images/about/team-plans/team-generator-calendar-options.png",
     alt: "Team plan generator showing calendar and event detail options",
-    caption: "Enable calendar/event planning features and choose detailed event entry behavior.",
-  },
-  {
-    src: "/images/about/team-plans/team-generator-generate-actions.png",
-    alt: "Team plan generator action area with generate and cancel controls",
-    caption: "Generate the document when setup is complete, then download and customize.",
+    caption:
+      "Configure options and enable calendar, add events, choose detailed event entries for desired event types. Generate the document when setup is complete, then download and customize.",
   },
 ];
 
