@@ -32,13 +32,16 @@ describe("HamburgerMenu", () => {
     render(<HamburgerMenu />);
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
     expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Club Plan Generator" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Team Plan Generator" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Goalie Journal Generator" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "All Goalie Drills" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Drills with Team" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Drills without Team" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Club Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Coach Resources" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Goalie Resources" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Equipment Fitting" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Equipment Fitting" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Patrick Boyle's Project" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Katie Jablynski's Project" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "James Kujawski's Project" })).toBeInTheDocument();
