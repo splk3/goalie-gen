@@ -48,6 +48,16 @@ jest.mock("../../components/GenerateTeamPlanButton", () => {
   };
 });
 
+jest.mock("../../components/GoalieJournalButton", () => {
+  return function MockGoalieJournalButton({
+    label = "Goalie Journal",
+  }: {
+    label?: string;
+  }) {
+    return <button>{label}</button>;
+  };
+});
+
 describe("About pages", () => {
   describe("AboutClubPlans (/about-club-plans)", () => {
     beforeEach(() => render(<AboutClubPlans />));
@@ -158,8 +168,37 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders the Content Coming Soon notice", () => {
-      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    it("renders the requested section headings", () => {
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Why Should I Use a Goalie Journal?",
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Create a Personalized Goalie Journal",
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "How to Maximize the Benefit of Journal Entries",
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("renders section-end CTAs for the goalie journal generator", () => {
+      expect(
+        screen.getAllByRole("button", {
+          name: "Generate Personalized Goalie Journal",
+        })
+      ).toHaveLength(3);
+    });
+
+    it("does not render the Content Coming Soon notice", () => {
+      expect(screen.queryByText(/Content Coming Soon!/i)).not.toBeInTheDocument();
     });
 
     it("renders a Back to Home link", () => {
