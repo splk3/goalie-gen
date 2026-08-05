@@ -4,10 +4,9 @@ import Seo from "../components/SEO";
 import AboutPage from "../components/AboutPage";
 import DrillMarkdown from "../components/DrillMarkdown";
 import GenerateTeamPlanButton from "../components/GenerateTeamPlanButton";
+import NavigationButton from "../components/NavigationButton";
 import whatIsTeamPlanMd from "../content/about/about-team-plans/what-is-team-goalie-development-plan.md";
 import createTeamPlanMd from "../content/about/about-team-plans/create-goalie-development-plan-for-your-team.md";
-import implementationInfoMd from "../content/about/about-team-plans/goalie-development-implementation-info.md";
-import sampleDrillsMd from "../content/about/about-team-plans/sample-drills-and-good-drill-design.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 const ctaLabel = "Generate a Goalie Development Plan for Your Team";
@@ -33,29 +32,6 @@ const teamGeneratorScreenshots = [
     alt: "Team plan generator showing calendar and event detail options",
     caption:
       "Configure options and enable calendar, add events, choose detailed event entries for desired event types. Generate the document when setup is complete, then download and customize.",
-  },
-];
-
-const implementationDiagrams = [
-  {
-    src: "/images/drill-design/goaltending-skills-cycle.png",
-    alt: "Goaltending skills cycle diagram",
-    caption: "Goaltending Skills Cycle",
-  },
-  {
-    src: "/images/drill-design/goaltending-skills-pyramid.png",
-    alt: "Goaltending skills pyramid diagram",
-    caption: "Goaltending Skills Pyramid",
-  },
-  {
-    src: "/images/drill-design/fundamental-skills-by-exp-1-movement.png",
-    alt: "Fundamental goalie movement skills by experience level diagram",
-    caption: "Fundamental Skills by Experience: Movement",
-  },
-  {
-    src: "/images/drill-design/fundamental-skills-by-exp-2-saves.png",
-    alt: "Fundamental goalie save skills by experience level diagram",
-    caption: "Fundamental Skills by Experience: Saves",
   },
 ];
 
@@ -116,44 +92,21 @@ export default function AboutTeamPlans() {
           cta: <TeamPlanGeneratorCta />,
         },
         {
-          heading: "Goalie Development Information to Assist you in Implementing Your Plan",
+          heading: "Fundamental Skills and Good Drill Design",
           content: (
-            <div className="space-y-6">
-              <DrillMarkdown
-                markdown={implementationInfoMd}
-                className="text-gray-700 dark:text-gray-300 space-y-4"
-              />
-              <div className="grid gap-6 md:grid-cols-2">
-                {implementationDiagrams.map((item) => (
-                  <figure
-                    key={item.src}
-                    className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4"
-                  >
-                    <img
-                      src={withPrefix(buildCacheBustedAssetPath(item.src))}
-                      alt={item.alt}
-                      className="w-full h-auto rounded-md border border-gray-300 dark:border-gray-600"
-                      loading="lazy"
-                    />
-                    <figcaption className="mt-3 text-sm text-gray-700 dark:text-gray-300">
-                      {item.caption}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            </div>
+            <p>
+              Learn how fundamental goaltending skills build on one another and explore practical
+              sample drills and drill-design guidance to support your team&apos;s development plan.
+            </p>
           ),
-          cta: <TeamPlanGeneratorCta />,
-        },
-        {
-          heading: "Sample Drills and Good Drill Design",
-          content: (
-            <DrillMarkdown
-              markdown={sampleDrillsMd}
-              className="text-gray-700 dark:text-gray-300 space-y-4"
-            />
+          cta: (
+            <NavigationButton
+              to="/fundamental-skills-and-good-drill-design"
+              className="text-base md:text-lg py-3 px-6 md:px-8"
+            >
+              Learn About Fundamental Skills and Drill Design
+            </NavigationButton>
           ),
-          cta: <TeamPlanGeneratorCta />,
         },
       ]}
     />

@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import AboutClubPlans from "../about-club-plans";
 import AboutTeamPlans from "../about-team-plans";
 import AboutGoalieJournals from "../about-goalie-journals";
+import FundamentalSkillsAndGoodDrillDesign from "../fundamental-skills-and-good-drill-design";
 import PatrickBoyleProject from "../patrick-boyle-project";
 import KatieJablynskiProject from "../katie-jablynski-project";
 import JamesKujawskiProject from "../james-kujawski-project";
@@ -48,12 +49,20 @@ jest.mock("../../components/GenerateTeamPlanButton", () => {
   };
 });
 
-jest.mock("../../components/GoalieJournalButton", () => {
-  return function MockGoalieJournalButton({
-    label = "Goalie Journal",
+jest.mock("../../components/NavigationButton", () => {
+  return function MockNavigationButton({
+    children,
+    to,
   }: {
-    label?: string;
+    children: React.ReactNode;
+    to: string;
   }) {
+    return <a href={to}>{children}</a>;
+  };
+});
+
+jest.mock("../../components/GoalieJournalButton", () => {
+  return function MockGoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
     return <button>{label}</button>;
   };
 });
@@ -131,13 +140,7 @@ describe("About pages", () => {
       expect(
         screen.getByRole("heading", {
           level: 2,
-          name: "Goalie Development Information to Assist you in Implementing Your Plan",
-        })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("heading", {
-          level: 2,
-          name: "Sample Drills and Good Drill Design",
+          name: "Fundamental Skills and Good Drill Design",
         })
       ).toBeInTheDocument();
     });
@@ -147,11 +150,59 @@ describe("About pages", () => {
         screen.getAllByRole("button", {
           name: "Generate a Goalie Development Plan for Your Team",
         })
-      ).toHaveLength(4);
+      ).toHaveLength(2);
+    });
+
+    it("links to fundamental skills and drill design guidance", () => {
+      expect(
+        screen.getByRole("link", {
+          name: "Learn About Fundamental Skills and Drill Design",
+        })
+      ).toHaveAttribute("href", "/fundamental-skills-and-good-drill-design");
     });
 
     it("does not render the Content Coming Soon notice", () => {
       expect(screen.queryByText(/Content Coming Soon!/i)).not.toBeInTheDocument();
+    });
+
+    it("renders a Back to Home link", () => {
+      expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
+    });
+  });
+
+  describe("FundamentalSkillsAndGoodDrillDesign (/fundamental-skills-and-good-drill-design)", () => {
+    beforeEach(() => render(<FundamentalSkillsAndGoodDrillDesign />));
+
+    it("renders the correct h1 title", () => {
+      expect(
+        screen.getByRole("heading", {
+          level: 1,
+          name: "Fundamental Skills and Good Drill Design",
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("renders the moved content sections", () => {
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Fundamental Skills of Goaltending",
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Elements of Good Drill Design",
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByAltText("USA Hockey five elements of good drill design diagram")
+      ).toBeInTheDocument();
+      expect(
+        screen.getByAltText(
+          "USA Hockey drill design continuum from unopposed practice to game-like play"
+        )
+      ).toBeInTheDocument();
     });
 
     it("renders a Back to Home link", () => {
