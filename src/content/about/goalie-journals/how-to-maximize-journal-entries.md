@@ -5,7 +5,7 @@ Strong entries are specific, honest, and actionable.
 To maximize value:
 
 - fill out entries both **before** and **after** each practice/game/event
-- answer prompts with detail (what happened, why it happened, and what you will do next)
+- answer prompts with detail (how you feel, why you feel that way, and what you will do next to change it)
 - use process goals you can control (preparation, tracking, communication)
 - review past entries regularly to identify emotional and performance patterns
 - share key themes with coaches/family so support and training can stay aligned

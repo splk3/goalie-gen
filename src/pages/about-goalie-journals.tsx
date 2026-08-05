@@ -15,27 +15,23 @@ const journalScreenshots = [
   {
     src: "/images/about/goalie-journals/journal-generator-home-card.png",
     alt: "Goalie Gen homepage For Goalies card with the journal generator button",
-    caption: "Start from the For Goalies section on the homepage.",
+    caption: "Start from the button below or the For Goalies section on the homepage.",
   },
   {
     src: "/images/about/goalie-journals/journal-generator-modal-overview.png",
     alt: "Goalie journal generator modal showing profile and season setup fields",
-    caption: "Set goalie identity and season details for a personalized journal cover.",
+    caption: (
+      <>
+        <p>Set goalie identity and season details for a personalized journal cover.</p>
+        <p className="mt-2">
+          Choose write-in options when you want hand-written details on the printed journal.
+        </p>
+      </>
+    ),
   },
   {
-    src: "/images/about/goalie-journals/journal-generator-write-in-options.png",
-    alt: "Goalie journal generator write-in options for printable customization",
-    caption:
-      "Choose write-in options when you want hand-written details on the printed journal.",
-  },
-  {
-    src: "/images/about/goalie-journals/journal-generator-season-goals-and-entries.png",
-    alt: "Goalie journal generator season goals and entry count settings",
-    caption: "Define season goals and the number of journal entries for your schedule.",
-  },
-  {
-    src: "/images/about/goalie-journals/journal-generator-generate-actions.png",
-    alt: "Goalie journal generator action area with generate and cancel controls",
+    src: "/images/about/goalie-journals/journal-generator-finish.png",
+    alt: "Goalie journal generator finish state with download controls",
     caption: "Generate the PDF journal, then save and begin daily use.",
   },
 ];

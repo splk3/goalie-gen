@@ -19,3 +19,5 @@ Key options include:
 5. Click **Generate** and download the journal, then begin using it before and after events.
 
 The resulting journal should be treated as a working development document for the goalie, with input from coaches and family.
+
+**TIP:** Use the 'fill out later' checkboxes to print out journals for other goalies you know!

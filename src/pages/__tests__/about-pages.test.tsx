@@ -248,6 +248,43 @@ describe("About pages", () => {
       ).toHaveLength(3);
     });
 
+    it("renders the updated journal screenshots and captions", () => {
+      expect(
+        screen.getByAltText(
+          "Goalie Gen homepage For Goalies card with the journal generator button"
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByAltText(
+          "Goalie journal generator modal showing profile and season setup fields"
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByAltText("Goalie journal generator finish state with download controls")
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByAltText(
+          "Goalie journal generator write-in options for printable customization"
+        )
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByAltText(
+          "Goalie journal generator action area with generate and cancel controls"
+        )
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByText("Start from the button below or the For Goalies section on the homepage.")
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Choose write-in options when you want hand-written details on the printed journal."
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Generate the PDF journal, then save and begin daily use.")
+      ).toBeInTheDocument();
+    });
+
     it("does not render the Content Coming Soon notice", () => {
       expect(screen.queryByText(/Content Coming Soon!/i)).not.toBeInTheDocument();
     });
