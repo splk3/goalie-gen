@@ -16,6 +16,7 @@ The page files under `src/pages/` are automatically compiled by Gatsby into corr
 - **About Pages**: Informational overview pages for each document generator:
   - **About Club Plans (`src/pages/about-club-plans.tsx`)**
   - **About Team Plans (`src/pages/about-team-plans.tsx`)**
+  - **Fundamental Skills and Good Drill Design (`src/pages/fundamental-skills-and-good-drill-design.tsx`)**
   - **About Goalie Journals (`src/pages/about-goalie-journals.tsx`)**
 - **Resource Pages**: Pages loaded with external PDFs and links for goalie learning:
   - **Club Resources (`src/pages/club-resources.tsx`)**

@@ -35,7 +35,15 @@ import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 const DEFAULT_LOGO_PATH = "/images/logos/logo-alt-light.png";
 const GOLD_CERTIFICATION_BADGE_PATH = "/images/usahockey/usahockey-gold-certification.png";
 
-export default function GoalieJournalButton({ label = "Goalie Journal" }: { label?: string }) {
+type GoalieJournalButtonProps = {
+  label?: string;
+  className?: string;
+};
+
+export default function GoalieJournalButton({
+  label = "Goalie Journal",
+  className = "",
+}: GoalieJournalButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [goalieName, setGoalieName] = React.useState<string>("");
@@ -368,7 +376,7 @@ export default function GoalieJournalButton({ label = "Goalie Journal" }: { labe
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
+        className={`w-full bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center ${className}`.trim()}
       >
         {label}
       </button>

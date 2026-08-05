@@ -49,6 +49,9 @@ export default function CoachResources() {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Coach Tools</h2>
           <div className="flex flex-col gap-3">
             <NavigationButton to="/about-team-plans">Team Goalie Development</NavigationButton>
+            <NavigationButton to="/fundamental-skills-and-good-drill-design">
+              Fundamental Skills and Good Drill Design
+            </NavigationButton>
             <NavigationButton to="/about-goalie-journals">Goalie Journal</NavigationButton>
             <NavigationButton to="/goalie-evals">Goalie Evaluations</NavigationButton>
             <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />

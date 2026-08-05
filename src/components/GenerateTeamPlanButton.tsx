@@ -35,6 +35,8 @@ import type {
 
 interface GenerateTeamPlanButtonProps {
   variant?: "blue" | "red";
+  label?: string;
+  className?: string;
 }
 
 interface EventTypeLegendProps {
@@ -142,7 +144,11 @@ async function getQrCodePngData(url: string): Promise<Uint8Array | null> {
   }
 }
 
-export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTeamPlanButtonProps) {
+export default function GenerateTeamPlanButton({
+  variant = "blue",
+  label = "Generate Team Development Plan",
+  className = "",
+}: GenerateTeamPlanButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [teamName, setTeamName] = React.useState<string>("");
@@ -860,9 +866,9 @@ export default function GenerateTeamPlanButton({ variant = "blue" }: GenerateTea
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className={`${variantClasses[variant]} text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center`}
+        className={`${variantClasses[variant]} text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center ${className}`.trim()}
       >
-        Generate Team Development Plan
+        {label}
       </button>
 
       <Modal

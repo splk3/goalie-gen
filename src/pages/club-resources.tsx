@@ -39,6 +39,9 @@ export default function ClubResources() {
           <div className="flex flex-col gap-3">
             <NavigationButton to="/about-club-plans">Club Goalie Development</NavigationButton>
             <NavigationButton to="/about-team-plans">Team Goalie Development</NavigationButton>
+            <NavigationButton to="/fundamental-skills-and-good-drill-design">
+              Fundamental Skills and Good Drill Design
+            </NavigationButton>
             <NavigationButton to="/goalie-evals">Goalie Evaluations</NavigationButton>
             <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
           </div>

@@ -73,6 +73,11 @@ type TrainingDetailInputsProps = {
   disabled: boolean;
 };
 
+type GenerateClubPlanButtonProps = {
+  label?: string;
+  className?: string;
+};
+
 const formInputClassName =
   "w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed";
 
@@ -221,7 +226,10 @@ function TrainingDetailInputs({
   );
 }
 
-export default function GenerateClubPlanButton() {
+export default function GenerateClubPlanButton({
+  label = "Generate Club Development Plan",
+  className = "",
+}: GenerateClubPlanButtonProps) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [clubName, setClubName] = React.useState<string>("");
@@ -565,9 +573,9 @@ export default function GenerateClubPlanButton() {
       <button
         ref={triggerRef}
         onClick={() => setShowModal(true)}
-        className="bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center"
+        className={`bg-usa-blue hover:bg-blue-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-usa-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-colors transform hover:scale-105 text-center ${className}`.trim()}
       >
-        Generate Club Development Plan
+        {label}
       </button>
 
       <Modal

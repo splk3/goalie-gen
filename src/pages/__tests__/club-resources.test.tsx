@@ -57,6 +57,9 @@ describe("ClubResources page", () => {
       "href",
       "/about-team-plans"
     );
+    expect(
+      screen.getByRole("link", { name: "Fundamental Skills and Good Drill Design" })
+    ).toHaveAttribute("href", "/fundamental-skills-and-good-drill-design");
     expect(screen.getByRole("link", { name: "Goalie Evaluations" })).toHaveAttribute(
       "href",
       "/goalie-evals"

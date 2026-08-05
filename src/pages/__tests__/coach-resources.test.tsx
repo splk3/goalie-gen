@@ -64,6 +64,9 @@ describe("CoachResources page", () => {
       "href",
       "/about-team-plans"
     );
+    expect(
+      screen.getByRole("link", { name: "Fundamental Skills and Good Drill Design" })
+    ).toHaveAttribute("href", "/fundamental-skills-and-good-drill-design");
     expect(screen.getByRole("link", { name: "Goalie Journal" })).toHaveAttribute(
       "href",
       "/about-goalie-journals"
@@ -77,6 +80,7 @@ describe("CoachResources page", () => {
       .parentElement?.querySelectorAll("button, a");
     expect(Array.from(toolControls ?? []).map((control) => control.textContent)).toEqual([
       "Team Goalie Development",
+      "Fundamental Skills and Good Drill Design",
       "Goalie Journal",
       "Goalie Evaluations",
       "Coach Z's Zone Map",
