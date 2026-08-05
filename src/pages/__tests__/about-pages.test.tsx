@@ -39,6 +39,18 @@ jest.mock("../../components/BackLinkButton", () => {
   };
 });
 
+jest.mock("../../components/DownloadMaterialButton", () => {
+  return function MockDownloadMaterialButton({
+    title,
+    fileName,
+  }: {
+    title: string;
+    fileName: string;
+  }) {
+    return <button data-file-name={fileName}>{title}</button>;
+  };
+});
+
 jest.mock("../../components/GenerateClubPlanButton", () => {
   return function MockGenerateClubPlanButton({
     label = "Generate Club Development Plan",
@@ -205,6 +217,34 @@ describe("About pages", () => {
           name: "Elements of Good Drill Design",
         })
       ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Coach Z's Zone Map",
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Use this handy zone map to help teach your goalies where to be with respect to the puck location. Use the crease map to show where the goalie's feet should be in each part of the zone, and how to transition in and out of the post, and how to manage depth."
+        )
+      ).toBeInTheDocument();
+      expect(screen.getByAltText("Coach Z's goalie crease zone map")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Special thanks to John "Coach Z" Zdunkiewicz at ztending.com for sharing his Zone Map'
+        )
+      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Download Coach Z's Zone Map" })).toHaveAttribute(
+        "data-file-name",
+        "coach-z-zone-map.pdf"
+      );
+      expect(
+        screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)
+      ).toEqual([
+        "Fundamental Skills of Goaltending",
+        "Coach Z's Zone Map",
+        "Elements of Good Drill Design",
+      ]);
       expect(
         screen.getByAltText("USA Hockey five elements of good drill design diagram")
       ).toBeInTheDocument();

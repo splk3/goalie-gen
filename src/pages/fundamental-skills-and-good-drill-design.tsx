@@ -3,6 +3,7 @@ import { withPrefix } from "gatsby";
 import Seo from "../components/SEO";
 import AboutPage from "../components/AboutPage";
 import DrillMarkdown from "../components/DrillMarkdown";
+import DownloadMaterialButton from "../components/DownloadMaterialButton";
 import implementationInfoMd from "../content/about/fundamental-skills-and-good-drill-design/goalie-development-implementation-info.md";
 import sampleDrillsMd from "../content/about/fundamental-skills-and-good-drill-design/sample-drills-and-good-drill-design.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
@@ -151,6 +152,37 @@ export default function FundamentalSkillsAndGoodDrillDesign() {
                   </figure>
                 ))}
               </div>
+            </div>
+          ),
+        },
+        {
+          heading: "Coach Z's Zone Map",
+          content: (
+            <div className="space-y-6">
+              <p>
+                Use this handy zone map to help teach your goalies where to be with respect to the
+                puck location. Use the crease map to show where the goalie&apos;s feet should be in
+                each part of the zone, and how to transition in and out of the post, and how to
+                manage depth.
+              </p>
+              <figure className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <img
+                  src={withPrefix(
+                    buildCacheBustedAssetPath("/images/about/goalie-journals/coach-z-zone-map.png")
+                  )}
+                  alt="Coach Z's goalie crease zone map"
+                  className="w-full h-auto rounded-md border border-gray-300 dark:border-gray-600"
+                  loading="lazy"
+                />
+                <figcaption className="mt-3 text-sm text-gray-700 dark:text-gray-300">
+                  Special thanks to John &quot;Coach Z&quot; Zdunkiewicz at ztending.com for sharing
+                  his Zone Map
+                </figcaption>
+              </figure>
+              <DownloadMaterialButton
+                title="Download Coach Z's Zone Map"
+                fileName="coach-z-zone-map.pdf"
+              />
             </div>
           ),
         },

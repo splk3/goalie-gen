@@ -89,6 +89,9 @@ export default function Home() {
             <div className="w-full px-4 flex flex-col gap-4 items-stretch">
               <GenerateClubPlanButton />
               <NavigationButton to="/about-club-plans">About Club Plans</NavigationButton>
+              <NavigationButton to="/fundamental-skills-and-good-drill-design">
+                Fundamental Skills and Good Drill Design
+              </NavigationButton>
               <NavigationButton to="/club-resources">More Club Resources</NavigationButton>
             </div>
           </div>
