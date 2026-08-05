@@ -7,9 +7,14 @@ import GoalieJournalButton from "../components/GoalieJournalButton";
 import whyUseJournalMd from "../content/about/goalie-journals/why-should-i-use-a-goalie-journal.md";
 import createPersonalizedJournalMd from "../content/about/goalie-journals/create-a-personalized-goalie-journal.md";
 import maximizeEntriesMd from "../content/about/goalie-journals/how-to-maximize-journal-entries.md";
+import acknowledgementsMd from "../content/goalie-journal/acknowledgements.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 const ctaLabel = "Generate Personalized Goalie Journal";
+const acknowledgementsWebMd = acknowledgementsMd.replace(
+  /^\s*(?:<!--[\s\S]*?-->\s*)?## Acknowledgements\s*/,
+  ""
+);
 
 const journalScreenshots = [
   {
@@ -101,6 +106,15 @@ export default function AboutGoalieJournals() {
             />
           ),
           cta: <GoalieJournalCta />,
+        },
+        {
+          heading: "Acknowledgements",
+          content: (
+            <DrillMarkdown
+              markdown={acknowledgementsWebMd}
+              className="text-gray-700 dark:text-gray-300 space-y-4"
+            />
+          ),
         },
       ]}
     />

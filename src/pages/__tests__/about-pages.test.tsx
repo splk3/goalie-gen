@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import AboutClubPlans from "../about-club-plans";
 import AboutTeamPlans from "../about-team-plans";
 import AboutGoalieJournals from "../about-goalie-journals";
@@ -10,6 +10,16 @@ import JamesKujawskiProject from "../james-kujawski-project";
 
 // .md files are mapped to "test-file-stub" by Jest's moduleNameMapper.
 // PageLayout, ShareButton, and BackLinkButton are mocked to isolate page rendering.
+
+jest.mock(
+  "../../content/goalie-journal/acknowledgements.md",
+  () => `
+    ## Acknowledgements
+
+    Thank you to Coach Z at [ztending.com](https://ztending.com).
+    Special thanks to Dr. Beuker at [athletemindsetperformance.com](https://athletemindsetperformance.com).
+  `
+);
 
 jest.mock("../../components/PageLayout", () => {
   return function MockPageLayout({ children }: { children: React.ReactNode }) {
@@ -238,6 +248,12 @@ describe("About pages", () => {
           name: "How to Maximize the Benefit of Journal Entries",
         })
       ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Acknowledgements",
+        })
+      ).toBeInTheDocument();
     });
 
     it("renders section-end CTAs for the goalie journal generator", () => {
@@ -283,6 +299,26 @@ describe("About pages", () => {
       expect(
         screen.getByText("Generate the PDF journal, then save and begin daily use.")
       ).toBeInTheDocument();
+    });
+
+    it("renders acknowledgements with linked domains", () => {
+      const acknowledgementsSection = screen.getByRole("region", {
+        name: "Acknowledgements",
+      });
+      expect(
+        within(acknowledgementsSection).queryByRole("heading", {
+          level: 4,
+          name: "Acknowledgements",
+        })
+      ).not.toBeInTheDocument();
+      expect(
+        within(acknowledgementsSection).getByRole("link", { name: "ztending.com" })
+      ).toHaveAttribute("href", "https://ztending.com");
+      expect(
+        within(acknowledgementsSection).getByRole("link", {
+          name: "athletemindsetperformance.com",
+        })
+      ).toHaveAttribute("href", "https://athletemindsetperformance.com");
     });
 
     it("does not render the Content Coming Soon notice", () => {
