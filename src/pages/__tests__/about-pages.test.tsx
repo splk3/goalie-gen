@@ -379,8 +379,18 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders the Content Coming Soon notice", () => {
-      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    it("does not render the Content Coming Soon notice", () => {
+      expect(screen.queryByText(/Content Coming Soon!/i)).not.toBeInTheDocument();
+    });
+
+    it("renders the presentation viewer and download button", () => {
+      expect(screen.getByTitle("Patrick Boyle presentation PDF")).toHaveAttribute(
+        "src",
+        "/presentations/patrick-presentation.pdf?v=1"
+      );
+      expect(
+        screen.getByRole("button", { name: "Download Patrick Boyle Presentation" })
+      ).toHaveAttribute("data-file-name", "patrick-presentation.pdf");
     });
 
     it("renders a Back to Home link", () => {
