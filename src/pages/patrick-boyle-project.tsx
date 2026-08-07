@@ -24,7 +24,7 @@ export default function PatrickBoyleProject() {
             </p>
           </div>
           <iframe
-            src={withPrefix(buildCacheBustedAssetPath("/presentations/patrick-presentation.pdf"))}
+            src={`${withPrefix(buildCacheBustedAssetPath("/presentations/patrick-presentation.pdf"))}#navpanes=0&view=Fit`}
             title="Patrick Boyle presentation PDF"
             className="h-[70vh] min-h-[30rem] w-full rounded-lg border border-gray-300 shadow-lg dark:border-gray-600"
           />

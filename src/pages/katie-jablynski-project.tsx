@@ -24,7 +24,7 @@ export default function KatieJablynskiProject() {
             </p>
           </div>
           <iframe
-            src={withPrefix(buildCacheBustedAssetPath("/presentations/katie-gold-presenation.pdf"))}
+            src={`${withPrefix(buildCacheBustedAssetPath("/presentations/katie-gold-presenation.pdf"))}#navpanes=0&view=Fit`}
             title="Katie Jablynski presentation PDF"
             className="h-[70vh] min-h-[30rem] w-full rounded-lg border border-gray-300 shadow-lg dark:border-gray-600"
           />
