@@ -9,6 +9,7 @@ interface ModalProps {
   children: React.ReactNode;
   className?: string;
   triggerRef?: React.RefObject<HTMLElement | null>;
+  keepMounted?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export default function Modal({
   children,
   className = "",
   triggerRef,
+  keepMounted = false,
 }: ModalProps) {
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const wasOpenRef = React.useRef<boolean>(false);
@@ -85,14 +87,17 @@ export default function Modal({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !keepMounted) return null;
 
   return (
     <>
       {/* Visual overlay — purely decorative, hidden from assistive technology */}
-      <div aria-hidden="true" className="fixed inset-0 bg-black/75 z-50" />
+      <div
+        aria-hidden="true"
+        className={`fixed inset-0 bg-black/75 z-50 ${isOpen ? "" : "hidden"}`}
+      />
       {/* Dialog centering container */}
-      <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+      <div className={`fixed inset-0 p-4 z-50 ${isOpen ? "flex items-center justify-center" : "hidden"}`}>
         <div
           ref={dialogRef}
           tabIndex={-1}

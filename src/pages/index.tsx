@@ -11,6 +11,7 @@ import INeedADrillButton from "../components/INeedADrillButton";
 import NavigationButton from "../components/NavigationButton";
 import TermsPopup from "../components/TermsPopup";
 import FeedbackButton from "../components/FeedbackButton";
+import EmailSignupButton from "../components/EmailSignupButton";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
 import ShareButton from "../components/ShareButton";
 
@@ -266,6 +267,7 @@ export default function Home() {
               <div className="mt-2 flex items-center justify-center gap-3">
                 <TermsPopup />
                 <FeedbackButton />
+                <EmailSignupButton />
               </div>
             </div>
           </div>
