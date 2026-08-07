@@ -7,7 +7,7 @@ import rawMarkdown from "../content/about/james-kujawski-project/index.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 const FULL_PRESENTATION_URL =
-  "https://docs.google.com/presentation/d/1VRtMJf45p7te7KPD09N2qXafcv7wunJ7/edit?usp=sharing&ouid=116610288340277897255&rtpof=true&sd=true";
+  "https://docs.google.com/presentation/d/1afi7C1_RCYAZBWF8VfPIM0WuVhKEPyDz/edit?usp=sharing&ouid=116610288340277897255&rtpof=true&sd=true";
 
 export default function JamesKujawskiProject() {
   return (
