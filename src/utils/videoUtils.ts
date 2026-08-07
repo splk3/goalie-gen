@@ -10,12 +10,23 @@ export const getVimeoVideoId = (url: string): string => {
   return match ? match[1] : "";
 };
 
+export const getVimeoVideoHash = (url: string): string => {
+  // Handles https://vimeo.com/ID/HASH format (unlisted videos)
+  const match = url.match(/vimeo\.com\/\d+\/([\w]+)/);
+  return match ? match[1] : "";
+};
+
 export const getEmbedUrl = (videoUrl: string): string => {
   if (!isValidDrillVideoUrl(videoUrl)) return "";
   const youtubeId = getYouTubeVideoId(videoUrl);
   if (youtubeId) return `https://www.youtube.com/embed/${youtubeId}`;
   const vimeoId = getVimeoVideoId(videoUrl);
-  if (vimeoId) return `https://player.vimeo.com/video/${vimeoId}`;
+  if (vimeoId) {
+    const vimeoHash = getVimeoVideoHash(videoUrl);
+    return vimeoHash
+      ? `https://player.vimeo.com/video/${vimeoId}?h=${vimeoHash}`
+      : `https://player.vimeo.com/video/${vimeoId}`;
+  }
   return "";
 };
 
