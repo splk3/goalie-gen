@@ -415,8 +415,14 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders the Content Coming Soon notice", () => {
-      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    it("renders the PDF viewer iframe", () => {
+      expect(screen.getByTitle("Katie Jablynski presentation PDF")).toBeInTheDocument();
+    });
+
+    it("renders the download button", () => {
+      expect(
+        screen.getByRole("button", { name: /download katie jablynski presentation/i })
+      ).toBeInTheDocument();
     });
 
     it("renders a Back to Home link", () => {
