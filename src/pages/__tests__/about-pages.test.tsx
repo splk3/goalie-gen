@@ -386,7 +386,7 @@ describe("About pages", () => {
     it("renders the presentation viewer and download button", () => {
       expect(screen.getByTitle("Patrick Boyle presentation PDF")).toHaveAttribute(
         "src",
-        "/presentations/patrick-presentation.pdf?v=1"
+        "/presentations/patrick-presentation.pdf?v=1#navpanes=0&view=Fit"
       );
       expect(
         screen.getByRole("button", { name: "Download Patrick Boyle Presentation" })
@@ -439,8 +439,24 @@ describe("About pages", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders the Content Coming Soon notice", () => {
-      expect(screen.getByText(/Content Coming Soon!/i)).toBeInTheDocument();
+    it("does not render the Content Coming Soon notice", () => {
+      expect(screen.queryByText(/Content Coming Soon!/i)).not.toBeInTheDocument();
+    });
+
+    it("renders the presentation viewer and download controls", () => {
+      expect(screen.getByTitle("James Kujawski presentation PDF")).toHaveAttribute(
+        "src",
+        "/presentations/james-kujawski-presentation-no-videos.pdf?v=1#navpanes=0&view=Fit"
+      );
+      expect(
+        screen.getByRole("button", { name: "Download Presentation (No Videos)" })
+      ).toHaveAttribute("data-file-name", "james-kujawski-presentation-no-videos.pdf");
+      expect(
+        screen.getByRole("link", { name: "Download Full Presentation (Videos Included)" })
+      ).toHaveAttribute(
+        "href",
+        "https://docs.google.com/presentation/d/1afi7C1_RCYAZBWF8VfPIM0WuVhKEPyDz/export/pptx"
+      );
     });
 
     it("renders a Back to Home link", () => {
