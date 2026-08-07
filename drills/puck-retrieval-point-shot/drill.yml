@@ -22,8 +22,10 @@ shooter_focus_points: |-
   - Recognize pressure.
 
 drill_image: puck-retrieval-point-shot.png
+video: https://youtu.be/caieVmv4KHs
 
 drill_creation_date: 2026-07-20
+drill_updated_date: 2026-08-06
 
 tags:
   skill_level:
