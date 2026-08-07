@@ -2,7 +2,7 @@
 // validation and browser embedding so unsupported URLs can never reach an iframe.
 const YOUTUBE_WATCH_REGEX = /^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+([&#].*)?$/;
 const YOUTUBE_SHORT_REGEX = /^https:\/\/youtu\.be\/[\w-]+(\?.*)?$/;
-const VIMEO_REGEX = /^https:\/\/(www\.)?vimeo\.com\/\d+(\?.*)?$/;
+const VIMEO_REGEX = /^https:\/\/(www\.)?vimeo\.com\/\d+(\/[\w]+)?(\?.*)?$/;
 
 export const isValidDrillVideoUrl = (value: unknown): value is string =>
   typeof value === "string" &&
