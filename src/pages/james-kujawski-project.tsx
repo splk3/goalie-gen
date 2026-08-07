@@ -7,7 +7,7 @@ import rawMarkdown from "../content/about/james-kujawski-project/index.md";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 
 const FULL_PRESENTATION_URL =
-  "https://docs.google.com/presentation/d/1afi7C1_RCYAZBWF8VfPIM0WuVhKEPyDz/edit?usp=sharing&ouid=116610288340277897255&rtpof=true&sd=true";
+  "https://docs.google.com/presentation/d/1afi7C1_RCYAZBWF8VfPIM0WuVhKEPyDz/export/pptx";
 
 export default function JamesKujawskiProject() {
   return (
@@ -27,11 +27,7 @@ export default function JamesKujawskiProject() {
             </p>
           </div>
           <iframe
-            src={withPrefix(
-              buildCacheBustedAssetPath(
-                "/presentations/james-kujawski-presentation-no-videos.pdf"
-              )
-            )}
+            src={`${withPrefix(buildCacheBustedAssetPath("/presentations/james-kujawski-presentation-no-videos.pdf"))}#navpanes=0&view=Fit`}
             title="James Kujawski presentation PDF"
             className="h-[70vh] min-h-[30rem] w-full rounded-lg border border-gray-300 shadow-lg dark:border-gray-600"
           />
