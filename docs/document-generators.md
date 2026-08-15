@@ -172,8 +172,15 @@ When `--all` is active (the default), the script generates a 4-month schedule (A
 - `--primary <hex>`: Primary color hex code (default: `"#00205B"`)
 - `--secondary <hex>`: Secondary color hex code (default: `"#AF272F"`)
 - `--logo <path>`: Local file path to a logo image (default: none)
+- `--goalie-photo <path>`: Local file path to a goalie photo (default: none). Does not affect team colors.
+- `--season <string>`: Season label (default: current season, e.g. `"2025-26"`)
 - `--out <path>`: Destination path of the generated `.pdf` (default: `"test-goalie-journal.pdf"`)
 - `--entries <number>`: Number of blank logs to generate (default: `24`)
+- `--write-in-goalie-name`: Render the Goalie Name field as a printable/handwriting line instead of the typed value
+- `--write-in-team-name`: Render the Team Name field as a printable/handwriting line instead of the typed value
+- `--write-in-season`: Render the Season field as a printable/handwriting line instead of the typed value
+- `--season-goal <string>`: Add a Season Goal (may be repeated up to the configured maximum)
+- `--write-in-season-goals`: Render blank printable Season Goal fields instead of typed values
 
 ---
 

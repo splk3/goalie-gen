@@ -22,6 +22,10 @@ The page files under `src/pages/` are automatically compiled by Gatsby into corr
   - **Club Resources (`src/pages/club-resources.tsx`)**
   - **Coach Resources (`src/pages/coach-resources.tsx`)**
   - **Goalie Resources (`src/pages/goalie-resources.tsx`)**
+- **Contributor Project Pages**: Individual pages showcasing contributor capstone/project work, rendered via the shared `AboutPage` component:
+  - **James Kujawski's Project (`src/pages/james-kujawski-project.tsx`)**
+  - **Katie Jablynski's Project (`src/pages/katie-jablynski-project.tsx`)**
+  - **Patrick Boyle's Project (`src/pages/patrick-boyle-project.tsx`)**
 - **404 Page (`src/pages/404.tsx`)**: Custom not-found error page.
 
 ---
