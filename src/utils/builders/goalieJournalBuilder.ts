@@ -10,6 +10,7 @@ import { parseInlineMarkdown, type InlineMarkdownSegment } from "../inlineMarkdo
 import type {
   GoalieJournalConfig,
   GoalieJournalContent,
+  JournalHelpfulResourcesImages,
   JournalLogoData,
 } from "../../types/generatorConfig";
 import {
@@ -360,6 +361,181 @@ function drawCoverImages(
   return 110 + height;
 }
 
+const HELPFUL_RESOURCES_PAGE_MARGIN_X = 15;
+const HELPFUL_RESOURCES_PAGE_WIDTH = 180;
+const HELPFUL_RESOURCES_COLUMN_GAP = 8;
+// Skills diagram images are kept small to leave room for captions + the zone map below.
+const HELPFUL_RESOURCES_SKILLS_MAX_HEIGHT = 45;
+// Space reserved below the zone map image for caption paragraphs (mm).
+const HELPFUL_RESOURCES_ZONE_MAP_CAPTION_RESERVE = 45;
+const HELPFUL_RESOURCES_CAPTION_FONT_SIZE = 8;
+const HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT = 4;
+
+function drawHelpfulResourcesPage(
+  doc: JournalDocument,
+  helpfulResourcesMd: string,
+  helpfulResourcesImages: JournalHelpfulResourcesImages | null,
+  primary: string
+): void {
+  const pageHeight = doc.internal.pageSize.height;
+  const pageBottomY = pageHeight - 10;
+
+  doc.setTextColor(primary);
+  doc.setFontSize(20);
+  drawInlineText(doc, "Helpful Resources", 105, 20, 170, 6, "center");
+
+  // ── 2-column skills diagrams layout ────────────────────────────────────────
+
+  const cycleImage = helpfulResourcesImages?.skillsCycle ?? null;
+  const pyramidImage = helpfulResourcesImages?.skillsPyramid ?? null;
+
+  const cycleCaptionText = extractLevel3Section(helpfulResourcesMd, "The Goaltending Skills Cycle");
+  const pyramidCaptionText = extractLevel3Section(
+    helpfulResourcesMd,
+    "The Goaltending Skills Pyramid"
+  );
+
+  const colWidth = (HELPFUL_RESOURCES_PAGE_WIDTH - HELPFUL_RESOURCES_COLUMN_GAP) / 2;
+  const leftColX = HELPFUL_RESOURCES_PAGE_MARGIN_X;
+  const rightColX = HELPFUL_RESOURCES_PAGE_MARGIN_X + colWidth + HELPFUL_RESOURCES_COLUMN_GAP;
+
+  // Renders a skills column: bold sub-title → image → caption paragraphs.
+  const renderSkillsColumn = (
+    title: string,
+    image: JournalLogoData | null,
+    captionMd: string,
+    colX: number,
+    startY: number
+  ): number => {
+    let y = startY;
+
+    // Bold sub-title
+    doc.setTextColor(primary);
+    doc.setFontSize(HELPFUL_RESOURCES_CAPTION_FONT_SIZE);
+    doc.setFont("helvetica", "bold");
+    const titleLines = drawInlineText(
+      doc,
+      title,
+      colX,
+      y,
+      colWidth,
+      HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT
+    );
+    y += titleLines * HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT + 3;
+    doc.setFont("helvetica", "normal");
+
+    if (image) {
+      const srcW = image.width > 0 ? image.width : 100;
+      const srcH = image.height > 0 ? image.height : 100;
+      const maxH = HELPFUL_RESOURCES_SKILLS_MAX_HEIGHT;
+      const maxW = colWidth;
+      const scale = Math.min(maxW / srcW, maxH / srcH);
+      const imgW = srcW * scale;
+      const imgH = srcH * scale;
+      const format =
+        image.dataUrl.startsWith("data:image/jpeg") || image.dataUrl.startsWith("data:image/jpg")
+          ? "JPEG"
+          : "PNG";
+      doc.addImage(image.dataUrl, format, colX + (colWidth - imgW) / 2, y, imgW, imgH);
+      y += imgH + 3;
+    }
+
+    if (captionMd) {
+      doc.setTextColor("#000000");
+      doc.setFontSize(HELPFUL_RESOURCES_CAPTION_FONT_SIZE);
+      const captionBlocks = parseMarkdown(captionMd).filter(
+        (b) => b.type === "paragraph" || b.type === "bullet"
+      );
+      captionBlocks.forEach((block) => {
+        const lineCount = drawInlineText(
+          doc,
+          block.text,
+          colX,
+          y,
+          colWidth,
+          HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT
+        );
+        y += lineCount * HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT + 2;
+      });
+    }
+
+    return y;
+  };
+
+  const leftBottom = renderSkillsColumn(
+    "The Goaltending Skills Cycle",
+    cycleImage,
+    cycleCaptionText,
+    leftColX,
+    32
+  );
+  const rightBottom = renderSkillsColumn(
+    "The Goaltending Skills Pyramid",
+    pyramidImage,
+    pyramidCaptionText,
+    rightColX,
+    32
+  );
+  const skillsSectionBottomY = Math.max(leftBottom, rightBottom);
+
+  // ── Coach Z Zone Map ────────────────────────────────────────────────────────
+
+  const zoneMapImage = helpfulResourcesImages?.coachZZoneMap ?? null;
+  const zoneMapCaptionText = extractLevel3Section(helpfulResourcesMd, "Coach Z's Zone Map");
+
+  const zoneMapStartY = skillsSectionBottomY + 5;
+  doc.setTextColor(primary);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  drawInlineText(doc, "Coach Z's Zone Map", 105, zoneMapStartY, 170, 5, "center");
+  doc.setFont("helvetica", "normal");
+
+  let zoneMapY = zoneMapStartY + 7;
+
+  if (zoneMapImage) {
+    // Fill the remaining page space, reserving room below for caption text.
+    const availableH = pageBottomY - zoneMapY - HELPFUL_RESOURCES_ZONE_MAP_CAPTION_RESERVE - 4;
+    const maxImgH = Math.max(20, availableH);
+    const maxW = HELPFUL_RESOURCES_PAGE_WIDTH;
+    const srcW = zoneMapImage.width > 0 ? zoneMapImage.width : 200;
+    const srcH = zoneMapImage.height > 0 ? zoneMapImage.height : 150;
+    const scale = Math.min(maxW / srcW, maxImgH / srcH);
+    const imgW = srcW * scale;
+    const imgH = srcH * scale;
+    const format =
+      zoneMapImage.dataUrl.startsWith("data:image/jpeg") ||
+      zoneMapImage.dataUrl.startsWith("data:image/jpg")
+        ? "JPEG"
+        : "PNG";
+    doc.addImage(
+      zoneMapImage.dataUrl,
+      format,
+      HELPFUL_RESOURCES_PAGE_MARGIN_X + (HELPFUL_RESOURCES_PAGE_WIDTH - imgW) / 2,
+      zoneMapY,
+      imgW,
+      imgH
+    );
+    zoneMapY += imgH + 4;
+  }
+
+  if (zoneMapCaptionText) {
+    doc.setTextColor("#000000");
+    doc.setFontSize(HELPFUL_RESOURCES_CAPTION_FONT_SIZE);
+    const captionBlocks = parseMarkdown(zoneMapCaptionText).filter((b) => b.type === "paragraph");
+    captionBlocks.forEach((block) => {
+      const lineCount = drawInlineText(
+        doc,
+        block.text,
+        HELPFUL_RESOURCES_PAGE_MARGIN_X,
+        zoneMapY,
+        HELPFUL_RESOURCES_PAGE_WIDTH,
+        HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT
+      );
+      zoneMapY += lineCount * HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT + 2;
+    });
+  }
+}
+
 /**
  * Builds a Goalie Journal PDF and returns the `jsPDF` document instance.
  *
@@ -382,7 +558,8 @@ export function buildGoalieJournalPdf(
   qrCodeDataUrl: string | null = null,
   footerLogo: JournalLogoData | null = null,
   goaliePhoto: JournalLogoData | null = null,
-  goldCertificationBadge: JournalLogoData | null = null
+  goldCertificationBadge: JournalLogoData | null = null,
+  helpfulResourcesImages: JournalHelpfulResourcesImages | null = null
 ): InstanceType<JsPdfModule["jsPDF"]> {
   const { jsPDF } = jsPdf;
   const {
@@ -403,6 +580,7 @@ export function buildGoalieJournalPdf(
     acknowledgementsMd,
     howToUseMd,
     howToImproveEveryDayMd,
+    helpfulResourcesMd,
     eventEntryMd,
     endOfSeasonMd,
   } = content;
@@ -537,6 +715,11 @@ export function buildGoalieJournalPdf(
     5,
     11
   );
+
+  // ── Helpful Resources page ──────────────────────────────────────────────────
+
+  doc.addPage();
+  drawHelpfulResourcesPage(doc, helpfulResourcesMd, helpfulResourcesImages, primary);
 
   // ── Season Goals and End of Season Review page ──────────────────────────────
 

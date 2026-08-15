@@ -229,7 +229,8 @@ describe("GoalieJournalButton", () => {
           }),
           expect.objectContaining({
             dataUrl: "data:image/png;base64,default-logo",
-          })
+          }),
+          expect.anything()
         );
       });
     } finally {
@@ -356,6 +357,7 @@ describe("GoalieJournalButton", () => {
           expect.anything(),
           expect.anything(),
           null,
+          expect.anything(),
           expect.anything()
         );
       });
@@ -408,7 +410,8 @@ describe("GoalieJournalButton", () => {
           null,
           expect.objectContaining({
             dataUrl: "data:image/png;base64,default-logo",
-          })
+          }),
+          expect.anything()
         );
       });
       expect(screen.queryByText(/Please enter/)).not.toBeInTheDocument();

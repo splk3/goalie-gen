@@ -190,8 +190,16 @@ export interface GoalieJournalContent {
   acknowledgementsMd: string;
   howToUseMd: string;
   howToImproveEveryDayMd: string;
+  helpfulResourcesMd: string;
   eventEntryMd: string;
   endOfSeasonMd: string;
+}
+
+/** Pre-loaded images for the Helpful Resources page of the Goalie Journal. */
+export interface JournalHelpfulResourcesImages {
+  skillsCycle: JournalLogoData | null;
+  skillsPyramid: JournalLogoData | null;
+  coachZZoneMap: JournalLogoData | null;
 }
 
 /**

@@ -182,6 +182,7 @@ export default function FundamentalSkillsAndGoodDrillDesign() {
               <DownloadMaterialButton
                 title="Download Coach Z's Zone Map"
                 fileName="coach-z-zone-map.pdf"
+                folder="diagrams"
               />
             </div>
           ),

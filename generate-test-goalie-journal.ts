@@ -19,6 +19,7 @@ import { getImageDimensions } from "./generate-utils";
 import type {
   GoalieJournalConfig,
   GoalieJournalContent,
+  JournalHelpfulResourcesImages,
   JournalLogoData,
 } from "./src/types/generatorConfig";
 
@@ -177,6 +178,7 @@ Options:
       path.join(contentDir, "how-to-improve-every-day.md"),
       "utf8"
     ),
+    helpfulResourcesMd: fs.readFileSync(path.join(contentDir, "helpful-resources.md"), "utf8"),
     eventEntryMd: fs.readFileSync(path.join(contentDir, "event-entry.md"), "utf8"),
     endOfSeasonMd: fs.readFileSync(path.join(contentDir, "end-of-season.md"), "utf8"),
   };
@@ -190,6 +192,20 @@ Options:
     path.join(__dirname, "static/images/usahockey/usahockey-gold-certification.png"),
     "Gold Certification badge"
   );
+  const helpfulResourcesImages: JournalHelpfulResourcesImages = {
+    skillsCycle: loadJournalImage(
+      path.join(__dirname, "static/images/drill-design/goaltending-skills-cycle.png"),
+      "Skills Cycle"
+    ),
+    skillsPyramid: loadJournalImage(
+      path.join(__dirname, "static/images/drill-design/goaltending-skills-pyramid.png"),
+      "Skills Pyramid"
+    ),
+    coachZZoneMap: loadJournalImage(
+      path.join(__dirname, "static/diagrams/coach-z-zone-map.png"),
+      "Coach Z Zone Map"
+    ),
+  };
 
   const config: GoalieJournalConfig = {
     goalieName: writeInGoalieName ? "" : goalieName,
@@ -218,7 +234,8 @@ Options:
     qrCodeDataUrl,
     footerLogoData,
     goaliePhotoData,
-    goldCertificationBadgeData
+    goldCertificationBadgeData,
+    helpfulResourcesImages
   );
   const arrayBuffer = doc.output("arraybuffer");
   fs.writeFileSync(outputPath, Buffer.from(arrayBuffer));
