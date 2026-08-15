@@ -43,6 +43,7 @@ drill_progressions:
       - Resets to butterfly
       - Receives the next shot
     progression_image: progression-2.png
+    progression_video: https://youtu.be/Sl2fcrVFXHg
   - progression_name: Progression 3 - Shot Deception
     progression_description: |-
       Shooter adds deception through:
@@ -56,7 +57,7 @@ drill_progressions:
       - Simulates focus under fatigue.
       - Simulates late-game pace.
 drill_creation_date: 2026-05-25
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-08-15
 tags:
   skill_level:
     - beginner
