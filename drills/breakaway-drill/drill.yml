@@ -1,4 +1,5 @@
 name: Breakaway Drill
+video: https://youtu.be/5MCgxZyufvI
 drill_steps: |-
   Shooter
     1. Starts at center ice or the top of the circles and skates in under control.
@@ -27,9 +28,11 @@ drill_progressions:
     progression_description: |-
       Shooter starts from wide left, wide right, or middle lane and skates in under control.
     progression_image: progression-1.png
+    progression_video: https://youtu.be/6VSAXH0zrGA
   - progression_name: Progression 2 - Delay Move
     progression_description: |-
       Shooter slows down at the hashmarks to force the goalie to hold their edges longer and stay patient.
+    progression_video: https://youtu.be/54Rf0c40BTM
   - progression_name: Progression 3 - Add multiple dekes
     progression_description: |-
       Shooter executes a series of fakes, such as:
@@ -42,8 +45,9 @@ drill_progressions:
       - Holds edges through each fake
       - Avoids dropping early
       - Reacts only when the shooter commits
+    progression_video: https://youtu.be/Ao5zVF8tRRs
 drill_creation_date: 2026-06-05
-drill_updated_date: 2026-06-28
+drill_updated_date: 2026-08-15
 tags:
   skill_level:
     - beginner
