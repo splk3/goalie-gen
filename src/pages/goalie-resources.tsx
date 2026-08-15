@@ -69,7 +69,11 @@ export default function GoalieResources() {
           <h2 className="text-2xl font-bold text-usa-blue dark:text-blue-400 mb-6">Goalie Tools</h2>
           <div className="flex flex-col gap-3">
             <NavigationButton to="/about-goalie-journals">Goalie Journal</NavigationButton>
-            <DownloadMaterialButton title="Coach Z's Zone Map" fileName="coach-z-zone-map.pdf" />
+            <DownloadMaterialButton
+              title="Coach Z's Zone Map"
+              fileName="coach-z-zone-map.pdf"
+              folder="diagrams"
+            />
             <NavigationButton to="/equipment-fitting">Equipment Fitting</NavigationButton>
           </div>
         </div>

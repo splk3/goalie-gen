@@ -38,6 +38,9 @@ const headingRegex = /^(\s*)(#{1,3})\s+(.+)$/;
 const listItemRegex = /^(\s*)(?:([-*+])|(\d+)\.)\s+(.+)$/;
 const MAX_LIST_DEPTH = 3;
 
+const isCompleteHtmlCommentLine = (line: string): boolean =>
+  line.trim().startsWith("<!--") && line.trim().endsWith("-->");
+
 const getIndent = (line: string): number => {
   let indent = 0;
   for (const ch of line) {
@@ -77,6 +80,10 @@ function appendOverflowNestedContent(
 
   while (index < lines.length) {
     const line = lines[index];
+    if (isCompleteHtmlCommentLine(line)) {
+      index += 1;
+      continue;
+    }
     if (!line.trim()) {
       index += 1;
       continue;
@@ -256,7 +263,9 @@ export function parseDrillMarkdown(markdownInput: DrillMarkdownInput): DrillMark
     return [];
   }
 
-  const lines = normalized.split("\n");
+  const lines = normalized
+    .split("\n")
+    .filter((line) => !isCompleteHtmlCommentLine(line));
   const blocks: DrillMarkdownBlock[] = [];
   let index = 0;
 
@@ -292,6 +301,10 @@ export function parseDrillMarkdown(markdownInput: DrillMarkdownInput): DrillMark
     const paragraphLines: string[] = [];
     while (index < lines.length) {
       const paragraphLine = lines[index];
+      if (isCompleteHtmlCommentLine(paragraphLine)) {
+        index += 1;
+        continue;
+      }
       if (!paragraphLine.trim()) {
         break;
       }

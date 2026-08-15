@@ -90,4 +90,15 @@ describe("drillMarkdown list depth + style behavior", () => {
 
     expect(lines).toEqual(["1. Step one", "  1. Substep one", "    • Detail"]);
   });
+
+  it("skips complete HTML comment lines before rendering markdown", () => {
+    const blocks = parseDrillMarkdown(
+      `<!-- markdownlint-disable MD041 -->\n\n## Section\n\nParagraph`
+    );
+
+    expect(blocks).toEqual([
+      { type: "heading", level: 2, text: "Section" },
+      { type: "paragraph", text: "Paragraph" },
+    ]);
+  });
 });

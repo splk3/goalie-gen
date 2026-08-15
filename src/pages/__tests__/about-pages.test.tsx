@@ -211,6 +211,7 @@ describe("About pages", () => {
           name: "Fundamental Skills of Goaltending",
         })
       ).toBeInTheDocument();
+      expect(screen.queryByText("markdownlint-disable MD041")).not.toBeInTheDocument();
       expect(
         screen.getByRole("heading", {
           level: 2,
