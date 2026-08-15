@@ -1,4 +1,5 @@
 name: Crease Footwork
+video: https://youtu.be/vfbWWG41ZE4
 drill_steps: |-
   1. Start on the post at Position 1.
   2. T-push from 1 to 2, arriving square and set.
@@ -31,6 +32,7 @@ drill_image: crease-footwork.png
 drill_progressions:
   - progression_name: Progression 1 - All T-Push
     progression_image: crease-footwork-progression-1.png
+    progression_video: https://youtu.be/mdxr3Kix2Jk
     progression_description: |-
       Replace every movement in the pattern with a T-push.
       Pattern
@@ -42,6 +44,7 @@ drill_progressions:
       Lead with the head and shoulders, push with full extension, recover under control, hands stay active and forward
   - progression_name: Progression 2 - T-Push With Butterfly
     progression_image: crease-footwork-progression-2.png
+    progression_video: https://youtu.be/Qc0_gDhC3mU
     progression_description: |-
       Add a controlled butterfly at each arrival point.
       Pattern
@@ -53,6 +56,7 @@ drill_progressions:
       Arrive balanced before the butterfly, keep chest tall and hands active through the drop, lead with head and shoulders
   - progression_name: Progression 3 - Butterfly With Power Push
     progression_image: crease-footwork-progression-3.png
+    progression_video: https://youtu.be/DQuhwylD5tU
     progression_description: |-
       Now the goalie drops into a butterfly at each point and uses a power push recovery to move to the next point.
       Pattern
@@ -64,6 +68,7 @@ drill_progressions:
       Seal the ice cleanly on each butterfly, load the pushing leg before exploding laterally, keep shoulders level during the power push
   - progression_name: Progression 4 - Start Facing the Boards, Recover to Post, Hinge to RVH, Then Begin Previous Sequence's Pattern
     progression_image: crease-footwork-progression-4.png
+    progression_video: https://youtu.be/oeKlge80FP8
     progression_description: |-
       Pattern
       1. Goalie starts on side of the net, set on knees facing the end boards
@@ -80,7 +85,7 @@ drill_progressions:
       Arrive in stance with square chest and balanced weight
       Begin the footwork sequence only after achieving a clean, stable stance.
 drill_creation_date: 2026-05-25
-drill_updated_date: 2026-05-31
+drill_updated_date: 2026-08-15
 tags:
   skill_level:
     - beginner
