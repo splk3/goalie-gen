@@ -413,7 +413,14 @@ function drawHelpfulResourcesPage(
     doc.setTextColor(primary);
     doc.setFontSize(HELPFUL_RESOURCES_CAPTION_FONT_SIZE);
     doc.setFont("helvetica", "bold");
-    const titleLines = drawInlineText(doc, title, colX, y, colWidth, HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT);
+    const titleLines = drawInlineText(
+      doc,
+      title,
+      colX,
+      y,
+      colWidth,
+      HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT
+    );
     y += titleLines * HELPFUL_RESOURCES_CAPTION_LINE_HEIGHT + 3;
     doc.setFont("helvetica", "normal");
 
@@ -487,8 +494,7 @@ function drawHelpfulResourcesPage(
 
   if (zoneMapImage) {
     // Fill the remaining page space, reserving room below for caption text.
-    const availableH =
-      pageBottomY - zoneMapY - HELPFUL_RESOURCES_ZONE_MAP_CAPTION_RESERVE - 4;
+    const availableH = pageBottomY - zoneMapY - HELPFUL_RESOURCES_ZONE_MAP_CAPTION_RESERVE - 4;
     const maxImgH = Math.max(20, availableH);
     const maxW = HELPFUL_RESOURCES_PAGE_WIDTH;
     const srcW = zoneMapImage.width > 0 ? zoneMapImage.width : 200;
@@ -515,9 +521,7 @@ function drawHelpfulResourcesPage(
   if (zoneMapCaptionText) {
     doc.setTextColor("#000000");
     doc.setFontSize(HELPFUL_RESOURCES_CAPTION_FONT_SIZE);
-    const captionBlocks = parseMarkdown(zoneMapCaptionText).filter(
-      (b) => b.type === "paragraph"
-    );
+    const captionBlocks = parseMarkdown(zoneMapCaptionText).filter((b) => b.type === "paragraph");
     captionBlocks.forEach((block) => {
       const lineCount = drawInlineText(
         doc,

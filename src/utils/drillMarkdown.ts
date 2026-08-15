@@ -263,9 +263,7 @@ export function parseDrillMarkdown(markdownInput: DrillMarkdownInput): DrillMark
     return [];
   }
 
-  const lines = normalized
-    .split("\n")
-    .filter((line) => !isCompleteHtmlCommentLine(line));
+  const lines = normalized.split("\n").filter((line) => !isCompleteHtmlCommentLine(line));
   const blocks: DrillMarkdownBlock[] = [];
   let index = 0;
 

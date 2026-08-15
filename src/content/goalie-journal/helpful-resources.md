@@ -1,5 +1,7 @@
 # Helpful Resources
 
+## Page Content
+
 ### The Goaltending Skills Cycle
 
 Every save requires you to maintain each spoke of the save cycle, or you will have to scramble to compensate, and making the save will be more difficult.
@@ -18,7 +20,7 @@ Don't skip the bottom levels; they are your foundation and enable you to achieve
 
 ### Coach Z's Zone Map
 
-Use this handy zone map to remind yourself of where to be with respect to the puck location. 
+Use this handy zone map to remind yourself of where to be with respect to the puck location.
 
 Use the crease map to show where your feet should be with respect to your location in the crease and puck location.
 
