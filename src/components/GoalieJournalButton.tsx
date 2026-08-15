@@ -29,11 +29,15 @@ import coverMd from "../content/goalie-journal/cover.md";
 import acknowledgementsMd from "../content/goalie-journal/acknowledgements.md";
 import howToUseMd from "../content/goalie-journal/how-to-use.md";
 import howToImproveEveryDayMd from "../content/goalie-journal/how-to-improve-every-day.md";
+import helpfulResourcesMd from "../content/goalie-journal/helpful-resources.md";
 import eventEntryMd from "../content/goalie-journal/event-entry.md";
 import endOfSeasonMd from "../content/goalie-journal/end-of-season.md";
 
 const DEFAULT_LOGO_PATH = "/images/logos/logo-alt-light.png";
 const GOLD_CERTIFICATION_BADGE_PATH = "/images/usahockey/usahockey-gold-certification.png";
+const SKILLS_CYCLE_IMAGE_PATH = "/images/drill-design/goaltending-skills-cycle.png";
+const SKILLS_PYRAMID_IMAGE_PATH = "/images/drill-design/goaltending-skills-pyramid.png";
+const COACH_Z_ZONE_MAP_IMAGE_PATH = "/diagrams/coach-z-zone-map.png";
 
 type GoalieJournalButtonProps = {
   label?: string;
@@ -170,10 +174,13 @@ export default function GoalieJournalButton({
     } catch (error) {
       console.error("Failed to generate goalie journal QR code", error);
     }
-    const [logoBase64, footerLogoBase64, goldCertificationBadgeBase64] = await Promise.all([
+    const [logoBase64, footerLogoBase64, goldCertificationBadgeBase64, skillsCycleBase64, skillsPyramidBase64, coachZZoneMapBase64] = await Promise.all([
       getLogoAsBase64(),
       getStaticImageAsBase64(DEFAULT_LOGO_PATH, "footer logo"),
       getStaticImageAsBase64(GOLD_CERTIFICATION_BADGE_PATH, "Gold Certification badge"),
+      getStaticImageAsBase64(SKILLS_CYCLE_IMAGE_PATH, "Skills Cycle"),
+      getStaticImageAsBase64(SKILLS_PYRAMID_IMAGE_PATH, "Skills Pyramid"),
+      getStaticImageAsBase64(COACH_Z_ZONE_MAP_IMAGE_PATH, "Coach Z Zone Map"),
     ]);
 
     const resolveLogoData = async (
@@ -204,6 +211,9 @@ export default function GoalieJournalButton({
     const footerLogoData = await resolveLogoData(footerLogoBase64);
     const goaliePhotoData = await resolveLogoData(goaliePhotoPreview);
     const goldCertificationBadgeData = await resolveLogoData(goldCertificationBadgeBase64);
+    const skillsCycleData = await resolveLogoData(skillsCycleBase64);
+    const skillsPyramidData = await resolveLogoData(skillsPyramidBase64);
+    const coachZZoneMapData = await resolveLogoData(coachZZoneMapBase64);
     const normalizedSeasonGoals = normalizeJournalSeasonGoals(seasonGoals);
 
     const config: import("../types/generatorConfig").GoalieJournalConfig = {
@@ -225,6 +235,7 @@ export default function GoalieJournalButton({
       acknowledgementsMd,
       howToUseMd,
       howToImproveEveryDayMd,
+      helpfulResourcesMd,
       eventEntryMd,
       endOfSeasonMd,
     };
@@ -237,7 +248,8 @@ export default function GoalieJournalButton({
       qrCodeDataUrl,
       footerLogoData,
       goaliePhotoData,
-      goldCertificationBadgeData
+      goldCertificationBadgeData,
+      { skillsCycle: skillsCycleData, skillsPyramid: skillsPyramidData, coachZZoneMap: coachZZoneMapData }
     );
 
     const sanitizedName = writeInGoalieName
