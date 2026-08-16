@@ -194,8 +194,8 @@ export default function TermsPopup() {
               <p className="mb-2">
                 Site usage is tracked for analytics and diagnostic purposes to help improve the
                 Site. Information such as team names and plan settings may be collected, but no
-                individual player names, contact details, or other direct personal identifiers are
-                recorded.
+                individual player or goalie names, contact details, or other direct personal
+                identifiers are recorded.
               </p>
               <p className="mb-2">We use this information solely to:</p>
               <ul className="list-disc pl-6 space-y-1">

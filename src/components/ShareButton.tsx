@@ -27,6 +27,7 @@ interface ShareButtonProps {
   title?: string;
   className?: string;
   iconClassName?: string;
+  onShareComplete?: (shareMethod: "web_share" | "clipboard") => void;
 }
 
 export default function ShareButton({
@@ -34,6 +35,7 @@ export default function ShareButton({
   title,
   className,
   iconClassName,
+  onShareComplete,
 }: ShareButtonProps) {
   const [copied, setCopied] = React.useState(false);
   const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -52,6 +54,7 @@ export default function ShareButton({
     if (navigator.share) {
       try {
         await navigator.share({ title: shareTitle, url });
+        onShareComplete?.("web_share");
       } catch {
         // User cancelled or share failed — no action needed
       }
@@ -60,6 +63,7 @@ export default function ShareButton({
         await navigator.clipboard.writeText(url);
         setCopied(true);
         timeoutRef.current = setTimeout(() => setCopied(false), 2000);
+        onShareComplete?.("clipboard");
       } catch {
         // Clipboard API unavailable — no action
       }

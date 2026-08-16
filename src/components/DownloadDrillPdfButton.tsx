@@ -7,12 +7,16 @@ import { OBJECT_URL_REVOKE_DELAY_MS } from "../utils/staticAsset";
 interface DownloadDrillPdfButtonProps {
   drillData: DrillData;
   drillFolder: string;
+  drillSlug: string;
+  sourcePage?: string;
   className?: string;
 }
 
 export default function DownloadDrillPdfButton({
   drillData,
   drillFolder,
+  drillSlug,
+  sourcePage = "drill_page",
   className = "",
 }: DownloadDrillPdfButtonProps) {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
@@ -43,8 +47,10 @@ export default function DownloadDrillPdfButton({
 
       trackEvent("download_drill", {
         drill_name: drillData.name,
+        drill_slug: drillSlug,
         age_group: drillData.tags.age_level?.join(", ") || "",
         skill_level: drillData.tags.skill_level?.join(", ") || "",
+        source_page: sourcePage,
       });
     } catch (error) {
       console.error("Error generating PDF:", error);

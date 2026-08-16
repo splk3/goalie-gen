@@ -28,11 +28,11 @@ describe("trackEvent", () => {
     const mockGtag = jest.fn();
     (window as { gtag?: unknown }).gtag = mockGtag;
 
-    trackEvent("generate_plan", { type: "club", team_name: "Metro Club" });
+    trackEvent("generate_plan", { type: "club", club_name: "Metro Club" });
 
     expect(mockGtag).toHaveBeenCalledWith("event", "generate_plan", {
       type: "club",
-      team_name: "Metro Club",
+      club_name: "Metro Club",
     });
   });
 
@@ -50,6 +50,49 @@ describe("trackEvent", () => {
       drill_name: "Butterfly Slides",
       age_group: "U12",
       skill_level: "Intermediate",
+    });
+  });
+
+  it("calls window.gtag for drill view and share events", () => {
+    const mockGtag = jest.fn();
+    (window as { gtag?: unknown }).gtag = mockGtag;
+
+    trackEvent("view_drill", {
+      drill_name: "Butterfly Slides",
+      drill_slug: "butterfly-slides",
+      source_page: "drill_page",
+    });
+    trackEvent("share_drill", {
+      drill_name: "Butterfly Slides",
+      drill_slug: "butterfly-slides",
+      source_page: "drill_page",
+      share_method: "clipboard",
+    });
+
+    expect(mockGtag).toHaveBeenNthCalledWith(1, "event", "view_drill", {
+      drill_name: "Butterfly Slides",
+      drill_slug: "butterfly-slides",
+      source_page: "drill_page",
+    });
+    expect(mockGtag).toHaveBeenNthCalledWith(2, "event", "share_drill", {
+      drill_name: "Butterfly Slides",
+      drill_slug: "butterfly-slides",
+      source_page: "drill_page",
+      share_method: "clipboard",
+    });
+  });
+
+  it("strips disallowed player/goalie name keys from payloads", () => {
+    const mockGtag = jest.fn();
+    (window as { gtag?: unknown }).gtag = mockGtag;
+
+    trackEvent("generate_journal", {
+      team_name: "Falcons",
+      goalie_name: "Do Not Track",
+    } as unknown as { format?: string; team_name?: string });
+
+    expect(mockGtag).toHaveBeenCalledWith("event", "generate_journal", {
+      team_name: "Falcons",
     });
   });
 

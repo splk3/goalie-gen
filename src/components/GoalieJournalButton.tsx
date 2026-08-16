@@ -302,7 +302,7 @@ export default function GoalieJournalButton({
 
       trackEvent("generate_journal", {
         format: "pdf",
-        team_name: teamName,
+        team_name: teamName.trim(),
       });
     } catch (error) {
       console.error("Error generating journal:", error);
@@ -325,7 +325,7 @@ export default function GoalieJournalButton({
 
       trackEvent("download_journal", {
         format: "pdf",
-        team_name: teamName,
+        team_name: teamName.trim(),
       });
 
       setShowModal(false);

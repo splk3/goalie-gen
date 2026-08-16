@@ -669,7 +669,7 @@ export default function GenerateTeamPlanButton({
       trackEvent("generate_plan", {
         type: "team",
         format: "docx",
-        team_name: teamName,
+        team_name: teamName.trim(),
         age_group: ageGroup,
       });
     } catch (error) {
@@ -694,7 +694,7 @@ export default function GenerateTeamPlanButton({
       trackEvent("download_plan", {
         type: "team",
         format: "docx",
-        team_name: teamName,
+        team_name: teamName.trim(),
       });
 
       setShowModal(false);

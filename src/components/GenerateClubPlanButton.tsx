@@ -526,8 +526,8 @@ export default function GenerateClubPlanButton({
       trackEvent("generate_plan", {
         type: "club",
         format: "docx",
-        team_name_provided: !!clubName.trim(),
-        team_name: clubName,
+        club_name_provided: !!clubName.trim(),
+        club_name: clubName.trim(),
       });
     } catch (error) {
       console.error("Error generating document:", error);
@@ -544,7 +544,7 @@ export default function GenerateClubPlanButton({
       trackEvent("download_plan", {
         type: "club",
         format: "docx",
-        team_name: clubName,
+        club_name: clubName.trim(),
       });
 
       resetForm();
