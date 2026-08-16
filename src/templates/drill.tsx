@@ -7,6 +7,7 @@ import HamburgerMenu from "../components/HamburgerMenu";
 import DownloadDrillPdfButton from "../components/DownloadDrillPdfButton";
 import ShareButton from "../components/ShareButton";
 import BackLinkButton from "../components/BackLinkButton";
+import { trackEvent } from "../utils/analytics";
 import { getEmbedUrl, getVideoThumbnail } from "../utils/videoUtils";
 import { shouldPlaceProgressionsOnSecondPage } from "../utils/estimateDrillPdfPages";
 import UsaHockeyGoldBanner from "../components/UsaHockeyGoldBanner";
@@ -51,7 +52,7 @@ function DrillVideoEmbed({ url, title }: { url: string; title: string }) {
 }
 
 export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
-  const { drillData, drillFolder } = pageContext;
+  const { drillData, drillFolder, slug } = pageContext;
 
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [drillsBackUrl, setDrillsBackUrl] = React.useState("/goalie-drills");
@@ -69,6 +70,24 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
     }
   }, []);
 
+  React.useEffect(() => {
+    trackEvent("view_drill", {
+      drill_name: drillData.name,
+      drill_slug: slug,
+      source_page: "drill_page",
+    });
+  }, [drillData.name, slug]);
+
+  const trackPrintAsDownload = React.useCallback(() => {
+    trackEvent("download_drill", {
+      drill_name: drillData.name,
+      drill_slug: slug,
+      age_group: drillData.tags.age_level?.join(", ") || "",
+      skill_level: drillData.tags.skill_level?.join(", ") || "",
+      source_page: "drill_page_print",
+    });
+  }, [drillData.name, drillData.tags.age_level, drillData.tags.skill_level, slug]);
+
   const handlePrint = async () => {
     setIsPrinting(true);
     try {
@@ -78,6 +97,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       const blob = doc.output("blob");
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
+      trackPrintAsDownload();
       // Revoke the object URL after the window has had time to load,
       // or after a delay even if the window could not be opened
       setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
@@ -85,6 +105,7 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
       console.error("Error generating print PDF:", error);
       // Fallback to native browser print
       window.print();
+      trackPrintAsDownload();
     } finally {
       setIsPrinting(false);
     }
@@ -475,11 +496,20 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
           <DownloadDrillPdfButton
             drillData={drillData}
             drillFolder={drillFolder}
+            drillSlug={slug}
             className={actionButtonClasses}
           />
           <ShareButton
             label="Share Drill"
             title={drillData.name}
+            onShareComplete={(shareMethod) =>
+              trackEvent("share_drill", {
+                drill_name: drillData.name,
+                drill_slug: slug,
+                source_page: "drill_page",
+                share_method: shareMethod,
+              })
+            }
             className={`${actionButtonClasses} bg-usa-red hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900`}
           />
           <BackLinkButton to={drillsBackUrl}>Back to Drills</BackLinkButton>

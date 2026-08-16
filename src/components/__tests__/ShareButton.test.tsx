@@ -45,22 +45,25 @@ describe("ShareButton", () => {
 
   it("uses navigator.share when available", async () => {
     const mockShare = jest.fn().mockResolvedValue(undefined);
+    const onShareComplete = jest.fn();
     Object.defineProperty(navigator, "share", {
       value: mockShare,
       writable: true,
       configurable: true,
     });
 
-    render(<ShareButton label="Share" />);
+    render(<ShareButton label="Share" onShareComplete={onShareComplete} />);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /share/i }));
     });
 
     expect(mockShare).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(String) }));
+    expect(onShareComplete).toHaveBeenCalledWith("web_share");
   });
 
   it("copies to clipboard when navigator.share is unavailable", async () => {
     jest.useFakeTimers();
+    const onShareComplete = jest.fn();
     Object.defineProperty(navigator, "share", {
       value: undefined,
       writable: true,
@@ -73,12 +76,13 @@ describe("ShareButton", () => {
       configurable: true,
     });
 
-    render(<ShareButton label="Share" />);
+    render(<ShareButton label="Share" onShareComplete={onShareComplete} />);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /share/i }));
     });
 
     expect(mockWriteText).toHaveBeenCalled();
+    expect(onShareComplete).toHaveBeenCalledWith("clipboard");
     expect(screen.getByRole("button", { name: /copied/i })).toBeInTheDocument();
 
     // Label resets after 2 seconds

@@ -1,11 +1,15 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import DrillTemplate from "../drill";
 import { shouldPlaceProgressionsOnSecondPage } from "../../utils/estimateDrillPdfPages";
 import { getEmbedUrl } from "../../utils/videoUtils";
+import { trackEvent } from "../../utils/analytics";
 
 jest.mock("../../utils/generateDrillPdf", () => ({
   generateDrillPdf: jest.fn(),
+}));
+jest.mock("../../utils/analytics", () => ({
+  trackEvent: jest.fn(),
 }));
 jest.mock("../../utils/videoUtils", () => ({
   getEmbedUrl: jest.fn((url: string) => {
@@ -80,9 +84,26 @@ const basePageContext = {
 };
 
 describe("DrillTemplate", () => {
+  const originalOpen = window.open;
+  const originalPrint = window.print;
+  const originalCreateObjectUrl = URL.createObjectURL;
+  const originalRevokeObjectUrl = URL.revokeObjectURL;
+
   beforeEach(() => {
     jest.mocked(shouldPlaceProgressionsOnSecondPage).mockReturnValue(false);
     jest.mocked(getEmbedUrl).mockClear();
+    jest.mocked(trackEvent).mockClear();
+    window.open = jest.fn();
+    window.print = jest.fn();
+    URL.createObjectURL = jest.fn(() => "blob:test");
+    URL.revokeObjectURL = jest.fn();
+  });
+
+  afterEach(() => {
+    window.open = originalOpen;
+    window.print = originalPrint;
+    URL.createObjectURL = originalCreateObjectUrl;
+    URL.revokeObjectURL = originalRevokeObjectUrl;
   });
 
   it("renders the Drill Information heading and drill_steps as an ordered list", () => {
@@ -177,6 +198,36 @@ describe("DrillTemplate", () => {
     render(<DrillTemplate pageContext={basePageContext} />);
     const shareButtons = screen.getAllByRole("button", { name: /share/i });
     expect(shareButtons.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("tracks view_drill analytics on mount", () => {
+    render(<DrillTemplate pageContext={basePageContext} />);
+
+    expect(trackEvent).toHaveBeenCalledWith("view_drill", {
+      drill_name: "Test Drill",
+      drill_slug: "test-drill",
+      source_page: "drill_page",
+    });
+  });
+
+  it("tracks share_drill analytics when sharing completes", async () => {
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: jest.fn().mockResolvedValue(undefined),
+    });
+
+    render(<DrillTemplate pageContext={basePageContext} />);
+    const shareButtons = screen.getAllByRole("button", { name: /share drill/i });
+    fireEvent.click(shareButtons[shareButtons.length - 1]);
+
+    await waitFor(() => {
+      expect(trackEvent).toHaveBeenCalledWith("share_drill", {
+        drill_name: "Test Drill",
+        drill_slug: "test-drill",
+        source_page: "drill_page",
+        share_method: "web_share",
+      });
+    });
   });
 
   it("renders the main video before drill progressions for screen and browser print", () => {
@@ -379,5 +430,26 @@ describe("DrillTemplate", () => {
     );
 
     expect(screen.queryByText("Space Required:")).not.toBeInTheDocument();
+  });
+
+  it("tracks print actions as download_drill analytics events", async () => {
+    const { generateDrillPdf } = await import("../../utils/generateDrillPdf");
+    jest.mocked(generateDrillPdf).mockResolvedValue({
+      autoPrint: jest.fn(),
+      output: jest.fn(() => new Blob(["pdf"], { type: "application/pdf" })),
+    } as unknown as Awaited<ReturnType<typeof generateDrillPdf>>);
+
+    render(<DrillTemplate pageContext={basePageContext} />);
+    fireEvent.click(screen.getByRole("button", { name: /print drill/i }));
+
+    await waitFor(() => {
+      expect(trackEvent).toHaveBeenCalledWith("download_drill", {
+        drill_name: "Test Drill",
+        drill_slug: "test-drill",
+        age_group: "",
+        skill_level: "",
+        source_page: "drill_page_print",
+      });
+    });
   });
 });

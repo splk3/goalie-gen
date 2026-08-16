@@ -122,8 +122,10 @@ export default function INeedADrillButton({ className }: INeedADrillButtonProps 
     // Track event (reusing download_drill event type for consistency)
     trackEvent("download_drill", {
       drill_name: selectedDrill.name,
+      drill_slug: selectedDrill.slug,
       age_group: ageGroup,
       skill_level: skillLevel,
+      source_page: "i_need_a_drill",
     });
 
     // Navigate to the drill page
