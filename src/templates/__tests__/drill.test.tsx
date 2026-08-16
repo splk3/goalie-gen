@@ -99,7 +99,7 @@ describe("DrillTemplate", () => {
     URL.revokeObjectURL = jest.fn();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     window.open = originalOpen;
     window.print = originalPrint;
     URL.createObjectURL = originalCreateObjectUrl;
