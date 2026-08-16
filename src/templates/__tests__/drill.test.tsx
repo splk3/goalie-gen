@@ -200,6 +200,36 @@ describe("DrillTemplate", () => {
     expect(shareButtons.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("tracks view_drill analytics on mount", () => {
+    render(<DrillTemplate pageContext={basePageContext} />);
+
+    expect(trackEvent).toHaveBeenCalledWith("view_drill", {
+      drill_name: "Test Drill",
+      drill_slug: "test-drill",
+      source_page: "drill_page",
+    });
+  });
+
+  it("tracks share_drill analytics when sharing completes", async () => {
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: jest.fn().mockResolvedValue(undefined),
+    });
+
+    render(<DrillTemplate pageContext={basePageContext} />);
+    const shareButtons = screen.getAllByRole("button", { name: /share drill/i });
+    fireEvent.click(shareButtons[shareButtons.length - 1]);
+
+    await waitFor(() => {
+      expect(trackEvent).toHaveBeenCalledWith("share_drill", {
+        drill_name: "Test Drill",
+        drill_slug: "test-drill",
+        source_page: "drill_page",
+        share_method: "web_share",
+      });
+    });
+  });
+
   it("renders the main video before drill progressions for screen and browser print", () => {
     render(
       <DrillTemplate
