@@ -101,7 +101,9 @@ const sanitizeAnalyticsParams = (params?: AnalyticsParams): AnalyticsParams | un
     return params;
   }
 
-  const sanitizedEntries = Object.entries(params).filter(([key]) => !DISALLOWED_PARAM_KEYS.has(key));
+  const sanitizedEntries = Object.entries(params).filter(
+    ([key]) => !DISALLOWED_PARAM_KEYS.has(key)
+  );
   return Object.fromEntries(sanitizedEntries) as AnalyticsParams;
 };
 
