@@ -16,11 +16,11 @@ describe("trackEvent", () => {
     const mockGtag = jest.fn();
     (window as { gtag?: unknown }).gtag = mockGtag;
 
-    trackEvent("generate_plan", { type: "individual", team_name: "Eagles" });
+    trackEvent("generate_team_plan", { team_name: "Eagles", team_name_provided: true });
 
-    expect(mockGtag).toHaveBeenCalledWith("event", "generate_plan", {
-      type: "individual",
+    expect(mockGtag).toHaveBeenCalledWith("event", "generate_team_plan", {
       team_name: "Eagles",
+      team_name_provided: true,
     });
   });
 
@@ -28,11 +28,46 @@ describe("trackEvent", () => {
     const mockGtag = jest.fn();
     (window as { gtag?: unknown }).gtag = mockGtag;
 
-    trackEvent("generate_plan", { type: "club", club_name: "Metro Club" });
+    trackEvent("generate_club_plan", { club_name: "Metro Club", club_name_provided: true });
 
-    expect(mockGtag).toHaveBeenCalledWith("event", "generate_plan", {
-      type: "club",
+    expect(mockGtag).toHaveBeenCalledWith("event", "generate_club_plan", {
       club_name: "Metro Club",
+      club_name_provided: true,
+    });
+
+    it("supports separate download events for team plan, club plan, and goalie journal", () => {
+      const mockGtag = jest.fn();
+      (window as { gtag?: unknown }).gtag = mockGtag;
+
+      trackEvent("download_team_plan", { format: "docx", team_name: "Eagles", team_name_provided: true });
+      trackEvent("download_club_plan", {
+        format: "docx",
+        club_name: "Metro Club",
+        club_name_provided: true,
+      });
+      trackEvent("download_goalie_journal", {
+        format: "pdf",
+        team_name: "Falcons",
+        team_name_provided: true,
+        season_provided: true,
+      });
+
+      expect(mockGtag).toHaveBeenNthCalledWith(1, "event", "download_team_plan", {
+        format: "docx",
+        team_name: "Eagles",
+        team_name_provided: true,
+      });
+      expect(mockGtag).toHaveBeenNthCalledWith(2, "event", "download_club_plan", {
+        format: "docx",
+        club_name: "Metro Club",
+        club_name_provided: true,
+      });
+      expect(mockGtag).toHaveBeenNthCalledWith(3, "event", "download_goalie_journal", {
+        format: "pdf",
+        team_name: "Falcons",
+        team_name_provided: true,
+        season_provided: true,
+      });
     });
   });
 
@@ -86,19 +121,19 @@ describe("trackEvent", () => {
     const mockGtag = jest.fn();
     (window as { gtag?: unknown }).gtag = mockGtag;
 
-    trackEvent("generate_journal", {
+    trackEvent("generate_goalie_journal", {
       team_name: "Falcons",
       goalie_name: "Do Not Track",
-    } as unknown as { format?: string; team_name?: string });
+    } as unknown as { format?: string; team_name?: string; team_name_provided?: boolean });
 
-    expect(mockGtag).toHaveBeenCalledWith("event", "generate_journal", {
+    expect(mockGtag).toHaveBeenCalledWith("event", "generate_goalie_journal", {
       team_name: "Falcons",
     });
   });
 
   it("does not throw when window.gtag is not available", () => {
     expect(() => {
-      trackEvent("generate_plan", { type: "team" });
+      trackEvent("generate_team_plan", { team_name_provided: false });
     }).not.toThrow();
   });
 
@@ -109,10 +144,11 @@ describe("trackEvent", () => {
     });
     const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
 
-    trackEvent("generate_journal", { team_name: "Falcons" });
+    trackEvent("generate_goalie_journal", { team_name: "Falcons", team_name_provided: true });
 
-    expect(consoleSpy).toHaveBeenCalledWith("[Analytics] Event: generate_journal", {
+    expect(consoleSpy).toHaveBeenCalledWith("[Analytics] Event: generate_goalie_journal", {
       team_name: "Falcons",
+      team_name_provided: true,
     });
     consoleSpy.mockRestore();
   });
@@ -124,7 +160,7 @@ describe("trackEvent", () => {
     });
     const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
 
-    trackEvent("generate_plan", { type: "individual" });
+    trackEvent("generate_team_plan", { team_name: "Falcons", team_name_provided: true });
 
     expect(consoleSpy).not.toHaveBeenCalled();
     consoleSpy.mockRestore();

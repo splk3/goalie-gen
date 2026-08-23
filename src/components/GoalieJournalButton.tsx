@@ -300,9 +300,11 @@ export default function GoalieJournalButton({
     try {
       await generatePdf(normalizedSeason ?? "", normalizedEntryCount);
 
-      trackEvent("generate_journal", {
+      trackEvent("generate_goalie_journal", {
         format: "pdf",
         team_name: teamName.trim(),
+        team_name_provided: !!teamName.trim(),
+        season_provided: !!normalizedSeason,
       });
     } catch (error) {
       console.error("Error generating journal:", error);
@@ -323,9 +325,11 @@ export default function GoalieJournalButton({
       document.body.removeChild(link);
       setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
 
-      trackEvent("download_journal", {
+      trackEvent("download_goalie_journal", {
         format: "pdf",
         team_name: teamName.trim(),
+        team_name_provided: !!teamName.trim(),
+        season_provided: !!normalizeJournalSeason(season),
       });
 
       setShowModal(false);

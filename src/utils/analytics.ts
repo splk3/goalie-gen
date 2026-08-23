@@ -11,45 +11,56 @@ declare global {
 }
 
 type EventType =
-  | "generate_plan"
-  | "generate_journal"
-  | "download_plan"
-  | "download_journal"
+  | "generate_team_plan"
+  | "generate_club_plan"
+  | "generate_goalie_journal"
+  | "download_team_plan"
+  | "download_club_plan"
+  | "download_goalie_journal"
   | "download_drill"
   | "view_drill"
   | "share_drill"
   | "download_material"
   | "external_link_click";
 
-// Specific interfaces for each event type's parameters
-interface GeneratePlanParams {
-  type: "individual" | "team" | "club";
+interface GenerateTeamPlanParams {
   format?: string;
   team_name?: string;
-  club_name?: string;
   team_name_provided?: boolean;
-  club_name_provided?: boolean;
   age_group?: string;
   skill_level?: string;
 }
 
-interface GenerateJournalParams {
+interface GenerateClubPlanParams {
   format?: string;
-  team_name?: string;
   club_name?: string;
+  club_name_provided?: boolean;
 }
 
-interface DownloadPlanParams {
-  type: "team" | "club";
+interface GenerateGoalieJournalParams {
   format?: string;
   team_name?: string;
-  club_name?: string;
+  team_name_provided?: boolean;
+  season_provided?: boolean;
 }
 
-interface DownloadJournalParams {
+interface DownloadTeamPlanParams {
   format?: string;
   team_name?: string;
+  team_name_provided?: boolean;
+}
+
+interface DownloadClubPlanParams {
+  format?: string;
   club_name?: string;
+  club_name_provided?: boolean;
+}
+
+interface DownloadGoalieJournalParams {
+  format?: string;
+  team_name?: string;
+  team_name_provided?: boolean;
+  season_provided?: boolean;
 }
 
 interface DownloadDrillParams {
@@ -84,10 +95,12 @@ interface ExternalLinkClickParams {
 }
 
 type AnalyticsParams =
-  | GeneratePlanParams
-  | GenerateJournalParams
-  | DownloadPlanParams
-  | DownloadJournalParams
+  | GenerateTeamPlanParams
+  | GenerateClubPlanParams
+  | GenerateGoalieJournalParams
+  | DownloadTeamPlanParams
+  | DownloadClubPlanParams
+  | DownloadGoalieJournalParams
   | DownloadDrillParams
   | ViewDrillParams
   | ShareDrillParams
@@ -121,9 +134,9 @@ const sanitizeAnalyticsParams = (params?: AnalyticsParams): AnalyticsParams | un
  *
  * @example
  * ```typescript
- * // Track an individual plan generation
- * trackEvent('generate_plan', {
- *   type: 'individual',
+ * // Track a team plan generation
+ * trackEvent('generate_team_plan', {
+ *   format: 'docx',
  *   team_name: 'Springfield Eagles U12',
  *   team_name_provided: true
  * });
@@ -136,10 +149,18 @@ const sanitizeAnalyticsParams = (params?: AnalyticsParams): AnalyticsParams | un
  * });
  * ```
  */
-export function trackEvent(action: "generate_plan", params?: GeneratePlanParams): void;
-export function trackEvent(action: "generate_journal", params?: GenerateJournalParams): void;
-export function trackEvent(action: "download_plan", params: DownloadPlanParams): void;
-export function trackEvent(action: "download_journal", params?: DownloadJournalParams): void;
+export function trackEvent(action: "generate_team_plan", params?: GenerateTeamPlanParams): void;
+export function trackEvent(action: "generate_club_plan", params?: GenerateClubPlanParams): void;
+export function trackEvent(
+  action: "generate_goalie_journal",
+  params?: GenerateGoalieJournalParams
+): void;
+export function trackEvent(action: "download_team_plan", params: DownloadTeamPlanParams): void;
+export function trackEvent(action: "download_club_plan", params: DownloadClubPlanParams): void;
+export function trackEvent(
+  action: "download_goalie_journal",
+  params?: DownloadGoalieJournalParams
+): void;
 export function trackEvent(action: "download_drill", params: DownloadDrillParams): void;
 export function trackEvent(action: "view_drill", params: ViewDrillParams): void;
 export function trackEvent(action: "share_drill", params: ShareDrillParams): void;

@@ -523,8 +523,7 @@ export default function GenerateClubPlanButton({
 
     try {
       await generateDocx();
-      trackEvent("generate_plan", {
-        type: "club",
+      trackEvent("generate_club_plan", {
         format: "docx",
         club_name_provided: !!clubName.trim(),
         club_name: clubName.trim(),
@@ -541,10 +540,10 @@ export default function GenerateClubPlanButton({
     if (generatedBlob && generatedFileName) {
       saveAs(generatedBlob, generatedFileName);
 
-      trackEvent("download_plan", {
-        type: "club",
+      trackEvent("download_club_plan", {
         format: "docx",
         club_name: clubName.trim(),
+        club_name_provided: !!clubName.trim(),
       });
 
       resetForm();

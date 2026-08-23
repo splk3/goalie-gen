@@ -28,3 +28,22 @@ This document outlines key reusable UI components located under `src/components/
 - **`Pagination` (`src/components/Pagination.tsx`)**: Manages pagination buttons and controls, clamping offsets safely to prevent out-of-range navigation.
 - **`DrillMarkdown` (`src/components/DrillMarkdown.tsx`)**: Helper component that parses and renders markdown fields from a drill configuration into standard HTML lists and blocks.
 - **`INeedADrillButton` (`src/components/INeedADrillButton.tsx`)**: Interactive drill recommendation widget that applies the shared `useDrillFilters` hook to suggest matching drills.
+
+---
+
+## 📈 Analytics Event Tracking
+
+- **`trackEvent` (`src/utils/analytics.ts`)** is the shared Google Analytics event helper used by generators and resource interactions.
+- Plan and journal flows are tracked as separate GA4 events:
+  - `generate_team_plan`, `download_team_plan`
+  - `generate_club_plan`, `download_club_plan`
+  - `generate_goalie_journal`, `download_goalie_journal`
+- Keep payload keys consistent (`format`, `team_name`, `club_name`, `*_name_provided`, `season_provided`) so GA4 exploration reports remain stable.
+
+### Required GA4 Configuration
+
+To make these events useful in GA4:
+
+1. Register event-scoped custom dimensions for any payload keys you want in reports (for example: `format`, `team_name_provided`, `club_name_provided`, `season_provided`, `age_group`).
+2. Mark generation events (`generate_team_plan`, `generate_club_plan`, `generate_goalie_journal`) as **Key events**.
+3. Keep download events as regular events, then build an Exploration/funnel that compares generate vs download completion by flow.

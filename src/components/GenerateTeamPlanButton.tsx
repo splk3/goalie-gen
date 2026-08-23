@@ -666,10 +666,10 @@ export default function GenerateTeamPlanButton({
     try {
       await generateDocx();
 
-      trackEvent("generate_plan", {
-        type: "team",
+      trackEvent("generate_team_plan", {
         format: "docx",
         team_name: teamName.trim(),
+        team_name_provided: !!teamName.trim(),
         age_group: ageGroup,
       });
     } catch (error) {
@@ -691,10 +691,10 @@ export default function GenerateTeamPlanButton({
       document.body.removeChild(link);
       setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
 
-      trackEvent("download_plan", {
-        type: "team",
+      trackEvent("download_team_plan", {
         format: "docx",
         team_name: teamName.trim(),
+        team_name_provided: !!teamName.trim(),
       });
 
       setShowModal(false);
