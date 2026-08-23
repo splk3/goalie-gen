@@ -34,40 +34,40 @@ describe("trackEvent", () => {
       club_name: "Metro Club",
       club_name_provided: true,
     });
+  });
 
-    it("supports separate download events for team plan, club plan, and goalie journal", () => {
-      const mockGtag = jest.fn();
-      (window as { gtag?: unknown }).gtag = mockGtag;
+  it("supports separate download events for team plan, club plan, and goalie journal", () => {
+    const mockGtag = jest.fn();
+    (window as { gtag?: unknown }).gtag = mockGtag;
 
-      trackEvent("download_team_plan", { format: "docx", team_name: "Eagles", team_name_provided: true });
-      trackEvent("download_club_plan", {
-        format: "docx",
-        club_name: "Metro Club",
-        club_name_provided: true,
-      });
-      trackEvent("download_goalie_journal", {
-        format: "pdf",
-        team_name: "Falcons",
-        team_name_provided: true,
-        season_provided: true,
-      });
+    trackEvent("download_team_plan", { format: "docx", team_name: "Eagles", team_name_provided: true });
+    trackEvent("download_club_plan", {
+      format: "docx",
+      club_name: "Metro Club",
+      club_name_provided: true,
+    });
+    trackEvent("download_goalie_journal", {
+      format: "pdf",
+      team_name: "Falcons",
+      team_name_provided: true,
+      season_provided: true,
+    });
 
-      expect(mockGtag).toHaveBeenNthCalledWith(1, "event", "download_team_plan", {
-        format: "docx",
-        team_name: "Eagles",
-        team_name_provided: true,
-      });
-      expect(mockGtag).toHaveBeenNthCalledWith(2, "event", "download_club_plan", {
-        format: "docx",
-        club_name: "Metro Club",
-        club_name_provided: true,
-      });
-      expect(mockGtag).toHaveBeenNthCalledWith(3, "event", "download_goalie_journal", {
-        format: "pdf",
-        team_name: "Falcons",
-        team_name_provided: true,
-        season_provided: true,
-      });
+    expect(mockGtag).toHaveBeenNthCalledWith(1, "event", "download_team_plan", {
+      format: "docx",
+      team_name: "Eagles",
+      team_name_provided: true,
+    });
+    expect(mockGtag).toHaveBeenNthCalledWith(2, "event", "download_club_plan", {
+      format: "docx",
+      club_name: "Metro Club",
+      club_name_provided: true,
+    });
+    expect(mockGtag).toHaveBeenNthCalledWith(3, "event", "download_goalie_journal", {
+      format: "pdf",
+      team_name: "Falcons",
+      team_name_provided: true,
+      season_provided: true,
     });
   });
 
