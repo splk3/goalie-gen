@@ -101,8 +101,12 @@ async function run() {
     } else if (args[i] === "--age" && args[i + 1]) {
       ageGroup = normalizeAgeGroup(args[i + 1]);
       i++;
-    } else if (args[i] === "--skill" && args[i + 1]) {
-      skillLevel = normalizeSkillLevel(args[i + 1]);
+    } else if (args[i] === "--skill") {
+      const skillArgument = args[i + 1];
+      if (!skillArgument || skillArgument.startsWith("--")) {
+        throw new Error('--skill must be followed by "beginner", "intermediate", or "advanced"');
+      }
+      skillLevel = normalizeSkillLevel(skillArgument);
       i++;
     } else if (args[i] === "--none") {
       enableAll = false;

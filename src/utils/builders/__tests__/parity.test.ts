@@ -530,6 +530,7 @@ describe("buildTeamPlanDocument", () => {
     const buffer = await docx.Packer.toBuffer(result);
     expect(buffer[0]).toBe(0x50);
     expect(buffer[1]).toBe(0x4b);
+    expect(JSON.stringify(result)).not.toContain("Skill Level:");
   });
 
   it("renders the configured skill level when provided", async () => {
