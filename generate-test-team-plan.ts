@@ -130,7 +130,9 @@ Options:
   }
 
   if (!["beginner", "intermediate", "advanced"].includes(skillLevel)) {
-    throw new Error('--skill must be one of: "beginner", "intermediate", "advanced"');
+    throw new Error(
+      `Invalid --skill value "${skillLevel}". Expected one of: "beginner", "intermediate", "advanced"`
+    );
   }
 
   // Resolve output path to be in test-docs if it's a simple filename or relative path
