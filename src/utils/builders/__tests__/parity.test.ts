@@ -545,6 +545,18 @@ describe("buildTeamPlanDocument", () => {
     expect(JSON.stringify(result)).toContain("Skill Level: advanced");
   });
 
+  it("renders a skill level placeholder when the field is present but blank", async () => {
+    const result = await buildTeamPlanDocument(
+      { ...MINIMAL_TEAM_CONFIG, skillLevel: "" },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    expect(JSON.stringify(result)).toContain("Skill Level: [SKILL_LEVEL]");
+  });
+
   it("produces the same output structure when called twice with the same config", async () => {
     const [docA, docB] = await Promise.all([
       buildTeamPlanDocument(

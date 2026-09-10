@@ -584,7 +584,7 @@ export async function buildTeamPlanDocument(
       ],
       spacing: { after: 100 },
     }),
-    ...(skillLevel
+    ...(skillLevel !== undefined
       ? [
           new Paragraph({
             children: [toBlackRun(`Skill Level: ${valueOrPlaceholder(skillLevel, "SKILL_LEVEL")}`)],
