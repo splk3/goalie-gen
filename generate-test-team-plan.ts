@@ -10,6 +10,7 @@ import type {
   TeamPlanConfig,
   TeamPlanContent,
   ResolvedLogoData,
+  AgeGroup,
   EventDateSelection,
   EventSelection,
   QrGenerator,
@@ -52,6 +53,10 @@ function normalizeAgeGroup(rawValue: string): string {
   return ageMap[normalized] || rawValue.trim();
 }
 
+function isAgeGroup(value: string): value is AgeGroup {
+  return ["8U", "10U", "12U", "14U", "16U and older"].includes(value);
+}
+
 function normalizeSkillLevel(rawValue: string): string {
   const normalized = rawValue.trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -77,7 +82,7 @@ async function run() {
   let secondaryColor = "#AF272F";
   let logoPath = "";
   let outputPath = "test-team-plan.docx";
-  let ageGroup = "12U";
+  let ageGroup: AgeGroup = "12U";
   let skillLevel: TeamSkillLevel = "intermediate";
   let enableAll = true;
 
@@ -104,7 +109,13 @@ async function run() {
       outputPath = args[i + 1];
       i++;
     } else if (args[i] === "--age" && args[i + 1]) {
-      ageGroup = normalizeAgeGroup(args[i + 1]);
+      const normalizedAgeGroup = normalizeAgeGroup(args[i + 1]);
+      if (!isAgeGroup(normalizedAgeGroup)) {
+        throw new Error(
+          `Invalid --age value "${normalizedAgeGroup}". Expected one of: "8U", "10U", "12U", "14U", "16U and older"`
+        );
+      }
+      ageGroup = normalizedAgeGroup;
       i++;
     } else if (args[i] === "--skill") {
       const skillArgument = args[i + 1];

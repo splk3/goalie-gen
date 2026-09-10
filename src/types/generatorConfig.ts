@@ -138,7 +138,7 @@ export interface TeamPlanConfig {
   primaryColor: string;
   secondaryColor: string;
 
-  ageGroup: string;
+  ageGroup: AgeGroup;
   skillLevel?: TeamSkillLevel | "";
 
   // Feature toggles

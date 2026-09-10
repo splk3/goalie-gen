@@ -163,7 +163,7 @@ export default function GenerateTeamPlanButton({
     DEFAULT_SECONDARY_TEAM_COLOR
   );
   const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
-  const [ageGroup, setAgeGroup] = React.useState<string>("");
+  const [ageGroup, setAgeGroup] = React.useState<AgeGroup | "">("");
   const [addShotTrackerToGames, setAddShotTrackerToGames] = React.useState<boolean>(true);
   const [hasGoalieMentors, setHasGoalieMentors] = React.useState<boolean>(false);
   const [hasGoalieEvaluations, setHasGoalieEvaluations] = React.useState<boolean>(false);
@@ -571,6 +571,7 @@ export default function GenerateTeamPlanButton({
   const generateDocx = async (): Promise<void> => {
     const docxModule = await loadDocxModule();
     const { Packer } = docxModule;
+    const validatedAgeGroup = ageGroup as AgeGroup;
 
     // ── Sort / reconcile event data ─────────────────────────────────────────
     const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
@@ -623,7 +624,7 @@ export default function GenerateTeamPlanButton({
       teamMotto,
       primaryColor: primaryTeamColor,
       secondaryColor: secondaryTeamColor,
-      ageGroup,
+      ageGroup: validatedAgeGroup,
       hasGoalieMentors,
       hasGoalieEvaluations,
       goalieEvaluationTimes,
@@ -970,7 +971,7 @@ export default function GenerateTeamPlanButton({
             <select
               id="ageGroup"
               value={ageGroup}
-              onChange={(e) => setAgeGroup(e.target.value)}
+              onChange={(e) => setAgeGroup(e.target.value as AgeGroup | "")}
               disabled={!!generatedBlob || isGenerating}
               className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
