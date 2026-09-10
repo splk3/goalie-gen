@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install PDF validation tool
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes qpdf
+
       - name: Prepare output directories
         run: |
           rm -rf generated-docs
@@ -69,6 +74,18 @@ jobs:
 
           grep -F "Skill Level: advanced" /tmp/custom-team-plan.log
 
+          if npm run generate-test-team-plan -- --skill > /tmp/missing-skill.log 2>&1; then
+            echo "Expected --skill without a value to fail"
+            exit 1
+          fi
+          grep -F -- '--skill must be followed by "beginner", "intermediate", or "advanced"' /tmp/missing-skill.log
+
+          if npm run generate-test-team-plan -- --skill "elite" > /tmp/invalid-skill.log 2>&1; then
+            echo "Expected unsupported --skill value to fail"
+            exit 1
+          fi
+          grep -F -- 'Invalid --skill value "elite". Expected one of: "beginner", "intermediate", "advanced"' /tmp/invalid-skill.log
+
           npm run generate-test-goalie-journal -- \
             --name "Jimmy Goldberg" \
             --team "Delaware Stars" \
@@ -101,12 +118,49 @@ jobs:
             fi
           }
 
-          validate_output generated-docs/default/test-club-plan.docx
-          validate_output generated-docs/default/test-team-plan.docx
-          validate_output generated-docs/default/test-goalie-journal.pdf
-          validate_output generated-docs/custom/brandywine-outlaws-club-plan.docx
-          validate_output generated-docs/custom/delmarva-raptors-team-plan.docx
-          validate_output generated-docs/custom/delaware-stars-goalie-journal.pdf
+          validate_docx_output() {
+            local file_path="$1"
+
+            validate_output "$file_path"
+
+            python3 - "$file_path" <<'PY'
+          import sys
+          import zipfile
+
+          file_path = sys.argv[1]
+          required_entries = {
+              "[Content_Types].xml",
+              "_rels/.rels",
+              "word/document.xml",
+          }
+
+          with zipfile.ZipFile(file_path) as archive:
+              invalid_entry = archive.testzip()
+              if invalid_entry is not None:
+                  raise SystemExit(f"Corrupt DOCX entry in {file_path}: {invalid_entry}")
+
+              archive_entries = set(archive.namelist())
+              missing_entries = sorted(required_entries - archive_entries)
+              if missing_entries:
+                  raise SystemExit(
+                      f"Missing DOCX entries in {file_path}: {', '.join(missing_entries)}"
+                  )
+          PY
+          }
+
+          validate_pdf_output() {
+            local file_path="$1"
+
+            validate_output "$file_path"
+            qpdf --check "$file_path"
+          }
+
+          validate_docx_output generated-docs/default/test-club-plan.docx
+          validate_docx_output generated-docs/default/test-team-plan.docx
+          validate_pdf_output generated-docs/default/test-goalie-journal.pdf
+          validate_docx_output generated-docs/custom/brandywine-outlaws-club-plan.docx
+          validate_docx_output generated-docs/custom/delmarva-raptors-team-plan.docx
+          validate_pdf_output generated-docs/custom/delaware-stars-goalie-journal.pdf
 
       - name: Upload generated documents
         if: always()
