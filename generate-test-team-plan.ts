@@ -13,6 +13,7 @@ import type {
   EventDateSelection,
   EventSelection,
   QrGenerator,
+  TeamSkillLevel,
 } from "./src/types/generatorConfig";
 
 // Node-native QR generator (satisfies QrGenerator callback type)
@@ -63,6 +64,10 @@ function normalizeSkillLevel(rawValue: string): string {
   return skillMap[normalized] || rawValue.trim();
 }
 
+function isTeamSkillLevel(value: string): value is TeamSkillLevel {
+  return ["beginner", "intermediate", "advanced"].includes(value);
+}
+
 async function run() {
   const args = process.argv.slice(2);
   let teamName = "Test Team";
@@ -73,7 +78,7 @@ async function run() {
   let logoPath = "";
   let outputPath = "test-team-plan.docx";
   let ageGroup = "12U";
-  let skillLevel = "intermediate";
+  let skillLevel: TeamSkillLevel = "intermediate";
   let enableAll = true;
 
   for (let i = 0; i < args.length; i++) {
@@ -106,7 +111,13 @@ async function run() {
       if (!skillArgument || skillArgument.startsWith("--")) {
         throw new Error('--skill must be followed by "beginner", "intermediate", or "advanced"');
       }
-      skillLevel = normalizeSkillLevel(skillArgument);
+      const normalizedSkillLevel = normalizeSkillLevel(skillArgument);
+      if (!isTeamSkillLevel(normalizedSkillLevel)) {
+        throw new Error(
+          `Invalid --skill value "${normalizedSkillLevel}". Expected one of: "beginner", "intermediate", "advanced"`
+        );
+      }
+      skillLevel = normalizedSkillLevel;
       i++;
     } else if (args[i] === "--none") {
       enableAll = false;
@@ -131,12 +142,6 @@ Options:
       `);
       return;
     }
-  }
-
-  if (!["beginner", "intermediate", "advanced"].includes(skillLevel)) {
-    throw new Error(
-      `Invalid --skill value "${skillLevel}". Expected one of: "beginner", "intermediate", "advanced"`
-    );
   }
 
   // Resolve output path to be in test-docs if it's a simple filename or relative path

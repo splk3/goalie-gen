@@ -101,6 +101,7 @@ export interface ClubPlanContent {
 // ─── Team Plan ────────────────────────────────────────────────────────────────
 
 export type AgeGroup = "8U" | "10U" | "12U" | "14U" | "16U and older";
+export type TeamSkillLevel = "beginner" | "intermediate" | "advanced";
 export type ConfigurableEventType =
   | "On-ice Practice"
   | "Off-ice Practice"
@@ -138,7 +139,7 @@ export interface TeamPlanConfig {
   secondaryColor: string;
 
   ageGroup: string;
-  skillLevel?: string;
+  skillLevel?: TeamSkillLevel | "";
 
   // Feature toggles
   hasGoalieMentors: boolean;
