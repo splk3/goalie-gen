@@ -51,6 +51,18 @@ function normalizeAgeGroup(rawValue: string): string {
   return ageMap[normalized] || rawValue.trim();
 }
 
+function normalizeSkillLevel(rawValue: string): string {
+  const normalized = rawValue.trim().toLowerCase().replace(/\s+/g, " ");
+
+  const skillMap: Record<string, string> = {
+    beginner: "beginner",
+    intermediate: "intermediate",
+    advanced: "advanced",
+  };
+
+  return skillMap[normalized] || rawValue.trim();
+}
+
 async function run() {
   const args = process.argv.slice(2);
   let teamName = "Test Team";
@@ -61,6 +73,7 @@ async function run() {
   let logoPath = "";
   let outputPath = "test-team-plan.docx";
   let ageGroup = "12U";
+  let skillLevel = "intermediate";
   let enableAll = true;
 
   for (let i = 0; i < args.length; i++) {
@@ -88,6 +101,9 @@ async function run() {
     } else if (args[i] === "--age" && args[i + 1]) {
       ageGroup = normalizeAgeGroup(args[i + 1]);
       i++;
+    } else if (args[i] === "--skill" && args[i + 1]) {
+      skillLevel = normalizeSkillLevel(args[i + 1]);
+      i++;
     } else if (args[i] === "--none") {
       enableAll = false;
     } else if (args[i] === "--all") {
@@ -105,11 +121,16 @@ Options:
   --logo <path>        Path to logo image file (optional)
   --out <path>         Path to output .docx file (default: "test-team-plan.docx")
   --age <string>       Age Group (8U, 10U, 12U, 14U, 16U and older, default: "12U")
+  --skill <string>     Skill Level (beginner, intermediate, advanced, default: "intermediate")
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features
       `);
       return;
     }
+  }
+
+  if (!["beginner", "intermediate", "advanced"].includes(skillLevel)) {
+    throw new Error('--skill must be one of: "beginner", "intermediate", "advanced"');
   }
 
   // Resolve output path to be in test-docs if it's a simple filename or relative path
@@ -129,6 +150,7 @@ Options:
   console.log(`  Motto:       ${teamMotto}`);
   console.log(`  Colors:      Primary: ${primaryColor}, Secondary: ${secondaryColor}`);
   console.log(`  Age Group:   ${ageGroup}`);
+  console.log(`  Skill Level: ${skillLevel}`);
   console.log(`  Logo:        ${logoPath || "None"}`);
   console.log(`  Output:      ${outputPath}`);
   console.log(`  Features:    ${enableAll ? "All enabled" : "Minimal/none"}\n`);

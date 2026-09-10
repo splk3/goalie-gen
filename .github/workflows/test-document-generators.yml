@@ -1,0 +1,118 @@
+name: Test Document Generators
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Saturday at 3:30 AM UTC (after the main test-build workflow)
+    - cron: "30 3 * * 6"
+
+permissions: {}
+
+jobs:
+  test-document-generators:
+    name: Test document generators
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare output directories
+        run: |
+          rm -rf generated-docs
+          mkdir -p generated-docs/default generated-docs/custom
+
+      - name: Generate default test documents
+        run: |
+          npm run generate-test-club-plan -- --out generated-docs/default/test-club-plan.docx
+          npm run generate-test-team-plan -- --out generated-docs/default/test-team-plan.docx
+          npm run generate-test-goalie-journal -- --out generated-docs/default/test-goalie-journal.pdf
+
+      - name: Generate custom test documents
+        run: |
+          set -o pipefail
+
+          npm run generate-test-club-plan -- \
+            --name "Brandywine Outlaws" \
+            --website "https://www.facebook.com/brandywineoutlaws/" \
+            --motto "The most fun you'll ever have playing summer hockey!" \
+            --primary "#081F8A" \
+            --secondary "#7B7E8C" \
+            --out generated-docs/custom/brandywine-outlaws-club-plan.docx
+
+          npm run generate-test-team-plan -- \
+            --name "Delmarva Raptors 10U A National" \
+            --website "https://raptorhockey.com/" \
+            --motto "Fostering teamwork, hard work, and a love for hockey." \
+            --primary "#56A0D3" \
+            --secondary "#666666" \
+            --age "10U" \
+            --skill "advanced" \
+            --out generated-docs/custom/delmarva-raptors-team-plan.docx | tee /tmp/custom-team-plan.log
+
+          grep -F "Skill Level: advanced" /tmp/custom-team-plan.log
+
+          npm run generate-test-goalie-journal -- \
+            --name "Jimmy Goldberg" \
+            --team "Delaware Stars" \
+            --primary "#1B3A19" \
+            --secondary "#B59B3F" \
+            --entries "30" \
+            --season "2026-27" \
+            --season-goal "Track the puck into every save" \
+            --season-goal "Own rebounds to safe areas" \
+            --out generated-docs/custom/delaware-stars-goalie-journal.pdf
+
+      - name: Validate generated documents
+        run: |
+          validate_output() {
+            local file_path="$1"
+            local min_size_bytes=5120
+
+            if [ ! -f "$file_path" ]; then
+              echo "Missing generated file: $file_path"
+              exit 1
+            fi
+
+            local file_size
+            file_size="$(stat -c%s "$file_path")"
+            echo "$file_path => ${file_size} bytes"
+
+            if [ "$file_size" -le "$min_size_bytes" ]; then
+              echo "Generated file is too small (<= 5KB): $file_path"
+              exit 1
+            fi
+          }
+
+          validate_output generated-docs/default/test-club-plan.docx
+          validate_output generated-docs/default/test-team-plan.docx
+          validate_output generated-docs/default/test-goalie-journal.pdf
+          validate_output generated-docs/custom/brandywine-outlaws-club-plan.docx
+          validate_output generated-docs/custom/delmarva-raptors-team-plan.docx
+          validate_output generated-docs/custom/delaware-stars-goalie-journal.pdf
+
+      - name: Upload generated documents
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-document-samples
+          path: generated-docs/
+          if-no-files-found: error
+          retention-days: 30
