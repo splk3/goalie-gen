@@ -138,6 +138,7 @@ export interface TeamPlanConfig {
   secondaryColor: string;
 
   ageGroup: string;
+  skillLevel?: string;
 
   // Feature toggles
   hasGoalieMentors: boolean;

@@ -532,6 +532,18 @@ describe("buildTeamPlanDocument", () => {
     expect(buffer[1]).toBe(0x4b);
   });
 
+  it("renders the configured skill level when provided", async () => {
+    const result = await buildTeamPlanDocument(
+      { ...MINIMAL_TEAM_CONFIG, skillLevel: "advanced" },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    expect(JSON.stringify(result)).toContain("Skill Level: advanced");
+  });
+
   it("produces the same output structure when called twice with the same config", async () => {
     const [docA, docB] = await Promise.all([
       buildTeamPlanDocument(

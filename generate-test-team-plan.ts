@@ -263,6 +263,7 @@ Options:
     primaryColor,
     secondaryColor,
     ageGroup,
+    skillLevel,
     hasGoalieMentors: enableAll,
     hasGoalieEvaluations: enableAll,
     goalieEvaluationTimes: "3",

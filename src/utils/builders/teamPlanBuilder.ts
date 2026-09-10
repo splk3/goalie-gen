@@ -127,6 +127,7 @@ export async function buildTeamPlanDocument(
     primaryColor,
     secondaryColor,
     ageGroup,
+    skillLevel,
     hasGoalieMentors,
     hasGoalieEvaluations,
     goalieEvaluationTimes,
@@ -583,6 +584,14 @@ export async function buildTeamPlanDocument(
       ],
       spacing: { after: 100 },
     }),
+    ...(skillLevel
+      ? [
+          new Paragraph({
+            children: [toBlackRun(`Skill Level: ${valueOrPlaceholder(skillLevel, "SKILL_LEVEL")}`)],
+            spacing: { after: 100 },
+          }),
+        ]
+      : []),
     new Paragraph({
       children: [toBlackRun(`Website: ${valueOrPlaceholder(teamWebsite, "WEBSITE_URL")}`)],
       spacing: { after: 100 },
