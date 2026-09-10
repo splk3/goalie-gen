@@ -45,6 +45,7 @@ Please adhere strictly to the following architectural guidelines, development wo
 | Workflow                      | File                                 | Trigger                                      |
 | ----------------------------- | ------------------------------------ | -------------------------------------------- |
 | Test Build                    | `test-build.yml`                     | PRs to any branch; weekly Saturday 3 AM UTC  |
+| Test Document Generators      | `test-document-generators.yml`       | PRs to any branch; weekly Saturday 3:30 AM UTC |
 | Deploy to GitHub Pages        | `deploy.yml`                         | Push to `dev` branch; `workflow_dispatch`    |
 | Lint Code Base (super-linter) | `super-linter.yml`                   | Push to any branch; weekly Saturday 2 AM UTC |
 | CodeQL Advanced               | `codeql.yml`                         | Push/PR to `main`; weekly Sunday             |
