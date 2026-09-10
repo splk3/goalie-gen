@@ -568,10 +568,9 @@ export default function GenerateTeamPlanButton({
     return true;
   };
 
-  const generateDocx = async (): Promise<void> => {
+  const generateDocx = async (validatedAgeGroup: AgeGroup): Promise<void> => {
     const docxModule = await loadDocxModule();
     const { Packer } = docxModule;
-    const validatedAgeGroup = ageGroup as AgeGroup;
 
     // ── Sort / reconcile event data ─────────────────────────────────────────
     const sortedEventDates = [...selectedEventDates].sort((a, b) => a.date.localeCompare(b.date));
@@ -661,11 +660,14 @@ export default function GenerateTeamPlanButton({
     if (!validateInputs()) {
       return;
     }
+    if (!ageGroup) {
+      return;
+    }
 
     setIsGenerating(true);
 
     try {
-      await generateDocx();
+      await generateDocx(ageGroup);
 
       trackEvent("generate_plan", {
         type: "team",
