@@ -163,7 +163,7 @@ export default function GenerateTeamPlanButton({
     DEFAULT_SECONDARY_TEAM_COLOR
   );
   const [logoPaletteColors, setLogoPaletteColors] = React.useState<string[]>([]);
-  const [ageGroup, setAgeGroup] = React.useState<string>("");
+  const [ageGroup, setAgeGroup] = React.useState<AgeGroup | "">("");
   const [addShotTrackerToGames, setAddShotTrackerToGames] = React.useState<boolean>(true);
   const [hasGoalieMentors, setHasGoalieMentors] = React.useState<boolean>(false);
   const [hasGoalieEvaluations, setHasGoalieEvaluations] = React.useState<boolean>(false);
@@ -568,7 +568,7 @@ export default function GenerateTeamPlanButton({
     return true;
   };
 
-  const generateDocx = async (): Promise<void> => {
+  const generateDocx = async (validatedAgeGroup: AgeGroup): Promise<void> => {
     const docxModule = await loadDocxModule();
     const { Packer } = docxModule;
 
@@ -623,7 +623,7 @@ export default function GenerateTeamPlanButton({
       teamMotto,
       primaryColor: primaryTeamColor,
       secondaryColor: secondaryTeamColor,
-      ageGroup,
+      ageGroup: validatedAgeGroup,
       hasGoalieMentors,
       hasGoalieEvaluations,
       goalieEvaluationTimes,
@@ -660,11 +660,14 @@ export default function GenerateTeamPlanButton({
     if (!validateInputs()) {
       return;
     }
+    if (!ageGroup) {
+      return;
+    }
 
     setIsGenerating(true);
 
     try {
-      await generateDocx();
+      await generateDocx(ageGroup);
 
       trackEvent("generate_plan", {
         type: "team",
@@ -970,7 +973,7 @@ export default function GenerateTeamPlanButton({
             <select
               id="ageGroup"
               value={ageGroup}
-              onChange={(e) => setAgeGroup(e.target.value)}
+              onChange={(e) => setAgeGroup(e.target.value as AgeGroup | "")}
               disabled={!!generatedBlob || isGenerating}
               className="w-full px-4 py-2 border-2 border-usa-blue dark:border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-usa-blue dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >

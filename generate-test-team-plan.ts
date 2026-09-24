@@ -10,9 +10,11 @@ import type {
   TeamPlanConfig,
   TeamPlanContent,
   ResolvedLogoData,
+  AgeGroup,
   EventDateSelection,
   EventSelection,
   QrGenerator,
+  TeamSkillLevel,
 } from "./src/types/generatorConfig";
 
 // Node-native QR generator (satisfies QrGenerator callback type)
@@ -51,6 +53,26 @@ function normalizeAgeGroup(rawValue: string): string {
   return ageMap[normalized] || rawValue.trim();
 }
 
+function isAgeGroup(value: string): value is AgeGroup {
+  return ["8U", "10U", "12U", "14U", "16U and older"].includes(value);
+}
+
+function normalizeSkillLevel(rawValue: string): string {
+  const normalized = rawValue.trim().toLowerCase().replace(/\s+/g, " ");
+
+  const skillMap: Record<string, string> = {
+    beginner: "beginner",
+    intermediate: "intermediate",
+    advanced: "advanced",
+  };
+
+  return skillMap[normalized] || rawValue.trim();
+}
+
+function isTeamSkillLevel(value: string): value is TeamSkillLevel {
+  return ["beginner", "intermediate", "advanced"].includes(value);
+}
+
 async function run() {
   const args = process.argv.slice(2);
   let teamName = "Test Team";
@@ -60,7 +82,8 @@ async function run() {
   let secondaryColor = "#AF272F";
   let logoPath = "";
   let outputPath = "test-team-plan.docx";
-  let ageGroup = "12U";
+  let ageGroup: AgeGroup = "12U";
+  let skillLevel: TeamSkillLevel = "intermediate";
   let enableAll = true;
 
   for (let i = 0; i < args.length; i++) {
@@ -86,7 +109,26 @@ async function run() {
       outputPath = args[i + 1];
       i++;
     } else if (args[i] === "--age" && args[i + 1]) {
-      ageGroup = normalizeAgeGroup(args[i + 1]);
+      const normalizedAgeGroup = normalizeAgeGroup(args[i + 1]);
+      if (!isAgeGroup(normalizedAgeGroup)) {
+        throw new Error(
+          `Invalid --age value "${normalizedAgeGroup}". Expected one of: "8U", "10U", "12U", "14U", "16U and older"`
+        );
+      }
+      ageGroup = normalizedAgeGroup;
+      i++;
+    } else if (args[i] === "--skill") {
+      const skillArgument = args[i + 1];
+      if (!skillArgument || skillArgument.startsWith("--")) {
+        throw new Error('--skill must be followed by "beginner", "intermediate", or "advanced"');
+      }
+      const normalizedSkillLevel = normalizeSkillLevel(skillArgument);
+      if (!isTeamSkillLevel(normalizedSkillLevel)) {
+        throw new Error(
+          `Invalid --skill value "${normalizedSkillLevel}". Expected one of: "beginner", "intermediate", "advanced"`
+        );
+      }
+      skillLevel = normalizedSkillLevel;
       i++;
     } else if (args[i] === "--none") {
       enableAll = false;
@@ -105,6 +147,7 @@ Options:
   --logo <path>        Path to logo image file (optional)
   --out <path>         Path to output .docx file (default: "test-team-plan.docx")
   --age <string>       Age Group (8U, 10U, 12U, 14U, 16U and older, default: "12U")
+  --skill <string>     Skill Level (beginner, intermediate, advanced, default: "intermediate")
   --all                Enable all optional sections and features (default)
   --none               Disable all optional sections and features
       `);
@@ -129,6 +172,7 @@ Options:
   console.log(`  Motto:       ${teamMotto}`);
   console.log(`  Colors:      Primary: ${primaryColor}, Secondary: ${secondaryColor}`);
   console.log(`  Age Group:   ${ageGroup}`);
+  console.log(`  Skill Level: ${skillLevel}`);
   console.log(`  Logo:        ${logoPath || "None"}`);
   console.log(`  Output:      ${outputPath}`);
   console.log(`  Features:    ${enableAll ? "All enabled" : "Minimal/none"}\n`);
@@ -241,6 +285,7 @@ Options:
     primaryColor,
     secondaryColor,
     ageGroup,
+    skillLevel,
     hasGoalieMentors: enableAll,
     hasGoalieEvaluations: enableAll,
     goalieEvaluationTimes: "3",

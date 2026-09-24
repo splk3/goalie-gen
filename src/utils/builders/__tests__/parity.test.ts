@@ -530,6 +530,31 @@ describe("buildTeamPlanDocument", () => {
     const buffer = await docx.Packer.toBuffer(result);
     expect(buffer[0]).toBe(0x50);
     expect(buffer[1]).toBe(0x4b);
+    expect(JSON.stringify(result)).not.toContain("Skill Level:");
+  });
+
+  it("renders the configured skill level when provided", async () => {
+    const result = await buildTeamPlanDocument(
+      { ...MINIMAL_TEAM_CONFIG, skillLevel: "advanced" },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    expect(JSON.stringify(result)).toContain("Skill Level: advanced");
+  });
+
+  it("renders a skill level placeholder when the field is present but blank", async () => {
+    const result = await buildTeamPlanDocument(
+      { ...MINIMAL_TEAM_CONFIG, skillLevel: "" },
+      MINIMAL_TEAM_CONTENT,
+      null,
+      NULL_QR_GENERATOR,
+      docx
+    );
+
+    expect(JSON.stringify(result)).toContain("Skill Level: [SKILL_LEVEL]");
   });
 
   it("produces the same output structure when called twice with the same config", async () => {
