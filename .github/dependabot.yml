@@ -3,7 +3,34 @@ updates:
       default-days: 7
     directory: /
     groups:
-      npm-all:
+      react-family:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+      gatsby-family:
+        patterns:
+          - gatsby
+          - gatsby-*
+      testing-family:
+        patterns:
+          - jest
+          - "@jest/*"
+          - ts-jest
+          - "@testing-library/*"
+      typescript-family:
+        patterns:
+          - typescript
+          - tsx
+          - "@types/*"
+      linting-family:
+        patterns:
+          - eslint
+          - eslint-*
+          - "@eslint/*"
+          - prettier
+      npm-other:
         patterns:
           - "*"
     open-pull-requests-limit: 10
@@ -16,6 +43,19 @@ updates:
     directory: /
     ignore:
       - dependency-name: "github/gh-aw-actions" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
+    groups:
+      github-actions-official:
+        patterns:
+          - "actions/*"
+      github-platform:
+        patterns:
+          - "github/*"
+      cloudflare-actions:
+        patterns:
+          - "cloudflare/*"
+      github-actions-other:
+        patterns:
+          - "*"
     open-pull-requests-limit: 10
     package-ecosystem: github-actions
     schedule:
