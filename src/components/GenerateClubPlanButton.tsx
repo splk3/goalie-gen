@@ -25,6 +25,7 @@ import {
   DEFAULT_GOALIE_DISCOUNT,
 } from "../utils/generatorDefaults";
 import { buildClubPlanDocument } from "../utils/builders/clubPlanBuilder";
+import { getFittedImageDimensions } from "../utils/imageDimensions";
 import { buildCacheBustedAssetPath } from "../utils/staticAsset";
 import introductionMd from "../content/club-plan/introduction.md";
 import seasonGoalsMd from "../content/club-plan/season-goals.md";
@@ -416,26 +417,7 @@ export default function GenerateClubPlanButton({
     if (selectedImage && imagePreview) {
       const arrayBuffer = await selectedImage.arrayBuffer();
       const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
-      let imgWidth = 320;
-      let imgHeight = 320;
-      try {
-        const img = new Image();
-        await new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve;
-          img.src = imagePreview;
-        });
-        const ratio = img.width / img.height;
-        if (ratio > 1) {
-          imgWidth = 320;
-          imgHeight = 320 / ratio;
-        } else {
-          imgHeight = 320;
-          imgWidth = 320 * ratio;
-        }
-      } catch (e) {
-        console.error("Failed to parse image dimensions", e);
-      }
+      const { width: imgWidth, height: imgHeight } = await getFittedImageDimensions(imagePreview, 320);
       resolvedLogo = { data: arrayBuffer, type: docxImageType, width: imgWidth, height: imgHeight };
     }
 
