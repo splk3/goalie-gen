@@ -1,7 +1,7 @@
 import { getFittedImageDimensions } from "../imageDimensions";
 
 describe("getFittedImageDimensions", () => {
-  let originalImage: any;
+  let originalImage: typeof global.Image;
 
   beforeEach(() => {
     // Mock the global Image object
@@ -11,7 +11,7 @@ describe("getFittedImageDimensions", () => {
       height = 0;
       src = "";
       onload: (() => void) | null = null;
-      onerror: ((e: any) => void) | null = null;
+      onerror: ((e: Error) => void) | null = null;
 
       constructor() {
         setTimeout(() => {
@@ -22,7 +22,7 @@ describe("getFittedImageDimensions", () => {
           }
         }, 0);
       }
-    } as any;
+    } as unknown as typeof global.Image;
   });
 
   afterEach(() => {
@@ -35,7 +35,7 @@ describe("getFittedImageDimensions", () => {
     global.Image = class extends originalImageClass {
       width = 800;
       height = 400;
-    } as any;
+    } as unknown as typeof global.Image;
 
     const result = await getFittedImageDimensions("landscape.png", 400);
     expect(result).toEqual({ width: 400, height: 200 });
@@ -46,7 +46,7 @@ describe("getFittedImageDimensions", () => {
     global.Image = class extends originalImageClass {
       width = 400;
       height = 800;
-    } as any;
+    } as unknown as typeof global.Image;
 
     const result = await getFittedImageDimensions("portrait.png", 400);
     expect(result).toEqual({ width: 200, height: 400 });
@@ -57,7 +57,7 @@ describe("getFittedImageDimensions", () => {
     global.Image = class extends originalImageClass {
       width = 500;
       height = 500;
-    } as any;
+    } as unknown as typeof global.Image;
 
     const result = await getFittedImageDimensions("square.png", 400);
     // ratio is 1, so the else branch applies (ratio <= 1)
