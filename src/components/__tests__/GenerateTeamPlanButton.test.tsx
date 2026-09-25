@@ -44,11 +44,27 @@ jest.mock("../Logo", () => {
 });
 
 jest.mock("../ImageUploader", () => {
-  function MockImageUploader() {
-    return <div data-testid="image-uploader" />;
-  }
-
-  return MockImageUploader;
+  return function MockImageUploader({
+    onImageCropped,
+  }: {
+    onImageCropped?: (f: File, url: string) => void;
+  }) {
+    return (
+      <div data-testid="image-uploader">
+        <button
+          data-testid="mock-upload-image"
+          onClick={() => {
+            if (onImageCropped) {
+              const file = new File(["fake-image-content"], "test.png", { type: "image/png" });
+              onImageCropped(file, "data:image/png;base64,fake");
+            }
+          }}
+        >
+          Upload Mock Image
+        </button>
+      </div>
+    );
+  };
 });
 
 const mockedLoadDocxModule = jest.mocked(loadDocxModule);
@@ -1039,5 +1055,78 @@ describe("GenerateTeamPlanButton event planning UI", () => {
     );
     expect(screen.getAllByRole("button", { name: /delete all events for/i })).toHaveLength(1);
     await waitFor(() => expect(deleteDateButton).toHaveFocus());
+  });
+});
+
+describe("GenerateTeamPlanButton image parsing error", () => {
+  it("shows an error notice if image dimensions fail to parse but still generates document", async () => {
+    const user = userEvent.setup();
+    const mockDocument = jest.fn((config) => ({ config }));
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    // Override Image to throw when src is set
+    const OriginalImage = global.Image;
+    global.Image = class {
+      onload: () => void = () => {};
+      onerror: () => void = () => {};
+      set src(_value: string) {
+        throw new Error("Simulated image load failure");
+      }
+    } as unknown as typeof Image;
+
+    mockedLoadDocxModule.mockResolvedValue({
+      AlignmentType: { CENTER: "CENTER", LEFT: "LEFT" },
+      Document: mockDocument,
+      ExternalHyperlink: jest.fn((options: unknown) => ({ options })),
+      HeadingLevel: { HEADING_1: "H1", HEADING_2: "H2", HEADING_3: "H3" },
+      ImageRun: jest.fn((options: unknown) => ({ options })),
+      Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
+      Paragraph: jest.fn((options: unknown) => ({ options })),
+      Table: jest.fn((options: unknown) => ({ options })),
+      TableCell: jest.fn((options: unknown) => ({ options })),
+      TableLayoutType: { FIXED: "FIXED" },
+      TableRow: jest.fn((options: unknown) => ({ options })),
+      TextRun: jest.fn((options: unknown) => ({ options })),
+      VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
+      WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
+      Header: jest.fn((options: unknown) => ({ options })),
+      Footer: jest.fn((options: unknown) => ({ options })),
+      BorderStyle: { SINGLE: "SINGLE" },
+      TabStopType: { RIGHT: "RIGHT", LEFT: "LEFT" },
+      PageNumber: { CURRENT: "CURRENT", TOTAL_PAGES: "TOTAL_PAGES" },
+    } as never);
+
+    render(<GenerateTeamPlanButton />);
+
+    // Open modal
+    await user.click(screen.getByRole("button", { name: "Generate Team Development Plan" }));
+
+    // Fill required fields
+    await user.type(screen.getByLabelText("Team Name"), "Springfield Goalies");
+    await user.selectOptions(screen.getByLabelText("Age Group"), "10U");
+
+    // Upload an image via our mock button
+    await user.click(screen.getByTestId("mock-upload-image"));
+
+    // Generate
+    await user.click(screen.getByRole("button", { name: "Generate" }));
+
+    // Verify error was logged and generation still occurred
+    expect(consoleSpy).toHaveBeenCalledWith("Failed to parse image dimensions", expect.any(Error));
+
+    await waitFor(() => {
+      expect(mockDocument).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify the error message is displayed
+    try {
+      const notice = await screen.findByText(
+        /The document was generated, but the provided team logo could not be processed and is not included/i
+      );
+      expect(notice).toBeInTheDocument();
+    } finally {
+      global.Image = OriginalImage;
+      consoleSpy.mockRestore();
+    }
   });
 });
