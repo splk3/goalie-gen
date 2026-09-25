@@ -1072,25 +1072,25 @@ describe("GenerateTeamPlanButton image parsing error", () => {
       set src(_value: string) {
         throw new Error("Simulated image load failure");
       }
-    } as any;
+    } as unknown as typeof Image;
 
     mockedLoadDocxModule.mockResolvedValue({
       AlignmentType: { CENTER: "CENTER", LEFT: "LEFT" },
       Document: mockDocument,
-      ExternalHyperlink: jest.fn((options: any) => ({ options })),
+      ExternalHyperlink: jest.fn((options: unknown) => ({ options })),
       HeadingLevel: { HEADING_1: "H1", HEADING_2: "H2", HEADING_3: "H3" },
-      ImageRun: jest.fn((options: any) => ({ options })),
+      ImageRun: jest.fn((options: unknown) => ({ options })),
       Packer: { toBlob: jest.fn(async () => new Blob(["test-doc"])) },
-      Paragraph: jest.fn((options: any) => ({ options })),
-      Table: jest.fn((options: any) => ({ options })),
-      TableCell: jest.fn((options: any) => ({ options })),
+      Paragraph: jest.fn((options: unknown) => ({ options })),
+      Table: jest.fn((options: unknown) => ({ options })),
+      TableCell: jest.fn((options: unknown) => ({ options })),
       TableLayoutType: { FIXED: "FIXED" },
-      TableRow: jest.fn((options: any) => ({ options })),
-      TextRun: jest.fn((options: any) => ({ options })),
+      TableRow: jest.fn((options: unknown) => ({ options })),
+      TextRun: jest.fn((options: unknown) => ({ options })),
       VerticalAlign: { CENTER: "CENTER", TOP: "TOP" },
       WidthType: { PERCENTAGE: "PERCENTAGE", DXA: "DXA" },
-      Header: jest.fn((options: any) => ({ options })),
-      Footer: jest.fn((options: any) => ({ options })),
+      Header: jest.fn((options: unknown) => ({ options })),
+      Footer: jest.fn((options: unknown) => ({ options })),
       BorderStyle: { SINGLE: "SINGLE" },
       TabStopType: { RIGHT: "RIGHT", LEFT: "LEFT" },
       PageNumber: { CURRENT: "CURRENT", TOTAL_PAGES: "TOTAL_PAGES" },
@@ -1112,10 +1112,7 @@ describe("GenerateTeamPlanButton image parsing error", () => {
     await user.click(screen.getByRole("button", { name: "Generate" }));
 
     // Verify error was logged and generation still occurred
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "Failed to parse image dimensions",
-      expect.any(Error)
-    );
+    expect(consoleSpy).toHaveBeenCalledWith("Failed to parse image dimensions", expect.any(Error));
 
     await waitFor(() => {
       expect(mockDocument).toHaveBeenCalledTimes(1);
@@ -1123,7 +1120,9 @@ describe("GenerateTeamPlanButton image parsing error", () => {
 
     // Verify the error message is displayed
     try {
-      const notice = await screen.findByText(/The document was generated, but the provided team logo could not be processed and is not included/i);
+      const notice = await screen.findByText(
+        /The document was generated, but the provided team logo could not be processed and is not included/i
+      );
       expect(notice).toBeInTheDocument();
     } finally {
       global.Image = OriginalImage;
