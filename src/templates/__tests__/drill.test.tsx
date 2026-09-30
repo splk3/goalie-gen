@@ -4,6 +4,7 @@ import DrillTemplate from "../drill";
 import { shouldPlaceProgressionsOnSecondPage } from "../../utils/estimateDrillPdfPages";
 import { getEmbedUrl } from "../../utils/videoUtils";
 import { trackEvent } from "../../utils/analytics";
+import { loadImagesForPrint, shouldUseNativePagePrint } from "../../utils/printSupport";
 
 jest.mock("../../utils/generateDrillPdf", () => ({
   generateDrillPdf: jest.fn(),
@@ -25,6 +26,10 @@ jest.mock("../../utils/videoUtils", () => ({
     }
   }),
   getVideoThumbnail: jest.fn(() => ""),
+}));
+jest.mock("../../utils/printSupport", () => ({
+  shouldUseNativePagePrint: jest.fn(() => false),
+  loadImagesForPrint: jest.fn(() => Promise.resolve()),
 }));
 jest.mock("../../components/SEO", () => () => null);
 jest.mock("../../utils/estimateDrillPdfPages", () => ({
@@ -93,6 +98,8 @@ describe("DrillTemplate", () => {
     jest.mocked(shouldPlaceProgressionsOnSecondPage).mockReturnValue(false);
     jest.mocked(getEmbedUrl).mockClear();
     jest.mocked(trackEvent).mockClear();
+    jest.mocked(shouldUseNativePagePrint).mockReturnValue(false);
+    jest.mocked(loadImagesForPrint).mockClear();
     window.open = jest.fn();
     window.print = jest.fn();
     URL.createObjectURL = jest.fn(() => "blob:test");
@@ -451,5 +458,44 @@ describe("DrillTemplate", () => {
         source_page: "drill_page_print",
       });
     });
+  });
+
+  it("opens the PDF with auto-print in a new tab on desktop browsers", async () => {
+    const { generateDrillPdf } = await import("../../utils/generateDrillPdf");
+    const autoPrint = jest.fn();
+    jest.mocked(generateDrillPdf).mockResolvedValue({
+      autoPrint,
+      output: jest.fn(() => new Blob(["pdf"], { type: "application/pdf" })),
+    } as unknown as Awaited<ReturnType<typeof generateDrillPdf>>);
+
+    render(<DrillTemplate pageContext={basePageContext} />);
+    fireEvent.click(screen.getByRole("button", { name: /print drill/i }));
+
+    await waitFor(() => {
+      expect(window.open).toHaveBeenCalledWith("blob:test", "_blank");
+    });
+    expect(autoPrint).toHaveBeenCalled();
+    expect(window.print).not.toHaveBeenCalled();
+  });
+
+  it("opens the native print dialog on mobile browsers and PWAs", async () => {
+    const { generateDrillPdf } = await import("../../utils/generateDrillPdf");
+    jest.mocked(generateDrillPdf).mockClear();
+    jest.mocked(shouldUseNativePagePrint).mockReturnValue(true);
+
+    render(<DrillTemplate pageContext={basePageContext} />);
+    fireEvent.click(screen.getByRole("button", { name: /print drill/i }));
+
+    await waitFor(() => {
+      expect(window.print).toHaveBeenCalledTimes(1);
+    });
+    expect(loadImagesForPrint).toHaveBeenCalled();
+    expect(window.open).not.toHaveBeenCalled();
+    expect(generateDrillPdf).not.toHaveBeenCalled();
+    expect(trackEvent).toHaveBeenCalledWith(
+      "download_drill",
+      expect.objectContaining({ source_page: "drill_page_print" })
+    );
+    expect(screen.getByRole("button", { name: /print drill/i })).not.toBeDisabled();
   });
 });

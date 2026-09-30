@@ -15,6 +15,7 @@ import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/
 import { formatDrillTagValue } from "../utils/drillTagLabels";
 import type { DrillData } from "../types/drill";
 import DrillMarkdown from "../components/DrillMarkdown";
+import { loadImagesForPrint, shouldUseNativePagePrint } from "../utils/printSupport";
 
 interface DrillPageContext {
   slug: string;
@@ -90,6 +91,19 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
 
   const handlePrint = async () => {
     setIsPrinting(true);
+    if (shouldUseNativePagePrint()) {
+      // Mobile browsers and installed PWAs do not open the print dialog for a
+      // PDF opened in a new tab, so print the print-optimized page directly.
+      try {
+        await loadImagesForPrint();
+      } catch (error) {
+        console.error("Error preparing images for print:", error);
+      }
+      setIsPrinting(false);
+      window.print();
+      trackPrintAsDownload();
+      return;
+    }
     try {
       const { generateDrillPdf } = await import("../utils/generateDrillPdf");
       const doc = await generateDrillPdf(drillData, drillFolder);

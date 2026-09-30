@@ -93,6 +93,7 @@ A module-level cache (`_drillsCache`) means disk reads happen once per build pro
 
 - `DownloadDrillPdfButton` — triggers PDF generation via `src/utils/generateDrillPdf.ts` (lazy-loaded through `src/utils/loadExportModules.ts`).
 - `DrillMarkdown` — renders markdown drill fields (steps, coaching focus, etc.).
+- **Print Drill** — on desktop, generates the PDF with `autoPrint()` and opens it in a new tab. On mobile browsers and installed PWAs (detected by `src/utils/printSupport.ts`), which do not auto-open the print dialog for PDFs, it loads lazy images and calls `window.print()` on the print-optimized page instead.
 - PDF page count estimates come from `src/utils/estimateDrillPdfPages.ts`; a build-time warning is emitted for drills whose content is estimated to overflow one page.
 
 ### 3. Plan & Journal Document Generation
