@@ -15,6 +15,7 @@ import { buildCacheBustedAssetPath, OBJECT_URL_REVOKE_DELAY_MS } from "../utils/
 import { formatDrillTagValue } from "../utils/drillTagLabels";
 import type { DrillData } from "../types/drill";
 import DrillMarkdown from "../components/DrillMarkdown";
+import { cleanupPdfPrint, shouldUseInPagePdfPrint } from "../utils/printSupport";
 
 interface DrillPageContext {
   slug: string;
@@ -88,9 +89,23 @@ export default function DrillTemplate({ pageContext }: DrillTemplateProps) {
     });
   }, [drillData.name, drillData.tags.age_level, drillData.tags.skill_level, slug]);
 
+  React.useEffect(() => cleanupPdfPrint, []);
+
   const handlePrint = async () => {
     setIsPrinting(true);
     try {
+      if (shouldUseInPagePdfPrint()) {
+        // Mobile browsers and installed PWAs do not honor autoPrint() for a PDF
+        // opened in a new tab, so print the same generated PDF in-page instead.
+        const [{ generateDrillPdfBlob }, { printPdfBlob }] = await Promise.all([
+          import("../utils/generateDrillPdf"),
+          import("../utils/printPdfBlob"),
+        ]);
+        const blob = await generateDrillPdfBlob(drillData, drillFolder);
+        await printPdfBlob(blob);
+        trackPrintAsDownload();
+        return;
+      }
       const { generateDrillPdf } = await import("../utils/generateDrillPdf");
       const doc = await generateDrillPdf(drillData, drillFolder);
       doc.autoPrint();
