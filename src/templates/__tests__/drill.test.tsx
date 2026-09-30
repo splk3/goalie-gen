@@ -4,10 +4,15 @@ import DrillTemplate from "../drill";
 import { shouldPlaceProgressionsOnSecondPage } from "../../utils/estimateDrillPdfPages";
 import { getEmbedUrl } from "../../utils/videoUtils";
 import { trackEvent } from "../../utils/analytics";
-import { loadImagesForPrint, shouldUseNativePagePrint } from "../../utils/printSupport";
+import { cleanupPdfPrint, shouldUseInPagePdfPrint } from "../../utils/printSupport";
+import { printPdfBlob } from "../../utils/printPdfBlob";
 
 jest.mock("../../utils/generateDrillPdf", () => ({
   generateDrillPdf: jest.fn(),
+  generateDrillPdfBlob: jest.fn(),
+}));
+jest.mock("../../utils/printPdfBlob", () => ({
+  printPdfBlob: jest.fn(() => Promise.resolve()),
 }));
 jest.mock("../../utils/analytics", () => ({
   trackEvent: jest.fn(),
@@ -28,8 +33,8 @@ jest.mock("../../utils/videoUtils", () => ({
   getVideoThumbnail: jest.fn(() => ""),
 }));
 jest.mock("../../utils/printSupport", () => ({
-  shouldUseNativePagePrint: jest.fn(() => false),
-  loadImagesForPrint: jest.fn(() => Promise.resolve()),
+  shouldUseInPagePdfPrint: jest.fn(() => false),
+  cleanupPdfPrint: jest.fn(),
 }));
 jest.mock("../../components/SEO", () => () => null);
 jest.mock("../../utils/estimateDrillPdfPages", () => ({
@@ -98,8 +103,8 @@ describe("DrillTemplate", () => {
     jest.mocked(shouldPlaceProgressionsOnSecondPage).mockReturnValue(false);
     jest.mocked(getEmbedUrl).mockClear();
     jest.mocked(trackEvent).mockClear();
-    jest.mocked(shouldUseNativePagePrint).mockReturnValue(false);
-    jest.mocked(loadImagesForPrint).mockClear();
+    jest.mocked(shouldUseInPagePdfPrint).mockReturnValue(false);
+    jest.mocked(printPdfBlob).mockClear();
     window.open = jest.fn();
     window.print = jest.fn();
     URL.createObjectURL = jest.fn(() => "blob:test");
@@ -478,24 +483,36 @@ describe("DrillTemplate", () => {
     expect(window.print).not.toHaveBeenCalled();
   });
 
-  it("opens the native print dialog on mobile browsers and PWAs", async () => {
-    const { generateDrillPdf } = await import("../../utils/generateDrillPdf");
+  it("prints the generated drill PDF in-page on mobile browsers and PWAs", async () => {
+    const { generateDrillPdf, generateDrillPdfBlob } = await import("../../utils/generateDrillPdf");
+    const pdfBlob = new Blob(["pdf"], { type: "application/pdf" });
     jest.mocked(generateDrillPdf).mockClear();
-    jest.mocked(shouldUseNativePagePrint).mockReturnValue(true);
+    jest.mocked(generateDrillPdfBlob).mockReset().mockResolvedValue(pdfBlob);
+    jest.mocked(shouldUseInPagePdfPrint).mockReturnValue(true);
 
     render(<DrillTemplate pageContext={basePageContext} />);
     fireEvent.click(screen.getByRole("button", { name: /print drill/i }));
 
     await waitFor(() => {
-      expect(window.print).toHaveBeenCalledTimes(1);
+      expect(printPdfBlob).toHaveBeenCalledWith(pdfBlob);
     });
-    expect(loadImagesForPrint).toHaveBeenCalled();
-    expect(window.open).not.toHaveBeenCalled();
+    expect(generateDrillPdfBlob).toHaveBeenCalledWith(basePageContext.drillData, "test-drill");
     expect(generateDrillPdf).not.toHaveBeenCalled();
+    expect(window.open).not.toHaveBeenCalled();
+    expect(window.print).not.toHaveBeenCalled();
     expect(trackEvent).toHaveBeenCalledWith(
       "download_drill",
       expect.objectContaining({ source_page: "drill_page_print" })
     );
-    expect(screen.getByRole("button", { name: /print drill/i })).not.toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /print drill/i })).not.toBeDisabled();
+    });
+  });
+
+  it("cleans up in-page PDF print content when the drill page unmounts", () => {
+    const { unmount } = render(<DrillTemplate pageContext={basePageContext} />);
+    jest.mocked(cleanupPdfPrint).mockClear();
+    unmount();
+    expect(cleanupPdfPrint).toHaveBeenCalledTimes(1);
   });
 });

@@ -4,10 +4,13 @@
  * Desktop browsers honor jsPDF's `autoPrint()` when a generated PDF blob is
  * opened in a new tab. Mobile browsers (e.g. Chrome on Android) and installed
  * PWAs do not: they only display/download the PDF, and standalone PWAs may not
- * expose a browser menu to print it. On those platforms, the page's own
- * print-optimized layout is printed via `window.print()`, which opens the
- * native system print dialog.
+ * expose a browser menu to print it. On those platforms, the generated PDF is
+ * rendered into the page and printed via `window.print()` (see
+ * `printPdfBlob.ts`), which opens the native system print dialog.
  */
+
+export const PDF_PRINT_ROOT_ID = "pdf-print-root";
+export const PDF_PRINT_STYLE_ID = "pdf-print-style";
 
 const MOBILE_USER_AGENT_PATTERN =
   /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle|BlackBerry|Opera Mini|IEMobile/i;
@@ -41,9 +44,9 @@ export function isMobileBrowser(): boolean {
 
 /**
  * Returns true when the browser cannot be relied on to auto-open the print
- * dialog for a PDF opened in a new tab, so native page printing should be used.
+ * dialog for a PDF opened in a new tab, so the PDF should be printed in-page.
  */
-export function shouldUseNativePagePrint(): boolean {
+export function shouldUseInPagePdfPrint(): boolean {
   return isMobileBrowser() || isStandalonePwa();
 }
 
@@ -77,4 +80,13 @@ export async function loadImagesForPrint(
   });
   await Promise.race([Promise.all(pending).then(() => undefined), timeout]);
   if (timeoutId !== undefined) clearTimeout(timeoutId);
+}
+
+/**
+ * Removes the in-page PDF print container and styles added by `printPdfBlob`.
+ */
+export function cleanupPdfPrint(): void {
+  if (typeof document === "undefined") return;
+  document.getElementById(PDF_PRINT_ROOT_ID)?.remove();
+  document.getElementById(PDF_PRINT_STYLE_ID)?.remove();
 }

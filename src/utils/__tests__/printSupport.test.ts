@@ -1,8 +1,11 @@
 import {
+  cleanupPdfPrint,
+  PDF_PRINT_ROOT_ID,
+  PDF_PRINT_STYLE_ID,
   isMobileBrowser,
   isStandalonePwa,
   loadImagesForPrint,
-  shouldUseNativePagePrint,
+  shouldUseInPagePdfPrint,
 } from "../printSupport";
 
 const DESKTOP_CHROME_UA =
@@ -49,18 +52,18 @@ describe("printSupport", () => {
   it("uses the PDF auto-print flow on desktop browsers", () => {
     expect(isMobileBrowser()).toBe(false);
     expect(isStandalonePwa()).toBe(false);
-    expect(shouldUseNativePagePrint()).toBe(false);
+    expect(shouldUseInPagePdfPrint()).toBe(false);
   });
 
   it("uses native page printing on Android Chrome", () => {
     setNavigatorProperty("userAgent", ANDROID_CHROME_UA);
     expect(isMobileBrowser()).toBe(true);
-    expect(shouldUseNativePagePrint()).toBe(true);
+    expect(shouldUseInPagePdfPrint()).toBe(true);
   });
 
   it("uses native page printing when user agent client hints report mobile", () => {
     setNavigatorProperty("userAgentData", { mobile: true });
-    expect(shouldUseNativePagePrint()).toBe(true);
+    expect(shouldUseInPagePdfPrint()).toBe(true);
   });
 
   it("detects iPadOS devices that report a desktop user agent", () => {
@@ -72,12 +75,21 @@ describe("printSupport", () => {
   it("uses native page printing in installed PWAs", () => {
     setDisplayModeMatches(["standalone"]);
     expect(isStandalonePwa()).toBe(true);
-    expect(shouldUseNativePagePrint()).toBe(true);
+    expect(shouldUseInPagePdfPrint()).toBe(true);
   });
 
   it("detects iOS home screen web apps", () => {
     setNavigatorProperty("standalone", true);
     expect(isStandalonePwa()).toBe(true);
+  });
+
+  it("removes in-page PDF print content", () => {
+    document.head.innerHTML = `<style id="${PDF_PRINT_STYLE_ID}"></style>`;
+    document.body.innerHTML = `<div id="${PDF_PRINT_ROOT_ID}"></div>`;
+    cleanupPdfPrint();
+    expect(document.getElementById(PDF_PRINT_ROOT_ID)).toBeNull();
+    expect(document.getElementById(PDF_PRINT_STYLE_ID)).toBeNull();
+    expect(() => cleanupPdfPrint()).not.toThrow();
   });
 
   describe("loadImagesForPrint", () => {
