@@ -14,6 +14,7 @@ import {
   extractPaletteHexColorsFromDataUrl,
 } from "../utils/teamColors";
 import { normalizeUrl } from "../utils/generatorDefaults";
+import { getFittedImageDimensions } from "../utils/imageDimensions";
 import { buildTeamPlanDocument } from "../utils/builders/teamPlanBuilder";
 import {
   fetchCalendarFeed,
@@ -593,26 +594,7 @@ export default function GenerateTeamPlanButton({
     if (selectedImage && imagePreview) {
       const arrayBuffer = await selectedImage.arrayBuffer();
       const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
-      let imgWidth = 400;
-      let imgHeight = 400;
-      try {
-        const img = new Image();
-        await new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve;
-          img.src = imagePreview;
-        });
-        const ratio = img.width / img.height;
-        if (ratio > 1) {
-          imgWidth = 400;
-          imgHeight = 400 / ratio;
-        } else {
-          imgHeight = 400;
-          imgWidth = 400 * ratio;
-        }
-      } catch (e) {
-        console.error("Failed to parse image dimensions", e);
-      }
+      const { width: imgWidth, height: imgHeight } = await getFittedImageDimensions(imagePreview, 400);
       resolvedLogo = { data: arrayBuffer, type: docxImageType, width: imgWidth, height: imgHeight };
     }
 
