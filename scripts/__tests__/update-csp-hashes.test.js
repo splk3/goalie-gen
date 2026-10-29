@@ -25,6 +25,15 @@ describe("CSP hash generation", () => {
     ]);
   });
 
+  it("recognizes inline scripts with whitespace or attributes on the closing tag", () => {
+    const inlineScript = "window.endTag = true;";
+    const html = `<script>${inlineScript}</script \n data-note="ignored">`;
+
+    expect(getInlineScriptHashes(html)).toEqual([
+      `'sha256-${crypto.createHash("sha256").update(inlineScript).digest("base64")}'`,
+    ]);
+  });
+
   it("uses one shared Gatsby page-path script while preserving each page path", () => {
     const html =
       '<script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/drills/test/";/*]]>*/</script>';
