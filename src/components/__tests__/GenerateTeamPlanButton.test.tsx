@@ -1070,7 +1070,7 @@ describe("GenerateTeamPlanButton image parsing error", () => {
       onload: () => void = () => {};
       onerror: () => void = () => {};
       set src(_value: string) {
-        throw new Error("Simulated image load failure");
+        this.onerror();
       }
     } as unknown as typeof Image;
 
