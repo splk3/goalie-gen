@@ -1411,7 +1411,10 @@ export default function GenerateTeamPlanButton({
             <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm flex flex-col gap-2">
               <p>Document generated successfully! Click Download to save it.</p>
               {imageLoadError && (
-                <div className="p-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded text-xs border border-yellow-200 dark:border-yellow-700">
+                <div
+                  role="status"
+                  className="p-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded text-xs border border-yellow-200 dark:border-yellow-700"
+                >
                   <strong>Notice:</strong> The document was generated, but the provided team logo
                   could not be processed and is not included.
                 </div>
