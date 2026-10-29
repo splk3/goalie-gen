@@ -212,6 +212,7 @@ export default function GenerateTeamPlanButton({
   const [datePendingDeletion, setDatePendingDeletion] = React.useState<string | null>(null);
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [validationError, setValidationError] = React.useState<string>("");
+  const [imageLoadError, setImageLoadError] = React.useState<boolean>(false);
   const [generatedBlob, setGeneratedBlob] = React.useState<Blob | null>(null);
   const [generatedFileName, setGeneratedFileName] = React.useState<string>("");
   const validationErrorRef = React.useRef<HTMLDivElement>(null);
@@ -533,6 +534,7 @@ export default function GenerateTeamPlanButton({
 
   const validateInputs = (): boolean => {
     setValidationError("");
+    setImageLoadError(false);
     shouldScrollValidationErrorRef.current = false;
 
     if (!teamName.trim()) {
@@ -594,8 +596,23 @@ export default function GenerateTeamPlanButton({
     if (selectedImage && imagePreview) {
       const arrayBuffer = await selectedImage.arrayBuffer();
       const docxImageType = toDocxImageTypeFromMime(selectedImage.type);
-      const { width: imgWidth, height: imgHeight } = await getFittedImageDimensions(imagePreview, 400);
-      resolvedLogo = { data: arrayBuffer, type: docxImageType, width: imgWidth, height: imgHeight };
+      let imageFailedToLoad = false;
+      const { width: imgWidth, height: imgHeight } = await getFittedImageDimensions(
+        imagePreview,
+        400,
+        () => {
+          imageFailedToLoad = true;
+          setImageLoadError(true);
+        }
+      );
+      if (!imageFailedToLoad) {
+        resolvedLogo = {
+          data: arrayBuffer,
+          type: docxImageType,
+          width: imgWidth,
+          height: imgHeight,
+        };
+      }
     }
 
     // ── Build config & content ──────────────────────────────────────────────
@@ -1382,8 +1399,17 @@ export default function GenerateTeamPlanButton({
           )}
 
           {generatedBlob && !validationError && (
-            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm">
-              Document generated successfully! Click Download to save it.
+            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg text-sm flex flex-col gap-2">
+              <p>Document generated successfully! Click Download to save it.</p>
+              {imageLoadError && (
+                <div
+                  role="status"
+                  className="p-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded text-xs border border-yellow-200 dark:border-yellow-700"
+                >
+                  <strong>Notice:</strong> The document was generated, but the provided team logo
+                  could not be processed and is not included.
+                </div>
+              )}
             </div>
           )}
         </div>

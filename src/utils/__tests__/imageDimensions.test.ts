@@ -66,11 +66,13 @@ describe("getFittedImageDimensions", () => {
 
   it("handles image load failure gracefully and returns maxDimension fallback", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const onError = jest.fn();
 
-    const result = await getFittedImageDimensions("error", 400);
+    const result = await getFittedImageDimensions("error", 400, onError);
 
     expect(result).toEqual({ width: 400, height: 400 });
     expect(consoleSpy).toHaveBeenCalledWith("Failed to parse image dimensions", expect.any(Error));
+    expect(onError).toHaveBeenCalledWith(expect.any(Error));
 
     consoleSpy.mockRestore();
   });

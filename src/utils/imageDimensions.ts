@@ -1,6 +1,7 @@
 export async function getFittedImageDimensions(
   imageSrc: string,
-  maxDimension: number
+  maxDimension: number,
+  onError?: (error: unknown) => void
 ): Promise<{ width: number; height: number }> {
   let imgWidth = maxDimension;
   let imgHeight = maxDimension;
@@ -23,6 +24,7 @@ export async function getFittedImageDimensions(
     }
   } catch (e) {
     console.error("Failed to parse image dimensions", e);
+    onError?.(e);
   }
 
   return { width: imgWidth, height: imgHeight };
