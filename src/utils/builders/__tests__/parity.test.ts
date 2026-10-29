@@ -111,6 +111,26 @@ const MINIMAL_TEAM_CONTENT: TeamPlanContent = {
 
 const NULL_QR_GENERATOR: QrGenerator = async () => null;
 
+const findNodeByRootKey = (
+  value: unknown,
+  rootKey: string
+): Record<string, unknown> | undefined => {
+  if (Array.isArray(value)) {
+    for (const child of value) {
+      const match = findNodeByRootKey(child, rootKey);
+      if (match) return match;
+    }
+  } else if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (record.rootKey === rootKey) return record;
+    for (const child of Object.values(record)) {
+      const match = findNodeByRootKey(child, rootKey);
+      if (match) return match;
+    }
+  }
+  return undefined;
+};
+
 const JOURNAL_CONFIG: GoalieJournalConfig = {
   goalieName: "Parity Test Goalie",
   teamName: "Parity Test Team",
@@ -721,10 +741,11 @@ describe("buildTeamPlanDocument", () => {
     );
 
     const serializedDocument = JSON.stringify(result);
-    expect(serializedDocument).toContain('"rootKey":"w:pBdr"');
-    expect(serializedDocument).toContain(
-      '"style":{"key":"w:val","value":"single"},"color":{"key":"w:color","value":"AF272F"}'
-    );
+    const paragraphBorder = findNodeByRootKey(JSON.parse(serializedDocument), "w:pBdr");
+
+    expect(paragraphBorder).toBeDefined();
+    expect(JSON.stringify(paragraphBorder)).toContain('"value":"single"');
+    expect(JSON.stringify(paragraphBorder)).toContain('"value":"AF272F"');
   });
 
   it("renders compact event fields as four fixed-width columns", async () => {
