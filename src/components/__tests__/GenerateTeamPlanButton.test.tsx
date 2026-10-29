@@ -1068,9 +1068,9 @@ describe("GenerateTeamPlanButton image parsing error", () => {
     const OriginalImage = global.Image;
     global.Image = class {
       onload: () => void = () => {};
-      onerror: () => void = () => {};
+      onerror: (error: Error) => void = () => {};
       set src(_value: string) {
-        this.onerror();
+        this.onerror(new Error("Image failed to load"));
       }
     } as unknown as typeof Image;
 
