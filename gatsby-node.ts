@@ -6,6 +6,8 @@ import type { DrillData } from "./src/types/drill";
 import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
 import { isValidDrillVideoUrl } from "./src/utils/drillVideo";
 
+const { updateCspHashes } = require("./scripts/update-csp-hashes");
+
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
 let _drillsCache: Array<{ folder: string; drillData: DrillData }> | null = null;
@@ -581,4 +583,9 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
     }
   }
   console.log(`  ✓ Sourced ${drills.length} drill node(s) into GraphQL`);
+};
+
+export const onPostBuild: GatsbyNode["onPostBuild"] = () => {
+  const hashCount = updateCspHashes(path.resolve(__dirname, "public"));
+  console.log(`  ✓ Added CSP hashes for ${hashCount} inline script(s)`);
 };
