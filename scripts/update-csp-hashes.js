@@ -37,6 +37,35 @@ function getHtmlFiles(directory) {
   });
 }
 
+function normalizeGatsbyPagePathScripts(html) {
+  return html.replace(SCRIPT_TAG_PATTERN, (tag, attributes, content) => {
+    if (
+      !/\bid\s*=\s*(?:"gatsby-script-loader"|'gatsby-script-loader'|gatsby-script-loader(?=[\s>]))/i.test(
+        attributes
+      )
+    ) {
+      return tag;
+    }
+    if (
+      content.includes('window.pagePath=document.currentScript.getAttribute("data-page-path");')
+    ) {
+      return tag;
+    }
+
+    const pagePathMatch = content.match(/window\.pagePath\s*=\s*("(?:\\.|[^"\\])*")\s*;/);
+    if (!pagePathMatch) {
+      throw new Error("Could not read the page path from Gatsby's script loader.");
+    }
+
+    const pagePath = JSON.parse(pagePathMatch[1]);
+    const escapedPagePath = pagePath
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;");
+    return `<script${attributes} data-page-path="${escapedPagePath}">/*<![CDATA[*/window.pagePath=document.currentScript.getAttribute("data-page-path");/*]]>*/</script>`;
+  });
+}
+
 function updateCspHashes(publicDirectory) {
   const headersPath = path.join(publicDirectory, "_headers");
   if (!fs.existsSync(headersPath)) {
@@ -45,7 +74,9 @@ function updateCspHashes(publicDirectory) {
 
   const hashes = new Set();
   for (const htmlPath of getHtmlFiles(publicDirectory)) {
-    for (const hash of getInlineScriptHashes(fs.readFileSync(htmlPath, "utf8"))) {
+    const html = normalizeGatsbyPagePathScripts(fs.readFileSync(htmlPath, "utf8"));
+    fs.writeFileSync(htmlPath, html);
+    for (const hash of getInlineScriptHashes(html)) {
       hashes.add(hash);
     }
   }
@@ -56,9 +87,11 @@ function updateCspHashes(publicDirectory) {
   const headers = fs.readFileSync(headersPath, "utf8");
   const updatedHeaders = headers.replace(
     /^(\s*Content-Security-Policy:\s*)(.*)$/m,
-    (line, prefix, policy) => {
+    (_line, prefix, policy) => {
       const directives = policy.split(";").map((directive) => directive.trim());
-      const scriptSrcIndex = directives.findIndex((directive) => directive.startsWith("script-src "));
+      const scriptSrcIndex = directives.findIndex((directive) =>
+        directive.startsWith("script-src ")
+      );
       if (scriptSrcIndex === -1) {
         throw new Error("Content-Security-Policy is missing a script-src directive.");
       }
@@ -68,7 +101,13 @@ function updateCspHashes(publicDirectory) {
         ...scriptSrcParts.filter((part) => !part.startsWith("'sha256-")),
         ...[...hashes].sort(),
       ].join(" ");
-      return `${prefix}${directives.join("; ")};`;
+      const updatedPolicy = `${directives.join("; ")};`;
+      if (updatedPolicy.length > 2000) {
+        throw new Error(
+          "Content-Security-Policy exceeds Cloudflare Pages' 2,000-character header limit."
+        );
+      }
+      return `${prefix}${updatedPolicy}`;
     }
   );
   if (updatedHeaders === headers) {
@@ -79,4 +118,4 @@ function updateCspHashes(publicDirectory) {
   return hashes.size;
 }
 
-module.exports = { getInlineScriptHashes, updateCspHashes };
+module.exports = { getInlineScriptHashes, normalizeGatsbyPagePathScripts, updateCspHashes };
