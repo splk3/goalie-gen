@@ -86,4 +86,24 @@ describe("CSP hash generation", () => {
       fs.rmSync(publicDirectory, { recursive: true, force: true });
     }
   });
+
+  it("counts the full CSP header line against Cloudflare Pages' header limit", () => {
+    const publicDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "csp-headers-prefix-limit-"));
+    const inlineScript = "window.one = 1;";
+    const hash = `'sha256-${crypto.createHash("sha256").update(inlineScript).digest("base64")}'`;
+    const headerPrefix = "  Content-Security-Policy: ";
+    const policyPrefix = `default-src 'self'; script-src 'self' ${hash}; connect-src 'self'`;
+    const paddingLength = 1990 - policyPrefix.length - 2;
+    const policy = `${policyPrefix} ${"x".repeat(paddingLength)};`;
+    fs.writeFileSync(path.join(publicDirectory, "_headers"), `/*\n${headerPrefix}${policy}\n`);
+    fs.writeFileSync(path.join(publicDirectory, "index.html"), `<script>${inlineScript}</script>`);
+
+    try {
+      expect(policy.length).toBeLessThanOrEqual(2000);
+      expect(headerPrefix.length + policy.length).toBeGreaterThan(2000);
+      expect(() => updateCspHashes(publicDirectory)).toThrow(/2,000-character header limit/);
+    } finally {
+      fs.rmSync(publicDirectory, { recursive: true, force: true });
+    }
+  });
 });

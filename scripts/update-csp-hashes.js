@@ -102,12 +102,13 @@ function updateCspHashes(publicDirectory) {
         ...[...hashes].sort(),
       ].join(" ");
       const updatedPolicy = `${directives.join("; ")};`;
-      if (updatedPolicy.length > 2000) {
+      const updatedLine = `${prefix}${updatedPolicy}`;
+      if (updatedLine.length > 2000) {
         throw new Error(
           "Content-Security-Policy exceeds Cloudflare Pages' 2,000-character header limit."
         );
       }
-      return `${prefix}${updatedPolicy}`;
+      return updatedLine;
     }
   );
   if (updatedHeaders === headers) {
