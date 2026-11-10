@@ -5,8 +5,7 @@ import * as yaml from "js-yaml";
 import type { DrillData } from "./src/types/drill";
 import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
 import { isValidDrillVideoUrl } from "./src/utils/drillVideo";
-
-const { updateCspHashes } = require("./scripts/update-csp-hashes");
+import { updateCspHashes } from "./scripts/update-csp-hashes";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
