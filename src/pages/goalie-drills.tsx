@@ -392,11 +392,10 @@ export default function GoalieDrills({ data, location }: GoalieDrillsProps) {
       searchParams.delete("q");
     }
 
-    const searchString = searchParams.toString();
-    const newUrl =
-      window.location.pathname + (searchString ? `?${searchString}` : "") + window.location.hash;
+    const url = new URL(window.location.href);
+    url.search = searchParams.toString();
 
-    window.history.replaceState(null, "", newUrl);
+    window.history.replaceState(null, "", url);
   }, [currentPage, debouncedTextQuery, selectedFilters, sortOrder]);
 
   const handleResetFilters = React.useCallback(() => {
