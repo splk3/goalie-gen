@@ -42,3 +42,4 @@ Goalie Gen is deployed to two separate environments depending on the branch:
 - **Deployment URL**: `https://goaliegen.com`
 - **Trigger**: Automatic on commits/merges to the `main` branch via Cloudflare's direct Git integration.
 - **Configuration**: Deployment variables and routes are configured in `wrangler.jsonc`.
+- **Security headers**: `static/_headers` defines the production headers. Gatsby updates the CSP hashes from built HTML during `onPostBuild`; do not edit the generated `public/_headers` file. GitHub Pages ignores `_headers`.
