@@ -23,9 +23,7 @@ export interface DrillMarkdownListItem {
 }
 
 export type DrillMarkdownBlock =
-  | DrillMarkdownHeadingBlock
-  | DrillMarkdownParagraphBlock
-  | DrillMarkdownListBlock;
+  DrillMarkdownHeadingBlock | DrillMarkdownParagraphBlock | DrillMarkdownListBlock;
 
 type DrillMarkdownInput = string | string[] | LegacyCoachingFocusPoint[];
 

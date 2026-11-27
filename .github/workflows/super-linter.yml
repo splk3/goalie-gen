@@ -40,6 +40,7 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: .github/linters
+          CSS_FILE_NAME: .stylelintrc.json
           # Disable Biome linters to avoid conflicts with ESLint and Prettier
           VALIDATE_JAVASCRIPT_BIOME: false
           VALIDATE_TYPESCRIPT_BIOME: false
