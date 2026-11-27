@@ -8,7 +8,17 @@ describe("API catalog", () => {
     const catalog = JSON.parse(
       fs.readFileSync(path.join(staticDirectory, ".well-known/api-catalog"), "utf8")
     );
-    const [search] = catalog.linkset;
+    const catalogEntry = catalog.linkset.find(
+      ({ anchor }) => anchor === "https://goaliegen.com/.well-known/api-catalog"
+    );
+    expect(catalogEntry).toBeDefined();
+    expect(catalogEntry.item).toEqual(
+      expect.arrayContaining([{ href: "https://goaliegen.com/.well-known/search" }])
+    );
+    const search = catalog.linkset.find(
+      ({ anchor }) => anchor === "https://goaliegen.com/.well-known/search"
+    );
+    expect(search).toBeDefined();
     const descriptionUrl = new URL(search["service-desc"][0].href);
     const description = JSON.parse(
       fs.readFileSync(path.join(staticDirectory, descriptionUrl.pathname), "utf8")
