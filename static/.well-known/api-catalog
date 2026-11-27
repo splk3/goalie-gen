@@ -1,0 +1,19 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://goaliegen.com/.well-known/search",
+      "service-desc": [
+        {
+          "href": "https://goaliegen.com/.well-known/search-openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://developers.cloudflare.com/ai-search/how-to/search-for-agents/",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}

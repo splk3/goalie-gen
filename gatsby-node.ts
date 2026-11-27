@@ -6,6 +6,7 @@ import type { DrillData } from "./src/types/drill";
 import { estimateDrillPdfPages } from "./src/utils/estimateDrillPdfPages";
 import { isValidDrillVideoUrl } from "./src/utils/drillVideo";
 import { updateCspHashes } from "./scripts/update-csp-hashes";
+import { generateSitemap } from "./scripts/sitemap";
 
 // Module-level cache: drills are loaded once per build process and reused
 // across createPages and sourceNodes to avoid redundant disk reads.
@@ -584,7 +585,27 @@ export const sourceNodes: GatsbyNode["sourceNodes"] = async ({
   console.log(`  ✓ Sourced ${drills.length} drill node(s) into GraphQL`);
 };
 
-export const onPostBuild: GatsbyNode["onPostBuild"] = () => {
+export const onPostBuild: GatsbyNode["onPostBuild"] = async ({ graphql }) => {
+  const result = await graphql<{
+    allSitePage: { nodes: Array<{ path: string; matchPath?: string | null }> };
+  }>(`
+    {
+      allSitePage {
+        nodes {
+          path
+          matchPath
+        }
+      }
+    }
+  `);
+  if (result.errors || !result.data) {
+    throw new Error(`Could not generate sitemap: ${String(result.errors || "missing page data")}`);
+  }
+  fs.writeFileSync(
+    path.resolve(__dirname, "public", "sitemap.xml"),
+    generateSitemap(result.data.allSitePage.nodes)
+  );
+
   const hashCount = updateCspHashes(path.resolve(__dirname, "public"));
   console.log(`  ✓ Added CSP hashes for ${hashCount} inline script(s)`);
 };
