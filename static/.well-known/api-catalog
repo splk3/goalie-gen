@@ -1,6 +1,14 @@
 {
   "linkset": [
     {
+      "anchor": "https://goaliegen.com/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://goaliegen.com/.well-known/search"
+        }
+      ]
+    },
+    {
       "anchor": "https://goaliegen.com/.well-known/search",
       "service-desc": [
         {
