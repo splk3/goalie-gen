@@ -1,0 +1,46 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Goalie Gen Search for Agents",
+    "version": "1.0.0",
+    "description": "Cloudflare-managed search of publicly indexed Goalie Gen content. Requests are subject to Cloudflare's AI Crawl Control and WAF settings."
+  },
+  "externalDocs": {
+    "url": "https://developers.cloudflare.com/ai-search/how-to/search-for-agents/"
+  },
+  "servers": [
+    {
+      "url": "https://goaliegen.com"
+    }
+  ],
+  "paths": {
+    "/.well-known/search": {
+      "get": {
+        "summary": "Search indexed site content",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Keywords or a natural-language query.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Relevant content in Markdown, with source references and relevance scores.",
+            "content": {
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
