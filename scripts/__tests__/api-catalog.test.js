@@ -27,7 +27,7 @@ describe("API catalog", () => {
     const headers = fs.readFileSync(path.join(staticDirectory, "_headers"), "utf8");
 
     expect(headers).toMatch(
-      /\/\.well-known\/api-catalog\n  Content-Type: application\/linkset\+json;/
+      /\/\.well-known\/api-catalog\n {2}Content-Type: application\/linkset\+json;/
     );
     expect(headers).toContain('Link: </.well-known/api-catalog>; rel="api-catalog"');
   });
